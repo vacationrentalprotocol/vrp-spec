@@ -61,9 +61,10 @@ signed-artifact hashes so trust history is tamper-evident.
 ## Is it open?
 
 Yes. The specification is public at <https://vacationrentalprotocol.com> and the
-repository is <https://github.com/HemmaBo-se/vrp-spec>. The
-`vacation-rental-protocol` well-known URI suffix is in provisional registration
-with the IANA Well-Known URIs registry.
+repository is <https://github.com/HemmaBo-se/vrp-spec>. A provisional
+registration of the `vacation-rental.json` well-known URI suffix has been
+requested in the IANA Well-Known URIs registry (request open, pending review:
+<https://github.com/protocol-registries/well-known-uris/issues/93>).
 
 ## Status
 

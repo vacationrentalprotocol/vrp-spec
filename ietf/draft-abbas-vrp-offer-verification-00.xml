@@ -1,0 +1,938 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude"
+     docName="draft-abbas-vrp-offer-verification-00"
+     category="info"
+     ipr="trust200902"
+     submissionType="IETF"
+     tocInclude="true"
+     sortRefs="true"
+     symRefs="true"
+     version="3">
+
+  <front>
+    <title abbrev="VRP Offer Verification">The Vacation Rental Protocol (VRP): Host-Domain Discovery and Verification of Signed Stay Offers</title>
+    <seriesInfo name="Internet-Draft" value="draft-abbas-vrp-offer-verification-00"/>
+    <author fullname="Rouiada Abbas" initials="R." surname="Abbas">
+      <organization>Vacation Rental Protocol</organization>
+      <address>
+        <email>hello@vacationrentalprotocol.com</email>
+        <uri>https://vacationrentalprotocol.com</uri>
+      </address>
+    </author>
+    <date year="2026" month="July" day="30"/>
+    <keyword>vacation rental</keyword>
+    <keyword>signed offers</keyword>
+    <keyword>well-known URI</keyword>
+    <keyword>Ed25519</keyword>
+    <keyword>agentic commerce</keyword>
+    <keyword>seller verification</keyword>
+
+    <abstract>
+      <t>The Vacation Rental Protocol (VRP) lets an AI agent or other
+      client verify, directly from a vacation-rental host's own domain and
+      with no intermediary, that a stay offer is authentic, currently
+      available, and exactly priced.  A host domain publishes a discovery
+      document at a well-known URI, an Ed25519 key set, and signed stay
+      offers (compact JSON Web Signatures).  Verification requires no
+      central registry, issuer, accreditation program, or gatekeeper:
+      control of the host domain is the root of trust.</t>
+      <t>This document specifies the discovery document, key publication
+      and rotation, the signed verified stay offer, and the verification
+      procedure, including fail-closed behavior and a three-state
+      verification model.  It also registers the "vacation-rental.json"
+      well-known URI suffix.</t>
+    </abstract>
+  </front>
+
+  <middle>
+
+    <section anchor="intro">
+      <name>Introduction</name>
+      <t>Buyer-side building blocks for agent-mediated commerce - agent
+      identity, payment authorization, and checkout - are being addressed
+      in multiple venues.  The seller side of the transaction has no
+      equivalent: when an AI agent finds a vacation-rental offer, nothing
+      lets it verify from the seller's own domain that the offer is
+      genuine, that the price is the exact amount the guest will pay, and
+      that the booking URL actually belongs to the seller.  Agents today
+      either trust an aggregator's word or forward unverified prose.</t>
+      <t>VRP closes that gap for one concrete vertical, vacation rentals,
+      with deliberately boring machinery: a well-known discovery document
+      (<xref target="discovery"/>), a published Ed25519 key set
+      (<xref target="jwks"/>), and stay offers signed as compact JSON Web
+      Signatures over the host's own domain (<xref target="offer"/>).  A
+      verifier fetches, verifies, and quotes - or fails closed
+      (<xref target="verification"/>).</t>
+
+      <section anchor="scope">
+        <name>Scope and Non-Goals</name>
+        <t>VRP v0.1 defines how a host-owned vacation-rental domain
+        publishes discovery metadata, signing keys, and signed verified
+        stay offers so that clients can verify provenance, freshness,
+        exact price, and the direct booking URL.</t>
+        <t>VRP is not an online travel agency (OTA), marketplace, central
+        registry, traffic proxy, payment processor, or central key
+        issuer.  VRP is a no-gatekeeper protocol: verification
+        <bcp14>MUST NOT</bcp14> require any specific vendor, a
+        VRP-operated trusted-issuer registry, a host accreditation
+        program, a certification company, or a central discovery
+        index.</t>
+        <t>VRP may compose with adjacent agent-commerce standards for
+        checkout, payment mandates, tool bindings, or inter-agent
+        negotiation; those runtime flows are out of scope for this
+        document.</t>
+      </section>
+    </section>
+
+    <section anchor="conventions">
+      <name>Conventions and Terminology</name>
+      <t>The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>",
+      "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>",
+      "<bcp14>SHALL NOT</bcp14>", "<bcp14>SHOULD</bcp14>",
+      "<bcp14>SHOULD NOT</bcp14>", "<bcp14>RECOMMENDED</bcp14>",
+      "<bcp14>NOT RECOMMENDED</bcp14>", "<bcp14>MAY</bcp14>", and
+      "<bcp14>OPTIONAL</bcp14>" in this document are to be interpreted as
+      described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/>
+      when, and only when, they appear in all capitals, as shown here.</t>
+      <dl newline="false" spacing="normal">
+        <dt>Node:</dt>
+        <dd>A host-owned HTTPS origin that publishes VRP resources.  Each
+        node is one origin describing one vacation-rental site; there is
+        no multi-publisher or shared-host case.</dd>
+        <dt>Host domain:</dt>
+        <dd>The registrable domain a node is served from, carried as
+        <tt>canonical_domain</tt> in VRP documents.</dd>
+        <dt>Discovery document:</dt>
+        <dd>The JSON resource at the node's well-known URI
+        (<xref target="discovery"/>).</dd>
+        <dt>Verified stay offer:</dt>
+        <dd>A stay quote signed by the node as a compact JSON Web
+        Signature (<xref target="offer"/>).</dd>
+        <dt>Verifier:</dt>
+        <dd>An AI agent or other client that fetches and validates VRP
+        resources.</dd>
+        <dt>Quote:</dt>
+        <dd>Presenting an offer's price, availability, or booking URL to
+        a user as host-verified information.</dd>
+      </dl>
+    </section>
+
+    <section anchor="discovery">
+      <name>Discovery Document</name>
+      <t>A VRP node publishes a site-wide discovery document at:</t>
+      <sourcecode type="text">
+https://{host-domain}/.well-known/vacation-rental.json
+</sourcecode>
+      <t>A client that already knows a host's domain issues this single
+      request to discover that the origin is a bookable vacation-rental
+      node and how to interact with it, in the site-wide pattern
+      <xref target="RFC8615"/> is intended for.  The model mirrors other
+      site-wide well-known configuration resources: probe one URL,
+      receive a structured configuration, with no per-host
+      hard-coding.</t>
+      <ul spacing="normal">
+        <li>Applicable scheme: <tt>https</tt> only.</li>
+        <li>Media type: <tt>application/json</tt> <xref target="RFC8259"/>.</li>
+        <li>One origin per node.</li>
+      </ul>
+
+      <section anchor="discovery-required">
+        <name>Required Fields</name>
+        <dl newline="false" spacing="normal">
+          <dt><tt>protocol</tt>:</dt>
+          <dd><bcp14>MUST</bcp14> be the string
+          <tt>vacation-rental-protocol</tt>.</dd>
+          <dt><tt>protocol_version</tt>:</dt>
+          <dd><bcp14>MUST</bcp14> be <tt>0.1</tt> for this version.</dd>
+          <dt><tt>canonical_domain</tt>:</dt>
+          <dd><bcp14>MUST</bcp14> match the host-owned domain being
+          verified.</dd>
+          <dt><tt>jwks_url</tt>:</dt>
+          <dd><bcp14>MUST</bcp14> point to the host-domain JWKS
+          (<xref target="jwks"/>).</dd>
+          <dt><tt>verified_stay_offer_endpoint</tt>:</dt>
+          <dd><bcp14>MUST</bcp14> point to the host-domain verified stay
+          offer endpoint (<xref target="offer"/>).</dd>
+        </dl>
+      </section>
+
+      <section anchor="discovery-recommended">
+        <name>Recommended Fields</name>
+        <t>A node <bcp14>SHOULD</bcp14> also publish:</t>
+        <dl newline="false" spacing="normal">
+          <dt><tt>node_id</tt>:</dt>
+          <dd>A stable node identifier.</dd>
+          <dt><tt>capabilities</tt>:</dt>
+          <dd>Supported operations (for example
+          <tt>signed_verified_stay_offer</tt>,
+          <tt>live_availability</tt>, <tt>exact_total_price</tt>,
+          <tt>direct_booking_url</tt>).</dd>
+          <dt><tt>endpoints</tt>:</dt>
+          <dd>Additional operation URLs.</dd>
+          <dt><tt>operator</tt>:</dt>
+          <dd><bcp14>MAY</bcp14> carry <tt>name</tt>, <tt>role</tt>, and
+          <tt>key_custody</tt>.  <tt>key_custody</tt> declares who holds
+          the node's Ed25519 signing key: <tt>platform</tt> (an operator
+          holds and operates the key on the host's behalf - offers are
+          signed under the host's domain identity and remain
+          independently verifiable against <tt>jwks_url</tt>, but the
+          host does not hold the key itself) or <tt>self</tt> (the host
+          self-custodies the key).  When the field is absent, custody is
+          unspecified, and a verifier <bcp14>MUST NOT</bcp14> assume
+          self-custody.  This lets a verifier reason about exactly what a
+          valid signature guarantees: provenance and integrity in both
+          cases, host self-sovereignty only when <tt>self</tt>.</dd>
+        </dl>
+        <t>Clients <bcp14>MUST</bcp14> ignore unknown fields.</t>
+      </section>
+
+      <section anchor="discovery-trust">
+        <name>Trust Model of the Discovery Document</name>
+        <t>Trust is not derived from the well-known location; presence at
+        the well-known URI confers no authority.  Authoritative offers
+        are signed on the host's own domain and verify standalone against
+        the node's published keys, independent of any central party.  A
+        client <bcp14>SHOULD</bcp14> verify signatures and
+        <bcp14>MUST NOT</bcp14> treat the discovery document itself as
+        proof of any claim: the document is advisory metadata only.</t>
+      </section>
+
+      <section anchor="discovery-alias">
+        <name>Transition Alias</name>
+        <t>For transition compatibility a node <bcp14>MAY</bcp14>
+        additionally serve the same document at the longer alias path
+        <tt>/.well-known/vacation-rental-protocol.json</tt>.  Clients
+        <bcp14>SHOULD</bcp14> use <tt>vacation-rental.json</tt>.</t>
+      </section>
+    </section>
+
+    <section anchor="jwks">
+      <name>Signing Keys (JWKS)</name>
+      <t>A VRP node publishes an Ed25519 public key set
+      <xref target="RFC7517"/> at:</t>
+      <sourcecode type="text">
+https://{host-domain}/.well-known/jwks.json
+</sourcecode>
+      <t>Keys used for signing verified stay offers <bcp14>MUST</bcp14>
+      use <xref target="RFC8037"/>:</t>
+      <ul spacing="normal">
+        <li><tt>kty</tt>: <tt>OKP</tt></li>
+        <li><tt>crv</tt>: <tt>Ed25519</tt></li>
+        <li><tt>alg</tt>: <tt>EdDSA</tt></li>
+        <li><tt>kid</tt>: stable key identifier</li>
+        <li><tt>x</tt>: base64url-encoded Ed25519 public key</li>
+      </ul>
+      <t>Such keys <bcp14>SHOULD</bcp14> also set <tt>use</tt> to
+      <tt>sig</tt> and include <tt>verify</tt> in <tt>key_ops</tt>.</t>
+      <t>Because there is no central issuer, the JWKS is the only
+      revocation authority: a key is valid exactly while it appears in
+      the node's JWKS.</t>
+
+      <section anchor="rotation">
+        <name>Rotation</name>
+        <t>To rotate, a node <bcp14>MUST</bcp14> publish the new key
+        alongside the old one in its JWKS and sign new offers with the
+        new key's <tt>kid</tt>.  It <bcp14>SHOULD</bcp14> retain the old
+        key in the JWKS until every offer signed with it has passed its
+        <tt>valid_until</tt>, so the retention overlap equals the maximum
+        offer lifetime.  A node <bcp14>SHOULD</bcp14> use a <tt>kid</tt>
+        that encodes a date and sequence (for example
+        <tt>example.com-2026-05-18-01</tt>) so operators can order keys;
+        a verifier <bcp14>MUST</bcp14> treat <tt>kid</tt> as opaque and
+        <bcp14>MUST NOT</bcp14> infer trust, recency, or status from its
+        value.</t>
+      </section>
+
+      <section anchor="refresh">
+        <name>Refresh on Miss</name>
+        <t>If a verifier receives an offer whose <tt>kid</tt> is not
+        present in its cached JWKS, it <bcp14>MUST</bcp14> re-fetch the
+        node's JWKS before acting, and only treat the offer as
+        unverifiable if the <tt>kid</tt> is still absent.  This makes a
+        rotation take effect immediately and decouples rotation from the
+        cache bound below, so the cache bound governs revocation latency
+        alone.  To avoid amplification, a verifier <bcp14>SHOULD</bcp14>
+        rate-limit or coalesce refresh-on-miss per domain, so a stream of
+        offers bearing unknown <tt>kid</tt>s cannot drive it into
+        excessive JWKS fetches against the node.</t>
+      </section>
+
+      <section anchor="revocation">
+        <name>Revocation and Cache Bound</name>
+        <t>A key's presence in the JWKS is the entire trust signal: an
+        offer verifies only against a key that is in the JWKS now.
+        Removing a key makes every offer signed with it unverifiable,
+        regardless of when it was signed; there is no retroactive
+        "historically valid" exemption.</t>
+        <ul spacing="normal">
+          <li>Routine rotation avoids breakage through timing: retain the
+          outgoing key until its outstanding offers have passed
+          <tt>valid_until</tt>, then remove it.</li>
+          <li>Compromise requires immediate removal.  This also
+          invalidates the operator's own legitimate offers signed with
+          that key - intentionally, because a verifier cannot distinguish
+          the operator's offers from an attacker's when they share the
+          same key.  Legitimate stays are re-signed with the new key.</li>
+        </ul>
+        <t>Offer freshness (<xref target="freshness"/>) does not bound a
+        compromise: an attacker holding the leaked private key can mint
+        fresh offers with a future <tt>valid_until</tt>.  The only thing
+        that stops a conforming verifier from honoring them is the key
+        being absent from the JWKS it holds.  Therefore:</t>
+        <ul spacing="normal">
+          <li>A verifier <bcp14>MUST NOT</bcp14> cache a node's JWKS for
+          longer than 5 minutes.  A node's <tt>Cache-Control</tt>
+          <xref target="RFC9111"/> may only shorten this window, never
+          extend it.  This bound is the revocation latency: a compromised
+          key is fully de-trusted by conforming verifiers within the
+          cache window after it is removed from the JWKS.</li>
+          <li>A node <bcp14>SHOULD</bcp14> serve <tt>jwks.json</tt> with
+          a short <tt>Cache-Control</tt> (for example
+          <tt>max-age=300</tt> or less).  The JWKS is a small,
+          CDN-cacheable document, so frequent re-fetching is
+          inexpensive.</li>
+        </ul>
+        <t>Three distinct controls, not to be conflated: freshness
+        (<tt>valid_until</tt>) bounds how long an offer is quotable;
+        refresh-on-miss gives immediate discovery of the current key set
+        (rotation); the JWKS cache cap bounds how long a revoked key is
+        still accepted (revocation latency).  They are independent - none
+        substitutes for another.</t>
+      </section>
+    </section>
+
+    <section anchor="offer">
+      <name>Verified Stay Offer</name>
+
+      <section anchor="offer-request">
+        <name>Offer Request</name>
+        <t>The verified stay offer endpoint accepts at least:</t>
+        <dl newline="false" spacing="normal">
+          <dt><tt>check_in</tt>:</dt>
+          <dd>Arrival date, <tt>YYYY-MM-DD</tt>.</dd>
+          <dt><tt>check_out</tt>:</dt>
+          <dd>Departure date, <tt>YYYY-MM-DD</tt>.</dd>
+          <dt><tt>guests</tt>:</dt>
+          <dd>Integer guest count.</dd>
+        </dl>
+        <t>The endpoint returns a signed verified stay offer envelope;
+        the signed payload contains the quotable facts.</t>
+      </section>
+
+      <section anchor="offer-payload">
+        <name>Signed Payload</name>
+        <t>The signature format is compact JWS <xref target="RFC7515"/>
+        using EdDSA over an Ed25519 key published in the host-domain
+        JWKS.  The signed payload <bcp14>MUST</bcp14> include:</t>
+        <ul spacing="compact">
+          <li><tt>kind</tt>: the string <tt>verified_stay_offer</tt></li>
+          <li><tt>protocol_version</tt>: <tt>0.1</tt></li>
+          <li><tt>canonical_domain</tt></li>
+          <li><tt>node_id</tt></li>
+          <li><tt>generated_at</tt></li>
+          <li><tt>valid_until</tt></li>
+          <li><tt>request</tt> (the echoed stay parameters)</li>
+          <li><tt>property</tt></li>
+          <li><tt>availability</tt></li>
+          <li><tt>price</tt></li>
+          <li><tt>booking</tt></li>
+          <li><tt>agent_permission</tt></li>
+        </ul>
+        <t><tt>generated_at</tt> and <tt>valid_until</tt> are
+        <xref target="RFC3339"/> date-time values restricted to UTC
+        ("Z").</t>
+        <t>The signed payload <bcp14>MAY</bcp14> also include
+        host-verified direct-source facts, so that a verifier can verify
+        (not just read) the node's commercial positioning:</t>
+        <dl newline="false" spacing="normal">
+          <dt><tt>source_authority</tt>:</dt>
+          <dd><tt>model: host_verified_direct_source</tt>,
+          <tt>is_official_source_for_property</tt>,
+          <tt>intermediary: none</tt>, <tt>payment_recipient: host</tt>,
+          <tt>booking_model: direct_with_host</tt>,
+          <tt>booking_commission_pct: 0</tt>.  A reselling marketplace
+          cannot truthfully sign these.</dd>
+          <dt><tt>price.no_add_on_fees</tt>:</dt>
+          <dd><tt>true</tt> asserts the quoted total has no add-on
+          booking, service, or cleaning fees (the displayed price is the
+          total paid).  This describes the node's own fee structure and
+          is never a comparison with any other channel.</dd>
+        </dl>
+      </section>
+
+      <section anchor="booking-url">
+        <name>Direct Booking URL</name>
+        <t>The signed payload's <tt>booking</tt> object carries the
+        direct booking URL the verifier routes the user to, and
+        <bcp14>MUST</bcp14> include <tt>direct_booking_url</tt>.  It is
+        the only booking action a VRP verifier may take for the offer
+        (<xref target="safe-to-quote"/>).</t>
+        <t>Structure:</t>
+        <ul spacing="normal">
+          <li><tt>direct_booking_url</tt> <bcp14>MUST</bcp14> be an
+          absolute <tt>https</tt> URL.</li>
+          <li>Its host <bcp14>MUST</bcp14> be the offer's
+          <tt>canonical_domain</tt>, or a subdomain of that registrable
+          domain.  It <bcp14>MUST NOT</bcp14> point at a third-party
+          domain, an OTA, a link shortener, a redirector, or any
+          operator-owned domain other than the host's.  A verifier that
+          cannot confirm the URL host is on the offer's
+          <tt>canonical_domain</tt> <bcp14>MUST</bcp14> treat the direct
+          booking URL as unknown (<xref target="three-state"/>) and
+          <bcp14>MUST NOT</bcp14> route booking to it.</li>
+          <li>The URL <bcp14>SHOULD</bcp14> encode the quoted stay so the
+          booking page opens pre-filled for the same stay.  The
+          <bcp14>RECOMMENDED</bcp14> query parameters are
+          <tt>checkIn</tt> (<tt>YYYY-MM-DD</tt>, matching
+          <tt>request.check_in</tt>), <tt>checkOut</tt>
+          (<tt>YYYY-MM-DD</tt>, matching <tt>request.check_out</tt>), and
+          <tt>guests</tt> (integer, matching <tt>request.guests</tt>).
+          Note that the URL query parameters use these exact names; they
+          intentionally differ in style from the offer-request parameter
+          names and implementations <bcp14>MUST NOT</bcp14> normalize one
+          convention into the other.</li>
+          <li>The URL <bcp14>MAY</bcp14> include an offer reference
+          identifier (for example an <tt>offer</tt> query parameter) so
+          the node can correlate the click with the signed offer it
+          issued.  The reference identifier, when present,
+          <bcp14>MUST NOT</bcp14> be required by a verifier to validate
+          the offer and <bcp14>MUST NOT</bcp14> be treated as a
+          substitute for verifying the JWS signature.</li>
+          <li>The URL <bcp14>MAY</bcp14> include additional host-specific
+          query parameters.  A verifier <bcp14>MUST</bcp14> ignore
+          unrecognized query parameters and <bcp14>MUST NOT</bcp14> treat
+          their presence as a verification failure.</li>
+        </ul>
+        <t>Integrity: <tt>direct_booking_url</tt> is a field inside the
+        signed offer payload.  Its integrity derives solely from the
+        compact JWS over that payload: if the JWS verifies against the
+        host-domain JWKS, the direct booking URL is exactly the URL the
+        host signed.  There is no separate signature over the URL, and a
+        verifier <bcp14>MUST NOT</bcp14> accept a
+        <tt>direct_booking_url</tt> delivered outside, or modified after,
+        the signed payload.  A <tt>direct_booking_url</tt> whose
+        enclosing offer fails signature verification is unknown and
+        <bcp14>MUST NOT</bcp14> be used.</t>
+        <t>Lifecycle: the direct booking URL is actionable only while the
+        enclosing offer is fresh, that is, while <tt>valid_until</tt>
+        holds:</t>
+        <ul spacing="normal">
+          <li>While the offer is fresh, a verifier <bcp14>MAY</bcp14>
+          present and route the user to <tt>direct_booking_url</tt>
+          subject to the safe-to-quote rules
+          (<xref target="safe-to-quote"/>).</li>
+          <li>Once <tt>valid_until</tt> has passed, the offer is stale.
+          The verifier <bcp14>MUST</bcp14> treat the direct booking URL
+          as unknown and <bcp14>MUST NOT</bcp14> present its associated
+          price as current or claim the stay is bookable on the strength
+          of the stale offer.  The verifier <bcp14>SHOULD</bcp14> fetch a
+          fresh signed offer for the user's dates and guest count before
+          routing a booking action.</li>
+          <li>After expiry, the host node <bcp14>MAY</bcp14> continue to
+          serve the same URL, <bcp14>MAY</bcp14> re-quote (return a new
+          signed offer, which may carry a different price, availability,
+          or <tt>direct_booking_url</tt>), or <bcp14>MAY</bcp14> return
+          an unavailable or non-quotable offer.  Following an expired
+          <tt>direct_booking_url</tt> is therefore an unverified action:
+          the host, not the protocol, decides what the URL does after
+          expiry.</li>
+          <li>A host node <bcp14>SHOULD</bcp14> ensure that following
+          <tt>direct_booking_url</tt> after expiry fails closed for the
+          guest - for example by re-quoting on the landing page rather
+          than silently honoring a stale price.  VRP does not guarantee
+          that a price observed in an expired offer is still
+          available.</li>
+        </ul>
+      </section>
+
+      <section anchor="refund-schedule">
+        <name>Computable Refund Schedule (Optional)</name>
+        <t>A node <bcp14>MAY</bcp14> publish its cancellation refund
+        terms inside the signed offer as <tt>rules.refund_schedule</tt>:
+        an array of rows
+        <tt>{ "hours_before_checkin": n, "refund_percent": p }</tt> with
+        <tt>n</tt> a non-negative integer and <tt>p</tt> an integer from
+        0 to 100.</t>
+        <t>The schedule is computable, not descriptive.  A verifier
+        evaluates it as a pure predicate with no platform context:</t>
+        <ol spacing="normal">
+          <li>Compute <tt>H = floor((check-in moment - cancellation
+          time) / 1 hour)</tt>: whole hours, floored.  Flooring makes
+          fractional boundaries resolve in the node's favor;
+          implementations <bcp14>MUST NOT</bcp14> substitute other
+          rounding.</li>
+          <li>Sort rows by <tt>hours_before_checkin</tt> descending.  The
+          first row with <tt>hours_before_checkin &lt;= H</tt> applies;
+          the guest receives that row's <tt>refund_percent</tt> of the
+          paid total.</li>
+          <li>No matching row - including any cancellation after the
+          check-in moment, where <tt>H</tt> is negative - means 0
+          percent.</li>
+        </ol>
+        <t>A row with <tt>hours_before_checkin: 0</tt> therefore means
+        "this percent up to the check-in moment itself".  An empty array
+        is a valid, honest schedule meaning "no refund at any point".  An
+        absent or null field means the node has not published computable
+        terms: the answer is unknown, and a verifier
+        <bcp14>MUST NOT</bcp14> invent, infer, or default a refund
+        promise.</t>
+        <t>Because the schedule is signed inside the offer, it is
+        verifiable, not merely attested: the guest's agent can prove
+        after the fact exactly which refund terms were in force at quote
+        time, regardless of what the node's pages say later.  Nodes and
+        verifiers <bcp14>MUST</bcp14> relay the rows verbatim to guests -
+        as hours/percent terms, never re-labelled into named tiers
+        ("flexible", "moderate", and similar), which this field
+        replaces.</t>
+      </section>
+
+      <section anchor="payment-reserved">
+        <name>Reserved: Agent-Native Payment Rails</name>
+        <t>VRP v0.1 defines exactly one payment path:
+        <tt>direct_booking_url</tt>, settled by the host's own payment
+        processor.  The optional <tt>booking.payment_options</tt> field
+        is reserved for a future agent-native payment-rail binding and is
+        not defined in v0.1: its shape, settlement, refund handling, and
+        reconciliation are intentionally left open.  A node
+        <bcp14>SHOULD</bcp14> omit it; a verifier <bcp14>MUST NOT</bcp14>
+        treat its presence as a defined, honorable payment path.</t>
+        <t>Two invariants will hold whenever the binding is defined, and
+        constrain it now: the payee is the host's own (never an
+        intermediary or marketplace), and payment rails
+        <bcp14>MUST NOT</bcp14> gate discovery, verification, or offer
+        retrieval (<xref target="scope"/>).</t>
+      </section>
+    </section>
+
+    <section anchor="verification">
+      <name>Verification</name>
+
+      <section anchor="freshness">
+        <name>Freshness</name>
+        <t>Verifiers <bcp14>MUST</bcp14> treat an offer as non-quotable
+        if <tt>valid_until</tt> is missing, malformed, or expired.
+        Verifiers <bcp14>SHOULD</bcp14> fetch a fresh offer for the
+        user's specific dates and guest count before presenting a final
+        price or booking URL.</t>
+      </section>
+
+      <section anchor="safe-to-quote">
+        <name>Safe-to-Quote Rules</name>
+        <t>A verifier may quote an offer as an official host-domain
+        verified offer only when all of the following are true:</t>
+        <ul spacing="compact">
+          <li>The discovery document is fetched from the host-owned
+          domain.</li>
+          <li>The discovery document declares
+          <tt>protocol: "vacation-rental-protocol"</tt>.</li>
+          <li>The discovery document declares
+          <tt>protocol_version: "0.1"</tt>.</li>
+          <li>The JWKS contains an Ed25519 verification key matching the
+          JWS.</li>
+          <li>The compact JWS verifies against the host-domain JWKS.</li>
+          <li>The signed payload matches the returned offer.</li>
+          <li><tt>valid_until</tt> is present and fresh.</li>
+          <li><tt>availability.available</tt> is true.</li>
+          <li><tt>price.exact</tt> is true.</li>
+          <li>A direct booking URL is present.</li>
+          <li><tt>agent_permission.may_quote_as_official_direct_offer</tt>
+          is true.</li>
+        </ul>
+        <t>Verifiers <bcp14>MUST NOT</bcp14>:</t>
+        <ul spacing="compact">
+          <li>Invent discounts, savings, promo codes, cross-channel
+          comparisons, or price reductions.</li>
+          <li>Say the stay is bookable unless
+          <tt>availability.available</tt> is true and agent permission
+          allows quoting.</li>
+          <li>Quote a final total unless <tt>price.exact</tt> is true in
+          the signed offer.</li>
+          <li>Route booking action anywhere except the signed direct
+          booking URL.</li>
+        </ul>
+      </section>
+
+      <section anchor="fail-closed">
+        <name>Fail-Closed Behavior</name>
+        <t>Verifiers and clients <bcp14>MUST</bcp14> fail closed.  If
+        signature verification, freshness, exact price, availability, the
+        direct booking URL, or citation permission cannot be verified,
+        the offer <bcp14>MUST NOT</bcp14> be quoted as official or
+        bookable.</t>
+      </section>
+
+      <section anchor="three-state">
+        <name>Three-State Verification</name>
+        <t>Verifiers and clients interacting with VRP nodes
+        <bcp14>MUST</bcp14> distinguish three states for any required
+        endpoint or field:</t>
+        <dl newline="false" spacing="normal">
+          <dt>Affirmed:</dt>
+          <dd>Present, signed where required, fresh, schema-valid, and
+          explicitly true or present.  May be cited.</dd>
+          <dt>Negated:</dt>
+          <dd>Present, signed where required, fresh, schema-valid, and
+          explicitly false.  May be cited as false.</dd>
+          <dt>Unknown:</dt>
+          <dd>Absent, unsigned, stale, unreachable, schema-invalid,
+          malformed, expired, or otherwise unverifiable.
+          <bcp14>MUST NOT</bcp14> be cited as true or false.</dd>
+        </dl>
+        <t>Unreachable is not the same as negated.  A timeout, DNS
+        failure, HTTP failure, blocked fetch, invalid JSON, missing
+        field, failed signature check, stale <tt>valid_until</tt>, or
+        schema mismatch means unknown.  Inference from unknown to either
+        affirmed or negated is a protocol violation.  Verifiers
+        <bcp14>SHOULD</bcp14> tell the user that the value could not be
+        verified and fetch a fresh signed offer before making booking,
+        availability, price, or official-source claims.</t>
+      </section>
+
+      <section anchor="classes">
+        <name>Verifiability Classes</name>
+        <t>VRP data falls into exactly three classes, and a surface
+        <bcp14>MUST NOT</bcp14> present a lower class as a higher one:</t>
+        <dl newline="false" spacing="normal">
+          <dt>Verifiable:</dt>
+          <dd>Fields signed inside the offer's compact JWS: price
+          (including <tt>exact</tt> and <tt>no_add_on_fees</tt>),
+          <tt>availability</tt>, <tt>valid_until</tt>,
+          <tt>source_authority</tt>, and
+          <tt>rules.refund_schedule</tt>.  Tampering with any of them
+          invalidates the same signature.</dd>
+          <dt>Attested:</dt>
+          <dd>Host-declared claims (amenities, policies) published in the
+          node's discovery document or companion attestation documents.
+          Actionable as the host's explicit statement - including
+          negations - but not cryptographically bound to a specific quote
+          moment.  Absence is unknown, never a yes or a no.</dd>
+          <dt>Reputational:</dt>
+          <dd>Review aggregates, stay history, and similar evidence about
+          past experience.  A verifier <bcp14>MAY</bcp14> cite it
+          (accurately attributed and time-bounded) but
+          <bcp14>MUST NOT</bcp14> present it as a promise, a term, or a
+          fact about the current offer.</dd>
+        </dl>
+        <t>Determining the class of a field is mechanical, never
+        editorial: the class follows from where the value was read, not
+        from how any surface phrases it.  Read from inside the offer JWS
+        payload (after signature verification): verifiable.  Read from
+        the discovery document or an attestation document: attested.
+        Read from review data: reputational.  A value that appears in
+        more than one place carries the class of the surface it was
+        actually read from.  If a host asserts something outside the
+        signed payload - in prose, marketing copy, or an unsigned field -
+        a renderer <bcp14>MUST</bcp14> treat it as attested at best,
+        regardless of wording: language like "verified", "guaranteed", or
+        "signed" attached to an unsigned value is a class violation, not
+        a promotion.</t>
+      </section>
+    </section>
+
+    <section anchor="security">
+      <name>Security Considerations</name>
+      <t>Root of trust.  The root of trust is control of the host
+      domain: the key set is whatever the host domain serves.  Rotation
+      and revocation (<xref target="jwks"/>) protect the case where a
+      signing key leaks while the domain remains under the operator's
+      control.  They do not protect against compromise of the domain
+      itself - an attacker who can serve the domain's <tt>jwks.json</tt>
+      can publish their own keys, and no key-level mechanism can detect
+      that.  Domain-level security (DNS, TLS, hosting) is out of scope
+      for VRP and is the operator's responsibility.</t>
+      <t>Key compromise.  Freshness does not bound a key compromise; the
+      JWKS cache bound (<xref target="revocation"/>) is the revocation
+      latency.  Immediate removal of a compromised key also invalidates
+      the operator's own offers signed with it; this is intentional,
+      since signatures from the operator and the attacker are
+      indistinguishable under the same key.</t>
+      <t>Enforcement honesty.  VRP cannot force a verifier to cache for
+      a bounded time.  The cache bound is a requirement on conforming
+      verifiers; there is no protocol backstop against a non-conforming
+      verifier that caches a revoked key indefinitely.  The bound is a
+      conformance requirement, not a guarantee the protocol can
+      enforce.</t>
+      <t>Booking-path integrity.  The constraints on
+      <tt>direct_booking_url</tt> (<xref target="booking-url"/>) - host
+      pinned to the signed <tt>canonical_domain</tt>, no third-party
+      domains, shorteners, or redirectors, integrity solely from the
+      enclosing JWS - exist to prevent a tampered or substituted offer
+      from routing a guest's booking, and its payment, to an attacker.</t>
+      <t>Amplification.  Refresh-on-miss (<xref target="refresh"/>) is
+      rate-limited per domain by conforming verifiers so that a stream of
+      offers bearing unknown key identifiers cannot be used to drive
+      traffic against a node's JWKS endpoint.</t>
+      <t>Transport.  All VRP resources are served over HTTPS only.</t>
+      <t>Tamper evidence.  A node <bcp14>MAY</bcp14> record
+      signed-artifact hashes and key-rotation events in a public
+      append-only transparency log (in the style of
+      <xref target="RFC6962"/>), giving a tamper-evident - not immutable
+      - history useful for after-the-fact disputes about whether an offer
+      was signed by a then-valid key.</t>
+    </section>
+
+    <section anchor="privacy">
+      <name>Privacy Considerations</name>
+      <t>The discovery document and JWKS are public, machine-readable,
+      site-wide metadata.  They <bcp14>MUST NOT</bcp14> contain guest
+      personal data or secrets.</t>
+      <t>A verified stay offer echoes the requested dates and guest
+      count.  Offers are short-lived by design (<tt>valid_until</tt>),
+      and verification is unauthenticated: fetching the discovery
+      document, the JWKS, or an offer requires no verifier identity, so
+      nodes learn no more about the requesting user than any web server
+      learns from an HTTP request.</t>
+      <t>The optional offer reference identifier in
+      <tt>direct_booking_url</tt> (<xref target="booking-url"/>) lets a
+      node correlate a booking-page visit with the signed offer it
+      issued.  It is not required for verification, and hosts
+      <bcp14>SHOULD</bcp14> limit retention of such correlation data to
+      what booking operations need.</t>
+    </section>
+
+    <section anchor="iana">
+      <name>IANA Considerations</name>
+      <t>IANA is requested to register the following entry in the
+      "Well-Known URIs" registry <xref target="RFC8615"/>:</t>
+      <dl newline="false" spacing="normal">
+        <dt>URI suffix:</dt>
+        <dd>vacation-rental.json</dd>
+        <dt>Change controller:</dt>
+        <dd>Vacation Rental Protocol (VRP) - Rouiada Abbas;
+        hello@vacationrentalprotocol.com</dd>
+        <dt>Specification document(s):</dt>
+        <dd>This document, <xref target="discovery"/>.</dd>
+        <dt>Status:</dt>
+        <dd>provisional</dd>
+        <dt>Related information:</dt>
+        <dd>Existing deployments additionally serve the same resource at
+        the transition alias suffix
+        <tt>vacation-rental-protocol.json</tt>; clients
+        <bcp14>SHOULD</bcp14> use <tt>vacation-rental.json</tt>
+        (<xref target="discovery-alias"/>).  An open registration request
+        for this suffix predates this document; see
+        <eref target="https://github.com/protocol-registries/well-known-uris/issues/93"/>.</dd>
+      </dl>
+      <t>The suffix names a descriptive discovery resource for one
+      vertical (a vacation-rental node's site-wide configuration), in the
+      naming style of other descriptive well-known resources; it is
+      deliberately not a claim on the generic term
+      "vacation-rental".</t>
+    </section>
+
+  </middle>
+
+  <back>
+    <references>
+      <name>References</name>
+      <references>
+        <name>Normative References</name>
+        <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119">
+          <front>
+            <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+            <author initials="S." surname="Bradner" fullname="Scott Bradner"/>
+            <date year="1997" month="March"/>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="2119"/>
+          <seriesInfo name="DOI" value="10.17487/RFC2119"/>
+        </reference>
+        <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174">
+          <front>
+            <title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
+            <author initials="B." surname="Leiba" fullname="Barry Leiba"/>
+            <date year="2017" month="May"/>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="8174"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8174"/>
+        </reference>
+        <reference anchor="RFC8615" target="https://www.rfc-editor.org/info/rfc8615">
+          <front>
+            <title>Well-Known Uniform Resource Identifiers (URIs)</title>
+            <author initials="M." surname="Nottingham" fullname="Mark Nottingham"/>
+            <date year="2019" month="May"/>
+          </front>
+          <seriesInfo name="RFC" value="8615"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8615"/>
+        </reference>
+        <reference anchor="RFC7515" target="https://www.rfc-editor.org/info/rfc7515">
+          <front>
+            <title>JSON Web Signature (JWS)</title>
+            <author initials="M." surname="Jones" fullname="Michael B. Jones"/>
+            <author initials="J." surname="Bradley" fullname="John Bradley"/>
+            <author initials="N." surname="Sakimura" fullname="Nat Sakimura"/>
+            <date year="2015" month="May"/>
+          </front>
+          <seriesInfo name="RFC" value="7515"/>
+          <seriesInfo name="DOI" value="10.17487/RFC7515"/>
+        </reference>
+        <reference anchor="RFC7517" target="https://www.rfc-editor.org/info/rfc7517">
+          <front>
+            <title>JSON Web Key (JWK)</title>
+            <author initials="M." surname="Jones" fullname="Michael B. Jones"/>
+            <date year="2015" month="May"/>
+          </front>
+          <seriesInfo name="RFC" value="7517"/>
+          <seriesInfo name="DOI" value="10.17487/RFC7517"/>
+        </reference>
+        <reference anchor="RFC8037" target="https://www.rfc-editor.org/info/rfc8037">
+          <front>
+            <title>CFRG Elliptic Curve Diffie-Hellman (ECDH) and Signatures in JSON Object Signing and Encryption (JOSE)</title>
+            <author initials="I." surname="Liusvaara" fullname="Ilari Liusvaara"/>
+            <date year="2017" month="January"/>
+          </front>
+          <seriesInfo name="RFC" value="8037"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8037"/>
+        </reference>
+        <reference anchor="RFC8259" target="https://www.rfc-editor.org/info/rfc8259">
+          <front>
+            <title>The JavaScript Object Notation (JSON) Data Interchange Format</title>
+            <author initials="T." surname="Bray" fullname="Tim Bray" role="editor"/>
+            <date year="2017" month="December"/>
+          </front>
+          <seriesInfo name="STD" value="90"/>
+          <seriesInfo name="RFC" value="8259"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8259"/>
+        </reference>
+        <reference anchor="RFC3339" target="https://www.rfc-editor.org/info/rfc3339">
+          <front>
+            <title>Date and Time on the Internet: Timestamps</title>
+            <author initials="G." surname="Klyne" fullname="Graham Klyne"/>
+            <author initials="C." surname="Newman" fullname="Chris Newman"/>
+            <date year="2002" month="July"/>
+          </front>
+          <seriesInfo name="RFC" value="3339"/>
+          <seriesInfo name="DOI" value="10.17487/RFC3339"/>
+        </reference>
+      </references>
+      <references>
+        <name>Informative References</name>
+        <reference anchor="RFC6962" target="https://www.rfc-editor.org/info/rfc6962">
+          <front>
+            <title>Certificate Transparency</title>
+            <author initials="B." surname="Laurie" fullname="Ben Laurie"/>
+            <author initials="A." surname="Langley" fullname="Adam Langley"/>
+            <author initials="E." surname="Kasper" fullname="Emilia Kasper"/>
+            <date year="2013" month="June"/>
+          </front>
+          <seriesInfo name="RFC" value="6962"/>
+          <seriesInfo name="DOI" value="10.17487/RFC6962"/>
+        </reference>
+        <reference anchor="RFC9111" target="https://www.rfc-editor.org/info/rfc9111">
+          <front>
+            <title>HTTP Caching</title>
+            <author initials="R." surname="Fielding" fullname="Roy T. Fielding" role="editor"/>
+            <author initials="M." surname="Nottingham" fullname="Mark Nottingham" role="editor"/>
+            <author initials="J." surname="Reschke" fullname="Julian Reschke" role="editor"/>
+            <date year="2022" month="June"/>
+          </front>
+          <seriesInfo name="STD" value="98"/>
+          <seriesInfo name="RFC" value="9111"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9111"/>
+        </reference>
+        <reference anchor="RFC7942" target="https://www.rfc-editor.org/info/rfc7942">
+          <front>
+            <title>Improving Awareness of Running Code: The Implementation Status Section</title>
+            <author initials="Y." surname="Sheffer" fullname="Yaron Sheffer"/>
+            <author initials="A." surname="Farrel" fullname="Adrian Farrel"/>
+            <date year="2016" month="July"/>
+          </front>
+          <seriesInfo name="BCP" value="205"/>
+          <seriesInfo name="RFC" value="7942"/>
+          <seriesInfo name="DOI" value="10.17487/RFC7942"/>
+        </reference>
+        <reference anchor="DID-WEB" target="https://w3c-ccg.github.io/did-method-web/">
+          <front>
+            <title>did:web Method Specification</title>
+            <author>
+              <organization>W3C Credentials Community Group</organization>
+            </author>
+            <date year="2023"/>
+          </front>
+        </reference>
+        <reference anchor="VRP-SPEC" target="https://vacationrentalprotocol.com">
+          <front>
+            <title>Vacation Rental Protocol - Specification v0.1 (public draft)</title>
+            <author initials="R." surname="Abbas" fullname="Rouiada Abbas"/>
+            <date year="2026"/>
+          </front>
+        </reference>
+      </references>
+    </references>
+
+    <section anchor="example-discovery">
+      <name>Example Discovery Document</name>
+      <sourcecode type="json">
+{
+  "protocol": "vacation-rental-protocol",
+  "protocol_version": "0.1",
+  "canonical_domain": "example-host.invalid",
+  "node_id": "example-host.invalid",
+  "jwks_url": "https://example-host.invalid/.well-known/jwks.json",
+  "verified_stay_offer_endpoint":
+    "https://example-host.invalid/api/verified-stay-offer",
+  "capabilities": {
+    "signed_verified_stay_offer": true,
+    "live_availability": true,
+    "exact_total_price": true,
+    "direct_booking_url": true
+  },
+  "operator": {
+    "name": "Example Host Platform",
+    "role": "infrastructure_provider",
+    "key_custody": "platform"
+  }
+}
+</sourcecode>
+    </section>
+
+    <section anchor="example-jwks">
+      <name>Example JWKS</name>
+      <sourcecode type="json">
+{
+  "keys": [
+    {
+      "kty": "OKP",
+      "crv": "Ed25519",
+      "kid": "example-host.invalid-2026-01-01-01",
+      "use": "sig",
+      "alg": "EdDSA",
+      "key_ops": ["verify"],
+      "x": "11qYAYLef_SPCb5r0x4n1uDZuQYgD4GZB8F6kS1v9KQ"
+    }
+  ]
+}
+</sourcecode>
+      <t>Nodes may additionally publish the same verification keys via
+      <tt>did:web</tt> <xref target="DID-WEB"/>; the JWKS remains the
+      revocation authority for offer verification.</t>
+    </section>
+
+    <section anchor="impl-status" removeInRFC="true">
+      <name>Implementation Status</name>
+      <t>This section records the status of known implementations of the
+      protocol defined by this specification, per
+      <xref target="RFC7942"/>.</t>
+      <t>One implementation is live at the time of writing: a reference
+      implementation operating a production node that serves the
+      discovery document at the well-known URI, the Ed25519 JWKS, and
+      signed verified stay offers with direct booking URLs, exercising
+      every normative requirement of this document.  Machine-readable
+      JSON Schemas for the discovery document, JWKS, and signed offer,
+      together with executable conformance vectors (including negative
+      cases: tampered signature, expired window, malformed
+      attestations), are published in the protocol repository
+      <xref target="VRP-SPEC"/>.  Specification text is dedicated to the
+      public domain (CC0 1.0); reference code and conformance vectors are
+      Apache-2.0.</t>
+    </section>
+
+    <section anchor="ack" numbered="false">
+      <name>Acknowledgements</name>
+      <t>Thanks to the operators of the first live node for exercising
+      every failure mode of this protocol against a real property before
+      this document was written down.</t>
+    </section>
+  </back>
+</rfc>

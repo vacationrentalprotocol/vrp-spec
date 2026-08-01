@@ -123,22 +123,29 @@ function rewriteDestination(route) {
   return rewrite?.destination || null;
 }
 
+// Resolve a repo-relative candidate to a file that actually ships, mirroring
+// Vercel's cleanUrls behaviour: an extensionless path is served by the matching
+// .html/.md file. This applies to rewrite destinations too — with cleanUrls a
+// destination like "/pages/source-pack" is served from pages/source-pack.html,
+// and a destination ending in ".html" is 308-redirected to the clean form (so
+// extensionless is the correct destination to author).
+function resolveExisting(relPath) {
+  if (fileExists(relPath)) return relPath;
+  if (vercel.cleanUrls) {
+    for (const extension of [".html", ".md"]) {
+      if (fileExists(`${relPath}${extension}`)) return `${relPath}${extension}`;
+    }
+  }
+  return null;
+}
+
 function resolveRoute(route) {
   if (route === "/") return "index.html";
 
   const destination = rewriteDestination(route);
-  if (destination) return stripLeadingSlash(destination);
+  if (destination) return resolveExisting(stripLeadingSlash(destination));
 
-  const direct = stripLeadingSlash(route);
-  if (fileExists(direct)) return direct;
-
-  if (vercel.cleanUrls) {
-    for (const extension of [".html", ".md"]) {
-      if (fileExists(`${direct}${extension}`)) return `${direct}${extension}`;
-    }
-  }
-
-  return null;
+  return resolveExisting(stripLeadingSlash(route));
 }
 
 function headerContentType(route) {

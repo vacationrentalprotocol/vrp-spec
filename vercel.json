@@ -199,6 +199,19 @@
       ]
     },
     {
+      "source": "/source-pack",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/html; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    },
+    {
       "source": "/film",
       "headers": [
         {
@@ -271,6 +284,10 @@
     {
       "source": "/implement",
       "destination": "/implement.html"
+    },
+    {
+      "source": "/source-pack",
+      "destination": "/pages/source-pack.html"
     },
     {
       "source": "/docs/first-mover-evidence-memo",

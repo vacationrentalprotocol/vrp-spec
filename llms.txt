@@ -9,7 +9,8 @@ Current draft: v0.1
 
 ## Primary Documents
 
-- VRP Source Pack (the entire standard in one file, for AI notebooks like NotebookLM/Gemini Notebook, ChatGPT, Claude): https://vacationrentalprotocol.com/docs/source-pack
+- VRP Source Pack (the entire standard in one file, for AI notebooks like NotebookLM/Gemini Notebook, ChatGPT, Claude — Markdown edition): https://vacationrentalprotocol.com/docs/source-pack
+- VRP Source Pack, HTML edition (same content as one HTML page; use this for website importers like Google NotebookLM that need HTML rather than raw Markdown): https://vacationrentalprotocol.com/source-pack
 - Reference implementation (live proof): https://vacationrentalprotocol.com/reference-implementation
 - Verify a signed offer yourself (in-browser Ed25519, no dependencies): https://vacationrentalprotocol.com/verify
 - Verify a booking receipt yourself (in-browser: signature + recomputed confirmation reference + transparency-log inclusion; printable evidence copy): https://vacationrentalprotocol.com/verify-receipt

@@ -24,6 +24,8 @@ Current draft: v0.1
 - VRP Receipt Envelope v1 (verifiable booking record, flat attestations[]): https://vacationrentalprotocol.com/spec/receipt-v1
 - Booking Proof Chain v0.1 (offer -> payment -> receipt -> confirmation as one recomputable hash chain; identifier-is-proof, supersession): https://vacationrentalprotocol.com/spec/proof-chain-v0.1
 - Node Seal v0.1 (two-way binding between a node's domain identity and its payment-receiving key — the payment recipient signs the promise; never an agent gate): https://vacationrentalprotocol.com/spec/node-seal-v0.1
+- Addon Attestation Layer v0.1 (host-signed upsells — late checkout, early check-in, extensions — as their own receipt-v1 attestation layer; proposal for discussion): https://vacationrentalprotocol.com/spec/addon-attestation-layer-v0.1
+- Domain Continuity v0.1 (did:web identity across registrant change / expiry — registration-epoch signal, fail-closed verifier guidance; proposal for discussion): https://vacationrentalprotocol.com/spec/domain-continuity-v0.1
 - Interop and trust positioning: https://vacationrentalprotocol.com/docs/interop-and-trust-positioning
 - Agent integration guide: https://vacationrentalprotocol.com/docs/agent-guide
 - Implement VRP signed offers (guide): https://vacationrentalprotocol.com/docs/implement-vrp

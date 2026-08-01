@@ -36,12 +36,14 @@ URL is authoritative.**
 9. [VRP receipt envelope v1](https://vacationrentalprotocol.com/spec/receipt-v1)
 10. [Booking Proof Chain v0.1](https://vacationrentalprotocol.com/spec/proof-chain-v0.1)
 11. [Node Seal v0.1](https://vacationrentalprotocol.com/spec/node-seal-v0.1)
-12. [Implement VRP signed offers](https://vacationrentalprotocol.com/docs/implement-vrp)
-13. [Implement portable attestations](https://vacationrentalprotocol.com/docs/implement-attestations)
-14. [Agent integration guide](https://vacationrentalprotocol.com/docs/agent-guide)
-15. [Interop and trust positioning](https://vacationrentalprotocol.com/docs/interop-and-trust-positioning)
-16. [First-mover evidence memo](https://vacationrentalprotocol.com/docs/first-mover-evidence-memo)
-17. Appendix: machine artifacts (schemas, context, live node)
+12. [Addon attestation layer v0.1](https://vacationrentalprotocol.com/spec/addon-attestation-layer-v0.1)
+13. [Domain continuity v0.1](https://vacationrentalprotocol.com/spec/domain-continuity-v0.1)
+14. [Implement VRP signed offers](https://vacationrentalprotocol.com/docs/implement-vrp)
+15. [Implement portable attestations](https://vacationrentalprotocol.com/docs/implement-attestations)
+16. [Agent integration guide](https://vacationrentalprotocol.com/docs/agent-guide)
+17. [Interop and trust positioning](https://vacationrentalprotocol.com/docs/interop-and-trust-positioning)
+18. [First-mover evidence memo](https://vacationrentalprotocol.com/docs/first-mover-evidence-memo)
+19. Appendix: machine artifacts (schemas, context, live node)
 
 ========================================================================
 ## 1. What is VRP?
@@ -2834,7 +2836,253 @@ verify a Node Seal without permission from anyone.
 Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE).
 
 ========================================================================
-## 12. Implement VRP signed offers
+## 12. Addon attestation layer v0.1
+
+*Canonical source: <https://vacationrentalprotocol.com/spec/addon-attestation-layer-v0.1>*
+========================================================================
+
+### VRP Addon Attestation Layer — Specification v0.1
+
+**Status:** Public draft — **proposal for discussion** (tracks
+[issue #63](https://github.com/HemmaBo-se/vrp-spec/issues/63)). Additive by
+construction: `addon` rides the open layer vocabulary of
+[Receipt Envelope v1 §3](https://vacationrentalprotocol.com/spec/receipt-v1) ("a new trust layer = a new
+`attestations[]` entry — no central approval is required"). Nothing in this
+document changes what a receipt-v1 verifier MUST do today.
+
+**Published:** 2026-08-01
+
+**Repository:** https://github.com/HemmaBo-se/vrp-spec
+
+**Builds on:** [Receipt Envelope v1](https://vacationrentalprotocol.com/spec/receipt-v1) (layer vocabulary §3,
+per-attestation freshness D2, signature input rule D5, key lifecycle §10),
+[Core VRP v0.1](https://vacationrentalprotocol.com/spec/v0.1) (signed offers, host JWKS),
+[Booking Proof Chain v0.1](https://vacationrentalprotocol.com/spec/proof-chain-v0.1) (supersession semantics).
+
+#### 1. Scope
+
+This document defines the semantics of one attestation layer, **`addon`**,
+for add-on services a host sells against an existing offer or stay:
+late checkout, early check-in, stay extensions, and comparable extras.
+
+The gap it closes: these sales already land in the payment rail and in the
+booking record, but they are not part of the host-signed, independently
+verifiable trust chain the way the `offer`, `transport`, and `payment`
+layers are. An agent that can verify *"this stay costs X"* today cannot
+verify *"and the 2-hour late checkout the guest bought belongs to that same
+stay, priced by the same host key."*
+
+#### 2. Layer semantics
+
+| Property | Rule |
+| --- | --- |
+| `layer` | Exactly `"addon"` |
+| Cardinality | One attestation per sold add-on. Multiple add-ons on one stay = multiple `addon` entries in the flat `attestations[]` array (receipt-v1 §3) |
+| `valid_from` / `valid_until` | MUST be present; evaluated per attestation (D2) |
+| `signature` | Compact JWS over the addon artifact (D5), signed by a key published in the **same host-node JWKS** as the `offer` layer. Per-layer key separation is permitted (§10 K5) |
+| `source` | SHOULD point at the host JWKS used for verification |
+| `ref` | MUST carry the correlator of the base subject the add-on attaches to (offer id or booking correlator) |
+
+The host is the merchant of record for the add-on; that is why the addon
+artifact is signed by the host-node key lineage and not by any platform key.
+
+#### 3. Addon artifact (the signed payload)
+
+| Field | Requirement | Description |
+| --- | --- | --- |
+| `addon_type` | MUST | Open vocabulary string: `late_checkout`, `early_checkin`, `extension`, … New types need no central approval |
+| `description` | SHOULD | Short human-readable label, guest language |
+| `quantity` | SHOULD | Number + `unit` (e.g. `{ "value": 2, "unit": "hours" }`, `{ "value": 1, "unit": "nights" }`) |
+| `price` | MUST | `{ "amount": …, "currency": ISO-4217 }` — the amount representation MUST match the one used by the receipt's `payment` layer for the same stay |
+| `payment_ref` | SHOULD | Correlator that reconciles this add-on with the `payment` layer entry (or PSP object) that charged it |
+| `issued_at` | MUST | ISO 8601 date-time of sale |
+
+#### 4. Verification
+
+- A v1 verifier that does not recognize `addon` MUST treat it like any other
+  unknown layer: the JWS is verifiable, the semantics are opaque, and the
+  presence of the entry MUST NOT fail the receipt.
+- An addon-aware verifier verifies the JWS per D5, evaluates freshness per
+  D2, and correlates `ref` against the receipt subject before presenting the
+  add-on as belonging to the stay.
+
+#### 5. Relationship to stay extensions and the proof chain
+
+An `extension` add-on attests the **sale**. The resulting change to the stay
+window itself is a booking-level event and follows
+[Booking Proof Chain v0.1](https://vacationrentalprotocol.com/spec/proof-chain-v0.1) supersession semantics.
+When a superseding booking artifact exists, the `addon` attestation SHOULD
+reference the same booking correlator so the two chains reconcile. An addon
+attestation is never mutated; corrections are expressed as new attestations,
+consistent with the append-only spirit of the flat array.
+
+#### 6. Non-goals
+
+- No new endpoint and no new runtime requirement for nodes or agents.
+- No central registry of `addon_type` values (open vocabulary per §3).
+- No pricing or policy semantics: how a host prices add-ons stays
+  node-internal and is out of scope here.
+- No change to refund mechanics; a refunded add-on is a payment-layer fact.
+
+#### 7. Worked example (non-normative)
+
+```json
+{
+  "layer": "addon",
+  "valid_from": "2026-08-01T10:00:00Z",
+  "valid_until": "2026-08-02T10:00:00Z",
+  "ref": "booking_9f2c…",
+  "source": "https://example-host.example/.well-known/jwks.json",
+  "signature": "eyJhbGciOiJFZERTQSIsImtpZCI6Im5vZGUtb2ZmZXItMSJ9…",
+  "artifact": {
+    "addon_type": "late_checkout",
+    "description": "Late checkout until 14:00",
+    "quantity": { "value": 3, "unit": "hours" },
+    "price": { "amount": "350.00", "currency": "SEK" },
+    "payment_ref": "pi_3Qx…",
+    "issued_at": "2026-08-01T09:58:12Z"
+  }
+}
+```
+
+#### 8. Open questions (for discussion in #63)
+
+1. Amount representation: pin minor units, or inherit the node's declared
+   convention from the base offer? (Draft above says: match the `payment`
+   layer.)
+2. Should receipt-v2 fold well-known `addon_type` values into a
+   non-normative appendix for interop hints?
+3. Refund expression: is a payment-layer fact enough, or does a
+   `superseded_by`-style pointer between addon attestations earn its place?
+
+#### 9. Neutrality
+
+The spec is vendor-neutral. HemmaBo is a reference implementer, not an
+approval authority. Any node, on any stack, can sign and any party can
+verify an addon attestation without permission from anyone.
+
+#### 10. License
+
+Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE).
+
+========================================================================
+## 13. Domain continuity v0.1
+
+*Canonical source: <https://vacationrentalprotocol.com/spec/domain-continuity-v0.1>*
+========================================================================
+
+### VRP Domain Continuity — Specification v0.1
+
+**Status:** Public draft — **proposal for discussion** (tracks
+[issue #59](https://github.com/HemmaBo-se/vrp-spec/issues/59)). Forward spec
+in the [Receipt v1 §10](https://vacationrentalprotocol.com/spec/receipt-v1) sense: nothing here changes what a
+v0.1 or receipt-v1 verifier MUST do today, and legacy nodes that publish
+none of the signals below keep exactly today's behavior.
+
+**Published:** 2026-08-01
+
+**Repository:** https://github.com/HemmaBo-se/vrp-spec
+
+**Builds on:** [Core VRP v0.1](https://vacationrentalprotocol.com/spec/v0.1) (§3 JWKS, §3.1 key rotation and
+revocation, §9 three-state verification),
+[Receipt Envelope v1](https://vacationrentalprotocol.com/spec/receipt-v1) (§10 key lifecycle K1–K6, D3
+transparency-log field), [Transparency Log v0.1](https://vacationrentalprotocol.com/spec/transparency-log-v0.1).
+
+#### 1. Scope and threat model
+
+VRP roots node identity in the host's own domain: `did:web`, JWKS at a
+well-known path. Core v0.1 §3.1 covers **key** events (rotation,
+revocation). It is silent on **domain** events:
+
+- **Expiry / non-renewal.** An expired domain is not just a dead link. The
+  next registrant inherits the `did:web` identifier and can publish their
+  own JWKS at the same well-known path — the identifier stays valid while
+  the identity behind it silently changes hands.
+- **Voluntary transfer or sale** of the domain to a new operator.
+- **Registrar-level compromise** (hijack). This document detects epoch
+  breaks; it does not prevent registrar attacks.
+
+Consequence for history: once the original JWKS is gone, historical signed
+offers lose **live** verifiability. Detection via the transparency log
+survives — the log is tamper-evident, not immutable, and that distinction
+is load-bearing here.
+
+#### 2. Continuity statement (registration epoch)
+
+A node SHOULD publish a **continuity statement** alongside its discovery
+document:
+
+| Field | Requirement | Description |
+| --- | --- | --- |
+| `domain_registered` | SHOULD | Registration (creation) date of the domain as attested by RDAP/registrar data |
+| `epoch_started` | MUST | Date this **key lineage** began operating the domain |
+| `genesis_kid` | MUST | `kid` of the first key in this lineage (retired keys stay resolvable per K2/K3) |
+| `statement_jws` | MUST | Compact JWS over the fields above, signed by a key in the current JWKS |
+
+The property that makes this useful: a **new registrant cannot truthfully
+extend the previous epoch**, because they cannot sign with the prior
+lineage's keys. An epoch break is therefore detectable by construction —
+no central authority, no registry, no permission.
+
+#### 3. Verifier guidance (forward spec)
+
+- **V1 — registration post-dates the artifact.** If the domain's current
+  registration date (RDAP) is later than the timestamp of the artifact
+  being verified, a verifier SHOULD treat live-JWKS verification of that
+  artifact as non-authoritative and fall back to transparency-log inclusion
+  (D3, K4). In v0.1 §9 terms the honest outcome is the middle state —
+  unverifiable live, log-consistent — never a silent pass.
+- **V2 — epoch mismatch.** If the artifact predates `epoch_started` of the
+  current continuity statement, same downgrade as V1.
+- **V3 — no signals published.** Verifier behavior is exactly today's.
+  This document adds no new failure modes for legacy nodes.
+
+#### 4. Host guidance
+
+Treat the domain as key material:
+
+- Multi-year registration and auto-renew; monitor expiry independently of
+  the registrar's own reminders.
+- Registrar transfer lock.
+- Anchor receipts in the transparency log (K4) so the history of what the
+  node signed outlives the domain itself.
+- On a planned transfer that is meant to *preserve* identity (same
+  operator, new registrar), keep the JWKS and continuity statement intact
+  across the move; the epoch does not break because the lineage keeps
+  signing.
+
+#### 5. What this does not do
+
+- No central continuity authority and no domain revocation list —
+  consistent with receipt-v1 neutrality (D8).
+- No protection against a registrar-level attacker who also steals the
+  node's signing keys; this is detection of identity discontinuity, not
+  prevention of infrastructure compromise.
+- No claim of immutability anywhere: the transparency log is
+  tamper-evident, and public copy about this mechanism MUST keep that word.
+
+#### 6. Open questions (for discussion in #59)
+
+1. Should the continuity statement live inside the discovery document or as
+   its own well-known artifact?
+2. What SHOULD a verifier assume when RDAP data is unavailable or the
+   registrar does not expose a creation date?
+3. Minimum guidance for hosts on renewal/expiry as an identity-safety
+   concern — how prescriptive should the spec be, given large-scale
+   link-rot and domain-death data?
+
+#### 7. Neutrality
+
+The spec is vendor-neutral. HemmaBo is a reference implementer, not an
+approval authority. Any node, on any stack, can publish a continuity
+statement and any party can evaluate one without permission from anyone.
+
+#### 8. License
+
+Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE).
+
+========================================================================
+## 14. Implement VRP signed offers
 
 *Canonical source: <https://vacationrentalprotocol.com/docs/implement-vrp>*
 ========================================================================
@@ -2885,7 +3133,7 @@ VRP implementers should keep field names stable and machine-readable. Agents sho
 If a value cannot be verified, agents must treat it as unknown. A missing endpoint, failed fetch, invalid JSON response, failed signature, or stale `valid_until` must never be interpreted as a confirmed negative or a confirmed positive.
 
 ========================================================================
-## 13. Implement portable attestations
+## 15. Implement portable attestations
 
 *Canonical source: <https://vacationrentalprotocol.com/docs/implement-attestations>*
 ========================================================================
@@ -2944,7 +3192,7 @@ Do not publish guest reviews, guest outcomes, guest risk, guest scores, or guest
 Guest-held credentials and reviews are deferred to a future v0.2 design with selective disclosure.
 
 ========================================================================
-## 14. Agent integration guide
+## 16. Agent integration guide
 
 *Canonical source: <https://vacationrentalprotocol.com/docs/agent-guide>*
 ========================================================================
@@ -2991,7 +3239,7 @@ Do not say the stay is bookable unless the signed offer says the dates are avail
 Do not infer from an unknown state. If the host domain, endpoint, signature, freshness, availability, price, or citation permission cannot be verified, report that the value is unknown rather than treating it as true or false.
 
 ========================================================================
-## 15. Interop and trust positioning
+## 17. Interop and trust positioning
 
 *Canonical source: <https://vacationrentalprotocol.com/docs/interop-and-trust-positioning>*
 ========================================================================
@@ -3116,7 +3364,7 @@ payment providers, search indexes, and host tools interoperate while VRP keeps
 the host-domain offer proof gatekeeper-free.
 
 ========================================================================
-## 16. First-mover evidence memo
+## 18. First-mover evidence memo
 
 *Canonical source: <https://vacationrentalprotocol.com/docs/first-mover-evidence-memo>*
 ========================================================================
@@ -3190,7 +3438,7 @@ VRP does not replace UCP checkout, Stripe payments, MCP tools, or search engines
 - [Core spec v0.1](https://vacationrentalprotocol.com/spec/v0.1)
 
 ========================================================================
-## 17. Appendix — machine artifacts
+## 19. Appendix — machine artifacts
 
 The documents above are the human-readable standard. The following machine
 artifacts are referenced by URL rather than inlined; fetch them directly when

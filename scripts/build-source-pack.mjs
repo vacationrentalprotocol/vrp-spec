@@ -38,6 +38,8 @@ const MANIFEST = [
   { file: "spec/receipt-v1.md", title: "VRP receipt envelope v1" },
   { file: "spec/proof-chain-v0.1.md", title: "Booking Proof Chain v0.1" },
   { file: "spec/node-seal-v0.1.md", title: "Node Seal v0.1" },
+  { file: "spec/addon-attestation-layer-v0.1.md", title: "Addon attestation layer v0.1" },
+  { file: "spec/domain-continuity-v0.1.md", title: "Domain continuity v0.1" },
   { file: "docs/implement-vrp.md", title: "Implement VRP signed offers" },
   { file: "docs/implement-attestations.md", title: "Implement portable attestations" },
   { file: "docs/agent-guide.md", title: "Agent integration guide" },

@@ -287,7 +287,7 @@
     },
     {
       "source": "/source-pack",
-      "destination": "/pages/source-pack.html"
+      "destination": "/pages/source-pack"
     },
     {
       "source": "/docs/first-mover-evidence-memo",

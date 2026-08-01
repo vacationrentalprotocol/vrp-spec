@@ -18,10 +18,14 @@ URL is authoritative.**
 ## How to use this in an AI notebook
 
 - **Google NotebookLM / Gemini Notebook:** Add source → Website, and paste
-  <https://vacationrentalprotocol.com/docs/source-pack> — or download this file and upload it.
-- **ChatGPT / Claude Projects:** attach this file, or paste the URL above.
-- The pack is plain Markdown, so any tool that reads text or Markdown can ingest
-  the whole standard in one step.
+  <https://vacationrentalprotocol.com/source-pack> (the HTML edition). NotebookLM's website importer
+  needs an HTML page, not raw Markdown — the HTML edition carries this exact
+  same standard. You can also download this file and upload it directly.
+- **ChatGPT / Claude Projects:** attach this file, or paste either URL — the
+  Markdown edition <https://vacationrentalprotocol.com/docs/source-pack> or the HTML edition
+  <https://vacationrentalprotocol.com/source-pack>.
+- Same content, two formats: the Markdown edition for tools that read
+  text/Markdown, the HTML edition for website importers.
 
 ## Contents
 

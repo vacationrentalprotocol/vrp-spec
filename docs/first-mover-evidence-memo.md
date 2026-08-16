@@ -4,7 +4,7 @@
 **Date:** 2026-06-14  
 **Protocol draft:** v0.1  
 **Public site:** https://vacationrentalprotocol.com  
-**Repository:** https://github.com/HemmaBo-se/vrp-spec
+**Repository:** https://github.com/vacationrentalprotocol/vrp-spec
 
 ## Permitted claim
 

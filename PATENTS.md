@@ -23,7 +23,7 @@ CC0 (above), so no additional copyright grant is required.
 
 **Identified Specification** (OWFa 1.0, "Identify the Specification here"):
 Vacation Rental Protocol (VRP) Specification, version 0.1, as published in this
-repository — https://github.com/HemmaBo-se/vrp-spec.
+repository — https://github.com/vacationrentalprotocol/vrp-spec.
 
 **Promisor:** Rouiada Abbas, on behalf of herself and HemmaBo, and their
 successors in interest and assigns.

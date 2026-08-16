@@ -4,7 +4,7 @@ VRP is an open protocol for host-domain signed vacation rental offers and
 privacy-minimized portable attestations.
 
 Canonical site: https://vacationrentalprotocol.com/
-Repository: https://github.com/HemmaBo-se/vrp-spec
+Repository: https://github.com/vacationrentalprotocol/vrp-spec
 Current draft: v0.1
 
 ## Primary Documents

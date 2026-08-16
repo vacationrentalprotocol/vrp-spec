@@ -1,7 +1,7 @@
 # VRP Addon Attestation Layer — Specification v0.1
 
 **Status:** Public draft — **proposal for discussion** (tracks
-[issue #63](https://github.com/HemmaBo-se/vrp-spec/issues/63)). Additive by
+[issue #63](https://github.com/vacationrentalprotocol/vrp-spec/issues/63)). Additive by
 construction: `addon` rides the open layer vocabulary of
 [Receipt Envelope v1 §3](./receipt-v1.md) ("a new trust layer = a new
 `attestations[]` entry — no central approval is required"). Nothing in this
@@ -9,7 +9,7 @@ document changes what a receipt-v1 verifier MUST do today.
 
 **Published:** 2026-08-01
 
-**Repository:** https://github.com/HemmaBo-se/vrp-spec
+**Repository:** https://github.com/vacationrentalprotocol/vrp-spec
 
 **Builds on:** [Receipt Envelope v1](./receipt-v1.md) (layer vocabulary §3,
 per-attestation freshness D2, signature input rule D5, key lifecycle §10),

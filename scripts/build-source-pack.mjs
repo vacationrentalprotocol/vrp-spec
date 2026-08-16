@@ -20,7 +20,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const ORIGIN = "https://vacationrentalprotocol.com";
-const GH = "https://github.com/HemmaBo-se/vrp-spec";
+const GH = "https://github.com/vacationrentalprotocol/vrp-spec";
 const OUT = "docs/source-pack.md";
 
 // Ordered, curated manifest — the reader-facing standard. Machine artifacts

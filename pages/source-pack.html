@@ -34,7 +34,7 @@
   <body>
 <h1>Vacation Rental Protocol (VRP) — Source Pack</h1>
 <p><strong>One file containing the full VRP open standard</strong>, assembled for AI notebooks (Google NotebookLM / Gemini Notebook, ChatGPT, Claude Projects) and for offline reading and citation.</p>
-<ul><li>Standard: <strong>Vacation Rental Protocol (VRP)</strong>, public draft <strong>v0.1</strong></li><li>Author &amp; maintainer: <strong>Rouiada Abbas</strong> — VRP is an open standard with no central gatekeeper</li><li>Reference implementation: <strong>HemmaBo</strong> (not the owner of the standard)</li><li>Canonical site: <a href="https://vacationrentalprotocol.com">https://vacationrentalprotocol.com</a></li><li>Repository: <a href="https://github.com/HemmaBo-se/vrp-spec">https://github.com/HemmaBo-se/vrp-spec</a></li><li>Specification text is dedicated to the public domain under <strong>CC0 1.0</strong> (see <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE">https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE</a>); reference code: <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE-CODE">https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE-CODE</a>.</li></ul>
+<ul><li>Standard: <strong>Vacation Rental Protocol (VRP)</strong>, public draft <strong>v0.1</strong></li><li>Author &amp; maintainer: <strong>Rouiada Abbas</strong> — VRP is an open standard with no central gatekeeper</li><li>Reference implementation: <strong>HemmaBo</strong> (not the owner of the standard)</li><li>Canonical site: <a href="https://vacationrentalprotocol.com">https://vacationrentalprotocol.com</a></li><li>Repository: <a href="https://github.com/vacationrentalprotocol/vrp-spec">https://github.com/vacationrentalprotocol/vrp-spec</a></li><li>Specification text is dedicated to the public domain under <strong>CC0 1.0</strong> (see <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE</a>); reference code: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE</a>.</li></ul>
 <p>This pack is generated from the canonical documents; each section links to its live source. If anything here disagrees with the canonical site, <strong>the canonical URL is authoritative.</strong></p>
 <h2>How to use this in an AI notebook</h2>
 <ul><li><strong>Google NotebookLM / Gemini Notebook:</strong> Add source → Website, and paste <a href="https://vacationrentalprotocol.com/source-pack">https://vacationrentalprotocol.com/source-pack</a> (the HTML edition). NotebookLM's website importer needs an HTML page, not raw Markdown — the HTML edition carries this exact same standard. You can also download this file and upload it directly.</li><li><strong>ChatGPT / Claude Projects:</strong> attach this file, or paste either URL — the Markdown edition <a href="https://vacationrentalprotocol.com/docs/source-pack">https://vacationrentalprotocol.com/docs/source-pack</a> or the HTML edition <a href="https://vacationrentalprotocol.com/source-pack">https://vacationrentalprotocol.com/source-pack</a>.</li><li>Same content, two formats: the Markdown edition for tools that read text/Markdown, the HTML edition for website importers.</li></ul>
@@ -62,7 +62,7 @@
 <ol><li>Open the live verifier: <a href="https://vacationrentalprotocol.com/verify">https://vacationrentalprotocol.com/verify</a></li><li>Or fetch a live signed offer and check it with any standard JWS/Ed25519 tool (e.g. jwt.io) against the host's published key. A live reference node: <a href="https://villaakerlyckan.se/.well-known/vacation-rental.json">https://villaakerlyckan.se/.well-known/vacation-rental.json</a></li></ol>
 <p>An <strong>optional</strong> public append-only Merkle transparency log (RFC 6962) can record signed-artifact hashes so trust history is tamper-evident.</p>
 <h4>Is it open?</h4>
-<p>Yes. The specification is public at <a href="https://vacationrentalprotocol.com">https://vacationrentalprotocol.com</a> and the repository is <a href="https://github.com/HemmaBo-se/vrp-spec">https://github.com/HemmaBo-se/vrp-spec</a>. A provisional registration of the <code>vacation-rental.json</code> well-known URI suffix has been requested in the IANA Well-Known URIs registry (request open, pending review: <a href="https://github.com/protocol-registries/well-known-uris/issues/93">https://github.com/protocol-registries/well-known-uris/issues/93</a>).</p>
+<p>Yes. The specification is public at <a href="https://vacationrentalprotocol.com">https://vacationrentalprotocol.com</a> and the repository is <a href="https://github.com/vacationrentalprotocol/vrp-spec">https://github.com/vacationrentalprotocol/vrp-spec</a>. A provisional registration of the <code>vacation-rental.json</code> well-known URI suffix has been requested in the IANA Well-Known URIs registry (request open, pending review: <a href="https://github.com/protocol-registries/well-known-uris/issues/93">https://github.com/protocol-registries/well-known-uris/issues/93</a>).</p>
 <h4>Status</h4>
 <p>Public draft <strong>v0.1</strong>. Spec: <a href="https://vacationrentalprotocol.com/spec/v0.1">https://vacationrentalprotocol.com/spec/v0.1</a>.</p>
 <hr>
@@ -70,7 +70,7 @@
 <p>*Canonical source: <a href="https://vacationrentalprotocol.com/spec/v0.1">https://vacationrentalprotocol.com/spec/v0.1</a>*</p>
 <hr>
 <h3>Vacation Rental Protocol - Specification v0.1</h3>
-<p><strong>Status:</strong> Public draft   <strong>Published:</strong> 2026-05-20   <strong>Canonical URL:</strong> https://vacationrentalprotocol.com   <strong>Repository:</strong> https://github.com/HemmaBo-se/vrp-spec</p>
+<p><strong>Status:</strong> Public draft   <strong>Published:</strong> 2026-05-20   <strong>Canonical URL:</strong> https://vacationrentalprotocol.com   <strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
 <h4>1. Scope</h4>
 <p>Vacation Rental Protocol (VRP) v0.1 defines how a host-owned vacation rental domain publishes discovery metadata, signing keys, and signed verified stay offers so AI agents can verify provenance, freshness, exact price, and direct booking URL.</p>
 <p>VRP v0.1 is not an OTA, marketplace, central registry, public traffic proxy, payment processor, or central key issuer.</p>
@@ -90,7 +90,7 @@
 <ul><li><code>kty</code>: <code>OKP</code></li><li><code>crv</code>: <code>Ed25519</code></li><li><code>alg</code>: <code>EdDSA</code></li><li><code>kid</code>: stable key identifier</li><li><code>x</code>: base64url Ed25519 public key</li></ul>
 <p>Such keys SHOULD also set:</p>
 <ul><li><code>use</code>: <code>sig</code></li><li><code>key_ops</code>: include <code>verify</code></li></ul>
-<p>The JWKS structure is pinned by <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/schemas/jwks-v0.1.schema.json"><code>schemas/jwks-v0.1.schema.json</code></a>.</p>
+<p>The JWKS structure is pinned by <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/schemas/jwks-v0.1.schema.json"><code>schemas/jwks-v0.1.schema.json</code></a>.</p>
 <h5>3.1 Key Rotation and Revocation</h5>
 <p>A node's signing authority is the Ed25519 key set published at its <code>jwks.json</code> (and mirrored by <code>did:web</code>). Because there is no central issuer, <strong>the JWKS is the only revocation authority</strong>: a key is valid exactly while it appears in the node's JWKS.</p>
 <p><strong>Rotation.</strong> To rotate, a node MUST publish the new key alongside the old one in its JWKS and sign new offers with the new key's <code>kid</code>. It SHOULD retain the old key in the JWKS until every offer signed with it has passed its <code>valid_until</code>, so the retention overlap equals the maximum offer lifetime. A node SHOULD use a <code>kid</code> that encodes a date and sequence (e.g. <code>example.com-2026-05-18-01</code>) so operators can order keys; a verifier MUST treat <code>kid</code> as opaque and MUST NOT infer trust, recency, or status from its value.</p>
@@ -113,7 +113,7 @@
 <ul><li><code>kind</code>: <code>verified_stay_offer</code></li><li><code>protocol_version</code>: <code>0.1</code></li><li><code>canonical_domain</code></li><li><code>node_id</code></li><li><code>generated_at</code></li><li><code>valid_until</code></li><li><code>request</code></li><li><code>property</code></li><li><code>availability</code></li><li><code>price</code></li><li><code>booking</code></li><li><code>agent_permission</code></li></ul>
 <p>The signed payload MAY also include host-verified direct-source facts, so an agent can verify (not just read) the node's positioning:</p>
 <ul><li><code>source_authority</code> — <code>model: host_verified_direct_source</code>, <code>is_official_source_for_property</code>, <code>intermediary: none</code>, <code>payment_recipient: host</code>, <code>booking_model: direct_with_host</code>, <code>booking_commission_pct: 0</code>. A reselling marketplace cannot sign these.</li><li><code>price.no_add_on_fees</code> — <code>true</code> asserts the quoted total has no add-on booking, service, or cleaning fees (the displayed price is the total paid). This is the node's own fee structure, never an OTA comparison.</li></ul>
-<p>The envelope and payload structure is pinned by <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/schemas/verified-stay-offer-v0.1.schema.json"><code>schemas/verified-stay-offer-v0.1.schema.json</code></a>, which is authoritative for v0.1 offer shape. A real, verifiable Ed25519/JWS example and its failure modes are in <a href="https://github.com/HemmaBo-se/vrp-spec/tree/main/examples/conformance"><code>examples/conformance/</code></a>.</p>
+<p>The envelope and payload structure is pinned by <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/schemas/verified-stay-offer-v0.1.schema.json"><code>schemas/verified-stay-offer-v0.1.schema.json</code></a>, which is authoritative for v0.1 offer shape. A real, verifiable Ed25519/JWS example and its failure modes are in <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance"><code>examples/conformance/</code></a>.</p>
 <h5>5.1 Direct Booking URL</h5>
 <p>The signed payload <code>booking</code> object carries the direct booking URL the agent routes the user to. The <code>booking</code> object MUST include:</p>
 <ul><li><code>direct_booking_url</code></li></ul>
@@ -123,7 +123,7 @@
 <p><strong>Integrity.</strong> <code>direct_booking_url</code> is a field inside the signed offer payload. Its integrity derives solely from the compact JWS over that payload (§5): if the JWS verifies against the host-domain JWKS, the direct booking URL is exactly the URL the host signed. There is no separate signature over the URL, and an agent MUST NOT accept a <code>direct_booking_url</code> delivered outside, or modified after, the signed payload. A <code>direct_booking_url</code> whose enclosing offer fails signature verification is <code>unknown</code> and MUST NOT be used.</p>
 <p><strong>Lifecycle.</strong> The direct booking URL is actionable only while the enclosing offer is fresh, that is while <code>valid_until</code> holds (§6).</p>
 <ul><li>While the offer is fresh, an agent MAY present and route the user to <code>direct_booking_url</code> subject to the Safe-to-Quote rules (§7).</li><li>Once <code>valid_until</code> has passed, the offer is stale. The agent MUST treat the direct booking URL as <code>unknown</code> and MUST NOT present its associated price as current or claim the stay is bookable on the strength of the stale offer. The agent SHOULD fetch a fresh signed offer for the user's dates and guest count (§6) before routing a booking action.</li><li>After expiry, the host node MAY continue to serve the same URL, MAY re-quote (return a new signed offer, which may carry a different price, availability, or <code>direct_booking_url</code>), or MAY return an unavailable or non-quoteable offer. Following an expired <code>direct_booking_url</code> is therefore an unverified action: the host, not the protocol, decides what the URL does after expiry.</li><li>A host node SHOULD ensure that following <code>direct_booking_url</code> after expiry fails closed for the guest — for example by re-quoting on the landing page rather than silently honoring a stale price. VRP does not guarantee that a price observed in an expired offer is still available.</li></ul>
-<p>The booking object shape is pinned by <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/schemas/verified-stay-offer-v0.1.schema.json"><code>schemas/verified-stay-offer-v0.1.schema.json</code></a>. The schema validates that <code>direct_booking_url</code> is present and is an <code>https</code> URL; the <code>canonical_domain</code> host constraint and the query-parameter recommendations above are normative protocol rules that a verifier enforces at runtime, not structural schema constraints.</p>
+<p>The booking object shape is pinned by <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/schemas/verified-stay-offer-v0.1.schema.json"><code>schemas/verified-stay-offer-v0.1.schema.json</code></a>. The schema validates that <code>direct_booking_url</code> is present and is an <code>https</code> URL; the <code>canonical_domain</code> host constraint and the query-parameter recommendations above are normative protocol rules that a verifier enforces at runtime, not structural schema constraints.</p>
 <h5>5.2 Reserved: optional agent-native payment rails</h5>
 <p>VRP v0.1 defines exactly ONE payment path: <code>direct_booking_url</code> (§5.1), settled by the host's own processor (fiat, e.g. Stripe). This is deliberate — every field VRP defines is one a live node actually honors and an agent can verify.</p>
 <p>The optional <code>booking.payment_options[]</code> field is <strong>RESERVED</strong> for a future agent-native payment-rail binding (e.g. <code>x402</code>) and is <strong>NOT defined in v0.1</strong>: its shape, settlement, refund handling, and reconciliation are intentionally left open. A node SHOULD omit it and rely on <code>direct_booking_url</code>; an agent MUST NOT treat its presence as a defined, honorable payment path.</p>
@@ -158,14 +158,14 @@
 <ul><li><strong>Affirmed</strong>: present, signed where required, fresh, schema-valid, and explicitly true or present. May be cited.</li><li><strong>Negated</strong>: present, signed where required, fresh, schema-valid, and explicitly false. May be cited as false.</li><li><strong>Unknown</strong>: absent, unsigned, stale, unreachable, schema-invalid, malformed, expired, or otherwise unverifiable. MUST NOT be cited as true or false.</li></ul>
 <p>Unreachable is not the same as negated. A timeout, DNS failure, HTTP failure, blocked fetch, invalid JSON, missing field, failed signature check, stale <code>valid_until</code>, or schema mismatch means unknown.</p>
 <p>Inference from Unknown to either Affirmed or Negated is a protocol violation. Agents SHOULD tell the user that the value could not be verified and fetch a fresh signed offer before making booking, availability, price, or official-source claims.</p>
-<p>Examples: see <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/examples/three-state-verification.md">three-state-verification.md</a>.</p>
+<p>Examples: see <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/examples/three-state-verification.md">three-state-verification.md</a>.</p>
 <h4>10. Core JSON Schemas</h4>
 <p>VRP v0.1 core artifacts have machine-readable JSON Schemas:</p>
 <pre><code>https://vacationrentalprotocol.com/schemas/discovery-v0.1.schema.json
 https://vacationrentalprotocol.com/schemas/jwks-v0.1.schema.json
 https://vacationrentalprotocol.com/schemas/verified-stay-offer-v0.1.schema.json
 https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-result-v0.1.schema.json</code></pre>
-<p>Repository copies are in <a href="https://github.com/HemmaBo-se/vrp-spec/tree/main/schemas"><code>schemas/</code></a>. The schemas are interoperability aids for implementers and examples. They do not create a central validator, issuer, registry, certification service, marketplace, OTA, booking intermediary, or trust authority.</p>
+<p>Repository copies are in <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/schemas"><code>schemas/</code></a>. The schemas are interoperability aids for implementers and examples. They do not create a central validator, issuer, registry, certification service, marketplace, OTA, booking intermediary, or trust authority.</p>
 <h4>11. Portable Attestations</h4>
 <p>Portable attestations are a document-only extension to VRP v0.1 for privacy-minimized trust history. Core VRP proves that a concrete offer is real; portable attestations prove selected host-domain, payment-path, policy, and optional verified-stay facts without making HemmaBo or any other operator the central issuer, registry, scorer, OTA, marketplace, booking intermediary, or trust authority.</p>
 <p>See <a href="https://vacationrentalprotocol.com/spec/attestations-v0.1">attestations-v0.1.md</a>.</p>
@@ -181,7 +181,7 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-resu
   -&gt; direct booking URL</code></pre>
 <p>HemmaBo is a reference implementation and provider/federation using VRP. VRP is neutral and implementable by others.</p>
 <h4>14. License</h4>
-<p>Specification text: dedicated to the public domain under <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (ADR 0010 D7). Patents: a royalty-free patent non-assertion commitment is offered under the Open Web Foundation Agreement 1.0 (Patent-Only) — see <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/PATENTS.md">PATENTS.md</a>.</p>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (ADR 0010 D7). Patents: a royalty-free patent non-assertion commitment is offered under the Open Web Foundation Agreement 1.0 (Patent-Only) — see <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/PATENTS.md">PATENTS.md</a>.</p>
 <hr>
 <h2>3. Well-Known URI v0.1</h2>
 <p>*Canonical source: <a href="https://vacationrentalprotocol.com/spec/well-known-uri-v0.1">https://vacationrentalprotocol.com/spec/well-known-uri-v0.1</a>*</p>
@@ -191,7 +191,7 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-resu
 <p><strong>Published:</strong> 2026-06-19 (revised 2026-07-30)</p>
 <p><strong>Change controller:</strong> Vacation Rental Protocol (VRP) — Rouiada Abbas, author/maintainer; hello@vacationrentalprotocol.com</p>
 <p><strong>Canonical context:</strong> https://vacationrentalprotocol.com/contexts/v1</p>
-<p><strong>Repository:</strong> https://github.com/HemmaBo-se/vrp-spec</p>
+<p><strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
 <h4>1. Scope</h4>
 <p>VRP defines the well-known URI suffix <strong><code>vacation-rental.json</code></strong> (RFC 8615). A client that already knows a host's domain issues a single request:</p>
 <pre><code>GET https://{host}/.well-known/vacation-rental.json</code></pre>
@@ -216,7 +216,7 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-resu
 <p>This document is the specification reference for the <strong>requested provisional</strong> registration of the <code>vacation-rental.json</code> well-known URI suffix in the IANA Well-Known URIs registry (RFC 8615). The registration request is open and pending review: https://github.com/protocol-registries/well-known-uris/issues/93 (being aligned to this suffix).</p>
 <ul><li><strong>URI suffix:</strong> <code>vacation-rental.json</code></li><li><strong>Change controller:</strong> Vacation Rental Protocol (VRP) — Rouiada Abbas; hello@vacationrentalprotocol.com</li><li><strong>Status:</strong> provisional (requested)</li><li><strong>Specification document:</strong> this page.</li></ul>
 <h4>License</h4>
-<p>Specification text: dedicated to the public domain under <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (ADR 0010 D7).</p>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (ADR 0010 D7).</p>
 <hr>
 <h2>4. StayIntent open discovery v0.1</h2>
 <p>*Canonical source: <a href="https://vacationrentalprotocol.com/spec/stayintent-discovery-v0.1">https://vacationrentalprotocol.com/spec/stayintent-discovery-v0.1</a>*</p>
@@ -283,13 +283,13 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-resu
 <h4>References</h4>
 <ul><li>VRP <a href="https://vacationrentalprotocol.com/spec/v0.1">v0.1</a> §1 (no central discovery index), §3 (signatures), §5.1 (<code>direct_booking_url</code> on <code>canonical_domain</code>)</li><li><a href="https://vacationrentalprotocol.com/spec/attestations-v0.1">attestations-v0.1</a> (did:web), <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">transparency-log-v0.1</a></li><li>W3C VC / did:web; schema.org; Wikidata; OpenTravel HAC; UCP (transport)</li></ul>
 <h4>License</h4>
-<p>Specification text: dedicated to the public domain under <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (ADR 0010 D7).</p>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (ADR 0010 D7).</p>
 <hr>
 <h2>5. Node structure declarations v0.1</h2>
 <p>*Canonical source: <a href="https://vacationrentalprotocol.com/spec/structure-declarations-v0.1">https://vacationrentalprotocol.com/spec/structure-declarations-v0.1</a>*</p>
 <hr>
 <h3>VRP Node Structure Declarations — Specification v0.1</h3>
-<p><strong>Status:</strong> Public draft <strong>Published:</strong> 2026-07-04 <strong>Canonical URL:</strong> https://vacationrentalprotocol.com/spec/structure-declarations-v0.1 <strong>Repository:</strong> https://github.com/HemmaBo-se/vrp-spec</p>
+<p><strong>Status:</strong> Public draft <strong>Published:</strong> 2026-07-04 <strong>Canonical URL:</strong> https://vacationrentalprotocol.com/spec/structure-declarations-v0.1 <strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
 <p>The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are to be interpreted as described in RFC 2119.</p>
 <h4>1. Scope</h4>
 <p>This section defines <strong>falsifiable node structure declarations</strong>: a small set of binary commercial-structure claims a VRP node publishes about itself, where <strong>every claim ships with its own verification procedure</strong> that any agent — or any human with a browser — can execute against the node itself. No third party, no issuer, no registry.</p>
@@ -342,7 +342,7 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-resu
 <h4>8. Reference</h4>
 <p>Villa Åkerlyckan (villaakerlyckan.se) is the intended first live node for structure declarations. Publication on the node and the in-browser verifier extension are implementation steps tracked separately (issue #60, scope items 3–4); this document intentionally precedes them.</p>
 <h4>License</h4>
-<p>Specification text: dedicated to the public domain under <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (ADR 0010 D7).</p>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (ADR 0010 D7).</p>
 <hr>
 <h2>6. Portable attestations v0.1</h2>
 <p>*Canonical source: <a href="https://vacationrentalprotocol.com/spec/attestations-v0.1">https://vacationrentalprotocol.com/spec/attestations-v0.1</a>*</p>
@@ -351,7 +351,7 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-resu
 <p><strong>Status:</strong> Public draft</p>
 <p><strong>Published:</strong> 2026-05-31</p>
 <p><strong>Canonical context:</strong> https://vacationrentalprotocol.com/contexts/v1</p>
-<p><strong>Repository:</strong> https://github.com/HemmaBo-se/vrp-spec</p>
+<p><strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
 <h4>1. Scope</h4>
 <p>VRP Portable Attestations v0.1 defines privacy-minimized Verifiable Credentials for portable trust history around VRP host nodes, payment paths, policy snapshots, and optionally verified stays.</p>
 <p>Core VRP proves that a concrete offer is real. Portable attestations prove selected trust history without making HemmaBo, or any other operator, the authority over truth.</p>
@@ -373,7 +373,7 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-resu
 <p>For <code>did:web:{host-domain}</code>, the DID document is published at:</p>
 <pre><code>https://{host-domain}/.well-known/did.json</code></pre>
 <p>The attestation JWS <code>kid</code> MUST be a DID URL controlled by the issuer DID. The referenced verification method SHOULD be listed in <code>assertionMethod</code> or otherwise be usable for assertion verification by the issuer DID. A host-domain DID MAY publish separate verification methods for VRP offers and VRP attestations.</p>
-<p>Example DID document: <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/examples/attestations/did-web-document.v0.1.json"><code>did-web-document.v0.1.json</code></a>.</p>
+<p>Example DID document: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/examples/attestations/did-web-document.v0.1.json"><code>did-web-document.v0.1.json</code></a>.</p>
 <p>HemmaBo may publish a reference implementation and help author this standard. HemmaBo MUST NOT be required as an issuer, registry, scorer, booking intermediary, OTA, marketplace, or trust authority for portable attestations to verify.</p>
 <p>Self-issued host-domain attestations are appropriate only for facts controlled by the host domain, such as node metadata, discovery URLs, key identifiers, payment-path routing facts, policy hashes, and privacy-minimized stay references. v0.1 MUST NOT treat self-issued host-domain attestations as independent proof of guest identity, right-to-let, local license status, property ownership, insurance coverage, or legal compliance.</p>
 <p>Claims that require independent evidence MAY be defined in a future VRP profile as third-party credentials. If such profiles are defined, issuer trust remains a verifier policy decision and MUST NOT require a mandatory HemmaBo or VRP trusted issuer registry.</p>
@@ -491,16 +491,16 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-resu
 <h4>10. Machine-Readable Schema</h4>
 <p>The JSON Schema profile for v0.1 examples and payload artifacts is:</p>
 <pre><code>https://vacationrentalprotocol.com/schemas/attestations-v0.1.schema.json</code></pre>
-<p>Repository copy: <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/schemas/attestations-v0.1.schema.json"><code>schemas/attestations-v0.1.schema.json</code></a>.</p>
+<p>Repository copy: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/schemas/attestations-v0.1.schema.json"><code>schemas/attestations-v0.1.schema.json</code></a>.</p>
 <p>The schema is an interoperability aid. It does not create a central validator, registry, issuer service, certification service, marketplace, OTA, booking intermediary, or trust authority.</p>
 <h4>11. Examples</h4>
-<p>Example files are in <a href="https://github.com/HemmaBo-se/vrp-spec/tree/main/examples/attestations"><code>examples/attestations</code></a>:</p>
+<p>Example files are in <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/attestations"><code>examples/attestations</code></a>:</p>
 <ul><li><code>did-web-document.v0.1.json</code></li><li><code>jws-header.ed25519.v0.1.json</code></li><li><code>host-domain-credential.payload.v0.1.json</code></li><li><code>payment-path-credential.payload.v0.1.json</code></li><li><code>policy-snapshot-credential.payload.v0.1.json</code></li><li><code>verified-stay-credential.payload.v0.1.json</code></li><li><code>regulatory-registration-credential.payload.v0.1.json</code></li><li><code>status-list.v0.1.json</code></li><li><code>attestation-bundle.v0.1.json</code></li></ul>
 <p>The payload examples are unsigned JWS payload examples. Production credentials are compact JWS envelopes over those payloads.</p>
 <p>The <code>did-web-document.v0.1.json</code> and <code>attestation-bundle.v0.1.json</code> files in <code>examples/attestations/</code> are <strong>illustrative only</strong>: their public key <code>x</code> value and their <code>compactJws</code> values are non-cryptographic placeholders (<code>&lt;…&gt;</code>) that show the document shape. They MUST NOT be used to validate the attestation layer.</p>
-<p>A <strong>real, verifiable</strong> Ed25519 / compact-JWS vector — an issuer <code>did:web</code> document with a genuine verification key and a signed attestation bundle whose <code>compactJws</code> values verify against it — is in <a href="https://github.com/HemmaBo-se/vrp-spec/tree/main/examples/conformance/attestations"><code>examples/conformance/attestations/</code></a>. That vector is checked on every run by <code>npm test</code> (see step 8 verification above); it uses a documented throwaway test key for the reserved <code>example-host.invalid</code> domain and MUST NOT be used by any production node.</p>
+<p>A <strong>real, verifiable</strong> Ed25519 / compact-JWS vector — an issuer <code>did:web</code> document with a genuine verification key and a signed attestation bundle whose <code>compactJws</code> values verify against it — is in <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance/attestations"><code>examples/conformance/attestations/</code></a>. That vector is checked on every run by <code>npm test</code> (see step 8 verification above); it uses a documented throwaway test key for the reserved <code>example-host.invalid</code> domain and MUST NOT be used by any production node.</p>
 <h4>12. License</h4>
-<p>Specification text: dedicated to the public domain under <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (ADR 0010 D7).</p>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (ADR 0010 D7).</p>
 <hr>
 <h2>7. Attestation status (Bitstring Status List) v0.1</h2>
 <p>*Canonical source: <a href="https://vacationrentalprotocol.com/spec/attestation-status-bitstring-v0.1">https://vacationrentalprotocol.com/spec/attestation-status-bitstring-v0.1</a>*</p>
@@ -556,7 +556,7 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-resu
 <h4>References</h4>
 <ul><li><a href="https://www.w3.org/TR/vc-bitstring-status-list/">W3C Bitstring Status List v1.0</a></li><li><a href="https://www.w3.org/TR/vc-data-model-2.0/">W3C Verifiable Credentials Data Model v2.0</a></li><li>VRP Portable Attestations: <a href="https://vacationrentalprotocol.com/spec/attestations-v0.1">attestations-v0.1</a> (§6 Status and Revocation)</li><li>VRP Transparency Log: <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">transparency-log-v0.1</a></li><li>VRP core: <a href="https://vacationrentalprotocol.com/spec/v0.1">v0.1</a></li></ul>
 <h4>License</h4>
-<p>Specification text: dedicated to the public domain under <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (ADR 0010 D7).</p>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (ADR 0010 D7).</p>
 <hr>
 <h2>8. Transparency log v0.1</h2>
 <p>*Canonical source: <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">https://vacationrentalprotocol.com/spec/transparency-log-v0.1</a>*</p>
@@ -566,7 +566,7 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-resu
 <p><strong>Published:</strong> 2026-06-13</p>
 <p><strong>Updated:</strong> 2026-07-04 — receipt leaves (<code>vrp_receipt</code>), leaf hashing rule, operator key discovery, STH archival, node read-through proxy, honest guarantee wording (issue #60-adjacent; per-booking inclusion proofs)</p>
 <p><strong>Canonical context:</strong> https://vacationrentalprotocol.com/contexts/v1</p>
-<p><strong>Repository:</strong> https://github.com/HemmaBo-se/vrp-spec</p>
+<p><strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
 <h4>1. Scope</h4>
 <p>VRP Transparency Log v0.1 defines an <strong>optional, append-only, publicly verifiable log</strong> for VRP artifacts — portable attestations and signed verified-stay-offer references — so that trust <strong>history</strong> becomes non-repudiable and tamper-evident.</p>
 <p>A transparency log proves two things and nothing more:</p>
@@ -644,7 +644,7 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-resu
 <ul><li>a central, canonical, or required log;</li><li>an issuer, certifier, accreditor, or certification company;</li><li>a node registry, discovery index, ranking engine, or trust score;</li><li>a marketplace, OTA, or booking intermediary;</li><li>a HemmaBo trust authority.</li></ul>
 <p>It is the decentralized, no-gatekeeper alternative to an accredited certifying authority: verifiable, non-forgeable trust history that no single party — including HemmaBo — can rewrite.</p>
 <h4>13. License</h4>
-<p>Specification text: dedicated to the public domain under <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (ADR 0010 D7).</p>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (ADR 0010 D7).</p>
 <hr>
 <h2>9. VRP receipt envelope v1</h2>
 <p>*Canonical source: <a href="https://vacationrentalprotocol.com/spec/receipt-v1">https://vacationrentalprotocol.com/spec/receipt-v1</a>*</p>
@@ -654,15 +654,15 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-resu
 <p><strong>Updated:</strong> 2026-07-04 — §14 issuance wrapper &amp; log anchoring, §15 delivery (verbatim rule), §16 verifier walk-through</p>
 <p><strong>Published:</strong> 2026-06-24 (revised 2026-07-04)</p>
 <p><strong>Envelope version:</strong> <code>1.0</code></p>
-<p><strong>Repository:</strong> https://github.com/HemmaBo-se/vrp-spec</p>
-<p><strong>Machine-readable schema:</strong> <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/schemas/vrp-receipt.v1.schema.json"><code>schemas/vrp-receipt.v1.schema.json</code></a></p>
-<p><strong>Reference verifier:</strong> <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/lib/vrp-receipt.mjs"><code>lib/vrp-receipt.mjs</code></a> (Apache-2.0; mirrors <code>hemmabo-mcp-server</code> <code>lib/vrp-receipt.ts</code>)</p>
+<p><strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
+<p><strong>Machine-readable schema:</strong> <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/schemas/vrp-receipt.v1.schema.json"><code>schemas/vrp-receipt.v1.schema.json</code></a></p>
+<p><strong>Reference verifier:</strong> <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/lib/vrp-receipt.mjs"><code>lib/vrp-receipt.mjs</code></a> (Apache-2.0; mirrors <code>hemmabo-mcp-server</code> <code>lib/vrp-receipt.ts</code>)</p>
 <h4>1. Scope</h4>
 <p>VRP Receipt v1 defines a versioned <strong>verifiable booking record</strong>: a flat array of signed attestations from independent trust layers (<code>offer</code>, <code>transport</code>, <code>payment</code>, …) assembled by a host node. It composes the existing VRP signed stay offer (<a href="https://vacationrentalprotocol.com/spec/v0.1"><code>v0.1.md</code></a>) and composition profiles (<a href="https://vacationrentalprotocol.com/spec/profiles/mcp-composition-profile"><code>profiles/mcp-composition-profile.md</code></a>) without making HemmaBo or any operator a gatekeeper.</p>
 <p>This specification is <strong>not</strong> a runtime tool surface, OTA, marketplace, central registry, or booking intermediary. It does not change Portable Attestations v0.1 (<a href="https://vacationrentalprotocol.com/spec/attestations-v0.1"><code>attestations-v0.1.md</code></a>) — especially not its §3 trust model.</p>
 <p>The keywords MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are interpreted as in RFC 2119 and RFC 8174 when capitalized.</p>
 <h4>2. References</h4>
-<ul><li>Core VRP v0.1: <a href="https://vacationrentalprotocol.com/spec/v0.1"><code>v0.1.md</code></a> — JWKS discovery (§3), signed offers (§5)</li><li>Portable Attestations v0.1: <a href="https://vacationrentalprotocol.com/spec/attestations-v0.1"><code>attestations-v0.1.md</code></a> — <code>did:web</code> VC layer (§3–§8)</li><li>MCP composition profile: <a href="https://vacationrentalprotocol.com/spec/profiles/mcp-composition-profile"><code>profiles/mcp-composition-profile.md</code></a> — <code>transport</code> layer (D6)</li><li>Receipt JSON Schema: <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/schemas/vrp-receipt.v1.schema.json"><code>schemas/vrp-receipt.v1.schema.json</code></a></li><li>Conformance vectors: <a href="https://github.com/HemmaBo-se/vrp-spec/tree/main/examples/conformance/receipt"><code>examples/conformance/receipt/</code></a></li><li>ADR 0010 (reference repo): receipt envelope decisions D1–D7</li><li>ADR 0011 (reference repo): key lifecycle K1–K6 (forward spec; §8 below)</li></ul>
+<ul><li>Core VRP v0.1: <a href="https://vacationrentalprotocol.com/spec/v0.1"><code>v0.1.md</code></a> — JWKS discovery (§3), signed offers (§5)</li><li>Portable Attestations v0.1: <a href="https://vacationrentalprotocol.com/spec/attestations-v0.1"><code>attestations-v0.1.md</code></a> — <code>did:web</code> VC layer (§3–§8)</li><li>MCP composition profile: <a href="https://vacationrentalprotocol.com/spec/profiles/mcp-composition-profile"><code>profiles/mcp-composition-profile.md</code></a> — <code>transport</code> layer (D6)</li><li>Receipt JSON Schema: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/schemas/vrp-receipt.v1.schema.json"><code>schemas/vrp-receipt.v1.schema.json</code></a></li><li>Conformance vectors: <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance/receipt"><code>examples/conformance/receipt/</code></a></li><li>ADR 0010 (reference repo): receipt envelope decisions D1–D7</li><li>ADR 0011 (reference repo): key lifecycle K1–K6 (forward spec; §8 below)</li></ul>
 <h4>3. Envelope shape (D1)</h4>
 <p>A v1 receipt MUST be a JSON object with:</p>
 <table><thead><tr><th>Field</th><th>Required</th><th>Description</th></tr></thead><tbody><tr><td><code>vrp_receipt_version</code></td><td>MUST</td><td>Exactly <code>&quot;1.0&quot;</code> for v1 verifiers</td></tr><tr><td><code>subject</code></td><td>MUST</td><td>What the receipt is about (property, stay window, offer id — generic object)</td></tr><tr><td><code>issuer</code></td><td>MUST</td><td>Node identity that assembled the receipt</td></tr><tr><td><code>attestations</code></td><td>MUST</td><td><strong>Flat</strong> array; min length 1</td></tr></tbody></table>
@@ -691,7 +691,7 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-resu
 <ul><li><code>agent_permission_denied</code>, <code>not_available</code>, <code>price_not_exact</code>, <code>direct_booking_url_missing</code></li></ul>
 <p><strong>AP2 payment-layer</strong> (reused from AP2 mandate verification):</p>
 <ul><li><code>mandate_expired</code>, <code>mandate_missing_amount</code>, <code>invalid_charge_amount</code>, <code>amount_exceeds_mandate</code>, <code>currency_mismatch</code>, <code>merchant_mismatch</code>, <code>cart_mismatch</code></li></ul>
-<p>The reference verifier in <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/lib/vrp-receipt.mjs"><code>lib/vrp-receipt.mjs</code></a> implements the envelope-level codes above for v1 receipt verification. Layer-specific offer/AP2 codes apply when a profile-aware verifier interprets attestation payloads.</p>
+<p>The reference verifier in <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/lib/vrp-receipt.mjs"><code>lib/vrp-receipt.mjs</code></a> implements the envelope-level codes above for v1 receipt verification. Layer-specific offer/AP2 codes apply when a profile-aware verifier interprets attestation payloads.</p>
 <h4>7. Signature input rule (D5)</h4>
 <p>The signature MUST be verified over the <strong>compact-JWS bytes as received</strong>. A v1 verifier MUST NOT re-canonicalize JSON to re-derive the signing input.</p>
 <p>Where canonical JSON is required for <strong>non-JWS correlators</strong> (e.g. MCP <code>arguments_sha256</code>), implementations MUST use JCS (RFC 8785). That canonicalization applies only to the hash input — not to JWS verification. See <a href="https://vacationrentalprotocol.com/spec/profiles/mcp-composition-profile"><code>profiles/mcp-composition-profile.md</code></a>.</p>
@@ -703,20 +703,20 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-resu
 <h4>9. Key-discovery layer separation (#5)</h4>
 <p>VRP uses <strong>two key-discovery paths</strong>. Implementers MUST NOT conflate them:</p>
 <table><thead><tr><th>Layer</th><th>Artifact</th><th>Key discovery</th><th>Typical <code>kid</code> form</th></tr></thead><tbody><tr><td><strong>Offer + receipt attestations</strong></td><td>Compact JWS (<code>offer</code>, <code>transport</code>, …)</td><td>Fetch <code>https://{host}/.well-known/jwks.json</code> directly (<a href="https://vacationrentalprotocol.com/spec/v0.1"><code>v0.1.md</code></a> §3)</td><td>Plain string <code>kid</code> matched against JWKS</td></tr><tr><td><strong>Portable Attestations (VC)</strong></td><td><code>application/vc+jwt</code> credentials</td><td>Resolve issuer <code>did:web:{host}</code> → <code>https://{host}/.well-known/did.json</code> (<a href="https://vacationrentalprotocol.com/spec/attestations-v0.1"><code>attestations-v0.1.md</code></a> §3)</td><td>DID URL <code>kid</code> on verification method</td></tr></tbody></table>
-<p>The live reference verifier for <strong>receipt v1</strong> resolves keys via <strong><code>attestation.source</code> → JWKS</strong> and matches JWS <code>kid</code> — it does <strong>not</strong> resolve <code>did:web</code> documents for receipt layers. Portable Attestations remain a separate verification path with their own conformance vectors (<a href="https://github.com/HemmaBo-se/vrp-spec/tree/main/examples/conformance/attestations"><code>examples/conformance/attestations/</code></a>).</p>
+<p>The live reference verifier for <strong>receipt v1</strong> resolves keys via <strong><code>attestation.source</code> → JWKS</strong> and matches JWS <code>kid</code> — it does <strong>not</strong> resolve <code>did:web</code> documents for receipt layers. Portable Attestations remain a separate verification path with their own conformance vectors (<a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance/attestations"><code>examples/conformance/attestations/</code></a>).</p>
 <p>Offer signatures and attestation VC signatures MAY use separate private keys as long as each verifying key is published under the host-domain trust root (<a href="https://vacationrentalprotocol.com/spec/attestations-v0.1"><code>attestations-v0.1.md</code></a> §3 — unchanged by this document).</p>
 <h4>10. Key lifecycle — forward spec (K1–K6)</h4>
 <p>The v1 receipt verifier implements <strong>signature + freshness only</strong>. The following rules are <strong>forward spec</strong> for Phase-5 dispute/insurance positioning (ADR 0011). They do not change v1 verifier behavior today.</p>
 <table><thead><tr><th>Rule</th><th>Summary</th></tr></thead><tbody><tr><td><strong>K1</strong></td><td>Every signature carries JWS <code>kid</code>; receipts surface verifying <code>kid</code> per attestation</td></tr><tr><td><strong>K2</strong></td><td>JWKS MUST retain <strong>retired</strong> public keys for the receipt-retention horizon; metadata: <code>vrp_key_status</code> (<code>active</code> · <code>retired</code> · <code>revoked</code>), <code>vrp_not_before</code>, <code>vrp_not_after</code></td></tr><tr><td><strong>K3</strong></td><td>Rotation is additive with overlap — retired keys remain resolvable</td></tr><tr><td><strong>K4</strong></td><td>Revocation ≠ rotation; <code>vrp_compromised_at</code> anchors fail-closed rules; Phase-5 receipts intended to survive revocation MUST carry <code>tlog</code></td></tr><tr><td><strong>K5</strong></td><td>Per-layer key separation is permitted (<code>payment</code> MAY use a distinct <code>kid</code> from <code>offer</code>)</td></tr><tr><td><strong>K6</strong></td><td>Phase-5 lifecycle-aware codes: <code>key_retired_out_of_window</code>, <code>key_revoked</code>, <code>tlog_required</code></td></tr></tbody></table>
 <p>Until a lifecycle-aware verifier ships, public copy MUST NOT claim long-term post-revocation verifiability.</p>
 <h4>11. Licensing (D7)</h4>
-<ul><li><strong>Specification text</strong> (this document): <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE">CC0 1.0</a></li><li><strong>Reference code + conformance vectors</strong>: <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> with explicit patent grant</li></ul>
+<ul><li><strong>Specification text</strong> (this document): <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a></li><li><strong>Reference code + conformance vectors</strong>: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> with explicit patent grant</li></ul>
 <h4>12. Conformance</h4>
-<p>Conformance vectors live in <a href="https://github.com/HemmaBo-se/vrp-spec/tree/main/examples/conformance/receipt"><code>examples/conformance/receipt/</code></a>. They use a <strong>shared throwaway Ed25519 test key</strong> (<code>kid</code>: <code>vrp-vectors-2026-01-01-01</code>) — never a production host key (D6 test isolation).</p>
-<p>Every <code>npm test</code> run executes <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/scripts/verify-receipt-vectors.mjs"><code>scripts/verify-receipt-vectors.mjs</code></a>, which MUST pass at minimum:</p>
+<p>Conformance vectors live in <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance/receipt"><code>examples/conformance/receipt/</code></a>. They use a <strong>shared throwaway Ed25519 test key</strong> (<code>kid</code>: <code>vrp-vectors-2026-01-01-01</code>) — never a production host key (D6 test isolation).</p>
+<p>Every <code>npm test</code> run executes <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/scripts/verify-receipt-vectors.mjs"><code>scripts/verify-receipt-vectors.mjs</code></a>, which MUST pass at minimum:</p>
 <table><thead><tr><th>Vector</th><th>Expectation</th></tr></thead><tbody><tr><td><code>01-offer-transport-verified.json</code></td><td><code>fully_verified: true</code>; <code>offer</code> + <code>transport</code> both <code>verified</code></td></tr><tr><td><code>03-tampered-signature.json</code></td><td>Manipulated JWS byte → <code>sig_invalid</code>; <code>fully_verified: false</code></td></tr></tbody></table>
 <p>Additional vectors cover partial verification (<code>02</code>), expiry (<code>04</code>), unsupported version (<code>05</code>), and malformed envelope (<code>06</code>).</p>
-<p>Implementers SHOULD treat vector output equality with <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/lib/vrp-receipt.mjs"><code>lib/vrp-receipt.mjs</code></a> as the interoperability bar for v1 receipt verification.</p>
+<p>Implementers SHOULD treat vector output equality with <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/lib/vrp-receipt.mjs"><code>lib/vrp-receipt.mjs</code></a> as the interoperability bar for v1 receipt verification.</p>
 <h4>13. Neutrality (D8)</h4>
 <p>The spec, schema, and vectors are vendor-neutral. HemmaBo is a reference implementer, not an approval authority. Composition profiles are published, not centrally granted.</p>
 <h4>14. Issuance wrapper and log anchoring (envelope level)</h4>
@@ -731,7 +731,7 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-resu
 <ol><li>Obtain the receipt wrapper JWS <strong>verbatim</strong> (§15).</li><li>Verify the wrapper signature against the issuing node's published keys (<code>did:web</code> / JWKS). This proves who issued the receipt and that its content is intact.</li><li>Compute <code>sha256:{hex}</code> over the exact JWS string. This is the leaf identity.</li><li>Fetch the inclusion proof and an STH for that hash — from the node's read-through proxy or from the log operator directly; the two surfaces are interchangeable because of step 5.</li><li>Verify the STH signature against the <strong>log operator's</strong> published key (<a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">Transparency Log</a> §5.1) — never against a key the node serves.</li><li>Recompute the Merkle root from the leaf hash, leaf index, tree size, and audit path (RFC 6962 §2.1.1). The inclusion claim holds <strong>iff</strong> the recomputed root equals the STH's <code>root_hash</code>; a failed recomputation falsifies it.</li><li>To additionally remove trust in the log operator, obtain a second tree head (archived, <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">Transparency Log</a> §7.1, or independently observed) and verify the consistency proof between the two tree sizes.</li></ol>
 <p>What this proves, in the layered formulation of <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">Transparency Log</a> §8.1: the exact promised terms — price, conditions, issuer, time — existed and were recorded in the log no later than the STH timestamp, tamper-evidently; steps 1–6 require no trust in the node, and step 7 removes the remaining trust in the log operator by making any rewrite cryptographically detectable.</p>
 <h4>17. License</h4>
-<p>Specification text: dedicated to the public domain under <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (ADR 0010 D7).</p>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (ADR 0010 D7).</p>
 <hr>
 <h2>10. Booking Proof Chain v0.1</h2>
 <p>*Canonical source: <a href="https://vacationrentalprotocol.com/spec/proof-chain-v0.1">https://vacationrentalprotocol.com/spec/proof-chain-v0.1</a>*</p>
@@ -739,7 +739,7 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-resu
 <h3>VRP Booking Proof Chain — Specification v0.1</h3>
 <p><strong>Status:</strong> Public draft</p>
 <p><strong>Published:</strong> 2026-07-23</p>
-<p><strong>Repository:</strong> https://github.com/HemmaBo-se/vrp-spec</p>
+<p><strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
 <p><strong>Builds on:</strong> <a href="https://vacationrentalprotocol.com/spec/v0.1">Core VRP v0.1</a> (signed verified stay offers), <a href="https://vacationrentalprotocol.com/spec/receipt-v1">Receipt Envelope v1</a> (issuance wrapper §14, verbatim delivery §15, verifier walk-through §16), <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">Transparency Log v0.1</a> (leaf hashing rule §4.1).</p>
 <h4>1. Scope</h4>
 <p>This document <strong>names and normatively defines the Booking Proof Chain</strong>: the single derivation family that binds a booking's offer, payment, receipt, and confirmation into one recomputable chain. Every link is the same primitive —</p>
@@ -783,7 +783,7 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-resu
 <h4>10. Neutrality</h4>
 <p>The spec is vendor-neutral. HemmaBo is a reference implementer, not an approval authority. Any node, on any stack, can produce and any party can verify a Booking Proof Chain without permission from anyone.</p>
 <h4>11. License</h4>
-<p>Specification text: dedicated to the public domain under <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE">CC0 1.0</a>.</p>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>.</p>
 <hr>
 <h2>11. Node Seal v0.1</h2>
 <p>*Canonical source: <a href="https://vacationrentalprotocol.com/spec/node-seal-v0.1">https://vacationrentalprotocol.com/spec/node-seal-v0.1</a>*</p>
@@ -791,7 +791,7 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-resu
 <h3>VRP Node Seal — Specification v0.1</h3>
 <p><strong>Status:</strong> Public draft — the pattern is named and its bytes are fixed; this version requires no new runtime behavior from agents or payment rails (see §1 and §9).</p>
 <p><strong>Published:</strong> 2026-07-24</p>
-<p><strong>Repository:</strong> https://github.com/HemmaBo-se/vrp-spec</p>
+<p><strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
 <p><strong>Builds on:</strong> <a href="https://vacationrentalprotocol.com/spec/v0.1">Core VRP v0.1</a> (<code>did:web</code> node identity, signed offers), <a href="https://vacationrentalprotocol.com/spec/well-known-uri-v0.1">Well-Known URI v0.1</a> (discovery layout), <a href="https://vacationrentalprotocol.com/spec/proof-chain-v0.1">Booking Proof Chain v0.1</a> (supersession semantics §7).</p>
 <h4>1. Scope</h4>
 <p>This document <strong>names and normatively defines the Node Seal</strong>: a two-directional, independently verifiable binding between a node's <strong>domain identity</strong> and its <strong>payment-receiving key</strong>.</p>
@@ -855,15 +855,15 @@ issued_at: &lt;issued_at&gt;</code></pre>
 <h4>11. Neutrality</h4>
 <p>The spec is vendor-neutral. HemmaBo is a reference implementer, not an approval authority. Any node, on any stack, can publish and any party can verify a Node Seal without permission from anyone.</p>
 <h4>12. License</h4>
-<p>Specification text: dedicated to the public domain under <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE">CC0 1.0</a>.</p>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>.</p>
 <hr>
 <h2>12. Addon attestation layer v0.1</h2>
 <p>*Canonical source: <a href="https://vacationrentalprotocol.com/spec/addon-attestation-layer-v0.1">https://vacationrentalprotocol.com/spec/addon-attestation-layer-v0.1</a>*</p>
 <hr>
 <h3>VRP Addon Attestation Layer — Specification v0.1</h3>
-<p><strong>Status:</strong> Public draft — <strong>proposal for discussion</strong> (tracks <a href="https://github.com/HemmaBo-se/vrp-spec/issues/63">issue #63</a>). Additive by construction: <code>addon</code> rides the open layer vocabulary of <a href="https://vacationrentalprotocol.com/spec/receipt-v1">Receipt Envelope v1 §3</a> (&quot;a new trust layer = a new <code>attestations[]</code> entry — no central approval is required&quot;). Nothing in this document changes what a receipt-v1 verifier MUST do today.</p>
+<p><strong>Status:</strong> Public draft — <strong>proposal for discussion</strong> (tracks <a href="https://github.com/vacationrentalprotocol/vrp-spec/issues/63">issue #63</a>). Additive by construction: <code>addon</code> rides the open layer vocabulary of <a href="https://vacationrentalprotocol.com/spec/receipt-v1">Receipt Envelope v1 §3</a> (&quot;a new trust layer = a new <code>attestations[]</code> entry — no central approval is required&quot;). Nothing in this document changes what a receipt-v1 verifier MUST do today.</p>
 <p><strong>Published:</strong> 2026-08-01</p>
-<p><strong>Repository:</strong> https://github.com/HemmaBo-se/vrp-spec</p>
+<p><strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
 <p><strong>Builds on:</strong> <a href="https://vacationrentalprotocol.com/spec/receipt-v1">Receipt Envelope v1</a> (layer vocabulary §3, per-attestation freshness D2, signature input rule D5, key lifecycle §10), <a href="https://vacationrentalprotocol.com/spec/v0.1">Core VRP v0.1</a> (signed offers, host JWKS), <a href="https://vacationrentalprotocol.com/spec/proof-chain-v0.1">Booking Proof Chain v0.1</a> (supersession semantics).</p>
 <h4>1. Scope</h4>
 <p>This document defines the semantics of one attestation layer, <strong><code>addon</code></strong>, for add-on services a host sells against an existing offer or stay: late checkout, early check-in, stay extensions, and comparable extras.</p>
@@ -901,15 +901,15 @@ issued_at: &lt;issued_at&gt;</code></pre>
 <h4>9. Neutrality</h4>
 <p>The spec is vendor-neutral. HemmaBo is a reference implementer, not an approval authority. Any node, on any stack, can sign and any party can verify an addon attestation without permission from anyone.</p>
 <h4>10. License</h4>
-<p>Specification text: dedicated to the public domain under <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE">CC0 1.0</a>.</p>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>.</p>
 <hr>
 <h2>13. Domain continuity v0.1</h2>
 <p>*Canonical source: <a href="https://vacationrentalprotocol.com/spec/domain-continuity-v0.1">https://vacationrentalprotocol.com/spec/domain-continuity-v0.1</a>*</p>
 <hr>
 <h3>VRP Domain Continuity — Specification v0.1</h3>
-<p><strong>Status:</strong> Public draft — <strong>proposal for discussion</strong> (tracks <a href="https://github.com/HemmaBo-se/vrp-spec/issues/59">issue #59</a>). Forward spec in the <a href="https://vacationrentalprotocol.com/spec/receipt-v1">Receipt v1 §10</a> sense: nothing here changes what a v0.1 or receipt-v1 verifier MUST do today, and legacy nodes that publish none of the signals below keep exactly today's behavior.</p>
+<p><strong>Status:</strong> Public draft — <strong>proposal for discussion</strong> (tracks <a href="https://github.com/vacationrentalprotocol/vrp-spec/issues/59">issue #59</a>). Forward spec in the <a href="https://vacationrentalprotocol.com/spec/receipt-v1">Receipt v1 §10</a> sense: nothing here changes what a v0.1 or receipt-v1 verifier MUST do today, and legacy nodes that publish none of the signals below keep exactly today's behavior.</p>
 <p><strong>Published:</strong> 2026-08-01</p>
-<p><strong>Repository:</strong> https://github.com/HemmaBo-se/vrp-spec</p>
+<p><strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
 <p><strong>Builds on:</strong> <a href="https://vacationrentalprotocol.com/spec/v0.1">Core VRP v0.1</a> (§3 JWKS, §3.1 key rotation and revocation, §9 three-state verification), <a href="https://vacationrentalprotocol.com/spec/receipt-v1">Receipt Envelope v1</a> (§10 key lifecycle K1–K6, D3 transparency-log field), <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">Transparency Log v0.1</a>.</p>
 <h4>1. Scope and threat model</h4>
 <p>VRP roots node identity in the host's own domain: <code>did:web</code>, JWKS at a well-known path. Core v0.1 §3.1 covers <strong>key</strong> events (rotation, revocation). It is silent on <strong>domain</strong> events:</p>
@@ -931,7 +931,7 @@ issued_at: &lt;issued_at&gt;</code></pre>
 <h4>7. Neutrality</h4>
 <p>The spec is vendor-neutral. HemmaBo is a reference implementer, not an approval authority. Any node, on any stack, can publish a continuity statement and any party can evaluate one without permission from anyone.</p>
 <h4>8. License</h4>
-<p>Specification text: dedicated to the public domain under <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE">CC0 1.0</a>.</p>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>.</p>
 <hr>
 <h2>14. Implement VRP signed offers</h2>
 <p>*Canonical source: <a href="https://vacationrentalprotocol.com/docs/implement-vrp">https://vacationrentalprotocol.com/docs/implement-vrp</a>*</p>
@@ -962,11 +962,11 @@ issued_at: &lt;issued_at&gt;</code></pre>
 <p>For issuer <code>did:web:example-host.invalid</code>, the DID document is published at:</p>
 <pre><code>https://example-host.invalid/.well-known/did.json</code></pre>
 <p>The DID document should include an attestation verification method that is controlled by the host-domain DID. The same host-domain trust root may also control a separate offer-signing key. The private keys do not need to be the same.</p>
-<p>Example: <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/examples/attestations/did-web-document.v0.1.json">did-web-document.v0.1.json</a>.</p>
+<p>Example: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/examples/attestations/did-web-document.v0.1.json">did-web-document.v0.1.json</a>.</p>
 <h4>Context Publishing</h4>
 <p>VRP terms are defined by the VRP context:</p>
 <pre><code>https://vacationrentalprotocol.com/contexts/v1</code></pre>
-<p>The repository copy is <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/contexts/v1.jsonld">contexts/v1.jsonld</a>. Deployments should serve the canonical extensionless URL above and may also serve <code>/contexts/v1.jsonld</code> as an equivalent copy. Both should return the same JSON-LD document.</p>
+<p>The repository copy is <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/contexts/v1.jsonld">contexts/v1.jsonld</a>. Deployments should serve the canonical extensionless URL above and may also serve <code>/contexts/v1.jsonld</code> as an equivalent copy. Both should return the same JSON-LD document.</p>
 <h4>Privacy Checklist</h4>
 <p>Do not publish guest reviews, guest outcomes, guest risk, guest scores, or guest history in v0.1.</p>
 <p><code>VRPVerifiedStayCredential</code>, if used, must stay privacy-minimized:</p>
@@ -1030,7 +1030,7 @@ issued_at: &lt;issued_at&gt;</code></pre>
 <p>*Canonical source: <a href="https://vacationrentalprotocol.com/docs/first-mover-evidence-memo">https://vacationrentalprotocol.com/docs/first-mover-evidence-memo</a>*</p>
 <hr>
 <h3>First-mover evidence memo — Vacation Rental Protocol</h3>
-<p><strong>Status:</strong> Published evidence memo   <strong>Date:</strong> 2026-06-14   <strong>Protocol draft:</strong> v0.1   <strong>Public site:</strong> https://vacationrentalprotocol.com   <strong>Repository:</strong> https://github.com/HemmaBo-se/vrp-spec</p>
+<p><strong>Status:</strong> Published evidence memo   <strong>Date:</strong> 2026-06-14   <strong>Protocol draft:</strong> v0.1   <strong>Public site:</strong> https://vacationrentalprotocol.com   <strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
 <h4>Permitted claim</h4>
 <blockquote>To our knowledge, Vacation Rental Protocol is the first open protocol focused on host-domain signed, AI-agent-readable vacation rental stay offers.</blockquote>
 <p>Do not use absolute wording such as &quot;world's first&quot; without separate legal review.</p>

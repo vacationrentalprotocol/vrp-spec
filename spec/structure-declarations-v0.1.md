@@ -3,7 +3,7 @@
 **Status:** Public draft
 **Published:** 2026-07-04
 **Canonical URL:** https://vacationrentalprotocol.com/spec/structure-declarations-v0.1
-**Repository:** https://github.com/HemmaBo-se/vrp-spec
+**Repository:** https://github.com/vacationrentalprotocol/vrp-spec
 
 The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are to be
 interpreted as described in RFC 2119.

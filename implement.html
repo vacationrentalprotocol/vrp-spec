@@ -216,7 +216,7 @@
           <a href="/implement">Implement</a>
           <a href="/verify">Verify offer</a>
           <a href="/reference-implementation">Reference impl</a>
-          <a href="https://github.com/HemmaBo-se/vrp-spec/tree/main/examples/conformance">Conformance</a>
+          <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance">Conformance</a>
           <a href="/declarations">Declarations</a>
           <a href="/docs/interop-and-trust-positioning.md">Interop</a>
         </div>
@@ -472,25 +472,25 @@ export function signOffer(offer) {
   return `${signingInput}.${b64url(signature)}`; // compact JWS
 }</pre>
           <div class="resource-list" style="margin-top: 20px">
-            <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/lib/vrp-jws.mjs">
+            <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/lib/vrp-jws.mjs">
               <span>Verification helper — lib/vrp-jws.mjs</span>
               <code>verifyCompactJws(jws, jwks) → { header, payload, kid }</code>
             </a>
-            <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/scripts/conformance.mjs">
+            <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/scripts/conformance.mjs">
               <span>Signing + verification reference — scripts/conformance.mjs</span>
               <code>signOffer(offer) · verifyCompactJws(jws, jwks)</code>
             </a>
-            <a href="https://github.com/HemmaBo-se/vrp-spec/tree/main/schemas">
+            <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/schemas">
               <span>JSON Schemas (CC0) — validate your documents</span>
               <code>discovery · jwks · verified-stay-offer</code>
             </a>
           </div>
           <p class="note" style="margin-top: 16px">
             License boundary: the specification text and schemas are
-            <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE">CC0-1.0</a>
+            <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0-1.0</a>
             (public domain — implement freely); the reference code and
             conformance vectors are
-            <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a>,
+            <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a>,
             which includes a royalty-free patent grant (§3).
           </p>
         </div>
@@ -508,19 +508,19 @@ export function signOffer(offer) {
             <code>npm run verify-vectors</code>).
           </p>
           <div class="resource-list">
-            <a href="https://github.com/HemmaBo-se/vrp-spec/tree/main/examples/conformance">
+            <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance">
               <span>Conformance vectors (overview + README)</span>
               <code>examples/conformance/</code>
             </a>
-            <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/examples/conformance/verified-stay-offer.signed.v0.1.json">
+            <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/examples/conformance/verified-stay-offer.signed.v0.1.json">
               <span>Signed verified-stay-offer vector</span>
               <code>verified-stay-offer.signed.v0.1.json</code>
             </a>
-            <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/examples/conformance/jwks.v0.1.json">
+            <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/examples/conformance/jwks.v0.1.json">
               <span>JWKS for the vector</span>
               <code>jwks.v0.1.json</code>
             </a>
-            <a href="https://github.com/HemmaBo-se/vrp-spec/blob/main/examples/conformance/three-state-verification.v0.1.json">
+            <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/examples/conformance/three-state-verification.v0.1.json">
               <span>Three-state behavior fixtures (Affirmed / Negated / Unknown)</span>
               <code>three-state-verification.v0.1.json</code>
             </a>

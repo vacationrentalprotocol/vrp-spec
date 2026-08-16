@@ -4,7 +4,7 @@
 
 **Published:** 2026-07-23
 
-**Repository:** https://github.com/HemmaBo-se/vrp-spec
+**Repository:** https://github.com/vacationrentalprotocol/vrp-spec
 
 **Builds on:** [Core VRP v0.1](./v0.1.md) (signed verified stay offers),
 [Receipt Envelope v1](./receipt-v1.md) (issuance wrapper §14, verbatim delivery §15,

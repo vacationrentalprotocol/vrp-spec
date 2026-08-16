@@ -1,14 +1,14 @@
 # VRP Domain Continuity — Specification v0.1
 
 **Status:** Public draft — **proposal for discussion** (tracks
-[issue #59](https://github.com/HemmaBo-se/vrp-spec/issues/59)). Forward spec
+[issue #59](https://github.com/vacationrentalprotocol/vrp-spec/issues/59)). Forward spec
 in the [Receipt v1 §10](./receipt-v1.md) sense: nothing here changes what a
 v0.1 or receipt-v1 verifier MUST do today, and legacy nodes that publish
 none of the signals below keep exactly today's behavior.
 
 **Published:** 2026-08-01
 
-**Repository:** https://github.com/HemmaBo-se/vrp-spec
+**Repository:** https://github.com/vacationrentalprotocol/vrp-spec
 
 **Builds on:** [Core VRP v0.1](./v0.1.md) (§3 JWKS, §3.1 key rotation and
 revocation, §9 three-state verification),

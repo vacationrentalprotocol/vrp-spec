@@ -80,7 +80,7 @@ concepts: a host domain serves a signed offer, and an agent verifies the price a
 availability came from that domain before quoting or booking — 0% intermediary.
 Live: `curl https://villaakerlyckan.se/.well-known/vacation-rental.json`. VRP's
 profile mapping OKF ↔ proof is published at
-`spec/profiles/okf-profile-v0.1.md` in `HemmaBo-se/vrp-spec`.
+`spec/profiles/okf-profile-v0.1.md` in `vacationrentalprotocol/vrp-spec`.
 
 We are offering this as a generalizable convention because the trust gap is not
 specific to rentals — any priced or sourced OKF concept has it.

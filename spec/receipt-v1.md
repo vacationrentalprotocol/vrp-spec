@@ -8,7 +8,7 @@
 
 **Envelope version:** `1.0`
 
-**Repository:** https://github.com/HemmaBo-se/vrp-spec
+**Repository:** https://github.com/vacationrentalprotocol/vrp-spec
 
 **Machine-readable schema:** [`schemas/vrp-receipt.v1.schema.json`](../schemas/vrp-receipt.v1.schema.json)
 

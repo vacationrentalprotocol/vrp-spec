@@ -1,7 +1,7 @@
 # VRP Spec — Test Coverage Analysis
 
 **Date:** 2026-06-02
-**Scope:** `hemmabo-se/vrp-spec` (protocol specification, JSON Schema, JSON-LD
+**Scope:** `vacationrentalprotocol/vrp-spec` (protocol specification, JSON Schema, JSON-LD
 context, example payloads, and the published website).
 
 This document analyzes the current automated-verification coverage of the

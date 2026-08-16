@@ -6,7 +6,7 @@ version requires no new runtime behavior from agents or payment rails (see
 
 **Published:** 2026-07-24
 
-**Repository:** https://github.com/HemmaBo-se/vrp-spec
+**Repository:** https://github.com/vacationrentalprotocol/vrp-spec
 
 **Builds on:** [Core VRP v0.1](./v0.1.md) (`did:web` node identity, signed
 offers), [Well-Known URI v0.1](./well-known-uri-v0.1.md) (discovery layout),

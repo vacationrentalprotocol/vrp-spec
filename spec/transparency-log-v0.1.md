@@ -10,7 +10,7 @@ guarantee wording (issue #60-adjacent; per-booking inclusion proofs)
 
 **Canonical context:** https://vacationrentalprotocol.com/contexts/v1
 
-**Repository:** https://github.com/HemmaBo-se/vrp-spec
+**Repository:** https://github.com/vacationrentalprotocol/vrp-spec
 
 ## 1. Scope
 

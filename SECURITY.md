@@ -17,7 +17,7 @@ not a permission any authority can grant or revoke.
 Please report privately — do **not** open a public issue for a suspected
 vulnerability.
 
-- **Preferred:** GitHub **[Report a vulnerability](https://github.com/HemmaBo-se/vrp-spec/security/advisories/new)**
+- **Preferred:** GitHub **[Report a vulnerability](https://github.com/vacationrentalprotocol/vrp-spec/security/advisories/new)**
   (Security → Advisories → Report a vulnerability). This opens a private advisory
   visible only to you and the maintainers.
 - **Alternative:** email **info@hemmabo.se** with `VRP SECURITY` in the subject.

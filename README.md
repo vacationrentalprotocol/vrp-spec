@@ -96,6 +96,15 @@ profiles where each verifier chooses which issuers to trust.
 The HemmaBo MCP server is an implementation-specific integration, not a VRP
 runtime tool defined by the v0.1 specification.
 
+## Security
+
+Report a vulnerability and read the scope in [`SECURITY.md`](./SECURITY.md). Deeper
+notes live in [`docs/security/`](./docs/security/):
+
+- [Threat model](./docs/security/THREAT_MODEL.md) — STRIDE-oriented, focused on Ed25519 signing, JWKS, host-domain-as-source-of-truth, and a compromised host key.
+- [Key rotation](./docs/security/KEY_ROTATION.md) — additive rotation per spec §3.1, and the current verified live-node key posture.
+- [Incident response](./docs/security/INCIDENT_RESPONSE.md) — handling a compromised host key or JWKS.
+
 ## License
 
 VRP uses a dual-license boundary (ADR 0010 D7), so the standard is free to implement while the reference code carries an explicit patent grant:

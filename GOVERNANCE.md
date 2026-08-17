@@ -1,7 +1,7 @@
 # Governance
 
-**Status:** Adopted 2026-08-17 · pre-1.0. This document takes effect now and
-evolves with the standard; changes to it follow §12.
+**Status:** Proposed 2026-08-17 · pre-1.0. Takes effect when merged to `main`;
+thereafter it evolves with the standard under §12.
 
 This document defines how the Vacation Rental Protocol (VRP) specification is
 governed: who may change it, how decisions are made, and the commitments that
@@ -52,9 +52,10 @@ a MAJOR version and maintainer consensus (§4, §5):
 
 **Continuity.** One maintainer holds the *project-continuity* role
 ([MAINTAINERS.md](MAINTAINERS.md)): keeping the standard maintained — releases,
-security response, and control of the project's domains, keys of record, and
-repository access — if the lead maintainer becomes unavailable. The continuity
-maintainer may add maintainers under §8 to restore active stewardship.
+security response, and control of the project's domains, repositories, and
+release process — if the lead maintainer becomes unavailable. The continuity
+maintainer may add maintainers under §8 to restore active stewardship. (VRP has
+no central signing keys; each node holds its own — see §2.)
 
 ## 4. Decision-making
 
@@ -74,8 +75,10 @@ resolved by discussion rather than by vote.
   capture.
 - **Two approvals once two maintainers are active.** While the project has a
   single active maintainer, that maintainer approves. As soon as a second
-  maintainer is active — which the path to 1.0 requires (§5) — a substantive
-  change needs approval from two maintainers.
+  maintainer is active, a substantive change needs approval from two
+  maintainers. (An independent implementation on the path to 1.0 (§5) is a
+  likely occasion for a second maintainer to join, but this rule applies
+  whenever two maintainers are active, regardless of implementation count.)
 - **Conformance-gated.** A change to a normative requirement or to signing or
   verification semantics is not accepted until it is covered by the conformance
   vectors in this repository (§6).

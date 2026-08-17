@@ -1,5 +1,8 @@
 # Governance
 
+**Status:** Adopted 2026-08-17 · pre-1.0. This document takes effect now and
+evolves with the standard; changes to it follow §12.
+
 This document defines how the Vacation Rental Protocol (VRP) specification is
 governed: who may change it, how decisions are made, and the commitments that
 keep the standard neutral, stable, and independent of any single operator.
@@ -47,6 +50,12 @@ a MAJOR version and maintainer consensus (§4, §5):
 - **Contributors** are anyone who proposes a change through an issue or pull
   request. No affiliation, employer, or credential is required to contribute.
 
+**Continuity.** One maintainer holds the *project-continuity* role
+([MAINTAINERS.md](MAINTAINERS.md)): keeping the standard maintained — releases,
+security response, and control of the project's domains, keys of record, and
+repository access — if the lead maintainer becomes unavailable. The continuity
+maintainer may add maintainers under §8 to restore active stewardship.
+
 ## 4. Decision-making
 
 The project runs on **lazy consensus**: silence is assent, and objections are
@@ -63,6 +72,13 @@ resolved by discussion rather than by vote.
 - **No consensus means no change.** If maintainers do not converge, the status
   quo stands. This deliberately biases the standard toward stability and against
   capture.
+- **Two approvals once two maintainers are active.** While the project has a
+  single active maintainer, that maintainer approves. As soon as a second
+  maintainer is active — which the path to 1.0 requires (§5) — a substantive
+  change needs approval from two maintainers.
+- **Conformance-gated.** A change to a normative requirement or to signing or
+  verification semantics is not accepted until it is covered by the conformance
+  vectors in this repository (§6).
 - **Out of bounds.** A change that would make VRP depend on a central issuer,
   registry, or gatekeeper contradicts ADR 0002 and will not be accepted, regard-
   less of consensus.
@@ -128,6 +144,10 @@ seniority or affiliation.
 - **Stepping down.** A maintainer may resign at any time.
 - **Inactivity.** A long-inactive maintainer may be moved to emeritus by
   consensus, preserving credit without implying active stewardship.
+- **Succession.** If no maintainer has been active for 90 days, the
+  project-continuity maintainer (§3) — or, failing that, any contributor via a
+  public issue — may initiate restoration of active maintainership under this
+  section, so the standard is never orphaned.
 
 Every change to the maintainer set is reflected in [MAINTAINERS.md](MAINTAINERS.md).
 

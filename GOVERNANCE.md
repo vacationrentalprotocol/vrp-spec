@@ -1,7 +1,7 @@
 # Governance
 
-**Status:** Proposed 2026-08-17 · pre-1.0. Takes effect when merged to `main`;
-thereafter it evolves with the standard under §12.
+**Status:** In force since 2026-08-18 · pre-1.0. This document is active and
+evolves with the standard under §12.
 
 This document defines how the Vacation Rental Protocol (VRP) specification is
 governed: who may change it, how decisions are made, and the commitments that

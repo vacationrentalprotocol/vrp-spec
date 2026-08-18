@@ -1,0 +1,23 @@
+# Code owners for vacationrentalprotocol/vrp-spec
+#
+# Listed owners are automatically requested for review on matching changes.
+# Code ownership is a review signal, not a trust authority — the decision
+# process is defined in GOVERNANCE.md. Project-continuity maintainers are in
+# MAINTAINERS.md but are not listed as review owners here.
+
+# Default owner for everything
+*                       @HemmaBo-se
+
+# Normative surface — substantive changes also require an ADR and maintainer
+# consensus (GOVERNANCE.md §4).
+/spec/                  @HemmaBo-se
+/schemas/               @HemmaBo-se
+/contexts/              @HemmaBo-se
+/examples/conformance/  @HemmaBo-se
+/docs/adr/              @HemmaBo-se
+
+# Governance and security documents
+/GOVERNANCE.md          @HemmaBo-se
+/MAINTAINERS.md         @HemmaBo-se
+/SECURITY.md            @HemmaBo-se
+/CODE_OF_CONDUCT.md     @HemmaBo-se

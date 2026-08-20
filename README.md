@@ -4,6 +4,8 @@
 
 Created and maintained by Rouiada Abbas. Anyone may implement it; HemmaBo is the reference implementation. Current public draft: v0.1.
 
+The `vacation-rental.json` well-known URI suffix is registered in the [IANA Well-Known URIs registry](https://www.iana.org/assignments/well-known-uris/) (provisional, 2026-08-19).
+
 VRP lets AI agents verify that a stay offer came from the host-owned domain, includes fresh availability, exact pricing, and a direct booking URL before quoting.
 
 Core VRP proves the offer is real. Portable attestations prove selected trust history without making HemmaBo, or any other operator, the authority over truth.

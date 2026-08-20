@@ -35,5 +35,9 @@ verifiability classes), and the formal IANA registration template for the
   analysis) intentionally stay **out** of the I-D — spec text only. They
   belong in a separate research paper.
 - The IANA Considerations section is the stable specification anchor for
-  the open registration request
-  [protocol-registries/well-known-uris#93](https://github.com/protocol-registries/well-known-uris/issues/93).
+  the registration: the `vacation-rental.json` well-known URI suffix is
+  registered in the IANA Well-Known URIs registry (provisional, 2026-08-19).
+  Registration history:
+  [protocol-registries/well-known-uris#93](https://github.com/protocol-registries/well-known-uris/issues/93)
+  (closed). `-01` should update the IANA Considerations wording from
+  "IANA is requested to register" to reflect the existing registration.

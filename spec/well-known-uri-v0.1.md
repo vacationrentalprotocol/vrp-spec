@@ -1,10 +1,10 @@
 # VRP Well-Known URI — `vacation-rental.json` — Specification v0.1
 
-**Status:** Draft (provisional). IANA registry request:
-https://github.com/protocol-registries/well-known-uris/issues/93 (being aligned
-to this suffix).
+**Status:** Draft. The `vacation-rental.json` well-known URI suffix is
+registered in the IANA Well-Known URIs registry (provisional, 2026-08-19):
+https://www.iana.org/assignments/well-known-uris/
 
-**Published:** 2026-06-19 (revised 2026-07-30)
+**Published:** 2026-06-19 (revised 2026-08-20)
 
 **Change controller:** Vacation Rental Protocol (VRP) — Rouiada Abbas,
 author/maintainer; hello@vacationrentalprotocol.com
@@ -104,17 +104,17 @@ The same document is also served at the alias path
 
 ## 7. IANA considerations
 
-This document is the specification reference for the **requested provisional**
-registration of the `vacation-rental.json` well-known URI suffix in the IANA
-Well-Known URIs registry (RFC 8615). The registration request is open and
-pending review:
-https://github.com/protocol-registries/well-known-uris/issues/93 (being aligned
-to this suffix).
+This document is the specification reference for the provisional registration
+of the `vacation-rental.json` well-known URI suffix in the IANA Well-Known URIs
+registry (RFC 8615), registered 2026-08-19:
+https://www.iana.org/assignments/well-known-uris/
+Registration history:
+https://github.com/protocol-registries/well-known-uris/issues/93 (closed).
 
 - **URI suffix:** `vacation-rental.json`
 - **Change controller:** Vacation Rental Protocol (VRP) — Rouiada Abbas;
   hello@vacationrentalprotocol.com
-- **Status:** provisional (requested)
+- **Status:** provisional (registered 2026-08-19)
 - **Specification document:** this page.
 
 ## License

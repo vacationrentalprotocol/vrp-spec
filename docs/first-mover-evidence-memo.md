@@ -1,7 +1,7 @@
 # First-mover evidence memo — Vacation Rental Protocol
 
 **Status:** Published evidence memo  
-**Date:** 2026-06-14  
+**Date:** 2026-06-14 (registry evidence added 2026-08-20)  
 **Protocol draft:** v0.1  
 **Public site:** https://vacationrentalprotocol.com  
 **Repository:** https://github.com/vacationrentalprotocol/vrp-spec
@@ -47,6 +47,22 @@ villaakerlyckan.se
 -> signed verified_stay_offer (EdDSA JWS)
 -> direct booking URL on host domain
 ```
+
+## Registry evidence (2026-08-19)
+
+The `vacation-rental.json` well-known URI suffix is registered in the IANA
+Well-Known URIs registry (provisional, 2026-08-19), with this repository's
+[Well-Known URI specification](../spec/well-known-uri-v0.1.md) as the
+registration's specification reference. Verifiable at
+<https://www.iana.org/assignments/well-known-uris/> (`well-known-uris-1.csv`):
+
+```text
+vacation-rental.json,[https://vacationrentalprotocol.com/spec/well-known-uri-v0.1],provisional,[Rouiada_Abbas],,2026-08-19,
+```
+
+A provisional registration records the URI suffix name (RFC 8615); it is not an
+IETF standards-track approval, and it is not a directory of nodes or properties
+— VRP still has no central registry of participants.
 
 ## Reference implementation
 

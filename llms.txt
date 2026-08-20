@@ -74,6 +74,11 @@ Agents should treat the host-owned domain as the source of truth for VRP offers
 and attestations. HemmaBo is a reference implementation and standards
 contributor, not the owner of truth.
 
+An agent that already knows a host domain fetches
+https://{host-domain}/.well-known/vacation-rental.json — the registered
+well-known URI suffix — to discover that node's endpoints and keys. Per-host
+and deterministic; there is no central discovery index to query.
+
 VRP verification should not require HemmaBo, a VRP-operated trusted issuer
 registry, a host accreditation program, a certification company, or a central
 discovery index.

@@ -3215,7 +3215,9 @@ Do not use VRP for:
 
 #### Verification Steps
 
-1. Fetch `https://{host-domain}/.well-known/vacation-rental.json`.
+1. Fetch `https://{host-domain}/.well-known/vacation-rental.json` — the
+   `vacation-rental.json` suffix is registered in the IANA Well-Known URIs
+   registry (provisional, 2026-08-19).
 2. Confirm `protocol` is `vacation-rental-protocol`.
 3. Confirm `protocol_version` is `0.1`.
 4. Confirm `canonical_domain` matches the host-owned domain.

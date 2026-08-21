@@ -20,7 +20,7 @@ vulnerability.
 - **Preferred:** GitHub **[Report a vulnerability](https://github.com/vacationrentalprotocol/vrp-spec/security/advisories/new)**
   (Security → Advisories → Report a vulnerability). This opens a private advisory
   visible only to you and the maintainers.
-- **Alternative:** email **info@hemmabo.se** with `VRP SECURITY` in the subject.
+- **Alternative:** email **security@vacationrentalprotocol.com** with `VRP SECURITY` in the subject.
 
 Please include, as far as you can:
 

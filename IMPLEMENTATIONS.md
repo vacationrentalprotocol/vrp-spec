@@ -37,8 +37,10 @@ its own domain. Start with [docs/implement-vrp.md](docs/implement-vrp.md).
 
 ## Get listed
 
-Open a pull request adding a row to the table above, or open an issue with a
-link to your implementation. The only requirement for a verifier is that it
+Your implementation lives in your own repository, under your own name and
+license — this repository takes only the row that points to it. Open a pull
+request adding a row to the table above, or open an issue with a link to your
+implementation. The only requirement for a verifier is that it
 passes the committed conformance vectors; for a node, that its discovery
 document, JWKS, and signed offers verify. Decision process per
 [GOVERNANCE.md](GOVERNANCE.md).

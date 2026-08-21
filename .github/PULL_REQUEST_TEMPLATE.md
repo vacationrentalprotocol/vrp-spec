@@ -3,6 +3,10 @@ Thanks for contributing to the Vacation Rental Protocol.
 See CONTRIBUTING.md for the proposal process and GOVERNANCE.md for how decisions
 are made. Keep implementation-specific details out of the standard unless they
 are needed as reference examples.
+
+Adding an implementation? Implementations live in their author's own
+repository — a PR here should only add a row to IMPLEMENTATIONS.md
+(see "Get listed").
 -->
 
 ## What

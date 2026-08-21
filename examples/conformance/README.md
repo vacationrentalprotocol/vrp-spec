@@ -18,6 +18,18 @@ result.
   — machine-readable fixtures for Affirmed, Negated, and Unknown verifier
   behavior.
 
+## Self-describing offer vectors
+
+The five base signed-offer cases also exist as **self-describing vector files**
+in [`offer/`](./offer/), format `{ name, description, clock, jwks, input, expected }`:
+each file embeds its own key set, evaluation clock, and expected outcome, so an
+independent implementation can consume them as pure data without reading any
+JavaScript in this repository. Cases: valid+fresh, valid+expired, tampered
+signature, unknown `kid`, wrong key. CI checks that the reference verifier
+agrees with every committed file (`npm test`, `verify-offer-vectors`). See
+[`IMPLEMENTATIONS.md`](../../IMPLEMENTATIONS.md) for how to test your own
+verifier against them.
+
 ## Receipt v1 vectors
 
 Two-attestation receipt envelope conformance (offer + transport) lives in

@@ -6,18 +6,18 @@
 # MAINTAINERS.md but are not listed as review owners here.
 
 # Default owner for everything
-*                       @HemmaBo-se
+*                       @vacationrentalprotocol/maintainers
 
 # Normative surface — substantive changes also require an ADR and maintainer
 # consensus (GOVERNANCE.md §4).
-/spec/                  @HemmaBo-se
-/schemas/               @HemmaBo-se
-/contexts/              @HemmaBo-se
-/examples/conformance/  @HemmaBo-se
-/docs/adr/              @HemmaBo-se
+/spec/                  @vacationrentalprotocol/maintainers
+/schemas/               @vacationrentalprotocol/maintainers
+/contexts/              @vacationrentalprotocol/maintainers
+/examples/conformance/  @vacationrentalprotocol/maintainers
+/docs/adr/              @vacationrentalprotocol/maintainers
 
 # Governance and security documents
-/GOVERNANCE.md          @HemmaBo-se
-/MAINTAINERS.md         @HemmaBo-se
-/SECURITY.md            @HemmaBo-se
-/CODE_OF_CONDUCT.md     @HemmaBo-se
+/GOVERNANCE.md          @vacationrentalprotocol/maintainers
+/MAINTAINERS.md         @vacationrentalprotocol/maintainers
+/SECURITY.md            @vacationrentalprotocol/maintainers
+/CODE_OF_CONDUCT.md     @vacationrentalprotocol/maintainers

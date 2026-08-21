@@ -93,7 +93,7 @@ profiles where each verifier chooses which issuers to trust.
 - MCP server repo: [HemmaBo-se/hemmabo-mcp-server](https://github.com/HemmaBo-se/hemmabo-mcp-server)
 - Proof node discovery: `https://villaakerlyckan.se/.well-known/vacation-rental.json`
 - Proof node JWKS: `https://villaakerlyckan.se/.well-known/jwks.json`
-- Contact: info@hemmabo.se
+- Contact: [open an issue](https://github.com/vacationrentalprotocol/vrp-spec/issues) — for security reports, see [SECURITY.md](SECURITY.md)
 
 The HemmaBo MCP server is an implementation-specific integration, not a VRP
 runtime tool defined by the v0.1 specification.

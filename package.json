@@ -10,12 +10,13 @@
     "verify-attestations": "node scripts/verify-attestation-vectors.mjs",
     "verify-three-state": "node scripts/verify-three-state-fixtures.mjs",
     "verify-receipt-vectors": "node scripts/verify-receipt-vectors.mjs",
+    "verify-offer-vectors": "node scripts/verify-offer-vectors.mjs",
     "check-public-routes": "node scripts/check-public-routes.mjs",
     "check-public-routes:live": "node scripts/check-public-routes.mjs --live",
     "check-license": "node scripts/check-license-boundary.mjs",
     "build-source-pack": "node scripts/build-source-pack.mjs",
     "check-source-pack": "node scripts/build-source-pack.mjs --check",
     "generate-vectors": "node scripts/generate-conformance-vectors.mjs",
-    "test": "npm run validate && npm run verify-vectors && npm run verify-offer-schema && npm run verify-attestations && npm run verify-three-state && npm run verify-receipt-vectors && npm run check-public-routes && npm run check-license && npm run check-source-pack"
+    "test": "npm run validate && npm run verify-vectors && npm run verify-offer-schema && npm run verify-attestations && npm run verify-three-state && npm run verify-receipt-vectors && npm run verify-offer-vectors && npm run check-public-routes && npm run check-license && npm run check-source-pack"
   }
 }

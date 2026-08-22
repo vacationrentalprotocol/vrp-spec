@@ -30,3 +30,16 @@ jobs:
         run: |
           git fetch origin ${{ github.base_ref }} --depth=50
           node scripts/check-updated-stamp.mjs origin/${{ github.base_ref }}
+
+  markdown:
+    name: Markdown integrity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Lint Markdown structure
+        uses: DavidAnson/markdownlint-cli2-action@v24.2.0
+        with:
+          globs: |
+            **/*.md

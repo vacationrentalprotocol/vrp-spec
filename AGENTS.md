@@ -18,7 +18,6 @@ test vectors (`examples/conformance`). Node.js scripts validate the artifacts.
   static file server (e.g. `python3 -m http.server 4180`) and open `index.html` /
   `verify.html`.
 
-
 ## Source truth: sync to origin/main BEFORE reading or building
 
 A stale local clone is the single most likely cause of a wrong conclusion —

@@ -25,4 +25,3 @@ How should AI agents change their behavior?
 ## Implementation Notes
 
 Add examples or references if available.
-

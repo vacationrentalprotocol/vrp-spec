@@ -1,0 +1,23 @@
+// Markdown integrity gate.
+//
+// Deliberately narrow: only rules that catch a *broken document*, never
+// matters of taste. Line length, bare URLs and heading style are not linted —
+// they would fail ~700 times on existing text and teach everyone to ignore red.
+//
+// Why these three: PR #107 arrived with a stray `=======` left over from a
+// merge, sitting inside the IMPLEMENTATIONS.md table. Our JSON/schema check
+// does not read Markdown, so it passed. MD055/MD056/MD012 each catch that
+// line independently — a conflict marker in a table *is* a broken table.
+{
+  "config": {
+    "default": false,
+    // Two blank lines where one is meant — the second half of the #107 damage.
+    "MD012": true,
+    // Table rows must keep their leading/trailing pipes.
+    "MD055": true,
+    // Table rows must have the column count the header declares.
+    "MD056": true
+  },
+  "globs": ["**/*.md"],
+  "ignores": ["node_modules"]
+}

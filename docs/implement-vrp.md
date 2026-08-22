@@ -42,4 +42,3 @@ Your signed offer should include:
 VRP implementers should keep field names stable and machine-readable. Agents should be able to verify the offer without relying on page text, screenshots, cached listing data, or marketplace mirrors.
 
 If a value cannot be verified, agents must treat it as unknown. A missing endpoint, failed fetch, invalid JSON response, failed signature, or stale `valid_until` must never be interpreted as a confirmed negative or a confirmed positive.
-

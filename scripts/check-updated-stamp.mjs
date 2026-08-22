@@ -40,9 +40,22 @@ const changed = sh(`git diff --name-only ${mergeBase}..HEAD`)
   .filter(Boolean);
 
 const CONTENT = /^(spec\/|schemas\/|contexts\/|examples\/|declarations\/|[^/]+\.html$)/;
-const contentChanged = changed.filter(
-  (f) => CONTENT.test(f) && f !== "index.html",
-);
+
+// A whitespace-only edit — a stray blank line, a trailing newline — is not a
+// change to the specification. Bumping the public "updated" stamp for one
+// would announce a revision that did not happen, which is the same class of
+// drift this guard exists to prevent, pointing the other way.
+function isWhitespaceOnly(file) {
+  return (
+    sh(
+      `git diff --ignore-all-space --ignore-blank-lines ${mergeBase}..HEAD -- "${file}"`,
+    ) === ""
+  );
+}
+
+const contentChanged = changed
+  .filter((f) => CONTENT.test(f) && f !== "index.html")
+  .filter((f) => !isWhitespaceOnly(f));
 
 // index.html itself counts as content when more than the stamp line changed.
 const STAMP_RE = /Public draft v[\d.]+ &middot; updated \d{4}-\d{2}-\d{2}/;

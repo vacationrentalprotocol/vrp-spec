@@ -16,7 +16,6 @@ VRP is intended to be implementable by independent hosts, booking providers, and
 - Agents must fail closed.
 - Pricing, availability, and booking URLs must be quoteable only when signed, fresh, exact, and permitted.
 
-
 ## Licensing
 
 By contributing you agree that your contributions are licensed under the same

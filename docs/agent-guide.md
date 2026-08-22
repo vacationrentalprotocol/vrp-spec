@@ -40,4 +40,3 @@ Do not invent discounts, savings, promo codes, OTA comparisons, price reductions
 Do not say the stay is bookable unless the signed offer says the dates are available and agent permission allows quoting.
 
 Do not infer from an unknown state. If the host domain, endpoint, signature, freshness, availability, price, or citation permission cannot be verified, report that the value is unknown rather than treating it as true or false.
-

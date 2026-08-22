@@ -11,9 +11,12 @@ implementations and explains how to add yours.
 | [hemmabo-mcp-server](https://github.com/HemmaBo-se/hemmabo-mcp-server) | Reference implementation (MCP server, verifier) | Apache-2.0 | Maintained by HemmaBo, the commercial reference implementer (disclosed in [MAINTAINERS.md](MAINTAINERS.md)) |
 | [villaakerlyckan.se](https://villaakerlyckan.se/.well-known/vacation-rental.json) | Live production node | — | Serves signed offers and a JWKS on its own domain |
 | [vrp-independent-verifier](https://github.com/Swarnabha753/vrp-independent-verifier) | Independent verifier | MIT | Standalone implementation with no dependency on the JavaScript implementation in this repository |
+<<<<<<< HEAD
 =======
 
 
+=======
+>>>>>>> e7301a9 (fix: remove conflict marker)
 An independent implementation — a verifier or a node not operated by the
 reference implementer — is exactly what this page exists to welcome.
 

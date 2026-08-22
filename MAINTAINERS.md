@@ -9,7 +9,7 @@ not a trust authority or gatekeeper — see
 
 | GitHub | Name | Role |
 |--------|------|------|
-| [@HemmaBo-se](https://github.com/HemmaBo-se) | Rouiada Abbas | Lead maintainer · specification editor · security contact |
+| [@HemmaBo-se](https://github.com/HemmaBo-se) | Rouiada Abbas | Lead maintainer · specification editor · Security Lead |
 | [@hayatabbasjr](https://github.com/hayatabbasjr) | — | Maintainer · project continuity |
 
 The maintainer set is expected to grow; new maintainers are added by consensus

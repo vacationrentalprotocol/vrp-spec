@@ -11,6 +11,8 @@ implementations and explains how to add yours.
 | [hemmabo-mcp-server](https://github.com/HemmaBo-se/hemmabo-mcp-server) | Reference implementation (MCP server, verifier) | Apache-2.0 | Maintained by HemmaBo, the commercial reference implementer (disclosed in [MAINTAINERS.md](MAINTAINERS.md)) |
 | [villaakerlyckan.se](https://villaakerlyckan.se/.well-known/vacation-rental.json) | Live production node | — | Serves signed offers and a JWKS on its own domain |
 | [vrp-independent-verifier](https://github.com/Swarnabha753/vrp-independent-verifier) | Independent verifier | MIT | Standalone implementation with no dependency on the JavaScript implementation in this repository |
+=======
+
 
 An independent implementation — a verifier or a node not operated by the
 reference implementer — is exactly what this page exists to welcome.
@@ -38,8 +40,10 @@ its own domain. Start with [docs/implement-vrp.md](docs/implement-vrp.md).
 
 ## Get listed
 
-Open a pull request adding a row to the table above, or open an issue with a
-link to your implementation. The only requirement for a verifier is that it
+Your implementation lives in your own repository, under your own name and
+license — this repository takes only the row that points to it. Open a pull
+request adding a row to the table above, or open an issue with a link to your
+implementation. The only requirement for a verifier is that it
 passes the committed conformance vectors; for a node, that its discovery
 document, JWKS, and signed offers verify. Decision process per
 [GOVERNANCE.md](GOVERNANCE.md).

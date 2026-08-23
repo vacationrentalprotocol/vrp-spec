@@ -1,0 +1,52 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Vacation Rental Protocol",
+    "documentationUrl": "https://vacationrentalprotocol.com/llms.txt"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:vacationrentalprotocol.com:spec:vacation-rental-protocol",
+      "displayName": "Vacation Rental Protocol — open specification",
+      "type": "text/html",
+      "url": "https://vacationrentalprotocol.com",
+      "description": "Open protocol for host-domain-signed vacation rental offers: hosts sign offers as Ed25519 compact JWS and publish keys at their own /.well-known/jwks.json. Registry-less by design — verification resolves to the host's domain and nothing else. Specification text CC0, code Apache-2.0. Discovery uses the IANA-registered well-known URI vacation-rental.json.",
+      "tags": ["vacation-rental", "open-standard", "signed-offers", "verification"],
+      "representativeQueries": [
+        "open protocol for host-signed vacation rental offers",
+        "verify a vacation rental stay offer cryptographically",
+        "vacation rental protocol specification"
+      ],
+      "version": "0.1"
+    },
+    {
+      "identifier": "urn:air:vacationrentalprotocol.com:docs:implementation-guide",
+      "displayName": "VRP implementation guide",
+      "type": "text/html",
+      "url": "https://vacationrentalprotocol.com/implement",
+      "description": "How to implement VRP on a host domain: discovery document, JWKS publication, offer signing, and verification flow.",
+      "tags": ["documentation", "implementation"]
+    },
+    {
+      "identifier": "urn:air:vacationrentalprotocol.com:tools:vrp-verify",
+      "displayName": "vrp-verify — reference verifier",
+      "type": "application/json",
+      "url": "https://registry.npmjs.org/@vacationrentalprotocol/vrp-verify",
+      "description": "Reference verifier for VRP signed offers and receipts (@vacationrentalprotocol/vrp-verify on npm). Apache-2.0, zero runtime dependencies.",
+      "tags": ["verifier", "npm", "tooling"],
+      "representativeQueries": [
+        "verify a VRP signed stay offer",
+        "vacation rental offer signature verification tool"
+      ],
+      "version": "0.1.0"
+    },
+    {
+      "identifier": "urn:air:vacationrentalprotocol.com:spec:conformance-vectors",
+      "displayName": "VRP conformance vectors",
+      "type": "text/html",
+      "url": "https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance",
+      "description": "Committed conformance test vectors (signed-offer and receipt) that independent implementations are checked against.",
+      "tags": ["conformance", "test-vectors"]
+    }
+  ]
+}

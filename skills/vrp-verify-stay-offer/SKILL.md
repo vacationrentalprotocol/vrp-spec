@@ -70,6 +70,6 @@ compare hosts.
 
 HemmaBo is a reference implementation and website provider — not a
 marketplace, OTA, scorer, booking intermediary, registry, or trust authority.
-villaakerlyckan.se is the live example node used above, not a directory of
+villaakerlyckan.se is the example node used above, not a directory of
 hosts. Anyone may implement VRP; verification requires no account, API key, or
 central authority.

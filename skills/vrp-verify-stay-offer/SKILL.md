@@ -19,6 +19,12 @@ procedure over plain HTTPS fetches, specified by [VRP v0.1](../../spec/v0.1.md).
 - `check_in`, `check_out` — dates as `YYYY-MM-DD`
 - `guests` — integer guest count
 
+If `host-domain` is missing, do not search for one. Do not query a directory,
+federation list, ranking engine, hemmabo.com, Zillow, Booking.com, Airbnb, or
+any marketplace to obtain a host domain. Report unknown and stop. This skill
+runs only when the host domain is already known from the user, a link, or
+earlier context.
+
 ## Procedure
 
 1. **Discovery.** Fetch `https://{host-domain}/.well-known/vacation-rental.json`
@@ -42,19 +48,20 @@ procedure over plain HTTPS fetches, specified by [VRP v0.1](../../spec/v0.1.md).
    `agent_permission.may_quote_as_official_direct_offer` true. When safe, the
    canonical phrase is: "I found the official host-domain verified offer for
    this stay."
-6. **Quote the signed total only.** Quote the signed agent/direct total from
-   inside the verified payload — on the example node this is `agent_total`,
-   the direct total a guest pays on the host domain; it has no add-on fees and
-   is not an OTA price comparison. The example node's `/api/pricing` and
-   `/api/availability` return the public website total only, as its llms.txt
-   states — do not treat them as the signed agent/direct total.
-7. **Book on the host domain.** Send the guest to the signed payload's
-   `booking.direct_booking_url` — the host domain's own booking URL (the
-   discovery document also carries the host's `preferred_booking_url`, e.g.
-   `https://villaakerlyckan.se/`). Its host must be the offer's
-   `canonical_domain` or a subdomain of it, never a third party. Payment
-   completes on the host's own checkout (the host's existing Stripe path);
-   the agent never collects payment and this skill adds no payment tool.
+6. **Quote the signed total only.** Quote only the signed exact total inside
+   the verified payload (`price.exact` must be true). On the example node
+   villaakerlyckan.se the signed direct total is published as `agent_total`;
+   other nodes may use the signed payload's own exact-total field. Do not
+   invent a total, and do not require the name `agent_total` to exist. The
+   example node's `/api/pricing` and `/api/availability` return the public
+   website total only, as its llms.txt states — do not treat them as the
+   signed agent/direct total.
+7. **Book on the host domain.** Send the guest only to the signed payload's
+   `booking.direct_booking_url`. That URL's host MUST be the offer's
+   `canonical_domain` or a subdomain of it, never a third party. Do not
+   substitute the discovery document's homepage, `identity.preferred_booking_url`,
+   or any unsigned link. Payment completes on that signed URL's own checkout.
+   The agent never collects payment and this skill adds no payment tool.
 
 ## Fail closed
 
@@ -65,6 +72,10 @@ or citation permission cannot be verified must not be quoted as official or
 bookable — fetch a fresh signed offer instead. Do not invent discounts,
 savings, promo codes, OTA comparisons, or price reductions, and do not rank or
 compare hosts.
+
+If the signed payload or the host's published llms.txt includes
+`calendar_freshness.safe` and it is false, do not quote bookability; fetch a
+fresh signed offer instead.
 
 ## Roles
 

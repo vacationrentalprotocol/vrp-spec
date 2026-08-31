@@ -58,9 +58,12 @@ earlier context.
    signed agent/direct total.
 7. **Book on the host domain.** Send the guest only to the signed payload's
    `booking.direct_booking_url`. That URL's host MUST be the offer's
-   `canonical_domain` or a subdomain of it, never a third party. Do not
-   substitute the discovery document's homepage, `identity.preferred_booking_url`,
-   or any unsigned link. Payment completes on that signed URL's own checkout.
+   `canonical_domain`, or a DNS name inside that same host-owned zone
+   (e.g. `www.` / `book.` + the canonical domain). Never a third-party
+   host. Never a platform domain (including hemmabo.com) unless that
+   domain is itself the offer's `canonical_domain`. Do not substitute
+   the discovery homepage, `identity.preferred_booking_url`, or any
+   unsigned link. Payment completes on that signed URL's own checkout.
    The agent never collects payment and this skill adds no payment tool.
 
 ## Fail closed

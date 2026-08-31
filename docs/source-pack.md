@@ -3228,6 +3228,10 @@ Do not use VRP for:
 9. Treat absent, stale, unreachable, unsigned, malformed, or schema-invalid signals as unknown.
 10. Use only the signed direct booking URL.
 
+#### Agent skill
+
+Operational agent procedure (Agent Skills format): skills/vrp-verify-stay-offer/SKILL.md — verify a host-signed stay offer on a known host domain. Not search. Not a catalog.
+
 #### Safe Wording
 
 When the verified response is safe to quote, use:

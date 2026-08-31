@@ -92,6 +92,9 @@ payment-path, policy, and privacy-minimized stay-reference facts. They are not
 independent proof of guest identity, right-to-let, local license status,
 property ownership, insurance coverage, or legal compliance.
 
+Operational agent procedure (Agent Skills format): skills/vrp-verify-stay-offer/SKILL.md — verify a host-signed stay offer on a known host domain. Not search. Not a catalog.
+Skill file: https://vacationrentalprotocol.com/skills/vrp-verify-stay-offer/SKILL.md
+
 ## Live Proof Node
 
 - Host discovery: https://villaakerlyckan.se/.well-known/vacation-rental.json

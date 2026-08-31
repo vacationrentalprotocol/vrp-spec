@@ -60,12 +60,10 @@ earlier context.
    `booking.direct_booking_url`. Its host MUST be the offer's
    `canonical_domain`, or a subdomain of that registrable domain. It MUST NOT
    point at a third-party domain, an OTA, a link shortener, a redirector, or
-   a HemmaBo-operated domain. An agent that cannot confirm the URL host is on
-   the offer's `canonical_domain` MUST treat the direct booking URL as
-   unknown and MUST NOT route booking to it. Do not substitute the discovery
-   homepage, `identity.preferred_booking_url`, or any unsigned link. Payment
-   completes on that signed URL's own checkout. The agent never collects
-   payment and this skill adds no payment tool.
+   a HemmaBo-operated domain. Do not substitute the discovery homepage,
+   `identity.preferred_booking_url`, or any unsigned link. Payment completes
+   on that signed URL's own checkout. The agent never collects payment and
+   this skill adds no payment tool.
 
 ## Fail closed
 

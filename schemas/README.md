@@ -36,4 +36,12 @@ Repository copy: [`vrp-receipt.v1.schema.json`](./vrp-receipt.v1.schema.json)
 
 > **Drift contract.** `vrp-receipt.v1.schema.json` is mirrored **byte-equal** from the reference implementation (`hemmabo-mcp-server` `spec/vrp-receipt.v1.schema.json`, the schema consumed by the `verifyReceipt` reference verifier). The two copies MUST stay byte-identical; the receipt conformance vector validates against this copy.
 
+Conformance report v0.1 schema (score-free record of one verifier run against one corpus; see [`docs/conformance-report.md`](../docs/conformance-report.md)):
+
+```text
+https://vacationrentalprotocol.com/schemas/conformance-report-v0.1.schema.json
+```
+
+Repository copy: [`conformance-report-v0.1.schema.json`](./conformance-report-v0.1.schema.json)
+
 These schemas are interoperability aids for implementers and examples. They are not a registry, issuer service, certification service, scoring service, OTA, marketplace, or booking intermediary.

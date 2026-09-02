@@ -45,6 +45,9 @@ The vacation-rental.json well-known URI suffix is registered in the IANA Well-Kn
 - Example attestation bundle: https://vacationrentalprotocol.com/examples/attestations/attestation-bundle.v0.1.json
 - Three-state conformance fixtures: https://vacationrentalprotocol.com/examples/conformance/three-state-verification.v0.1.json
 - StayIntent conformance fixtures (positive + no-match): https://vacationrentalprotocol.com/examples/conformance/stayintent/positive.v0.1.json
+- Conformance report v0.1 (score-free record of one verifier run against one corpus): https://vacationrentalprotocol.com/docs/conformance-report
+- Conformance report JSON Schema: https://vacationrentalprotocol.com/schemas/conformance-report-v0.1.schema.json
+- Example conformance report (reference verifier, signed-offer corpus): https://vacationrentalprotocol.com/examples/conformance/reports/offer.reference-verifier.v0.1.json
 
 ## What VRP Is
 

@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vacationrentalprotocol.com/schemas/conformance-report-v0.1.schema.json",
+  "title": "VRP Conformance Report v0.1",
+  "description": "Score-free record of one run of one verifier (engine) against one named VRP conformance corpus. It carries per-vector outcomes, the reproducibility binding (engine, corpus digest, configuration, environment, run instant) and at least one declared must-fail control. It is not a trust, safety, compliance, certification or whole-agent verdict. It is not a score, a ranking, a registry of nodes, or a catalogue.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "report_version",
+    "engine",
+    "corpus",
+    "config",
+    "environment",
+    "run_at",
+    "results",
+    "must_fail_controls"
+  ],
+  "properties": {
+    "kind": {
+      "const": "vrp_conformance_report"
+    },
+    "report_version": {
+      "const": "0.1"
+    },
+    "engine": {
+      "description": "The verifier under test. `source` and/or `digest` MUST identify the exact code that ran; a name and version alone are not reproducible.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "anyOf": [
+        { "required": ["source"] },
+        { "required": ["digest"] }
+      ],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["repository", "revision"],
+          "properties": {
+            "repository": { "type": "string", "pattern": "^https://" },
+            "revision": { "type": "string", "minLength": 7 },
+            "path": { "type": "string", "minLength": 1 }
+          }
+        },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "corpus": {
+      "description": "The vector set that was run, as a repository path plus a content digest. One report covers exactly one corpus; do not merge corpora into one report.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "version", "digest"],
+      "properties": {
+        "repository": { "type": "string", "pattern": "^https://" },
+        "revision": { "type": "string", "minLength": 7 },
+        "path": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "config": {
+      "description": "Every input that could change an outcome and is not part of the corpus itself: injected clock source, key resolution, exclusions. Empty object means the engine ran with no options.",
+      "type": "object"
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runtime"],
+      "properties": {
+        "runtime": { "type": "string", "minLength": 1 },
+        "platform": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    },
+    "run_at": {
+      "description": "UTC instant the run started (RFC 3339, Z suffix).",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+    },
+    "results": {
+      "description": "One entry per vector in the corpus, including vectors that were not run. Missing evidence, a failed control or unavailable infrastructure is `inconclusive` or `void`, never `pass`.",
+      "type": "array",
+      "contains": { "$ref": "#/$defs/result" },
+      "items": { "$ref": "#/$defs/result" }
+    },
+    "must_fail_controls": {
+      "description": "Declared controls the engine MUST reject. A control whose `observed` outcome is anything other than `reject-as-required` shows the harness cannot distinguish the behavior; the report is then `discriminates: false` and no aggregate may be published.",
+      "type": "array",
+      "contains": { "$ref": "#/$defs/control" },
+      "items": { "$ref": "#/$defs/control" }
+    },
+    "discriminates": {
+      "description": "true only when every declared must-fail control was observed as `reject-as-required`.",
+      "type": "boolean"
+    },
+    "aggregate": {
+      "description": "Optional. Counts only; no score, no weight, no percentile. `denominator` is always the full corpus size. Only `pass` and `reject-as-required` count as distinguished. `not-exercised`, `inconclusive` and `void` can never raise `distinguished`. The aggregate is not a trust, safety, compliance, certification or whole-agent verdict.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["denominator", "exercised", "distinguished", "not_exercised", "inconclusive", "void"],
+      "properties": {
+        "denominator": { "type": "integer", "minimum": 1 },
+        "exercised": { "type": "integer", "minimum": 0 },
+        "distinguished": { "type": "integer", "minimum": 0 },
+        "not_exercised": { "type": "integer", "minimum": 0 },
+        "inconclusive": { "type": "integer", "minimum": 0 },
+        "void": { "type": "integer", "minimum": 0 },
+        "note": { "type": "string" }
+      }
+    },
+    "reporter": {
+      "description": "Who ran it. Free text; a report is evidence about a run, not an endorsement of the reporter.",
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "digest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alg", "value", "method"],
+      "properties": {
+        "alg": { "const": "sha256" },
+        "value": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "method": {
+          "description": "How the digest was produced, precisely enough to recompute it. For a directory corpus: `sha256sum` manifest of the sorted (LC_ALL=C) *.json file names, then sha256 of that manifest text.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["pass", "reject-as-required", "not-exercised", "inconclusive", "void"]
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vector", "outcome", "expected", "observed"],
+      "properties": {
+        "vector": { "type": "string", "minLength": 1 },
+        "outcome": { "$ref": "#/$defs/outcome" },
+        "expected": {
+          "description": "The vector's own `expected` block, copied verbatim.",
+          "type": "object"
+        },
+        "observed": {
+          "description": "What the engine returned, in the same shape as `expected`. Null members mean the engine did not evaluate that member.",
+          "type": "object"
+        },
+        "note": { "type": "string" }
+      }
+    },
+    "control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vector", "expected", "observed"],
+      "properties": {
+        "vector": { "type": "string", "minLength": 1 },
+        "expected": { "const": "reject-as-required" },
+        "observed": { "$ref": "#/$defs/outcome" },
+        "note": { "type": "string" }
+      }
+    }
+  }
+}

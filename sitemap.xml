@@ -184,4 +184,16 @@
     <loc>https://vacationrentalprotocol.com/schemas/vrp-receipt.v1.schema.json</loc>
     <lastmod>2026-06-24</lastmod>
   </url>
+  <url>
+    <loc>https://vacationrentalprotocol.com/docs/conformance-report</loc>
+    <lastmod>2026-09-02</lastmod>
+  </url>
+  <url>
+    <loc>https://vacationrentalprotocol.com/schemas/conformance-report-v0.1.schema.json</loc>
+    <lastmod>2026-09-02</lastmod>
+  </url>
+  <url>
+    <loc>https://vacationrentalprotocol.com/examples/conformance/reports/offer.reference-verifier.v0.1.json</loc>
+    <lastmod>2026-09-02</lastmod>
+  </url>
 </urlset>

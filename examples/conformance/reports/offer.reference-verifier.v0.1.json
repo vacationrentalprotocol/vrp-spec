@@ -1,0 +1,130 @@
+{
+  "kind": "vrp_conformance_report",
+  "report_version": "0.1",
+  "engine": {
+    "name": "vrp-spec reference verifier (scripts/conformance.mjs verifyCompactJws)",
+    "version": "0.1.0",
+    "source": {
+      "repository": "https://github.com/vacationrentalprotocol/vrp-spec",
+      "revision": "52e9c112a8e50b9e4b468f6865fbcb0597dd3f80",
+      "path": "scripts/conformance.mjs"
+    },
+    "digest": {
+      "alg": "sha256",
+      "value": "8d1782f72456e0dfcdcd0e454cf2b84a2eea73f9066110969b6d28377d6b8360",
+      "method": "sha256 of the file scripts/conformance.mjs at the stated revision"
+    }
+  },
+  "corpus": {
+    "repository": "https://github.com/vacationrentalprotocol/vrp-spec",
+    "revision": "52e9c112a8e50b9e4b468f6865fbcb0597dd3f80",
+    "path": "examples/conformance/offer",
+    "version": "0.1",
+    "digest": {
+      "alg": "sha256",
+      "value": "7c3876d3d49396023784d84f2e866043f499686a23c266a9cd806576e7734c08",
+      "method": "cd examples/conformance/offer && ls *.json | LC_ALL=C sort | xargs sha256sum | sha256sum"
+    }
+  },
+  "config": {
+    "clock": "injected per vector (`clock` field); no wall-clock dependency",
+    "key_resolution": "JWKS embedded in each vector; resolved by header kid",
+    "exclusions": []
+  },
+  "environment": {
+    "runtime": "node v22.22.2",
+    "platform": "linux x64"
+  },
+  "run_at": "2026-09-02T17:53:15Z",
+  "results": [
+    {
+      "vector": "examples/conformance/offer/01-valid-fresh.json",
+      "outcome": "pass",
+      "expected": {
+        "verified": true,
+        "reason": null,
+        "fresh": true
+      },
+      "observed": {
+        "verified": true,
+        "reason": null,
+        "fresh": true
+      }
+    },
+    {
+      "vector": "examples/conformance/offer/02-valid-expired.json",
+      "outcome": "pass",
+      "expected": {
+        "verified": true,
+        "reason": null,
+        "fresh": false
+      },
+      "observed": {
+        "verified": true,
+        "reason": null,
+        "fresh": false
+      }
+    },
+    {
+      "vector": "examples/conformance/offer/03-tampered-signature.json",
+      "outcome": "reject-as-required",
+      "expected": {
+        "verified": false,
+        "reason": "signature_mismatch",
+        "fresh": null
+      },
+      "observed": {
+        "verified": false,
+        "reason": "signature_mismatch",
+        "fresh": null
+      }
+    },
+    {
+      "vector": "examples/conformance/offer/04-unknown-kid.json",
+      "outcome": "reject-as-required",
+      "expected": {
+        "verified": false,
+        "reason": "kid_not_in_jwks",
+        "fresh": null
+      },
+      "observed": {
+        "verified": false,
+        "reason": "kid_not_in_jwks",
+        "fresh": null
+      }
+    },
+    {
+      "vector": "examples/conformance/offer/05-wrong-key.json",
+      "outcome": "reject-as-required",
+      "expected": {
+        "verified": false,
+        "reason": "signature_mismatch",
+        "fresh": null
+      },
+      "observed": {
+        "verified": false,
+        "reason": "signature_mismatch",
+        "fresh": null
+      }
+    }
+  ],
+  "must_fail_controls": [
+    {
+      "vector": "examples/conformance/offer/03-tampered-signature.json",
+      "expected": "reject-as-required",
+      "observed": "reject-as-required",
+      "note": "Declared must-fail control: signature altered; engine MUST reject with signature_mismatch."
+    }
+  ],
+  "discriminates": true,
+  "aggregate": {
+    "denominator": 5,
+    "exercised": 5,
+    "distinguished": 5,
+    "not_exercised": 0,
+    "inconclusive": 0,
+    "void": 0,
+    "note": "Counts only. Not a trust, safety, compliance, certification or whole-agent verdict."
+  },
+  "reporter": "vrp-spec maintainers, reference run"
+}

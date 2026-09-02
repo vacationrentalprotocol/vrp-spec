@@ -525,6 +525,47 @@ for (const [schemaPath, examplePath] of coreExampleSchemas) {
   if (coreSchema && example !== undefined) assertSchemaValid(coreSchema, example, examplePath);
 }
 
+const reportSchema = readJson("schemas/conformance-report-v0.1.schema.json");
+const reportExample = readJson("examples/conformance/reports/offer.reference-verifier.v0.1.json");
+if (reportSchema && reportExample) {
+  assertSchemaValid(reportSchema, reportExample, "examples/conformance/reports/offer.reference-verifier.v0.1.json");
+
+  // Score-free invariants the schema grammar cannot express (docs/conformance-report.md).
+  const outcomes = reportExample.results.map((r) => r.outcome);
+  const count = (o) => outcomes.filter((x) => x === o).length;
+  const a = reportExample.aggregate;
+  if (a) {
+    if (a.denominator !== outcomes.length) failures.push("conformance report: aggregate.denominator must equal results.length");
+    if (a.exercised !== outcomes.length - count("not-exercised")) failures.push("conformance report: aggregate.exercised must equal results minus not-exercised");
+    if (a.distinguished !== count("pass") + count("reject-as-required")) failures.push("conformance report: aggregate.distinguished must equal pass + reject-as-required");
+    if (a.not_exercised !== count("not-exercised") || a.inconclusive !== count("inconclusive") || a.void !== count("void")) failures.push("conformance report: aggregate counts must match results");
+    for (const key of Object.keys(a)) {
+      if (/score|rank|rating|percentile|grade/i.test(key)) failures.push(`conformance report: aggregate must be score-free, found ${key}`);
+    }
+  }
+  const declared = reportExample.must_fail_controls;
+  const allReject = declared.every((c) => c.observed === "reject-as-required");
+  if (reportExample.discriminates !== allReject) failures.push("conformance report: discriminates must be true iff every must-fail control was observed as reject-as-required");
+  if (!allReject && a) failures.push("conformance report: no aggregate may be published when a must-fail control did not reject");
+  for (const c of declared) {
+    if (!reportExample.results.some((r) => r.vector === c.vector)) failures.push(`conformance report: control ${c.vector} is not in results`);
+  }
+  const corpusPrefix = `${reportExample.corpus.path}/`;
+  for (const r of reportExample.results) {
+    if (!r.vector.startsWith(corpusPrefix)) failures.push(`conformance report: result ${r.vector} is outside the single corpus ${reportExample.corpus.path}`);
+  }
+
+  const withScore = structuredClone(reportExample);
+  withScore.aggregate.score = 100;
+  assertSchemaInvalid(reportSchema, withScore, "negative: conformance report aggregate must reject a score field");
+  const noControls = structuredClone(reportExample);
+  noControls.must_fail_controls = [];
+  assertSchemaInvalid(reportSchema, noControls, "negative: conformance report must declare at least one must-fail control");
+  const badOutcome = structuredClone(reportExample);
+  badOutcome.results[0].outcome = "ok";
+  assertSchemaInvalid(reportSchema, badOutcome, "negative: conformance report must reject outcomes outside the five-value set");
+}
+
 const discoverySchema = readJson("schemas/discovery-v0.1.schema.json");
 const discoveryExample = readJson("examples/discovery.v0.1.json");
 if (discoverySchema && discoveryExample) {

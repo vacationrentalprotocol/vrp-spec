@@ -306,6 +306,19 @@
         </div>
       </section>
 
+      <section class="band" id="coding-agents">
+        <div class="resources">
+          <h2>For coding agents (Claude Code, Cursor, Codex)</h2>
+          <ol class="steps">
+            <li>Publish three documents on the host's own domain: <code>/.well-known/jwks.json</code>, <code>/.well-known/vacation-rental.json</code>, and the offer endpoint it names, e.g. <code>/api/verified-stay-offer</code>.</li>
+            <li>Do not invent a schema — use <a href="/spec/v0.1.md">spec/v0.1.md</a> and <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/schemas">schemas/</a> verbatim.</li>
+            <li>Do not proxy booking through a marketplace — <code>direct_booking_url</code> stays on the host's domain.</li>
+            <li>Prove interop with the <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance">conformance vectors</a> (<code>npm test</code>).</li>
+            <li>Questions: <a href="mailto:hello@vacationrentalprotocol.com">hello@vacationrentalprotocol.com</a></li>
+          </ol>
+        </div>
+      </section>
+
       <section class="band" id="signer">
         <div class="panel">
           <h2>Copy-paste signer — sign a real offer in your browser</h2>

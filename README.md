@@ -87,6 +87,14 @@ profiles where each verifier chooses which issuers to trust.
 
 **Live proof node:** [villaakerlyckan.se](https://villaakerlyckan.se)
 
+## For Coding Agents (Claude Code, Cursor, Codex)
+
+- Publish three documents on the host's own domain: `/.well-known/jwks.json`, `/.well-known/vacation-rental.json`, and the offer endpoint it names, e.g. `/api/verified-stay-offer`.
+- Do not invent a schema — use [`spec/v0.1.md`](./spec/v0.1.md) and [`schemas/`](./schemas/) verbatim.
+- Do not proxy booking through a marketplace — `direct_booking_url` stays on the host's domain.
+- Prove interop with the [conformance vectors](./examples/conformance/) (`npm test`).
+- Questions: hello@vacationrentalprotocol.com
+
 ## Developer Links
 
 - Live HemmaBo MCP endpoint: `https://www.hemmabo.com/mcp`

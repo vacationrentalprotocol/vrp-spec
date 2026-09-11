@@ -30,5 +30,6 @@ All vectors share one throwaway Ed25519 public key:
 | `04-expired-window.json` | Valid signature, past `valid_until` → `sig_expired` |
 | `05-unsupported-version.json` | `vrp_receipt_version` ≠ `1.0` → `unsupported_version` |
 | `06-malformed-empty-attestations.json` | Empty `attestations[]` → `malformed_receipt` |
+| `07-unparseable-validity-window.json` | Receipt 01 with offer `valid_until` = `"tisdag"` (not an instant) → offer `invalid` / `missing_validity_window`, `kid` null; transport still `verified`; not `fully_verified` |
 
 Run: `node scripts/verify-receipt-vectors.mjs` or `npm test`.

@@ -1,6 +1,6 @@
 # Vacation Rental Protocol (VRP)
 
-**The Vacation Rental Protocol (VRP) is an open protocol for host-domain-signed vacation-rental offers: an AI agent discovers a property on the open web, fetches a cryptographically signed (Ed25519, did:web) stay offer from the host's own domain, verifies it against the domain's JWKS, and books directly — no central marketplace, registry, or gatekeeper.**
+**The Vacation Rental Protocol (VRP) is an open protocol for host-domain-signed vacation-rental offers: an AI agent discovers a property on the open web, fetches a cryptographically signed (Ed25519, did:web) stay offer from the host's own domain, verifies it against the domain's JWKS — no central marketplace, registry, or gatekeeper.**
 
 Created and maintained by Rouiada Abbas. Anyone may implement it; HemmaBo is the reference implementation. Current public draft: v0.1.
 

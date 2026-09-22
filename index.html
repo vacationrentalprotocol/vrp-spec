@@ -32,8 +32,8 @@
             "name": "Vacation Rental Protocol",
             "alternateName": "VRP",
             "termCode": "VRP",
-            "description": "An open protocol for host-domain signed vacation rental offers. An AI agent discovers a property off the open web (no connector or API key), fetches a cryptographically signed stay offer (Ed25519, did:web), verifies it against the host domain's public JWKS, and books directly — no central marketplace, registry, or gatekeeper.",
-            "disambiguatingDescription": "The software / agentic-commerce meaning of \"VRP\" in vacation rentals — a trust and discovery protocol for AI-agent booking. Distinct from \"Vacation Rental Property\", the physical short-term rental home used in legal, government, and property-management contexts.",
+            "description": "An open protocol for host-domain signed vacation rental offers. An AI agent discovers a property off the open web (no connector or API key), fetches a cryptographically signed stay offer (Ed25519, did:web), verifies it against the host domain's public JWKS — no central marketplace, registry, or gatekeeper.",
+            "disambiguatingDescription": "The software / agentic-commerce meaning of \"VRP\" in vacation rentals — a trust protocol for host-domain signed stay-offer verification. Distinct from \"Vacation Rental Property\", the physical short-term rental home used in legal, government, and property-management contexts.",
             "url": "https://vacationrentalprotocol.com/",
             "sameAs": ["https://github.com/vacationrentalprotocol/vrp-spec"],
             "inDefinedTermSet": {
@@ -52,7 +52,7 @@
             "isPartOf": { "@id": "https://vacationrentalprotocol.com/#website" },
             "url": "https://vacationrentalprotocol.com/",
             "inLanguage": "en",
-            "keywords": "Vacation Rental Protocol, VRP, host-domain signed offers, Ed25519, did:web, JWKS, agentic commerce, AI agent booking, verified stay offer, no gatekeeper, direct booking",
+            "keywords": "Vacation Rental Protocol, VRP, host-domain signed offers, Ed25519, did:web, JWKS, agentic commerce, verified stay offer, no gatekeeper, direct booking",
             "author": { "@type": "Person", "name": "Rouiada Abbas" },
             "license": "https://creativecommons.org/publicdomain/zero/1.0/"
           }
@@ -89,7 +89,7 @@
     <main>
       <section class="intro">
         <div class="intro-copy">
-          <p class="eyebrow">Public draft v0.1 &middot; updated 2026-09-11</p>
+          <p class="eyebrow">Public draft v0.1 &middot; updated 2026-09-22</p>
           <h1>Vacation Rental Protocol</h1>
           <p class="lead">
             An open protocol for host-domain signed vacation rental offers.
@@ -107,7 +107,7 @@
             <a
               href="/demo"
               style="display: inline-block; font-weight: 800; background: linear-gradient(135deg, #c9a84c, #e8d5a3); color: #1a1a18; padding: 12px 22px; border-radius: 999px; text-decoration: none; box-shadow: 0 6px 20px rgba(201, 168, 76, 0.3)"
-              >▶ Watch an AI agent book a verified stay</a
+              >▶ Watch an agent verify a signed stay offer</a
             >
           </p>
         </div>
@@ -120,7 +120,7 @@
 
       <section class="band" style="text-align: center">
         <p class="eyebrow">The 20-second film</p>
-        <h2 style="margin-top: 6px">Watch an AI agent reach a verified, direct booking</h2>
+        <h2 style="margin-top: 6px">Watch an agent verify a signed stay offer</h2>
         <p style="max-width: 62ch; margin: 10px auto 22px">
           A guest asks. An agent finds the property on the open web. The host's
           own domain signs the offer — and it's verified in your browser. No
@@ -128,7 +128,7 @@
         </p>
         <iframe
           src="/film"
-          title="VRP — the film: an AI agent books a verified stay"
+          title="VRP — the film: verify a signed stay offer"
           loading="lazy"
           style="width: min(900px, 100%); aspect-ratio: 16 / 9; border: 0; border-radius: 16px; box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35); display: block; margin: 0 auto; background: #060d18"
         ></iframe>
@@ -281,7 +281,7 @@
           <a href="/reference-implementation">Reference implementation proof page</a>
           · Proof node:
           <a href="https://villaakerlyckan.se">villaakerlyckan.se</a>
-          · Runtime:
+          · Reference implementation:
           <a href="https://hemmabo.com">HemmaBo</a>
         </p>
         <div class="resource-list">
@@ -328,7 +328,7 @@
           Offers are signed with Ed25519 (compact JWS) and verified against the
           host domain&rsquo;s JWKS; did:web carries the portable-attestation
           layer. A tamper-evident, append-only transparency log (RFC 6962
-          Merkle) records the federation&rsquo;s signed tree heads &mdash; live
+          Merkle) records signed tree heads &mdash; live
           and independently verifiable at
           <a href="https://www.hemmabo.com/api/vrp-tlog">www.hemmabo.com/api/vrp-tlog</a>
           (per-booking inclusion proofs are still being wired).

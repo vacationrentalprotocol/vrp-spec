@@ -82,9 +82,9 @@ https://{host-domain}/.well-known/vacation-rental.json — the registered
 well-known URI suffix — to discover that node's endpoints and keys. Per-host
 and deterministic; there is no central discovery index to query.
 
-VRP verification should not require HemmaBo, a VRP-operated trusted issuer
-registry, a host accreditation program, a certification company, or a central
-discovery index.
+Protocol rule: VRP verification MUST NOT require HemmaBo, a VRP-operated
+trusted issuer registry, a host accreditation program, a certification
+company, or a central discovery index.
 
 For v0.1 portable attestations, do not infer guest identity, guest history,
 guest risk, guest score, guest reviews, or booking outcomes from the published

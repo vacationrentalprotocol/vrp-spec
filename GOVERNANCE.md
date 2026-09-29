@@ -55,7 +55,10 @@ a MAJOR version and maintainer consensus (§4, §5):
 security response, and control of the project's domains, repositories, and
 release process — if the lead maintainer becomes unavailable. The continuity
 maintainer may add maintainers under §8 to restore active stewardship. (VRP has
-no central signing keys; each node holds its own — see §2.)
+no central signing keys: each node signs under its own domain's key set, and
+verification MUST NOT require HemmaBo — see §2 and spec/v0.1.md. Who holds a
+node's key is declared per node in `operator.key_custody`; HemmaBo-operated
+nodes may use `platform` custody, and the reference node does.)
 
 ## 4. Decision-making
 

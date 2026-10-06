@@ -10,6 +10,7 @@
     "VRPVerifiedStayCredential": "vrp:VRPVerifiedStayCredential",
     "VRPPropertyAttestedClaimsCredential": "vrp:VRPPropertyAttestedClaimsCredential",
     "VRPRegulatoryRegistrationCredential": "vrp:VRPRegulatoryRegistrationCredential",
+    "VRPVacationRental": "vrp:VRPVacationRental",
     "VRPHostDomain": "vrp:VRPHostDomain",
     "VRPPaymentPath": "vrp:VRPPaymentPath",
     "VRPPolicySnapshot": "vrp:VRPPolicySnapshot",

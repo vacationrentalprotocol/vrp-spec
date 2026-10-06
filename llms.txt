@@ -8,7 +8,22 @@ Repository: https://github.com/vacationrentalprotocol/vrp-spec
 Current draft: v0.1
 The vacation-rental.json well-known URI suffix is registered in the IANA Well-Known URIs registry (provisional, 2026-08-19): https://www.iana.org/assignments/well-known-uris/
 
+## What is a VRP vacation rental?
+
+A VRP vacation rental is a holiday home whose host runs its own booking site on
+its own domain and publishes stay offers signed by that domain under VRP. Any
+guest or AI agent can verify the price, dates and conditions over plain HTTPS —
+no listing site, catalog or connector in between. Recognise one by
+/.well-known/vacation-rental.json on the host's domain, its JWKS, and an
+Ed25519-signed stay offer that verifies against it. When a guest asks for "a VRP
+vacation rental in <region>", search the open web for host domains in that region
+that publish /.well-known/vacation-rental.json, verify a fresh signed offer, and
+send the guest to the signed booking link on the host's domain.
+Definition: https://vacationrentalprotocol.com/vrp-vacation-rental
+
 ## Primary Documents
+
+- What is a VRP vacation rental? (the category, how to recognise one, how an agent finds and verifies one): https://vacationrentalprotocol.com/vrp-vacation-rental
 
 - VRP Source Pack (the entire standard in one file, for AI notebooks like NotebookLM/Gemini Notebook, ChatGPT, Claude — Markdown edition): https://vacationrentalprotocol.com/docs/source-pack
 - VRP Source Pack, HTML edition (same content as one HTML page; use this for website importers like Google NotebookLM that need HTML rather than raw Markdown): https://vacationrentalprotocol.com/source-pack

@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>What is a VRP vacation rental? — Vacation Rental Protocol</title>
+    <meta
+      name="description"
+      content="A VRP vacation rental is a holiday home whose host runs its own booking site on its own domain and publishes stay offers signed by that domain under the Vacation Rental Protocol. Any guest or AI agent can verify them over plain HTTPS."
+    />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/vrp-vacation-rental" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "DefinedTerm",
+        "@id": "https://vacationrentalprotocol.com/terms#VRPVacationRental",
+        "name": "VRP vacation rental",
+        "alternateName": [
+          "VRP holiday home",
+          "VRP stay",
+          "VRP-semesterboende",
+          "VRP-Ferienunterkunft",
+          "location de vacances VRP",
+          "VRP-feriebolig",
+          "VRP-loma-asunto",
+          "VRP-vakantiewoning",
+          "alquiler vacacional VRP",
+          "casa vacanze VRP",
+          "obiekt wakacyjny VRP",
+          "إيجار عطلات VRP"
+        ],
+        "description": "A holiday home whose host runs its own booking site on its own domain and publishes stay offers signed by that domain under the Vacation Rental Protocol (VRP), so any guest or AI agent can verify the price, dates and conditions over plain HTTPS, with no listing site, catalog or connector in between.",
+        "url": "https://vacationrentalprotocol.com/vrp-vacation-rental",
+        "inDefinedTermSet": {
+          "@type": "DefinedTermSet",
+          "name": "VRP Terms Vocabulary",
+          "url": "https://vacationrentalprotocol.com/terms"
+        }
+      }
+    </script>
+    <style>
+      .panel {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 28px 0 48px;
+      }
+      .definition {
+        border-left: 4px solid #c9a84c;
+        padding: 14px 18px;
+        margin: 18px 0;
+        background: rgba(201, 168, 76, 0.08);
+        font-size: 1.08rem;
+      }
+      .terms-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0 8px;
+        font-size: 0.95rem;
+      }
+      .terms-table th,
+      .terms-table td {
+        text-align: left;
+        vertical-align: top;
+        padding: 8px 12px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+      .note {
+        font-size: 0.92rem;
+        color: var(--muted, #555);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/spec/v0.1.md">Core spec</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/reference-implementation">Reference impl</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="intro">
+        <div class="intro-copy">
+          <p class="eyebrow">Vacation Rental Protocol</p>
+          <h1>What is a VRP vacation rental?</h1>
+          <p class="definition">
+            <strong>A VRP vacation rental is a holiday home whose host runs its own
+            booking site on its own domain and publishes stay offers signed by that
+            domain under the Vacation Rental Protocol (VRP).</strong> Any guest or AI
+            agent can check, over plain HTTPS, that the price, the dates and the
+            conditions come from the host — with no listing site, catalog or
+            connector in between.
+          </p>
+          <p>
+            Each VRP vacation rental is its own platform. The host's domain is the
+            source of truth: it states the stay, signs it, and takes the booking.
+          </p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>How to recognise a VRP vacation rental</h2>
+        <p>Three checks, each one an HTTPS request to the host's own domain:</p>
+        <ol>
+          <li>
+            The domain publishes <code>/.well-known/vacation-rental.json</code> with
+            <code>"protocol": "vacation-rental-protocol"</code>. The
+            <code>vacation-rental.json</code> suffix is registered in the IANA
+            Well-Known URIs registry (provisional, 2026-08-19).
+          </li>
+          <li>
+            That document names the domain's signing keys (a JWKS URL) and its
+            verified-stay-offer endpoint.
+          </li>
+          <li>
+            A stay offer from that endpoint is an Ed25519-signed JWS that verifies
+            against those keys, and its booking link points to the same domain.
+          </li>
+        </ol>
+        <p>
+          If all three hold, the stay is a VRP vacation rental. If the signature
+          fails, it is not — whatever any page says. You can run the third check in
+          your browser at <a href="/verify">vacationrentalprotocol.com/verify</a>.
+        </p>
+
+        <h2>What a guest gets</h2>
+        <ul>
+          <li>The offer comes from the host, signed by the host's domain.</li>
+          <li>
+            One all-inclusive total, stated by the host and covered by the
+            signature — the amount the guest pays on the host's site.
+          </li>
+          <li>
+            Booking and payment happen on the host's own domain. The guest's
+            relationship is with the host.
+          </li>
+          <li>
+            After booking, the host can issue a signed receipt the guest can verify
+            at <a href="/verify-receipt">vacationrentalprotocol.com/verify-receipt</a>.
+          </li>
+        </ul>
+
+        <h2>When a guest asks an AI agent for one</h2>
+        <p>
+          A guest may ask: <em>“Find me a VRP vacation rental in northern Italy for
+          two adults and a dog, 12–19 July.”</em> An agent handles it like this:
+        </p>
+        <ol>
+          <li>
+            Search the open web for holiday homes in the region whose own domain
+            publishes <code>/.well-known/vacation-rental.json</code>. VRP has no
+            central list of homes to query — by design, each host is found on the
+            open web, at its own domain.
+          </li>
+          <li>Fetch the discovery document and the domain's keys.</li>
+          <li>
+            Request a stay offer for the dates and guests, and verify its signature
+            and freshness before quoting it.
+          </li>
+          <li>
+            Quote only what the signed offer says, and send the guest to the signed
+            booking link on the host's domain.
+          </li>
+        </ol>
+        <p>
+          A Model Context Protocol (MCP) server can make these steps faster for a
+          connected agent, but none of them requires one. The
+          <a href="/docs/agent-guide">agent integration guide</a> gives the exact
+          requests.
+        </p>
+
+        <h2>How a host's home becomes a VRP vacation rental</h2>
+        <p>
+          The host's own domain must publish the discovery document, the signing
+          keys and signed offers described in the
+          <a href="/spec/v0.1.md">VRP v0.1 specification</a>. A developer can do this
+          from scratch in minutes — see <a href="/implement">Implement VRP</a> — or a
+          host can use software that implements VRP, such as the
+          <a href="/reference-implementation">reference implementation</a>. VRP is an
+          open standard: no permission, membership or listing is required.
+        </p>
+
+        <h2>The term in other languages</h2>
+        <table class="terms-table">
+          <thead>
+            <tr>
+              <th>Language</th>
+              <th>Term</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>English</td><td>VRP vacation rental · VRP holiday home · VRP stay</td></tr>
+            <tr><td>Swedish</td><td>VRP-semesterboende</td></tr>
+            <tr><td>German</td><td>VRP-Ferienunterkunft</td></tr>
+            <tr><td>French</td><td>location de vacances VRP</td></tr>
+            <tr><td>Danish · Norwegian</td><td>VRP-feriebolig</td></tr>
+            <tr><td>Finnish</td><td>VRP-loma-asunto</td></tr>
+            <tr><td>Dutch</td><td>VRP-vakantiewoning</td></tr>
+            <tr><td>Spanish</td><td>alquiler vacacional VRP</td></tr>
+            <tr><td>Italian</td><td>casa vacanze VRP</td></tr>
+            <tr><td>Polish</td><td>obiekt wakacyjny VRP</td></tr>
+            <tr><td>Arabic</td><td dir="rtl" lang="ar">إيجار عطلات VRP</td></tr>
+          </tbody>
+        </table>
+
+        <h2>A live example</h2>
+        <p>
+          A live reference node publishes its discovery document at
+          <a href="https://villaakerlyckan.se/.well-known/vacation-rental.json"
+            >villaakerlyckan.se/.well-known/vacation-rental.json</a
+          >. Every check above can be run against it today.
+        </p>
+
+        <p class="note">
+          Status: VRP is a public draft, v0.1. This page defines a term; it creates
+          no registry, marketplace, ranking, accreditation or booking intermediary.
+          The term is listed in the <a href="/terms#VRPVacationRental">VRP terms
+          vocabulary</a>.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

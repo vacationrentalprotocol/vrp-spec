@@ -3338,6 +3338,7 @@ VRP should compose with the agent-commerce stack instead of replacing it.
 | AP2 | Complementary. AP2 can handle cryptographic payment mandates and payment authorization. VRP v0.1 does not define payment mandates or raw payment processing. |
 | MCP | Complementary. MCP can expose retrieval or verification behavior as tools in a future profile. VRP v0.1 defines documents and verification rules, not runtime tools. |
 | A2A | Complementary. A2A can carry future guest-agent and host-agent negotiation. VRP v0.1 does not define an A2A binding. |
+| A2A Agent Card | A node may publish an A2A Agent Card at `https://{host-domain}/.well-known/agent-card.json`. Its `provider` is the host. It may carry a data-only extension with `uri` `https://vacationrentalprotocol.com/spec/v0.1` and `required: false`, whose `params` repeat the VRP v0.1 §2 discovery fields of the same host domain. Its skills name only tools the host domain serves, and it lists no A2A interface the host domain does not serve. The card describes the node; it is not a registry entry and does not replace verification of the signed offer against `jwks_url`. |
 | W3C VC 2.0 | Used by VRP Portable Attestations. |
 | VC JOSE/COSE | Canonical v0.1 security format for VRP Portable Attestations as compact JWS with `typ: "vc+jwt"` and `alg: "EdDSA"`. |
 | W3C Data Integrity | Possible future interoperability mapping. VRP v0.1 does not use embedded `proof` objects. |

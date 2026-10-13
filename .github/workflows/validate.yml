@@ -29,8 +29,10 @@ jobs:
 
       - name: Updated-stamp guard (spec content changed => landing-page stamp bumped)
         if: github.event_name == 'pull_request'
+        # No --depth here: a depth-limited fetch turns the full-history checkout
+        # into a shallow one, and the sitemap check below refuses shallow clones.
         run: |
-          git fetch origin ${{ github.base_ref }} --depth=50
+          git fetch origin ${{ github.base_ref }}
           node scripts/check-updated-stamp.mjs origin/${{ github.base_ref }}
 
       - name: Sitemap lastmod matches git (every <lastmod> is the date of the last commit to the file it serves)

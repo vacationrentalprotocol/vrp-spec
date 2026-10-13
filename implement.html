@@ -212,13 +212,13 @@
       <nav class="top-nav" aria-label="Main navigation">
         <a class="brand" href="/">VRP</a>
         <div class="nav-links">
-          <a href="/spec/v0.1.md">Core spec</a>
+          <a href="/spec/v0.1">Core spec</a>
           <a href="/implement">Implement</a>
           <a href="/verify">Verify offer</a>
           <a href="/reference-implementation">Reference impl</a>
           <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance">Conformance</a>
           <a href="/declarations">Declarations</a>
-          <a href="/docs/interop-and-trust-positioning.md">Interop</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
         </div>
       </nav>
     </header>
@@ -300,7 +300,7 @@
             Fail closed: when you cannot satisfy a request, return an explicit
             signed <code>available: false</code> — never an unsigned or partial
             answer. See the
-            <a href="/spec/v0.1.md">core spec (v0.1)</a> and the
+            <a href="/spec/v0.1">core spec (v0.1)</a> and the
             <a href="/docs/implement-vrp">implementation guide</a>.
           </p>
         </div>
@@ -311,7 +311,7 @@
           <h2>For coding agents (Claude Code, Cursor, Codex)</h2>
           <ol class="steps">
             <li>Publish three documents on the host's own domain: <code>/.well-known/jwks.json</code>, <code>/.well-known/vacation-rental.json</code>, and the offer endpoint it names, e.g. <code>/api/verified-stay-offer</code>.</li>
-            <li>Do not invent a schema — use <a href="/spec/v0.1.md">spec/v0.1.md</a> and <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/schemas">schemas/</a> verbatim.</li>
+            <li>Do not invent a schema — use <a href="/spec/v0.1">spec/v0.1.md</a> and <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/schemas">schemas/</a> verbatim.</li>
             <li>Do not proxy booking through a marketplace — <code>direct_booking_url</code> stays on the host's domain.</li>
             <li>Prove interop with the <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance">conformance vectors</a> (<code>npm test</code>).</li>
             <li>Questions: <a href="mailto:hello@vacationrentalprotocol.com">hello@vacationrentalprotocol.com</a></li>

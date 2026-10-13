@@ -16,6 +16,8 @@
     "check-license": "node scripts/check-license-boundary.mjs",
     "build-source-pack": "node scripts/build-source-pack.mjs",
     "check-source-pack": "node scripts/build-source-pack.mjs --check",
+    "build-sitemap": "node scripts/build-sitemap.mjs",
+    "check-sitemap": "node scripts/build-sitemap.mjs --check",
     "generate-vectors": "node scripts/generate-conformance-vectors.mjs",
     "test": "npm run validate && npm run verify-vectors && npm run verify-offer-schema && npm run verify-attestations && npm run verify-three-state && npm run verify-receipt-vectors && npm run verify-offer-vectors && npm run check-public-routes && npm run check-license && npm run check-source-pack"
   }

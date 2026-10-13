@@ -52,6 +52,34 @@ function extractCanonicalUrls(relPath) {
   return [...new Set(matches.map((url) => url.replace(/[.,;:]+$/, "")))];
 }
 
+function htmlFiles() {
+  return walk(root).filter((file) => file.endsWith(".html"));
+}
+
+// Internal hrefs of a static HTML page: root-relative ("/spec/v0.1") plus
+// absolute canonical-origin hrefs. Only href attributes are read, never page
+// text (pages/source-pack.html carries an escaped JSON sample ending in
+// contexts/v1&quot;]). Fragments and queries are dropped later by
+// routePathFromUrl (URL.pathname).
+function extractInternalHrefs(relPath) {
+  const text = readText(relPath);
+  const hrefs = [...text.matchAll(/href="([^"]+)"/g)].map((match) => match[1]);
+  const rootRelative = hrefs
+    .filter((href) => href.startsWith("/") && !href.startsWith("//"))
+    .map((href) => `${canonicalOrigin}${href}`);
+  const absolute = hrefs.filter((href) => href === canonicalOrigin || href.startsWith(`${canonicalOrigin}/`));
+  return [...new Set([...rootRelative, ...absolute])];
+}
+
+// Markdown link targets on the canonical origin: only "](https://...)" targets.
+// extractCanonicalUrls would also capture backtick-wrapped mentions and CSV
+// cells in docs/source-pack.md.
+function extractMarkdownLinkUrls(relPath) {
+  const text = readText(relPath);
+  const matches = [...text.matchAll(/\]\((https:\/\/vacationrentalprotocol\.com[^)\s]*)\)/g)].map((match) => match[1]);
+  return [...new Set(matches)];
+}
+
 function sitemapUrls() {
   return [...readText("sitemap.xml").matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
 }
@@ -118,34 +146,51 @@ function routeMatchesSource(route, source) {
   return route === source;
 }
 
+// Mirror Vercel's rewrite matching: `source` is a path-to-regexp pattern in
+// which ":name" matches one path segment and ":name*" a path of one or more
+// segments (no ":name*" source exists today); the first matching entry wins
+// and its parameters are substituted into `destination`. Rewrite sources are
+// plain paths or ":name" segments — no regex groups — so every other
+// character is escaped as a literal.
 function rewriteDestination(route) {
-  const rewrite = (vercel.rewrites || []).find((item) => item.source === route);
-  return rewrite?.destination || null;
+  for (const item of vercel.rewrites || []) {
+    const pattern = item.source
+      .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
+      .replace(/:([A-Za-z0-9_]+)\*/g, "(?<$1>.+)")
+      .replace(/:([A-Za-z0-9_]+)/g, "(?<$1>[^/]+)");
+    const match = route.match(new RegExp(`^${pattern}$`));
+    if (!match) continue;
+    return item.destination.replace(/:([A-Za-z0-9_]+)\*?/g, (m, name) => match.groups?.[name] ?? m);
+  }
+  return null;
 }
 
-// Resolve a repo-relative candidate to a file that actually ships, mirroring
-// Vercel's cleanUrls behaviour: an extensionless path is served by the matching
-// .html/.md file. This applies to rewrite destinations too — with cleanUrls a
-// destination like "/pages/source-pack" is served from pages/source-pack.html,
-// and a destination ending in ".html" is 308-redirected to the clean form (so
+// Resolve a repo-relative candidate to a file that actually ships. Vercel's
+// cleanUrls strips the extension of HTML files (and functions) only, so an
+// extensionless Markdown route is served solely through a vercel.json rewrite.
+// This applies to rewrite destinations too — with cleanUrls a destination like
+// "/pages/source-pack" is served from pages/source-pack.html, and a
+// destination ending in ".html" is 308-redirected to the clean form (so
 // extensionless is the correct destination to author).
 function resolveExisting(relPath) {
   if (fileExists(relPath)) return relPath;
-  if (vercel.cleanUrls) {
-    for (const extension of [".html", ".md"]) {
-      if (fileExists(`${relPath}${extension}`)) return `${relPath}${extension}`;
-    }
-  }
+  if (vercel.cleanUrls && fileExists(`${relPath}.html`)) return `${relPath}.html`;
   return null;
 }
 
 function resolveRoute(route) {
   if (route === "/") return "index.html";
 
+  // Vercel: "precedence is given to the filesystem prior to rewrites being
+  // applied", so a request for an existing file (/spec/v0.1.md) is served
+  // before any rewrite pattern (/spec/:slug) is consulted.
+  const direct = resolveExisting(stripLeadingSlash(route));
+  if (direct) return direct;
+
   const destination = rewriteDestination(route);
   if (destination) return resolveExisting(stripLeadingSlash(destination));
 
-  return resolveExisting(stripLeadingSlash(route));
+  return null;
 }
 
 function headerContentType(route) {
@@ -156,6 +201,24 @@ function headerContentType(route) {
     if (contentType) values.push(contentType.value);
   }
   return values.at(-1) || null;
+}
+
+function linkHeaderFor(route) {
+  for (const entry of vercel.headers || []) {
+    if (!routeMatchesSource(route, entry.source)) continue;
+    const link = entry.headers?.find((header) => header.key.toLowerCase() === "link");
+    if (link) return link.value;
+  }
+  return null;
+}
+
+// Exact-path header rules that set a Link header (the .md twins of the
+// sitemap's Markdown documents).
+function linkHeaderRoutes() {
+  return (vercel.headers || [])
+    .filter((entry) => entry.headers?.some((header) => header.key.toLowerCase() === "link"))
+    .map((entry) => entry.source)
+    .filter((source) => !/[(:*]/.test(source));
 }
 
 function expectedContentType(route, resolvedPath) {
@@ -176,6 +239,8 @@ function checkPublicRoutes() {
     ...sitemapUrls(),
     ...extractCanonicalUrls("README.md"),
     ...extractCanonicalUrls("llms.txt"),
+    ...extractMarkdownLinkUrls("docs/source-pack.md"),
+    ...htmlFiles().flatMap(extractInternalHrefs),
   ]);
 
   const sitemapRoutes = new Set(sitemapUrls().map(routePathFromUrl));
@@ -183,6 +248,16 @@ function checkPublicRoutes() {
 
   for (const route of llmsRoutes) {
     if (!sitemapRoutes.has(route)) fail(`llms.txt: canonical route missing from sitemap.xml: ${route}`);
+  }
+  for (const route of sitemapRoutes) {
+    if (!llmsRoutes.has(route)) fail(`sitemap.xml: route missing from llms.txt: ${route}`);
+  }
+
+  for (const source of linkHeaderRoutes()) {
+    if (!fileExists(stripLeadingSlash(source))) fail(`vercel.json: Link header source is not a file: ${source}`);
+    const canonical = linkHeaderFor(source).match(/^<([^>]+)>; rel="canonical"$/)?.[1];
+    if (!canonical) fail(`vercel.json: Link header for ${source} is not <url>; rel="canonical"`);
+    else if (!sitemapRoutes.has(routePathFromUrl(canonical))) fail(`vercel.json: canonical ${canonical} for ${source} is not a sitemap route`);
   }
 
   for (const url of urls) {
@@ -207,7 +282,13 @@ function checkPublicRoutes() {
 }
 
 async function checkLiveRoutes() {
-  const urls = [...new Set([...requiredCanonicalUrls(), ...sitemapUrls()])];
+  const urls = [...new Set([
+    ...requiredCanonicalUrls(),
+    ...sitemapUrls(),
+    ...extractMarkdownLinkUrls("docs/source-pack.md"),
+    ...htmlFiles().flatMap(extractInternalHrefs),
+    ...linkHeaderRoutes().map((route) => `${canonicalOrigin}${route}`),
+  ])];
   const jsonLdUrl = `${canonicalOrigin}/contexts/v1.jsonld`;
   let jsonLdBody = null;
   const bodyMustMatchRepository = new Map([
@@ -233,6 +314,16 @@ async function checkLiveRoutes() {
     const actualType = response.headers.get("content-type") || "";
     if (expectedType && !actualType.startsWith(expectedType)) {
       fail(`${url}: live Content-Type expected ${expectedType}, got ${actualType || "<missing>"}`);
+    }
+
+    // The .md twin must declare its clean canonical; the clean URL carries no
+    // Link header, or at most a self-referential one.
+    const expectedLink = linkHeaderFor(route);
+    const actualLink = response.headers.get("link");
+    if (expectedLink && actualLink !== expectedLink) {
+      fail(`${url}: live Link header expected ${expectedLink}, got ${actualLink || "<missing>"}`);
+    } else if (!expectedLink && actualLink && actualLink !== `<${url}>; rel="canonical"`) {
+      fail(`${url}: unexpected live Link header ${actualLink}`);
     }
 
     let body = null;

@@ -24,9 +24,12 @@ Definition: https://vacationrentalprotocol.com/vrp-vacation-rental
 ## Primary Documents
 
 - What is a VRP vacation rental? (the category, how to recognise one, how an agent finds and verifies one): https://vacationrentalprotocol.com/vrp-vacation-rental
+- What is VRP?: https://vacationrentalprotocol.com/docs/what-is-vrp
 
 - VRP Source Pack (the entire standard in one file, for AI notebooks like NotebookLM/Gemini Notebook, ChatGPT, Claude — Markdown edition): https://vacationrentalprotocol.com/docs/source-pack
 - VRP Source Pack, HTML edition (same content as one HTML page; use this for website importers like Google NotebookLM that need HTML rather than raw Markdown): https://vacationrentalprotocol.com/source-pack
+- The film: https://vacationrentalprotocol.com/film
+- Watch the agent: https://vacationrentalprotocol.com/demo
 - Reference implementation (live proof): https://vacationrentalprotocol.com/reference-implementation
 - Verify a signed offer yourself (in-browser Ed25519, no dependencies): https://vacationrentalprotocol.com/verify
 - Verify a booking receipt yourself (in-browser: signature + recomputed confirmation reference + transparency-log inclusion; printable evidence copy): https://vacationrentalprotocol.com/verify-receipt
@@ -34,6 +37,7 @@ Definition: https://vacationrentalprotocol.com/vrp-vacation-rental
 - Implement VRP in 5 minutes (in-browser Ed25519 signer + reference code + conformance vectors): https://vacationrentalprotocol.com/implement
 - First-mover evidence memo: https://vacationrentalprotocol.com/docs/first-mover-evidence-memo
 - Core VRP v0.1 specification: https://vacationrentalprotocol.com/spec/v0.1
+- Well-Known URI v0.1: https://vacationrentalprotocol.com/spec/well-known-uri-v0.1
 - Portable Attestations v0.1: https://vacationrentalprotocol.com/spec/attestations-v0.1
 - StayIntent open discovery v0.1 (no-gatekeeper, priceless, verifiable): https://vacationrentalprotocol.com/spec/stayintent-discovery-v0.1
 - Transparency Log v0.1 (append-only, tamper-evident auditability): https://vacationrentalprotocol.com/spec/transparency-log-v0.1
@@ -44,6 +48,7 @@ Definition: https://vacationrentalprotocol.com/vrp-vacation-rental
 - Addon Attestation Layer v0.1 (host-signed upsells — late checkout, early check-in, extensions — as their own receipt-v1 attestation layer; proposal for discussion): https://vacationrentalprotocol.com/spec/addon-attestation-layer-v0.1
 - Domain Continuity v0.1 (did:web identity across registrant change / expiry — registration-epoch signal, fail-closed verifier guidance; proposal for discussion): https://vacationrentalprotocol.com/spec/domain-continuity-v0.1
 - Interop and trust positioning: https://vacationrentalprotocol.com/docs/interop-and-trust-positioning
+- ADR 0002: No-Gatekeeper Trust and Interop Positioning: https://vacationrentalprotocol.com/docs/adr/0002-no-gatekeeper-trust-and-interop
 - Agent integration guide: https://vacationrentalprotocol.com/docs/agent-guide
 - Implement VRP signed offers (guide): https://vacationrentalprotocol.com/docs/implement-vrp
 - Implement portable attestations (guide): https://vacationrentalprotocol.com/docs/implement-attestations
@@ -57,9 +62,14 @@ Definition: https://vacationrentalprotocol.com/vrp-vacation-rental
 - Receipt Envelope JSON Schema: https://vacationrentalprotocol.com/schemas/vrp-receipt.v1.schema.json
 - StayIntent query JSON Schema: https://vacationrentalprotocol.com/schemas/stayintent-query-v0.1.schema.json
 - StayIntent response JSON Schema: https://vacationrentalprotocol.com/schemas/stayintent-response-v0.1.schema.json
+- Example discovery document: https://vacationrentalprotocol.com/examples/discovery.v0.1.json
+- Example JWKS: https://vacationrentalprotocol.com/examples/jwks.v0.1.json
+- Example verified stay offer verification result (safe to quote): https://vacationrentalprotocol.com/examples/verified-stay-offer-verification-result.safe-to-quote.v0.1.json
+- Example verified stay offer (not quoteable): https://vacationrentalprotocol.com/examples/verified-stay-offer.not-quoteable.v0.1.json
 - Example attestation bundle: https://vacationrentalprotocol.com/examples/attestations/attestation-bundle.v0.1.json
 - Three-state conformance fixtures: https://vacationrentalprotocol.com/examples/conformance/three-state-verification.v0.1.json
 - StayIntent conformance fixtures (positive + no-match): https://vacationrentalprotocol.com/examples/conformance/stayintent/positive.v0.1.json
+- StayIntent conformance fixture (no-match): https://vacationrentalprotocol.com/examples/conformance/stayintent/no-match.v0.1.json
 - Conformance report v0.1 (score-free record of one verifier run against one corpus): https://vacationrentalprotocol.com/docs/conformance-report
 - Conformance report JSON Schema: https://vacationrentalprotocol.com/schemas/conformance-report-v0.1.schema.json
 - Example conformance report (reference verifier, signed-offer corpus): https://vacationrentalprotocol.com/examples/conformance/reports/offer.reference-verifier.v0.1.json

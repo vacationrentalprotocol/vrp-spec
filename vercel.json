@@ -4,6 +4,186 @@
   "trailingSlash": false,
   "headers": [
     {
+      "source": "/spec/v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/attestations-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/attestations-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/well-known-uri-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/well-known-uri-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/stayintent-discovery-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/stayintent-discovery-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/transparency-log-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/transparency-log-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/attestation-status-bitstring-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/attestation-status-bitstring-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/receipt-v1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/receipt-v1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/proof-chain-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/proof-chain-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/node-seal-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/node-seal-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/addon-attestation-layer-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/addon-attestation-layer-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/domain-continuity-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/domain-continuity-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/what-is-vrp.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/what-is-vrp>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/source-pack.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/source-pack>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/first-mover-evidence-memo.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/first-mover-evidence-memo>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/interop-and-trust-positioning.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/interop-and-trust-positioning>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/agent-guide.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/agent-guide>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/implement-vrp.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/implement-vrp>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/implement-attestations.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/implement-attestations>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/adr/0002-no-gatekeeper-trust-and-interop.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/adr/0002-no-gatekeeper-trust-and-interop>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/conformance-report.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/conformance-report>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
       "source": "/contexts/v1",
       "headers": [
         {
@@ -361,6 +541,14 @@
     {
       "source": "/docs/:slug",
       "destination": "/docs/:slug.md"
+    },
+    {
+      "source": "/spec/:dir/:slug",
+      "destination": "/spec/:dir/:slug.md"
+    },
+    {
+      "source": "/docs/:dir/:slug",
+      "destination": "/docs/:dir/:slug.md"
     }
   ]
 }

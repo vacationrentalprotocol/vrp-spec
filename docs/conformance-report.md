@@ -52,4 +52,4 @@ The `method` field in the report carries this command so the digest can be recom
 
 ## License
 
-Specification text on this page and the schema under `schemas/` are [CC0 1.0](../LICENSE). The conformance vectors and the example report under `examples/conformance/`, and any harness under `scripts/`, are [Apache-2.0](../LICENSE-CODE), which carries the royalty-free patent grant. See the [README license table](../README.md#license).
+Specification text on this page and the schema under `schemas/` are [CC0 1.0](../LICENSE). The conformance vectors and the example report under `examples/conformance/`, and any harness under `scripts/`, are [Apache-2.0](../LICENSE-CODE), which carries the royalty-free patent grant. See the [README license table](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/README.md#license).

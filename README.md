@@ -83,7 +83,7 @@ profiles where each verifier chooses which issuers to trust.
 
 ## Reference Implementation
 
-[HemmaBo](https://hemmabo.com) is a reference implementation, provider, and federation using VRP-compatible host-owned domains.
+[HemmaBo](https://www.hemmabo.com/) is a reference implementation, provider, and federation using VRP-compatible host-owned domains.
 
 **Live proof node:** [villaakerlyckan.se](https://villaakerlyckan.se)
 

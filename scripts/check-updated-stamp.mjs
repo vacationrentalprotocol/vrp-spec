@@ -53,13 +53,36 @@ function isWhitespaceOnly(file) {
   );
 }
 
+// A link-target-only edit — an href value, a JSON-LD "url" value, or an <a>
+// wrapped around words that were already on the page — changes where a page
+// points, not what it says. Like whitespace, it is not a revision.
+function isLinkTargetOnly(file) {
+  const normalize = (line) =>
+    line
+      .replace(/<a href="[^"]*">/g, "")
+      .replace(/<\/a>/g, "")
+      .replace(/href="[^"]*"/g, 'href=""')
+      .replace(/"url": "[^"]*"/g, '"url": ""')
+      .replace(/\s+/g, " ")
+      .trim();
+  const removed = [];
+  const added = [];
+  for (const line of sh(`git diff ${mergeBase}..HEAD -- "${file}"`).split("\n")) {
+    if (/^(---|\+\+\+) /.test(line)) continue;
+    if (line.startsWith("-")) removed.push(normalize(line.slice(1)));
+    else if (line.startsWith("+")) added.push(normalize(line.slice(1)));
+  }
+  return removed.length === added.length && removed.every((line, i) => line === added[i]);
+}
+
 const contentChanged = changed
   .filter((f) => CONTENT.test(f) && f !== "index.html")
-  .filter((f) => !isWhitespaceOnly(f));
+  .filter((f) => !isWhitespaceOnly(f))
+  .filter((f) => !isLinkTargetOnly(f));
 
 // index.html itself counts as content when more than the stamp line changed.
 const STAMP_RE = /Public draft v[\d.]+ &middot; updated \d{4}-\d{2}-\d{2}/;
-if (changed.includes("index.html")) {
+if (changed.includes("index.html") && !isLinkTargetOnly("index.html")) {
   const diff = sh(`git diff ${mergeBase}..HEAD -- index.html`);
   const nonStampEdits = diff
     .split("\n")

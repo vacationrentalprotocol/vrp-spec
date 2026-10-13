@@ -67,7 +67,7 @@ IETF standards-track approval, and it is not a directory of nodes or properties
 ## Reference implementation
 
 - **Protocol:** Vacation Rental Protocol v0.1 (this repository)
-- **Runtime:** [HemmaBo](https://hemmabo.com) — infrastructure, not trust root for offers
+- **Runtime:** [HemmaBo](https://www.hemmabo.com/) — infrastructure, not trust root for offers
 - **Proof node:** [villaakerlyckan.se](https://villaakerlyckan.se)
 
 HemmaBo is a reference implementation and standards contributor, not a central issuer, registry, OTA, marketplace, or booking intermediary.

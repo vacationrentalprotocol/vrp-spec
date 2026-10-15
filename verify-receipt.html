@@ -189,9 +189,11 @@
             <p class="note">
               The property's public key is fetched from the issuer domain named
               <em>inside</em> the signed receipt (<code>/.well-known/jwks.json</code>),
-              and the inclusion proof from that domain's log endpoint. Nothing you
-              paste is sent anywhere — all fetches go straight to the property's
-              own domain and the log, and all checks run locally.
+              and the inclusion proof from that domain's log endpoint. The tree head
+              is checked against the key the log operator publishes on its own
+              domain, never a key the property serves. Nothing you paste is sent
+              anywhere — all fetches go straight to the property's own domain and
+              the log, and all checks run locally.
             </p>
           </div>
         </div>
@@ -248,10 +250,12 @@
       (function () {
         "use strict";
 
-        // Reference transparency log — HemmaBo-operated (spec/transparency-log-v0.1.md).
-        // Its tree heads verify against this JWKS.
-        var OPERATOR_LOG = "https://www.hemmabo.com/api/vrp-tlog";
-        var OPERATOR_JWKS = "https://www.hemmabo.com/.well-known/jwks.json";
+        // Fallback place to look up an inclusion proof when the property's own
+        // read-through proxy has none: a known public VRP log. This URL is only a
+        // lookup location, never a trust anchor — every tree head is verified against
+        // the key published by the log operator named in the tree head's own `log_id`
+        // (spec/transparency-log-v0.1.md §5.1).
+        var FALLBACK_LOG = "https://www.hemmabo.com/api/vrp-tlog";
 
         function b64urlToBytes(s) {
           s = s.replace(/-/g, "+").replace(/_/g, "/");
@@ -349,6 +353,43 @@
           return sn === 0 && bytesEqual(r, b64urlToBytes(rootB64));
         }
 
+        // A log's `log_id` is a did:web identifier (transparency-log §5). Its DID
+        // document lives on the log operator's own domain, so the key found there is
+        // the operator's published key — the only trust anchor for tree heads (§5.1).
+        function didWebDocumentUrl(did) {
+          var m = /^did:web:([^#?]+)$/.exec(String(did || "").trim());
+          if (!m) return null;
+          var segs = m[1].split(":").map(function (s) { return decodeURIComponent(s); });
+          var host = segs.shift();
+          if (!host || !/^[A-Za-z0-9.-]+(:\d+)?$/.test(host)) return null;
+          return "https://" + host + (segs.length ? "/" + segs.join("/") : "/.well-known") + "/did.json";
+        }
+        function didWebHost(did) {
+          var m = /^did:web:([^:#?]+)/.exec(String(did || "").trim());
+          return m ? decodeURIComponent(m[1]).toLowerCase() : "";
+        }
+        function jwksFromDidDocument(doc) {
+          var methods = (doc && Array.isArray(doc.verificationMethod)) ? doc.verificationMethod : [];
+          var keys = [];
+          for (var i = 0; i < methods.length; i++) {
+            var vm = methods[i];
+            var jwk = vm && vm.publicKeyJwk;
+            if (!jwk || jwk.kty !== "OKP" || jwk.crv !== "Ed25519" || !jwk.x) continue;
+            var id = typeof vm.id === "string" ? vm.id : "";
+            var kid = jwk.kid || (id.indexOf("#") >= 0 ? id.slice(id.indexOf("#") + 1) : undefined);
+            keys.push({ kty: "OKP", crv: "Ed25519", x: jwk.x, kid: kid });
+          }
+          return { keys: keys };
+        }
+        // The issuing property must not be its own anchor (§5.1: never a key
+        // published by a host node). Same domain, or one inside the other, counts.
+        function sameOperator(logHost, issuerDomain) {
+          var a = String(logHost || "").replace(/^www\./, "");
+          var b = String(issuerDomain || "").replace(/^www\./, "");
+          if (!a || !b) return false;
+          return a === b || a.endsWith("." + b) || b.endsWith("." + a);
+        }
+
         var checks = [];
         function addCheck(ok, label, detail) {
           checks.push({ state: ok, label: label, detail: detail || "" });
@@ -441,7 +482,10 @@
             document.getElementById("refbox").textContent = artifactHash;
             addCheck(true, "Confirmation reference recomputed from the exact receipt bytes");
 
-            // Step 4: transparency-log inclusion (node read-through proxy, operator log as fallback).
+            // Step 4: transparency-log inclusion proof (property's read-through proxy
+            // first, then a known public log). A missing proof means signature-only
+            // verification, not a failure: log inclusion MUST NOT be a precondition
+            // for verification (receipt-v1 §5, transparency-log §3).
             var proof = null;
             var proofSource = "";
             try {
@@ -450,43 +494,66 @@
             } catch (_e) { /* fall through */ }
             if (!proof || !proof.inclusion) {
               try {
-                var r2 = await fetch(OPERATOR_LOG + "?hash=" + encodeURIComponent(artifactHash));
-                if (r2.ok) { proof = await r2.json(); proofSource = "operator log"; }
+                var r2 = await fetch(FALLBACK_LOG + "?hash=" + encodeURIComponent(artifactHash));
+                if (r2.ok) { proof = await r2.json(); proofSource = "public log"; }
               } catch (_e) { /* handled below */ }
             }
 
+            // "Anchored" requires all of: the inclusion proof recomputes to the tree
+            // head; the tree head is signed by the log operator named in its own
+            // log_id, with the key resolved from that operator's domain (§5.1); and
+            // that operator is not the issuing property itself (§5.1).
             var anchored = false;
-            var sthVerified = null;
+            var notAnchoredWhy = "";
+            var logId = "";
             if (proof && proof.inclusion && proof.signed_tree_head) {
               var sth = proof.signed_tree_head;
-              anchored = await verifyInclusion(
+              logId = String(sth.log_id || "");
+              var inclusionOk = await verifyInclusion(
                 artifactHash,
                 proof.inclusion.leaf_index,
                 proof.inclusion.tree_size,
                 proof.inclusion.audit_path || [],
                 sth.root_hash
               );
-              addCheck(anchored,
-                "Inclusion proof recomputes to the signed tree head",
-                "leaf " + proof.inclusion.leaf_index + " of " + proof.inclusion.tree_size + " (" + proofSource + ")");
+              addCheck(inclusionOk ? true : null,
+                "Inclusion proof recomputes to the tree head",
+                "leaf " + esc(proof.inclusion.leaf_index) + " of " + esc(proof.inclusion.tree_size) + " (" + proofSource + ")" +
+                  (inclusionOk ? "" : " — did not recompute"));
 
               // Step 5: the log operator's signature over the tree head.
-              if (proof.signature && proof.signature.jws) {
+              var sthVerified = false;
+              var sthDetail = "";
+              var didUrl = didWebDocumentUrl(logId);
+              if (!(proof.signature && proof.signature.jws)) {
+                sthDetail = "the tree head carries no operator signature";
+              } else if (!didUrl) {
+                sthDetail = "log_id is not a did:web identifier (" + logId + ")";
+              } else if (sameOperator(didWebHost(logId), domain)) {
+                sthDetail = "the log is operated by the issuing domain itself (" + logId + ") — not an independent anchor";
+              } else {
                 try {
-                  var opJwks = await (await fetch(OPERATOR_JWKS)).json();
-                  var sthPayload = (await verifyJws(proof.signature.jws, opJwks)).payload;
+                  var didDoc = await (await fetch(didUrl)).json();
+                  var sthPayload = (await verifyJws(proof.signature.jws, jwksFromDidDocument(didDoc))).payload;
                   sthVerified =
                     sthPayload.root_hash === sth.root_hash &&
                     sthPayload.tree_size === sth.tree_size &&
                     sthPayload.log_id === sth.log_id;
-                  addCheck(sthVerified === true, "Tree head is signed by the log operator", esc(sth.log_id || ""));
+                  sthDetail = sthVerified
+                    ? logId + " (key published at " + didUrl + ")"
+                    : "the signed payload does not match the tree head";
                 } catch (_e) {
-                  sthVerified = null;
-                  addCheck(null, "Tree head operator signature", "could not be checked from this browser");
+                  sthDetail = "could not be verified against the operator's published key (" + didUrl + ")";
                 }
               }
+              addCheck(sthVerified ? true : null, "Tree head is signed by the log operator", esc(sthDetail));
+
+              anchored = inclusionOk && sthVerified;
+              if (!anchored) notAnchoredWhy = inclusionOk ? sthDetail : "the inclusion proof did not recompute";
             } else {
-              addCheck(false, "Transparency-log inclusion", "no inclusion proof found for this receipt's reference");
+              addCheck(null, "Transparency-log inclusion",
+                "no inclusion proof found for this receipt's reference — signature-only verification");
+              notAnchoredWhy = "no inclusion proof was found";
             }
 
             // Facts panel — the promise, in clear text.
@@ -510,12 +577,14 @@
               verdictEl.className = "verdict pass";
               verdictEl.textContent =
                 "VERIFIED — this receipt was signed by " + domain +
-                " and its fingerprint is anchored in the public log. The promise shown below is mathematically bound to that domain.";
+                " and its fingerprint is anchored in the public log " + logId +
+                ". The promise shown below is mathematically bound to that domain.";
             } else if (allHard) {
               verdictEl.className = "verdict warn";
               verdictEl.textContent =
                 "SIGNATURE VERIFIED — signed by " + domain +
-                ", but the log-inclusion check did not complete. The signature alone still binds the promise to the domain.";
+                ", but not anchored in an independent public log (" + notAnchoredWhy +
+                "). The signature alone still binds the promise to the domain.";
             } else {
               verdictEl.className = "verdict fail";
               verdictEl.textContent = "NOT VERIFIED — one or more checks failed. Do not rely on this receipt.";

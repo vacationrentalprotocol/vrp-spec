@@ -15,6 +15,9 @@ implementation's code as the thing to conform to:
 
 - `spec/stayintent-discovery-v0.1.md` §8 called a specific implementation file
   ("`api/search-properties.ts`") "the normative conformant surface".
+- `spec/stayintent-discovery-v0.1.md` §7 said the capability alias table "is
+  maintained in the reference implementation (`AMENITY_SCHEMA_MAP`), not
+  redefined here".
 - `schemas/README.md` ordered the standard's receipt schema to stay "byte-equal"
   with a copy in the implementation repository, with the two copies required to
   "stay byte-identical".
@@ -51,10 +54,10 @@ Competitive framing ("moat") is not used in the specification text.
 
 ## Consequences
 
-- The wording in nine places is corrected (see the Class A line list on the pull
-  request). Seven reverse the direction — the standard, not an implementation,
+- The wording in ten places is corrected (see the Class A line list on the pull
+  request). Eight reverse the direction — the standard, not an implementation,
   is the source of truth; two drop the word "moat".
-- Eight of the nine change only which side is the source of truth, or a single
+- Nine of the ten change only which side is the source of truth, or a single
   word; no schema field, signing rule, or verification rule changes in meaning.
   One does change meaning: `stayintent-discovery` §8 moves the normative
   conformant surface from a named implementation file to any deterministic

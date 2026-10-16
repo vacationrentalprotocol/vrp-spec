@@ -66,8 +66,8 @@ Competitive framing ("moat") is not used in the specification text.
   at least seven days for review with no maintainer objecting, and — while two
   maintainers are active — approval from two (one maintainer approves while only
   one is active).
-- `ADR 0010`/`0011`, currently cited from the implementation repository, are
-  brought into this repository as the standard's own ADRs in a follow-up; that
-  work is out of scope here.
+- The receipt-envelope and key-lifecycle design records currently cited from the
+  implementation repository are brought into this repository as the standard's
+  own ADRs in a follow-up; that work is out of scope here.
 
 This ADR adds no runtime behavior and no new tools.

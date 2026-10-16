@@ -858,8 +858,9 @@ adds price or ranking has rebuilt the OTA it replaces.
 - OTA OpenTravel Hotel Amenity Codes (HAC) where a mapping exists,
 - (future) the UCP hospitality namespace when published.
 
-The alias table is maintained in the reference implementation
-(`AMENITY_SCHEMA_MAP`), not redefined here. Geo uses Wikidata QID + OSM.
+The alias table maps these codes to the vocabularies above; an implementation
+provides the concrete lookup (for example `AMENITY_SCHEMA_MAP`). Geo uses
+Wikidata QID + OSM.
 
 #### 8. Conformance
 

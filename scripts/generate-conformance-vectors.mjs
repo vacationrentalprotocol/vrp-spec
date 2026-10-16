@@ -15,6 +15,7 @@ import {
   signedAttestationBundle,
   signedOfferEnvelope,
 } from "./conformance.mjs";
+import { buildTlogVectors } from "./tlog-vectors.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -36,3 +37,11 @@ writeJson(
   "examples/conformance/attestations/attestation-bundle.signed.v0.1.json",
   signedAttestationBundle(loadPayload),
 );
+
+// Transparency-log vectors (spec/transparency-log-v0.1.md §11): test log key,
+// signed tree head, inclusion proofs for a known leaf, consistency proofs.
+const tlog = buildTlogVectors();
+writeJson("examples/conformance/log/did-web-document.v0.1.json", tlog.didDocument);
+writeJson("examples/conformance/log/sth.signed.v0.1.json", tlog.signedSth);
+for (const v of tlog.inclusion) writeJson(`examples/conformance/log/inclusion/${v.name}.json`, v);
+for (const v of tlog.consistency) writeJson(`examples/conformance/log/consistency/${v.name}.json`, v);

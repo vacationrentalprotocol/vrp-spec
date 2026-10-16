@@ -1,0 +1,63 @@
+{
+  "name": "03-second-sth-unsigned",
+  "description": "The later tree head carries no operator signature → it proves nothing about append-only growth (§5).",
+  "spec": "spec/transparency-log-v0.1.md",
+  "log_operator_did_document": {
+    "@context": [
+      "https://www.w3.org/ns/did/v1"
+    ],
+    "id": "did:web:example-log.invalid",
+    "verificationMethod": [
+      {
+        "id": "did:web:example-log.invalid#log-ed25519-2026-10",
+        "type": "JsonWebKey2020",
+        "controller": "did:web:example-log.invalid",
+        "publicKeyJwk": {
+          "kty": "OKP",
+          "crv": "Ed25519",
+          "kid": "did:web:example-log.invalid#log-ed25519-2026-10",
+          "alg": "EdDSA",
+          "x": "QCsV_rg8-rG_7R3UgACWighs9H8xV0z5PX4w87OIjaY"
+        }
+      }
+    ],
+    "assertionMethod": [
+      "did:web:example-log.invalid#log-ed25519-2026-10"
+    ]
+  },
+  "first": {
+    "signed_tree_head": {
+      "kind": "vrp_tlog_sth",
+      "log_id": "did:web:example-log.invalid",
+      "tree_size": 2,
+      "root_hash": "u4yOH5tHtRD5ckHHd_KULet_lY0Z73gE4zXtjAllzEY",
+      "timestamp": "2026-10-16T00:00:02Z"
+    },
+    "signature": {
+      "format": "jws_compact",
+      "alg": "EdDSA",
+      "kid": "did:web:example-log.invalid#log-ed25519-2026-10",
+      "jws": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCIsImtpZCI6ImRpZDp3ZWI6ZXhhbXBsZS1sb2cuaW52YWxpZCNsb2ctZWQyNTUxOS0yMDI2LTEwIn0.eyJraW5kIjoidnJwX3Rsb2dfc3RoIiwibG9nX2lkIjoiZGlkOndlYjpleGFtcGxlLWxvZy5pbnZhbGlkIiwidHJlZV9zaXplIjoyLCJyb290X2hhc2giOiJ1NHlPSDV0SHRSRDVja0hIZF9LVUxldF9sWTBaNzNnRTR6WHRqQWxsekVZIiwidGltZXN0YW1wIjoiMjAyNi0xMC0xNlQwMDowMDowMloifQ.d89ubbDhBsG5YK-okHbXk_e3CEE82ZFvn0a4Mxvl9l-m6PKS_RwmSfLL52XdVpoBy4klyiCtPR6XNnvbEKZxAA"
+    }
+  },
+  "second": {
+    "signed_tree_head": {
+      "kind": "vrp_tlog_sth",
+      "log_id": "did:web:example-log.invalid",
+      "tree_size": 4,
+      "root_hash": "Pkl76cAcNskycDgnB-c8pe3wAb49tl93UjUhcmGbW8k",
+      "timestamp": "2026-10-16T00:00:04Z"
+    }
+  },
+  "consistency": {
+    "first_size": 2,
+    "second_size": 4,
+    "proof": [
+      "CvZ7e-9pn6lL7r9X8iU0wcCmHagzaIiI9u6WJIta9Is"
+    ]
+  },
+  "expected": {
+    "consistent": false,
+    "reason": "second_sth_unsigned"
+  }
+}

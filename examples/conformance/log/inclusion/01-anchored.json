@@ -1,0 +1,59 @@
+{
+  "name": "01-anchored",
+  "description": "Leaf 0 (the committed signed offer) with a correct audit path and a tree head signed by the published log key → anchored (§8 steps 1–3, §5.1).",
+  "spec": "spec/transparency-log-v0.1.md",
+  "log_operator_did_document": {
+    "@context": [
+      "https://www.w3.org/ns/did/v1"
+    ],
+    "id": "did:web:example-log.invalid",
+    "verificationMethod": [
+      {
+        "id": "did:web:example-log.invalid#log-ed25519-2026-10",
+        "type": "JsonWebKey2020",
+        "controller": "did:web:example-log.invalid",
+        "publicKeyJwk": {
+          "kty": "OKP",
+          "crv": "Ed25519",
+          "kid": "did:web:example-log.invalid#log-ed25519-2026-10",
+          "alg": "EdDSA",
+          "x": "QCsV_rg8-rG_7R3UgACWighs9H8xV0z5PX4w87OIjaY"
+        }
+      }
+    ],
+    "assertionMethod": [
+      "did:web:example-log.invalid#log-ed25519-2026-10"
+    ]
+  },
+  "issuer_domain": "example-host.invalid",
+  "artifact_jws": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCIsImtpZCI6ImV4YW1wbGUtaG9zdC5pbnZhbGlkLXRlc3QtdmVjdG9yLTIwMjYifQ.eyJraW5kIjoidmVyaWZpZWRfc3RheV9vZmZlciIsInByb3RvY29sX3ZlcnNpb24iOiIwLjEiLCJjYW5vbmljYWxfZG9tYWluIjoiZXhhbXBsZS1ob3N0LmludmFsaWQiLCJub2RlX2lkIjoiZXhhbXBsZS1ob3N0LmludmFsaWQiLCJnZW5lcmF0ZWRfYXQiOiIyMDI2LTA2LTAyVDEyOjAwOjAwWiIsInZhbGlkX3VudGlsIjoiMjAyNi0wNi0wMlQxMjoxMDowMFoiLCJyZXF1ZXN0Ijp7ImNoZWNrX2luIjoiMjAyNi0wOS0xMiIsImNoZWNrX291dCI6IjIwMjYtMDktMTUiLCJndWVzdHMiOjJ9LCJwcm9wZXJ0eSI6eyJwcm9wZXJ0eV9pZCI6ImV4YW1wbGUtcHJvcGVydHkiLCJuYW1lIjoiRXhhbXBsZSBIb3N0IFN0YXkiLCJ1cmwiOiJodHRwczovL2V4YW1wbGUtaG9zdC5pbnZhbGlkLyJ9LCJhdmFpbGFiaWxpdHkiOnsiYXZhaWxhYmxlIjp0cnVlLCJzb3VyY2UiOiJvZmZpY2lhbF9ob3N0X2RvbWFpbiJ9LCJwcmljZSI6eyJjdXJyZW5jeSI6IkVVUiIsInB1YmxpY190b3RhbCI6MTIzNDAwLCJhZ2VudF90b3RhbCI6MTIzNDAwLCJtaW5vcl91bml0Ijp0cnVlLCJleGFjdCI6dHJ1ZX0sImJvb2tpbmciOnsiZGlyZWN0X2Jvb2tpbmdfdXJsIjoiaHR0cHM6Ly9leGFtcGxlLWhvc3QuaW52YWxpZC9ib29rP29mZmVyX2lkPXRlc3QtdmVjdG9yIn0sImFnZW50X3Blcm1pc3Npb24iOnsibWF5X3F1b3RlX2FzX29mZmljaWFsX2RpcmVjdF9vZmZlciI6dHJ1ZSwibXVzdF9ub3RfY2xhaW1fb3RhX2NvbXBhcmlzb25fd2l0aG91dF9zaWduZWRfb3RhX3ByaWNlIjp0cnVlfX0.H7TpEL462nLg5UyhxO_c5WZLlQhHO_fGm-FaV5DCuJACKzTvmjVMa5un6sUxahXChsFdC39F2o7ZaQ7AsG6LDw",
+  "proof": {
+    "signed_tree_head": {
+      "kind": "vrp_tlog_sth",
+      "log_id": "did:web:example-log.invalid",
+      "tree_size": 4,
+      "root_hash": "Pkl76cAcNskycDgnB-c8pe3wAb49tl93UjUhcmGbW8k",
+      "timestamp": "2026-10-16T00:00:04Z"
+    },
+    "signature": {
+      "format": "jws_compact",
+      "alg": "EdDSA",
+      "kid": "did:web:example-log.invalid#log-ed25519-2026-10",
+      "jws": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCIsImtpZCI6ImRpZDp3ZWI6ZXhhbXBsZS1sb2cuaW52YWxpZCNsb2ctZWQyNTUxOS0yMDI2LTEwIn0.eyJraW5kIjoidnJwX3Rsb2dfc3RoIiwibG9nX2lkIjoiZGlkOndlYjpleGFtcGxlLWxvZy5pbnZhbGlkIiwidHJlZV9zaXplIjo0LCJyb290X2hhc2giOiJQa2w3NmNBY05za3ljRGduQi1jOHBlM3dBYjQ5dGw5M1VqVWhjbUdiVzhrIiwidGltZXN0YW1wIjoiMjAyNi0xMC0xNlQwMDowMDowNFoifQ.nBfJ3-GdV5HrnHkeoiFITlILUCqBfS_BDB01uvSRxcGfdG56DWVdRrocFeaQExUICbzLvsWHshgSm3HNuLTNBg"
+    },
+    "inclusion": {
+      "leaf_index": 0,
+      "tree_size": 4,
+      "audit_path": [
+        "LFvGaof8GyuZhKVaxity3LqxNv8P9APVP18G-DGhIIM",
+        "CvZ7e-9pn6lL7r9X8iU0wcCmHagzaIiI9u6WJIta9Is"
+      ]
+    }
+  },
+  "expected": {
+    "anchored": true,
+    "reason": "anchored",
+    "artifact_hash": "sha256:1d948fcc6fdb3b2576da0bab4a1c1f61a1c7d0f74b6439401dc7d81404eff37b",
+    "log_id": "did:web:example-log.invalid"
+  }
+}

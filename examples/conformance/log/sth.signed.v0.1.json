@@ -1,0 +1,15 @@
+{
+  "signed_tree_head": {
+    "kind": "vrp_tlog_sth",
+    "log_id": "did:web:example-log.invalid",
+    "tree_size": 4,
+    "root_hash": "Pkl76cAcNskycDgnB-c8pe3wAb49tl93UjUhcmGbW8k",
+    "timestamp": "2026-10-16T00:00:04Z"
+  },
+  "signature": {
+    "format": "jws_compact",
+    "alg": "EdDSA",
+    "kid": "did:web:example-log.invalid#log-ed25519-2026-10",
+    "jws": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCIsImtpZCI6ImRpZDp3ZWI6ZXhhbXBsZS1sb2cuaW52YWxpZCNsb2ctZWQyNTUxOS0yMDI2LTEwIn0.eyJraW5kIjoidnJwX3Rsb2dfc3RoIiwibG9nX2lkIjoiZGlkOndlYjpleGFtcGxlLWxvZy5pbnZhbGlkIiwidHJlZV9zaXplIjo0LCJyb290X2hhc2giOiJQa2w3NmNBY05za3ljRGduQi1jOHBlM3dBYjQ5dGw5M1VqVWhjbUdiVzhrIiwidGltZXN0YW1wIjoiMjAyNi0xMC0xNlQwMDowMDowNFoifQ.nBfJ3-GdV5HrnHkeoiFITlILUCqBfS_BDB01uvSRxcGfdG56DWVdRrocFeaQExUICbzLvsWHshgSm3HNuLTNBg"
+  }
+}

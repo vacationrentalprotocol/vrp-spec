@@ -324,11 +324,13 @@ scores may be derivable from a log entry.
 
 ## 11. Conformance
 
-A future revision will publish signed conformance vectors under
-`examples/conformance/log/`: a documented test log key, a signed STH, an
-inclusion proof for a known leaf, and a consistency proof between two tree
-sizes — verifiable the same way the attestation vectors are. For this v0.1
-draft, conformance vectors are deferred.
+Signed conformance vectors are published under
+[`examples/conformance/log/`](../examples/conformance/log/README.md): a
+documented test log key (`did:web:example-log.invalid`), a signed STH,
+inclusion proofs for a known leaf (positive and negative), and consistency
+proofs between two tree sizes — verifiable the same way the attestation
+vectors are (`npm test`, `verify-tlog-vectors`). The reference verifier is
+[`lib/vrp-tlog.mjs`](../lib/vrp-tlog.mjs).
 
 ## 12. Non-Goals
 

@@ -290,3 +290,61 @@ export function verifyAttestationJws(compactJws, didDocument) {
   }
   return { valid: true, reason: null, header, payload };
 }
+
+// ---------------------------------------------------------------------------
+// Transparency-log test operator (spec/transparency-log-v0.1.md §5, §11).
+//
+// SECURITY: a throwaway key derived from a public label, for the reserved
+// `example-log.invalid` operator domain only. It MUST NOT run a real log.
+
+export const LOG_SEED_LABEL = "VRP transparency-log v0.1 conformance test log key - DO NOT USE";
+export const LOG_ID = "did:web:example-log.invalid";
+export const LOG_KID = `${LOG_ID}#log-ed25519-2026-10`;
+// A second throwaway key that the test operator never publishes — used only to
+// build the negative vectors where a tree head is signed by an unknown key.
+export const LOG_UNPUBLISHED_SEED_LABEL =
+  "VRP transparency-log v0.1 conformance UNPUBLISHED key - DO NOT USE";
+export const LOG_UNPUBLISHED_KID = `${LOG_ID}#log-ed25519-unpublished`;
+
+function deriveFromLabel(label) {
+  const seed = createHash("sha256").update(label).digest();
+  const der = Buffer.concat([PKCS8_ED25519_PREFIX, seed]);
+  const privateKey = createPrivateKey({ key: der, format: "der", type: "pkcs8" });
+  return { privateKey, publicKey: createPublicKey(privateKey) };
+}
+
+export const { privateKey: logPrivateKey, publicKey: logPublicKey } = deriveFromLabel(LOG_SEED_LABEL);
+export const { privateKey: logUnpublishedPrivateKey } = deriveFromLabel(LOG_UNPUBLISHED_SEED_LABEL);
+
+export function logPublicKeyX() {
+  return logPublicKey.export({ format: "jwk" }).x;
+}
+
+// The log operator's did:web document: the only trust anchor for tree heads (§5.1).
+export function logDidWebDocument() {
+  return {
+    "@context": ["https://www.w3.org/ns/did/v1"],
+    id: LOG_ID,
+    verificationMethod: [
+      {
+        id: LOG_KID,
+        type: "JsonWebKey2020",
+        controller: LOG_ID,
+        publicKeyJwk: { kty: "OKP", crv: "Ed25519", kid: LOG_KID, alg: "EdDSA", x: logPublicKeyX() },
+      },
+    ],
+    assertionMethod: [LOG_KID],
+  };
+}
+
+// Sign a tree head as a log serves it: `{ signed_tree_head, signature: { jws } }`.
+// `key`/`kid` default to the published operator key; the negative vectors pass others.
+export function signTreeHead(sth, { key = logPrivateKey, kid = LOG_KID } = {}) {
+  const header = { alg: "EdDSA", typ: "JWT", kid };
+  const signingInput = `${b64url(JSON.stringify(header))}.${b64url(JSON.stringify(sth))}`;
+  const signature = sign(null, Buffer.from(signingInput), key);
+  return {
+    signed_tree_head: sth,
+    signature: { format: "jws_compact", alg: "EdDSA", kid, jws: `${signingInput}.${b64url(signature)}` },
+  };
+}

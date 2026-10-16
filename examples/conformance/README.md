@@ -36,6 +36,13 @@ Two-attestation receipt envelope conformance (offer + transport) lives in
 [`receipt/`](./receipt/). See [`spec/receipt-v1.md`](../../spec/receipt-v1.md) and
 `npm test` (`verify-receipt-vectors`).
 
+## Transparency-log vectors
+
+Signed tree head, inclusion (anchoring) and consistency vectors for
+[`spec/transparency-log-v0.1.md`](../../spec/transparency-log-v0.1.md) live in
+[`log/`](./log/) with their own [README](./log/README.md). See `npm test`
+(`verify-tlog-vectors`).
+
 ## ⚠️ The key is a throwaway test key — DO NOT USE
 
 The signing key is **not** a real host key. It is deterministically derived from

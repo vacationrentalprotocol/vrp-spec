@@ -870,11 +870,11 @@ The alias table is maintained in the reference implementation
   `match: "no"`, empty `nodes`. (Mirrors VRP's failure-mode fixtures.)
 - **Reference verifier** (`scripts/verify-stayintent.mjs`): independently checks a
   response shape + that a pointed node's offer verifies — anyone can run it.
-- **Reference implementation:** the deterministic capability+geo filter
-  (HemmaBo `api/search-properties.ts`, pure DB, no LLM) is the normative conformant
-  surface. HemmaBo's free-text `api/federation/search` (LLM upstream) is a
-  **non-normative** convenience layer and is NOT the StayIntent contract until its
-  upstream is deterministic.
+- **Conformance:** the StayIntent contract is defined by this specification and
+  its conformance vectors. A conformant surface is any deterministic
+  capability+geo filter that satisfies them (for example a pure-DB, no-LLM
+  filter). A free-text, LLM-upstream search is a **non-normative** convenience
+  layer and is NOT the StayIntent contract until its upstream is deterministic.
 
 #### 9. Relationship to UCP / A2A
 
@@ -2076,7 +2076,7 @@ Specification text: dedicated to the public domain under [CC0 1.0](https://githu
 
 **Machine-readable schema:** [`schemas/vrp-receipt.v1.schema.json`](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/schemas/vrp-receipt.v1.schema.json)
 
-**Reference verifier:** [`lib/vrp-receipt.mjs`](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/lib/vrp-receipt.mjs) (Apache-2.0; mirrors `hemmabo-mcp-server` `lib/vrp-receipt.ts`)
+**Reference verifier:** [`lib/vrp-receipt.mjs`](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/lib/vrp-receipt.mjs) (Apache-2.0)
 
 #### 1. Scope
 

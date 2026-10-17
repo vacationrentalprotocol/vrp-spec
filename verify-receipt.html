@@ -457,10 +457,10 @@
             try {
               jwks = await (await fetch("https://" + domain + "/.well-known/jwks.json")).json();
             } catch (e) {
-              addCheck(false, "Fetch the property's published keys", "https://" + domain + "/.well-known/jwks.json unreachable");
+              addCheck(false, "Fetch the property's published keys", esc("https://" + domain + "/.well-known/jwks.json unreachable"));
               throw new Error("Could not fetch the property's published keys.");
             }
-            addCheck(true, "Fetched the property's published keys", "https://" + domain + "/.well-known/jwks.json");
+            addCheck(true, "Fetched the property's published keys", esc("https://" + domain + "/.well-known/jwks.json"));
             await verifyJws(jws, jwks);
             addCheck(true, "Receipt signature verifies against the property domain's Ed25519 key");
 

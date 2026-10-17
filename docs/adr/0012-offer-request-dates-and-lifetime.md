@@ -99,9 +99,9 @@ patterns and the D3 pattern end in `$(?!\n)`, for the reason D3 gives.
 clock 16, dates 12, language 9, the stay asked for 6, plus one offer that meets
 every rule), built by `scripts/offer-rules-vectors.mjs` and checked by
 `scripts/verify-offer-rules.mjs` in `npm test`. `scripts/validate-artifacts.mjs`
-gains three negative schema checks (no `request`, a free-text language, month
-13). `verify.html` applies D1–D4 to a live offer, with the dates and guest
-count typed into the page as the stay asked for.
+gains five negative schema checks (no `request`, no `node_id`, no `property`, a
+free-text language, month 13). `verify.html` applies D1–D4 to a live offer,
+with the dates and guest count typed into the page as the stay asked for.
 
 ## Consequences
 
@@ -113,11 +113,16 @@ count typed into the page as the stay asked for.
   not a language tag; a lifetime that is not positive or exceeds 900 seconds; a
   `generated_at` more than 60 seconds ahead; an offer without `request`,
   `node_id` or `property`.
-- **Known nodes affected: the known production node.** Measured 2026-10-17, its
-  ordinary offers (a future stay, without a language and with `sv`) meet every
-  rule and validate against the changed schema. For some other requests it signs
-  offers that these rules refuse. It changes in its own repository; this record
-  is accepted only after that change is live and measured.
+- **Known nodes affected: the known production node.** Measured 2026-10-17
+  before its change (18:13 UTC): its ordinary offers (a future stay, without a
+  language and with `sv`) met every rule and validated against the changed
+  schema, and it also signed offers for a `check_in` that had passed, for month
+  13, and with free text as `request.language`. It changed in its own
+  repository. Measured after that change was live (18:44 UTC): those requests
+  are answered 400 (`checkin_in_past`, `invalid_date`), free text is left out of
+  `request`, and ordinary offers are as before, with a 900-second lifetime. The
+  condition this record set, that change live and measured before acceptance,
+  is met.
 - **Substantive** under GOVERNANCE.md §4 and §12: this record, seven days of
   review and two approvals while two maintainers are active.
 - **Migration path.** A node validates the dates, refuses a past `check_in` by

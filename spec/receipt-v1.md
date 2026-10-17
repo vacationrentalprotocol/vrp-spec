@@ -12,7 +12,7 @@
 
 **Machine-readable schema:** [`schemas/vrp-receipt.v1.schema.json`](../schemas/vrp-receipt.v1.schema.json)
 
-**Reference verifier:** [`lib/vrp-receipt.mjs`](../lib/vrp-receipt.mjs) (Apache-2.0; mirrors `hemmabo-mcp-server` `lib/vrp-receipt.ts`)
+**Reference verifier:** [`lib/vrp-receipt.mjs`](../lib/vrp-receipt.mjs) (Apache-2.0)
 
 ## 1. Scope
 

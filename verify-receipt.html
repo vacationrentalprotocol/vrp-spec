@@ -590,7 +590,8 @@
             var proof = null;
             var proofSource = "";
             try {
-              var r1 = await fetch("https://" + domain + "/.well-known/vrp/log/v0.1/proof?hash=" + encodeURIComponent(artifactHash));
+              // No redirect from the node is followed (§2): a redirect leaves no proof.
+              var r1 = await fetch("https://" + domain + "/.well-known/vrp/log/v0.1/proof?hash=" + encodeURIComponent(artifactHash), { redirect: "manual", cache: "no-store" });
               if (r1.ok) { proof = await r1.json(); proofSource = "property domain log proxy"; }
             } catch (_e) { /* fall through */ }
             if (!proof || !proof.inclusion) {
@@ -663,7 +664,7 @@
               fact("Booked directly at", esc(domain)) +
               fact("Check-in", esc(subject.check_in || "")) +
               fact("Check-out", esc(subject.check_out || "")) +
-              fact("Guests", subject.guests_count) +
+              fact("Guests", subject.guests_count == null ? "" : esc(subject.guests_count)) +
               fact("Total price (promised)", subject.total_price != null ? esc(subject.total_price + " " + (subject.currency || "")) : "") +
               fact("Booking reference (privacy-preserving)", esc(subject.booking_ref || "")) +
               fact("Issued by", esc(issuer.did || "")) +

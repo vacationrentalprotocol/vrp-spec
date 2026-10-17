@@ -119,11 +119,14 @@ Both select the key only by the `kid` in the JWS header (§3.1).
 - `verify.html`, pasted offer: D1, D2, D4 and the discovery half of D3, for the
   domain the offer names. A pasted offer can come from anywhere, so the page
   never shows one as safe to quote.
-- `verify-receipt.html`: D1 for the issuer domain, before anything is fetched
-  from it.
+- `verify-receipt.html`: D1 for the issuer domain. Nothing is fetched from a
+  name that fails D1; when the lists cannot be fetched, the page still checks
+  the signature, and the result is unknown.
+- `demo.html` and `implement.html` also select the key only by `kid`.
 
-The pages are tested in a browser with every request answered locally, not in
-`npm test`.
+The pages were checked in a browser during review, with every request answered
+locally; the cases are listed in the pull request. That browser test is not
+part of this repository or of `npm test`.
 
 ## Consequences
 

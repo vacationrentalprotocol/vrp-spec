@@ -1,4 +1,4 @@
-// Receipt envelope conformance vectors (ADR 0010 Phase 4).
+// Receipt envelope conformance vectors (ADR 0007).
 // Runs the reference verifier (lib/vrp-receipt.mjs) against committed vectors.
 // Positive: 01-offer-transport-verified → fully_verified, offer+transport verified.
 // Negative: 03-tampered-signature → sig_invalid on manipulated JWS byte.

@@ -465,12 +465,14 @@
         if (ok) {
           const cd = payload.canonical_domain || payload.node_id;
           if (queriedHost && cd) {
-            const match = cd.replace(/^www\./, "") === queriedHost.replace(/^www\./, "");
+            const match = cd === queriedHost.toLowerCase().replace(/^www\./, "");
             rows.push(
               checkRow(
-                match ? "pass" : "warn",
-                match ? "Offer is the official source for " + cd : "canonical_domain is " + cd,
-                match ? "The offer declares itself the official direct source for this domain." : "Differs from the host you queried (" + queriedHost + ")."
+                match ? "pass" : "fail",
+                match ? "Offer is the official source for " + cd : "Offer names another domain: " + cd,
+                match
+                  ? "The offer declares itself the official direct source for this domain."
+                  : "It was fetched from " + queriedHost + ". An offer that names another domain is not that domain's offer (VRP §7)."
               )
             );
           }
@@ -478,7 +480,8 @@
           if (url && cd) {
             let onDomain = false;
             try {
-              onDomain = new URL(url).hostname.replace(/^www\./, "") === cd.replace(/^www\./, "");
+              const h = new URL(url).hostname;
+              onDomain = new URL(url).protocol === "https:" && (h === cd || h === "www." + cd);
             } catch (e) {}
             rows.push(
               checkRow(

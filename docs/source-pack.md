@@ -171,9 +171,25 @@ Required fields:
 
 - `protocol`: MUST be `vacation-rental-protocol`.
 - `protocol_version`: MUST be `0.1`.
-- `canonical_domain`: MUST match the host-owned domain being verified.
+- `canonical_domain`: MUST match the host-owned domain being verified, which is
+  the domain this document is fetched from.
 - `jwks_url`: MUST point to the host-domain JWKS.
 - `verified_stay_offer_endpoint`: MUST point to the host-domain verified stay offer endpoint.
+
+**Host-owned domain.** A VRP node is a domain registered for the host, never a
+name under another party's domain. `canonical_domain` MUST be lowercase ASCII,
+with internationalized labels in A-label (`xn--`) form and no trailing dot, and
+it MUST equal its own registrable domain as computed by the
+[Public Suffix List](https://publicsuffix.org/list/) algorithm using only the
+rules in the list's ICANN section; where no ICANN rule matches, the algorithm's
+default rule `*` applies. The list's PRIVATE section does not count. It lists
+domains under which a company hands out names to its customers, and a name under
+a platform, catalog, marketplace, OTA, site builder or operator domain is never a
+`canonical_domain`, whoever operates that domain. `example.com` and
+`example.co.uk` are host-owned domains; `www.example.com` and
+`villa.platform.example` are not. A verifier that holds no copy of the ICANN
+section MUST treat the node as `unknown` (§9). Conformance vectors:
+[`examples/conformance/host-domain/`](https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance/host-domain).
 
 Recommended fields:
 
@@ -344,11 +360,14 @@ lifecycle.
 **Structure.**
 
 - `direct_booking_url` MUST be an absolute `https` URL.
-- Its host MUST be the offer's `canonical_domain`, or a subdomain of that
-  registrable domain. It MUST NOT point at a third-party domain, an OTA, a link
-  shortener, a redirector, or a HemmaBo-operated domain. An agent that cannot
-  confirm the URL host is on the offer's `canonical_domain` MUST treat the
-  direct booking URL as `unknown` (see §9) and MUST NOT route booking to it.
+- Its host MUST be the offer's `canonical_domain` or `www.` followed by the
+  offer's `canonical_domain`, and no other name. It MUST NOT point at any other
+  host: another name under the node's domain, another node's domain, a name
+  under a platform, catalog, marketplace or operator domain, an OTA, a link
+  shortener or a redirector. Hosts are compared after URL parsing, which
+  lowercases them. An agent that cannot confirm that the URL host is one of
+  these two names MUST treat the direct booking URL as `unknown` (see §9) and
+  MUST NOT route booking to it.
 - The URL SHOULD encode the quoted stay so that the booking page opens
   pre-filled for the same stay the agent quoted. The RECOMMENDED query
   parameters are:
@@ -512,14 +531,15 @@ Agents SHOULD fetch a fresh offer for the user's specific dates and guest count 
 
 #### 7. Safe-to-Quote Rules
 
-An agent may quote an offer as an official host-domain verified offer only when all of the following are true:
+An agent MUST NOT quote an offer as an official host-domain verified offer unless all of the following are true:
 
-- The discovery document is fetched from the host-owned domain.
+- The discovery document is fetched from the host-owned domain (§2), and its `canonical_domain` is that domain.
 - The discovery document declares `protocol: "vacation-rental-protocol"`.
 - The discovery document declares `protocol_version: "0.1"`.
 - The JWKS contains an Ed25519 verification key matching the JWS.
 - The compact JWS verifies against the host-domain JWKS.
 - The signed payload matches the returned offer.
+- The signed payload's `canonical_domain` is the domain the discovery document was fetched from.
 - `valid_until` is present and fresh.
 - `availability.available` is true.
 - `price.exact` is true.
@@ -541,7 +561,7 @@ Agents MUST NOT:
 
 #### 8. Fail-Closed Behavior
 
-Agents and clients MUST fail closed. If signature verification, freshness, exact price, availability, direct booking URL, or citation permission cannot be verified, the offer MUST NOT be quoted as official or bookable.
+Agents and clients MUST fail closed. If signature verification, the offer's binding to the fetched domain (§7), freshness, exact price, availability, direct booking URL, or citation permission cannot be verified, the offer MUST NOT be quoted as official or bookable.
 
 #### 9. Three-State Verification
 
@@ -620,6 +640,12 @@ governs, and nothing here adds to or relaxes it.
   the signature then proves that the domain's published key signed, not that the
   host itself held the key. A verifier does not assume self-custody when
   `key_custody` is absent (§2).
+- **Domain binding.** A valid signature proves which domain's key signed, not
+  which domain the offer is about. If the node at one domain signs an offer whose
+  `canonical_domain` names another domain, the signature verifies against the
+  signing node's JWKS; only the check that the offer names the domain it was
+  fetched from (§7) stops an agent from presenting it as the other domain's
+  offer.
 - **Concentration under platform custody.** An operator that holds the signing
   keys of many nodes is one point of compromise for all of them. Rotation and
   revocation (§3.1) work per node: removing a compromised key from one node's
@@ -636,11 +662,14 @@ governs, and nothing here adds to or relaxes it.
   bound. It is a conformance requirement on verifiers, not a guarantee the
   protocol can enforce (§3.1).
 - **Booking-path integrity.** The rules for `direct_booking_url` (§5.1) — its
-  host on the offer's `canonical_domain`, no third-party domain, shortener or
-  redirector, integrity solely from the enclosing JWS, actionable only while the
-  offer is fresh — exist so that a tampered or substituted offer cannot route a
-  guest's booking, and payment, to an attacker. An agent that cannot confirm the
-  host treats the URL as unknown (§5.1, §9).
+  host the offer's `canonical_domain` or `www.` under it and no other name, no
+  shortener or redirector, integrity solely from the enclosing JWS, actionable
+  only while the offer is fresh — exist so that a tampered or substituted offer
+  cannot route a guest's booking, and payment, to an attacker. An agent that
+  cannot confirm the host treats the URL as unknown (§5.1, §9).
+- **Host-owned domains.** Only a domain registered for the host can be a node
+  (§2). A company that hands out names under its own domain, as the Public
+  Suffix List's PRIVATE section records, cannot make those names VRP nodes.
 - **Fail-closed verification.** Whatever cannot be verified is unknown, never
   affirmed or negated (§8, §9), so a timeout, a malformed response or a failed
   signature check cannot be turned into a quote.
@@ -759,7 +788,8 @@ The resource is a self-describing JSON object, versioned by `$schema` and
 `schema_version`. Discovery-relevant fields include:
 
 - `protocol`, `protocol_version` — identifies the document as VRP and its version.
-- `canonical_domain`, `node_id` — the node's canonical host and stable identifier.
+- `canonical_domain`, `node_id` — the node's host-owned domain
+  ([v0.1](https://vacationrentalprotocol.com/spec/v0.1) §2) and stable identifier.
 - `identity` / `did` — the node's `did:web` identity (see `/.well-known/did.json`).
 - `jwks_url` — public keys (JWKS) used to verify signed artifacts.
 - `verified_stay_offer_endpoint` — where a signed, verifiable stay offer is obtained.
@@ -3324,10 +3354,13 @@ Do not use VRP for:
    registry (provisional, 2026-08-19).
 2. Confirm `protocol` is `vacation-rental-protocol`.
 3. Confirm `protocol_version` is `0.1`.
-4. Confirm `canonical_domain` matches the host-owned domain.
+4. Confirm `canonical_domain` matches the host-owned domain you fetched from:
+   a domain registered for the host, never a name under a platform's or
+   catalog's domain (v0.1 §2).
 5. Fetch the declared JWKS.
 6. Request a verified stay offer for the user's dates and guest count.
-7. Verify the compact JWS with the host-domain Ed25519 key.
+7. Verify the compact JWS with the host-domain Ed25519 key, and confirm the
+   signed payload's `canonical_domain` is the domain you fetched from (v0.1 §7).
 8. Confirm the payload is fresh, exact, available, and permitted for citation.
 9. Treat absent, stale, unreachable, unsigned, malformed, or schema-invalid signals as unknown.
 10. Use only the signed direct booking URL.

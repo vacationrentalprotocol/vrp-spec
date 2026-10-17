@@ -16,6 +16,7 @@ import {
   signedOfferEnvelope,
 } from "./conformance.mjs";
 import { buildHostDomainVectors } from "./host-domain-vectors.mjs";
+import { buildOfferRulesVectors } from "./offer-rules-vectors.mjs";
 import { buildTlogVectors } from "./tlog-vectors.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -50,3 +51,4 @@ for (const v of tlog.consistency) writeJson(`examples/conformance/log/consistenc
 // Host-domain vectors (spec/v0.1.md §2, §5.1, §7): host-owned domain, offer
 // binding to the fetched domain, booking-URL host.
 writeJson("examples/conformance/host-domain/vectors.v0.1.json", buildHostDomainVectors());
+writeJson("examples/conformance/offer-rules/vectors.v0.1.json", buildOfferRulesVectors());

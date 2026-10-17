@@ -104,8 +104,9 @@ the resolved structure:
 2. **Signed payload missing `SHOULD` fields.** The `not-quoteable` offer
    previously omitted `request` and `property`, which `spec/v0.1.md` lists in
    the signed payload. The example now includes them, and the signed-offer
-   schema validates their shape when present without making SHOULD-level fields
-   mandatory.
+   schema validates their shape when present. Since ADR 0012 the schema
+   requires `request`, because §7 compares it with the stay the agent asked
+   for; `node_id` and `property` stay optional in the schema.
 
 ### Priority 2 — Schema ↔ context ↔ vocabulary consistency (done)
 

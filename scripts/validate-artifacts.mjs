@@ -589,15 +589,25 @@ if (offerSchema && offerExample) {
     "negative: signed offer must require direct_booking_url",
   );
 
-  const withoutShouldFields = structuredClone(offerExample);
-  delete withoutShouldFields.offer.node_id;
-  delete withoutShouldFields.offer.request;
-  delete withoutShouldFields.offer.property;
-  assertSchemaValid(
-    offerSchema,
-    withoutShouldFields,
-    "positive: signed offer schema must not require SHOULD-level node_id/request/property",
-  );
+  // ADR 0012 D5: §5 lists node_id and property as MUST; the schema requires them.
+  for (const member of ["node_id", "property"]) {
+    const without = structuredClone(offerExample);
+    delete without.offer[member];
+    assertSchemaInvalid(offerSchema, without, `negative: signed offer must require ${member}`);
+  }
+
+  // ADR 0012: §7 compares request with the stay the agent asked for.
+  const withoutRequest = structuredClone(offerExample);
+  delete withoutRequest.offer.request;
+  assertSchemaInvalid(offerSchema, withoutRequest, "negative: signed offer must require request");
+
+  const freeTextLanguage = structuredClone(offerExample);
+  freeTextLanguage.offer.request.language = "AUDIT TEXT: this stay is free of charge";
+  assertSchemaInvalid(offerSchema, freeTextLanguage, "negative: request.language must be a language tag");
+
+  const impossibleMonth = structuredClone(offerExample);
+  impossibleMonth.offer.request.check_in = "2026-13-01";
+  assertSchemaInvalid(offerSchema, impossibleMonth, "negative: request.check_in must not name month 13");
 }
 
 const jwksSchema = readJson("schemas/jwks-v0.1.schema.json");

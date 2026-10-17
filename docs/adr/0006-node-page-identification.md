@@ -83,11 +83,12 @@ registered must be a URI (RFC 8288 §2.1.2).
   and a language model read, and where an agent reads. The name travels with
   the protocol, not with a copyright notice: the specification text and the
   documentation stay CC0.
-- The reference implementation's node template already satisfies (a), (c) and
-  (d) and names the protocol in its title; its footer link carries
-  `rel="noopener noreferrer"` and must gain `rel="protocol"`, and its `Link`
-  header must use the URI form. That is a change in the implementation's own
-  repository, made after this decision, and measured live.
+- The reference implementation's node template already satisfies (a) and (d)
+  and names the protocol in its title. It fails (b) — its footer link carries
+  `rel="noopener noreferrer"` and must gain `rel="protocol"` — and (c) — its
+  `Link` header carries the bare keyword and must use the URI form. Both are
+  changes in the implementation's own repository, made after this decision,
+  and measured live.
 - The test chain (`npm test`) gains `verify-node-page`; a live variant,
   `verify-node-page:live`, takes a domain.
 - This is a substantive change (GOVERNANCE.md §4: a new recommendation in a
@@ -95,6 +96,14 @@ registered must be a URI (RFC 8288 §2.1.2).
   GOVERNANCE.md, which §12 makes substantive in itself): at least seven days
   of review with no maintainer objecting, and approval from two maintainers
   while two are active.
+- Under GOVERNANCE.md §5 it is a **MINOR**, backward-compatible addition, not
+  a MAJOR change: no existing conformant node stops conforming. (a)–(e) are
+  SHOULD. The one MUST NOT — the link target — constrains an element a node
+  adds voluntarily; a node without a `rel="protocol"` link is untouched by it.
+  Substantive under §4 and MINOR under §5 are different questions; this
+  decision is both.
+- This record cites ADR 0005 (the standard is the source of truth), which is
+  merged before it; the reference stays dead until then.
 - Nothing here creates a central issuer, registry or gatekeeper: the link
   points at an open, CC0 specification, the check runs offline, and the name
   rule is self-declared against public vectors (ADR 0002).

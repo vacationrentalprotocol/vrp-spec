@@ -32,4 +32,6 @@ SHOULD-level (c) `Link` header, (d) JSON-LD `additionalType` and (e) title.
 The checker reads attributes, never literal tag text: attribute order,
 quoting and self-closing syntax do not matter. It cannot render a page; a link
 is treated as visible unless it carries `hidden`, `aria-hidden="true"` or an
-inline `display: none`.
+inline `display: none`. A link hidden by an ancestor element or by a stylesheet
+passes the checker and still does not satisfy (b): the checker is necessary,
+not sufficient, and a reviewer looks at the rendered page.

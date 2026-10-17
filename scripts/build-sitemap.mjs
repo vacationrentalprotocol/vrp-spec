@@ -72,6 +72,7 @@ const ROUTES = [
   ],
   ["/examples/verified-stay-offer.not-quoteable.v0.1.json", "examples/verified-stay-offer.not-quoteable.v0.1.json"],
   ["/examples/conformance/three-state-verification.v0.1.json", "examples/conformance/three-state-verification.v0.1.json"],
+  ["/examples/conformance/host-domain/vectors.v0.1.json", "examples/conformance/host-domain/vectors.v0.1.json"],
   ["/examples/conformance/stayintent/positive.v0.1.json", "examples/conformance/stayintent/positive.v0.1.json"],
   ["/examples/conformance/stayintent/no-match.v0.1.json", "examples/conformance/stayintent/no-match.v0.1.json"],
   ["/examples/attestations/attestation-bundle.v0.1.json", "examples/attestations/attestation-bundle.v0.1.json"],

@@ -284,6 +284,9 @@
       const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
       function isoIn(n) { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); }
 
+      function esc(v) {
+        return String(v).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+      }
       function logLine(html) {
         const el = document.createElement("span");
         el.className = "l";
@@ -311,9 +314,11 @@
       async function verifyJws(jws, jwks) {
         const [h, p, s] = String(jws).trim().split(".");
         const header = jsonFromB64url(h);
-        const keys = (jwks && jwks.keys) || [];
-        const key = keys.find((k) => k.kid === header.kid) || keys.find((k) => k.kty === "OKP" && k.crv === "Ed25519");
-        if (!key) throw new Error("No matching key in host JWKS");
+        // VRP §3.1: the key is the one whose kid the JWS header names, and no other.
+        if (typeof header.kid !== "string" || !header.kid) throw new Error("The JWS header carries no kid");
+        const keys = (jwks && Array.isArray(jwks.keys) && jwks.keys) || [];
+        const key = keys.find((k) => k && k.kid === header.kid);
+        if (!key) throw new Error("No key with that kid in the host JWKS");
         const cryptoKey = await crypto.subtle.importKey("jwk", { kty: "OKP", crv: "Ed25519", x: key.x }, { name: "Ed25519" }, false, ["verify"]);
         const data = new TextEncoder().encode(h + "." + p);
         const ok = await crypto.subtle.verify({ name: "Ed25519" }, cryptoKey, b64urlToBytes(s), data);
@@ -337,7 +342,7 @@
           await sleep(700);
           const trav = await (await fetch(origin + "/.well-known/agent-traversal.json")).json();
           logLine('GET /.well-known/agent-traversal.json → <span class="ok">200</span>  ·  no connector, no API key');
-          logLine('   node: <b>' + (trav.node || HOST) + '</b>  ·  issuer: <span class="key">' + (trav.issuer || "did:web:" + HOST) + '</span>');
+          logLine('   node: <b>' + esc(trav.node || HOST) + '</b>  ·  issuer: <span class="key">' + esc(trav.issuer || "did:web:" + HOST) + '</span>');
           setStep("discover", "done");
           await sleep(550);
 
@@ -347,7 +352,7 @@
           await sleep(650);
           const jwks = await (await fetch(origin + "/.well-known/jwks.json")).json();
           const kid = (jwks.keys && jwks.keys[0] && jwks.keys[0].kid) || "host-key";
-          logLine('GET /.well-known/jwks.json → <span class="ok">200</span>  ·  Ed25519 key <span class="key">' + kid + '</span>');
+          logLine('GET /.well-known/jwks.json → <span class="ok">200</span>  ·  Ed25519 key <span class="key">' + esc(kid) + '</span>');
           setStep("keys", "done");
           await sleep(550);
 
@@ -379,7 +384,7 @@
           if (!ok) throw new Error("Signature did NOT verify");
           const cd = payload.canonical_domain || HOST;
           logLine('crypto.subtle.verify(Ed25519) → <span class="ok">VALID ✓</span>');
-          logLine('   <span class="ok">✓ The price came from <b>' + cd + '</b>\u2019s own key.</span> Nothing was altered. No middleman.');
+          logLine('   <span class="ok">✓ The price came from <b>' + esc(cd) + '</b>\u2019s own key.</span> Nothing was altered. No middleman.');
           $("env").classList.remove("sealed"); $("env").classList.add("verified");
           setStep("verify", "done");
 
@@ -389,14 +394,16 @@
           const total = price.agent_total != null ? price.agent_total : price.total;
           const url = (payload.booking && payload.booking.direct_booking_url) || (origin + "/book");
           $("envBody").innerHTML =
-            '<div class="env-verified-tag">● Verified by your browser — signed by ' + cd + '</div>' +
-            '<div class="env-price">' + (total != null ? total : "—") + ' <span class="cur">' + cur + '</span></div>' +
+            '<div class="env-verified-tag">● Verified by your browser — signed by ' + esc(cd) + '</div>' +
+            '<div class="env-price">' + esc(total != null ? total : "—") + ' <span class="cur">' + esc(cur) + '</span></div>' +
             '<div class="env-meta">' +
-            '<div><b>' + (prop.name || "Villa Åkerlyckan") + '</b>' + (prop.city ? ", " + prop.city : "") + '</div>' +
-            '<div>' + (req.check_in || ci) + " → " + (req.check_out || co) + " · " + (req.guests || guests) + ' guests</div>' +
+            '<div><b>' + esc(prop.name || "Villa Åkerlyckan") + '</b>' + (prop.city ? ", " + esc(prop.city) : "") + '</div>' +
+            '<div>' + esc(req.check_in || ci) + " → " + esc(req.check_out || co) + " · " + esc(req.guests || guests) + ' guests</div>' +
             '<div>0% commission · paid direct to the host · no add-on fees</div>' +
             '</div>' +
-            '<a class="env-cta" href="' + url + '" target="_blank" rel="noopener">Book direct on ' + cd + ' →</a>' +
+            (/^https:\/\//i.test(String(url))
+              ? '<a class="env-cta" href="' + esc(url) + '" target="_blank" rel="noopener">Book direct on ' + esc(cd) + ' →</a>'
+              : '<div class="env-cta">' + esc(url) + ' (not an https URL, so no link)</div>') +
             '<div class="env-frontier">Checkout runs in Stripe test mode today; autonomous agent payment is the open frontier.</div>';
           await sleep(650);
 
@@ -404,11 +411,11 @@
           setStep("book", "active");
           logLine('<b>agent ›</b> Routing the guest to the host\u2019s <b>own</b> signed booking URL — not a marketplace.');
           await sleep(600);
-          logLine('   → <span class="key">' + url + '</span>');
+          logLine('   → <span class="key">' + esc(url) + '</span>');
           logLine('<span class="ok">✓ Done.</span> Verified offer, direct booking, 0% commission. The host owns the guest, the domain and the data.');
           setStep("book", "done");
         } catch (e) {
-          logLine('<span style="color:#fca5a5">✕ ' + (e && e.message ? e.message : e) + '</span>  (the host may be momentarily unreachable — try again).');
+          logLine('<span style="color:#fca5a5">✕ ' + esc(e && e.message ? e.message : e) + '</span>  (the host may be momentarily unreachable — try again).');
         } finally {
           $("agentDot").classList.remove("live");
           btn.disabled = false; btn.textContent = "▶  Run it again";

@@ -122,6 +122,11 @@
         border-color: var(--fail);
         color: var(--fail);
       }
+      .verdict.warn {
+        background: var(--warn-bg);
+        border-color: var(--warn);
+        color: var(--warn);
+      }
       .checks {
         display: grid;
         gap: 0;
@@ -284,9 +289,10 @@
             </div>
             <p class="note">
               Fetches
-              <code>https://&lt;host&gt;/api/verified-stay-offer</code> and
-              <code>/.well-known/jwks.json</code> directly from the host, then
-              verifies locally.
+              <code>https://&lt;host&gt;/.well-known/vacation-rental.json</code>
+              directly from the host, then the JWKS and the offer endpoint that
+              document names, which must both be node URLs (VRP §2). It follows
+              no redirect, and verifies locally against VRP §7.
             </p>
           </div>
 
@@ -301,10 +307,11 @@
               <button id="btnPaste">Verify</button>
             </div>
             <p class="note">
-              The host's public key is fetched from the
-              <code>canonical_domain</code> inside the offer's
-              <code>/.well-known/jwks.json</code>. Nothing is sent anywhere — the
-              fetch goes straight to the host.
+              The discovery document and the JWKS it names are fetched from the
+              <code>canonical_domain</code> inside the offer. Nothing is sent
+              anywhere — the fetch goes straight to the host. This page cannot
+              see where you got a pasted offer, so it never shows a pasted offer
+              as safe to quote (VRP §7).
             </p>
           </div>
         </div>
@@ -328,6 +335,7 @@
             <ul>
               <li>The offer was signed by the host-owned domain's Ed25519 key.</li>
               <li>The price, freshness, and direct booking URL were not altered.</li>
+              <li>A live offer came from the domain it names, and its booking URL is on that domain.</li>
               <li>No marketplace, registry, or central issuer sat in between.</li>
               <li>You confirmed it with your own browser — not on our word.</li>
             </ul>
@@ -384,12 +392,15 @@
         if (header.alg !== "EdDSA") {
           throw new Error("Unexpected alg '" + header.alg + "'. VRP signs with EdDSA (Ed25519).");
         }
-        const keys = (jwks && jwks.keys) || [];
-        const key =
-          keys.find((k) => k.kid === header.kid) ||
-          keys.find((k) => k.kty === "OKP" && k.crv === "Ed25519");
+        // §3.1: the key is the one whose kid the JWS header names, and no other.
+        // A header without a kid, or a kid the JWKS does not hold, is unverifiable.
+        if (typeof header.kid !== "string" || !header.kid) {
+          throw new Error("The JWS header carries no kid, so no key of the host can be selected (VRP §3.1).");
+        }
+        const keys = (jwks && Array.isArray(jwks.keys) && jwks.keys) || [];
+        const key = keys.find((k) => k && k.kid === header.kid);
         if (!key) {
-          throw new Error("No matching key in the host JWKS for kid '" + header.kid + "'.");
+          throw new Error("The host JWKS holds no key with kid '" + header.kid + "', so the offer is unverifiable (VRP §3.1).");
         }
         if (key.kty !== "OKP" || key.crv !== "Ed25519") {
           throw new Error("The host's key is not Ed25519/OKP.");
@@ -409,6 +420,154 @@
         const data = new TextEncoder().encode(h + "." + p);
         const ok = await crypto.subtle.verify({ name: "Ed25519" }, cryptoKey, b64urlToBytes(s), data);
         return { ok, header, key, payload: jsonFromB64url(p) };
+      }
+
+      // ── host-owned domain and node URLs (VRP v0.1 §2, §5.1) ───────────────
+      // Both lists are fetched live from their publishers; nothing is bundled.
+      const PSL_URL = "https://publicsuffix.org/list/public_suffix_list.dat";
+      const GTLDS_URL = "https://www.icann.org/resources/registries/gtlds/v2/gtlds.json";
+      const CLOSED_TLDS = ["booking", "hotels"]; // §2: closed top-level domains named by the standard
+      let listsPromise = null;
+      function toALabel(label) {
+        if (label === "*" || /^[\x00-\x7f]*$/.test(label)) return label;
+        try {
+          return new URL("https://" + label + "/").hostname;
+        } catch (e) {
+          return label;
+        }
+      }
+      function loadLists() {
+        if (!listsPromise) {
+          listsPromise = Promise.all([
+            fetch(PSL_URL).then((r) => (r.ok ? r.text() : Promise.reject(new Error("PSL " + r.status)))),
+            fetch(GTLDS_URL).then((r) => (r.ok ? r.json() : Promise.reject(new Error("gTLD list " + r.status)))),
+          ]).then(([psl, gtlds]) => {
+            const lines = psl.split("\n");
+            const a = lines.findIndex((l) => l.includes("===BEGIN ICANN DOMAINS==="));
+            const b = lines.findIndex((l) => l.includes("===END ICANN DOMAINS==="));
+            if (a < 0 || b < a) throw new Error("PSL ICANN section not found");
+            const rules = lines
+              .slice(a, b)
+              .map((l) => l.trim())
+              .filter((l) => l && !l.startsWith("//"))
+              .map((r) => {
+                const ex = r.startsWith("!");
+                return { ex, labels: (ex ? r.slice(1) : r).split(".").map(toALabel) };
+              });
+            const spec13 = new Set((gtlds.gTLDs || []).filter((g) => g.specification13).map((g) => g.gTLD));
+            return { rules, spec13 };
+          });
+          listsPromise.catch(() => (listsPromise = null));
+        }
+        return listsPromise;
+      }
+      // §2 steps 1–3. Returns { state: "pass" | "fail" | "unknown", detail }.
+      async function hostOwned(cd) {
+        const labels = String(cd || "").split(".");
+        if (!labels.every((l) => /^(?!-)[a-z0-9-]{1,63}(?<!-)$/.test(l))) {
+          return { state: "fail", detail: "Not lowercase ASCII A-labels without a trailing dot." };
+        }
+        let lists;
+        try {
+          lists = await loadLists();
+        } catch (e) {
+          return { state: "unknown", detail: "The Public Suffix List or ICANN's gTLD list could not be fetched, so this is unknown (§2, §9)." };
+        }
+        let exception = null;
+        let longest = 1;
+        for (const r of lists.rules) {
+          if (r.labels.length > labels.length) continue;
+          const off = labels.length - r.labels.length;
+          if (!r.labels.every((l, i) => l === "*" || l === labels[off + i])) continue;
+          if (r.ex) exception = r.labels.length - 1;
+          else longest = Math.max(longest, r.labels.length);
+        }
+        const suffix = exception !== null ? exception : longest;
+        if (labels.length <= suffix) return { state: "fail", detail: cd + " is a public suffix, not a domain anyone holds." };
+        const registrable = labels.slice(-(suffix + 1)).join(".");
+        if (registrable !== cd) {
+          return { state: "fail", detail: cd + " is a name under " + registrable + ", not a domain registered for the host." };
+        }
+        const tld = labels[labels.length - 1];
+        if (lists.spec13.has(tld) || CLOSED_TLDS.includes(tld)) {
+          return { state: "fail", detail: "." + tld + " is a brand or closed top-level domain; every name under it belongs to its operator." };
+        }
+        return { state: "pass", detail: cd + " is its own registrable domain under the ICANN section, not under a brand or closed top-level domain." };
+      }
+      // §2 node URL: https, host canonical_domain or www. + it, no userinfo, default port.
+      function isNodeUrl(url, cd) {
+        try {
+          const u = new URL(url);
+          return u.protocol === "https:" && !u.username && !u.password && !u.port && (u.hostname === cd || u.hostname === "www." + cd);
+        } catch (e) {
+          return false;
+        }
+      }
+
+      // ── fetching from the node (VRP §2 "Fetching") ────────────────────────
+      // A browser cannot see where a redirect points, so this page follows no
+      // redirect from a node: a redirect makes the result unknown (§2, §9).
+      class NodeRedirect extends Error {}
+      async function nodeFetch(url) {
+        const res = await fetch(url, { redirect: "manual", cache: "no-store" });
+        if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400)) throw new NodeRedirect(url);
+        if (!res.ok) throw new Error(url + " answered HTTP " + res.status + ".");
+        return res.json();
+      }
+      // The domain a user typed, as a lowercase A-label host. A leading "www."
+      // is dropped: the node is the domain itself (§2).
+      function toHost(input) {
+        const h = String(input).trim().replace(/^https?:\/\//i, "").replace(/[/?#].*$/, "").replace(/^www\./i, "");
+        if (!h) return "";
+        try {
+          return new URL("https://" + h + "/").hostname;
+        } catch (e) {
+          return "";
+        }
+      }
+      // JSON equality regardless of member order (§7 "matches the returned offer").
+      function sameJson(a, b) {
+        if (a === b) return true;
+        if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+        if (Array.isArray(a) !== Array.isArray(b)) return false;
+        const ka = Object.keys(a);
+        if (ka.length !== Object.keys(b).length) return false;
+        return ka.every((k) => Object.prototype.hasOwnProperty.call(b, k) && sameJson(a[k], b[k]));
+      }
+      // The schema's dateTime (UTC, "Z"), and a real instant: no rolled-over
+      // day or hour. Anything else is malformed (§6). Returns ms or NaN.
+      function parseDateTime(v) {
+        const m = typeof v === "string" && /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(\.\d+)?Z$/.exec(v);
+        if (!m) return NaN;
+        const t = Date.parse(v);
+        const d = new Date(t);
+        return d.getUTCFullYear() === +m[1] && d.getUTCMonth() + 1 === +m[2] && d.getUTCDate() === +m[3] &&
+          d.getUTCHours() === +m[4] && d.getUTCMinutes() === +m[5] && d.getUTCSeconds() === +m[6]
+          ? t
+          : NaN;
+      }
+      // §2 and §7: the discovery document of `domain`.
+      function checkDiscovery(doc, domain) {
+        const d = doc && typeof doc === "object" ? doc : {};
+        const rows = [];
+        const problems = [];
+        const proto = d.protocol === "vacation-rental-protocol" && d.protocol_version === "0.1";
+        rows.push(checkRow(proto ? "pass" : "fail", proto ? "Declares VRP 0.1" : "Does NOT declare VRP 0.1",
+          "protocol " + JSON.stringify(d.protocol) + ", protocol_version " + JSON.stringify(d.protocol_version) + " (VRP §2, §7)."));
+        if (!proto) problems.push("the discovery document does not declare vacation-rental-protocol 0.1");
+        const cdOk = d.canonical_domain === domain;
+        rows.push(checkRow(cdOk ? "pass" : "fail", cdOk ? "Discovery canonical_domain is " + domain : "Discovery names another domain",
+          "canonical_domain " + JSON.stringify(d.canonical_domain) + ", fetched from " + domain + " (VRP §2, §7)."));
+        if (!cdOk) problems.push("the discovery document names another domain");
+        const jwksOk = isNodeUrl(d.jwks_url, domain);
+        rows.push(checkRow(jwksOk ? "pass" : "fail", jwksOk ? "jwks_url is a node URL" : "jwks_url is NOT a node URL",
+          String(d.jwks_url) + " (VRP §2)."));
+        if (!jwksOk) problems.push("jwks_url is not a node URL");
+        const epOk = isNodeUrl(d.verified_stay_offer_endpoint, domain);
+        rows.push(checkRow(epOk ? "pass" : "fail", epOk ? "Offer endpoint is a node URL" : "Offer endpoint is NOT a node URL",
+          String(d.verified_stay_offer_endpoint) + " (VRP §2)."));
+        if (!epOk) problems.push("the offer endpoint is not a node URL");
+        return { rows, problems, urlsOk: jwksOk && epOk };
       }
 
       // ── rendering ─────────────────────────────────────────────────────────
@@ -440,17 +599,35 @@
           "</div></div>"
         );
       }
-      function render(result, queriedHost) {
-        const { ok, header, payload } = result;
-        const rows = [];
+      // A verdict without a verified offer: the page stopped before the
+      // signature could be checked, or the offer is not this node's.
+      function showStop(state, text, rows) {
+        $("resultSection").style.display = "";
+        $("facts").style.display = "none";
+        $("raw").textContent = "";
+        $("verdict").className = "verdict " + state;
+        $("verdict").textContent = text;
+        $("checks").innerHTML = rows.join("");
+        $("resultSection").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      const REQUIRED_FIELDS = ["kind", "protocol_version", "canonical_domain", "node_id", "generated_at", "valid_until",
+        "request", "property", "availability", "price", "booking", "agent_permission"];
+      // ctx: result (verifyJws), host (the domain the offer was fetched from,
+      // null when pasted), own (hostOwned), rows and problems so far, jwksUrl,
+      // envelopeOffer (the unsigned copy; null for a bare JWS, undefined when
+      // the envelope has none).
+      function render(ctx) {
+        const { ok, header, payload } = ctx.result;
+        const own = ctx.own;
+        const rows = ctx.rows.slice();
+        const problems = ctx.problems.slice(); // not a VRP offer of this domain
+        const unknown = []; // could not be checked (§9)
+        const notQuotable = []; // a VRP offer that §6 and §7 forbid quoting
+        const cd = payload.canonical_domain;
+        const bookUrl = payload.booking && payload.booking.direct_booking_url;
+        const bookOnNode = typeof cd === "string" && isNodeUrl(bookUrl, cd);
         rows.push(checkRow("pass", "Compact JWS parsed", "Algorithm " + header.alg + ", key id " + header.kid + "."));
-        rows.push(
-          checkRow(
-            "pass",
-            "Signing key found in the host's own JWKS",
-            "/.well-known/jwks.json on " + (payload.canonical_domain || queriedHost || "the host") + "."
-          )
-        );
+        rows.push(checkRow("pass", "Key " + header.kid + " is in the host's JWKS", ctx.jwksUrl + " (VRP §3.1)."));
         rows.push(
           checkRow(
             ok ? "pass" : "fail",
@@ -463,42 +640,114 @@
 
         // semantic checks (only meaningful if signature holds)
         if (ok) {
-          const cd = payload.canonical_domain || payload.node_id;
-          if (queriedHost && cd) {
-            const match = cd.replace(/^www\./, "") === queriedHost.replace(/^www\./, "");
+          rows.push(
+            checkRow(
+              own.state === "unknown" ? "warn" : own.state,
+              own.state === "pass"
+                ? "Host-owned domain (VRP §2)"
+                : own.state === "fail"
+                  ? "NOT a host-owned domain (VRP §2)"
+                  : "Host-owned domain could not be checked (VRP §2)",
+              own.detail
+            )
+          );
+          if (own.state === "fail") problems.push("not a host-owned domain");
+          if (own.state === "unknown") unknown.push("the host-owned domain could not be checked");
+
+          const missing = REQUIRED_FIELDS.filter((k) => !(k in payload));
+          const shape = payload.kind === "verified_stay_offer" && payload.protocol_version === "0.1" && !missing.length;
+          rows.push(
+            checkRow(
+              shape ? "pass" : "warn",
+              shape ? "Offer has the fields VRP §5 requires" : "Offer does NOT have the shape VRP §5 requires",
+              shape
+                ? "kind, protocol_version 0.1 and the twelve required fields. This page does not run the full JSON Schema."
+                : (missing.length ? "Missing: " + missing.join(", ") + ". " : "") +
+                    "kind " + JSON.stringify(payload.kind) + ", protocol_version " + JSON.stringify(payload.protocol_version) + " — unknown (VRP §9)."
+            )
+          );
+          if (!shape) unknown.push("the offer does not have the VRP §5 shape");
+
+          if (ctx.envelopeOffer === undefined) {
+            rows.push(checkRow("warn", "The response carries no returned offer", "VRP §7 compares the returned offer with the signed payload; without one this is unknown."));
+            unknown.push("the response carries no returned offer");
+          } else if (ctx.envelopeOffer !== null) {
+            const same = sameJson(ctx.envelopeOffer, payload);
             rows.push(
               checkRow(
-                match ? "pass" : "warn",
-                match ? "Offer is the official source for " + cd : "canonical_domain is " + cd,
-                match ? "The offer declares itself the official direct source for this domain." : "Differs from the host you queried (" + queriedHost + ")."
+                same ? "pass" : "fail",
+                same ? "Returned offer matches the signed payload" : "Returned offer DIFFERS from the signed payload",
+                same ? "VRP §7." : "The unsigned copy beside the signature was changed. Only the signed payload counts (VRP §5.1, §7)."
+              )
+            );
+            if (!same) problems.push("the returned offer differs from the signed payload");
+          }
+
+          if (ctx.host) {
+            const match = cd === ctx.host;
+            if (!match) problems.push("the offer names another domain");
+            rows.push(
+              checkRow(
+                match ? "pass" : "fail",
+                match ? "Offer is the official source for " + cd : "Offer names another domain: " + cd,
+                match
+                  ? "The offer declares itself the official direct source for the domain it was fetched from."
+                  : "It was fetched from " + ctx.host + ". An offer that names another domain is not that domain's offer (VRP §7)."
+              )
+            );
+          } else {
+            rows.push(
+              checkRow(
+                "warn",
+                "Where this offer came from cannot be checked",
+                "A pasted offer could come from anywhere. VRP §7 requires its canonical_domain to be the domain it was fetched from; use “Fetch a live offer” to check that."
+              )
+            );
+            unknown.push("this page cannot see where a pasted offer was fetched from");
+          }
+
+          if (bookUrl === undefined || bookUrl === null || bookUrl === "") {
+            rows.push(checkRow("warn", "No direct booking URL", "VRP §7: an offer without one must not be quoted."));
+            notQuotable.push("no direct booking URL");
+          } else {
+            if (!bookOnNode) problems.push("the booking URL is not a node URL");
+            rows.push(
+              checkRow(
+                bookOnNode ? "pass" : "fail",
+                bookOnNode ? "Direct booking URL is a node URL" : "Direct booking URL is NOT a node URL",
+                String(bookUrl) + (bookOnNode ? "  (VRP §5.1 satisfied)" : "  (VRP §5.1 violated — never follow it)")
               )
             );
           }
-          const url = payload.booking && payload.booking.direct_booking_url;
-          if (url && cd) {
-            let onDomain = false;
-            try {
-              onDomain = new URL(url).hostname.replace(/^www\./, "") === cd.replace(/^www\./, "");
-            } catch (e) {}
-            rows.push(
-              checkRow(
-                onDomain ? "pass" : "fail",
-                onDomain ? "Direct booking URL is on the host's own domain" : "Direct booking URL is OFF-domain",
-                url + (onDomain ? "  (VRP §5.1 satisfied)" : "  (VRP §5.1 violated — be suspicious)")
-              )
-            );
-          }
-          const vu = payload.valid_until ? new Date(payload.valid_until) : null;
-          if (vu) {
-            const fresh = vu.getTime() > Date.now();
+
+          const vu = parseDateTime(payload.valid_until);
+          if (isNaN(vu)) {
+            rows.push(checkRow("warn", "valid_until is missing or malformed", JSON.stringify(payload.valid_until) + " — VRP §6: the offer must not be quoted."));
+            notQuotable.push("valid_until is missing or malformed");
+          } else {
+            const fresh = vu > Date.now();
             rows.push(
               checkRow(
                 fresh ? "pass" : "warn",
                 fresh ? "Offer is still fresh" : "Offer has EXPIRED (signature still valid)",
-                "valid_until " + payload.valid_until + (fresh ? "" : " — re-fetch for a current price.")
+                "valid_until " + payload.valid_until + (fresh ? "" : " — VRP §6: fetch a fresh offer.")
               )
             );
+            if (!fresh) notQuotable.push("the offer has expired");
           }
+
+          const flags = [
+            [payload.availability, "available", "Available", "availability.available"],
+            [payload.price, "exact", "Exact total price", "price.exact"],
+            [payload.agent_permission, "may_quote_as_official_direct_offer", "The host lets agents quote this offer", "agent_permission.may_quote_as_official_direct_offer"],
+          ];
+          for (const [obj, key, label, path] of flags) {
+            const value = obj && typeof obj === "object" ? obj[key] : undefined;
+            const yes = value === true;
+            rows.push(checkRow(yes ? "pass" : "warn", yes ? label : "Not true: " + path, path + " is " + JSON.stringify(value) + " (VRP §7)."));
+            if (!yes) notQuotable.push(path + " is not true");
+          }
+
           const price = payload.price || {};
           if (price.no_add_on_fees === true) {
             rows.push(checkRow("pass", "No add-on fees", "The signed total is the total — no booking, service, or cleaning fees."));
@@ -515,10 +764,16 @@
           }
         }
 
-        $("verdict").className = "verdict " + (ok ? "pass" : "fail");
-        $("verdict").textContent = ok
-          ? "✓ Verified — signed by " + (payload.canonical_domain || header.kid)
-          : "✕ Not verified — signature does not match";
+        const cautions = unknown.concat(notQuotable);
+        const verdict = !ok || problems.length ? "fail" : cautions.length ? "warn" : "pass";
+        $("verdict").className = "verdict " + verdict;
+        $("verdict").textContent = !ok
+          ? "✕ Not verified — signature does not match"
+          : problems.length
+            ? "✕ Not a VRP offer — " + problems.join("; ")
+            : cautions.length
+              ? "! Signature valid, but not safe to quote — " + cautions.join("; ")
+              : "✓ Verified and safe to quote — signed by " + cd;
         $("checks").innerHTML = rows.join("");
 
         // facts
@@ -526,10 +781,17 @@
         const prop = payload.property || {};
         const req = payload.request || {};
         const facts = [
-          ["Property", prop.name ? prop.name + (prop.city ? ", " + prop.city : "") + (prop.country ? ", " + prop.country : "") : "—"],
-          ["Stay", req.check_in ? req.check_in + " → " + req.check_out + " (" + (req.nights || "?") + " nights, " + (req.guests || "?") + " guests)" : "—"],
-          ["Total price", price.total != null ? price.total + " " + (price.currency || "") + (price.agent_total != null && price.agent_total !== price.total ? "  (agent: " + price.agent_total + " " + (price.currency || "") + ")" : "") : "—"],
-          ["Book direct", payload.booking && payload.booking.direct_booking_url ? '<a href="' + esc(payload.booking.direct_booking_url) + '" rel="noopener" target="_blank">' + esc(payload.booking.direct_booking_url) + "</a>" : "—"],
+          ["Property", prop.name ? esc(prop.name + (prop.city ? ", " + prop.city : "") + (prop.country ? ", " + prop.country : "")) : "—"],
+          ["Stay", req.check_in ? esc(req.check_in + " → " + req.check_out + " (" + (req.nights || "?") + " nights, " + (req.guests || "?") + " guests)") : "—"],
+          ["Total price", price.total != null ? esc(price.total + " " + (price.currency || "") + (price.agent_total != null && price.agent_total !== price.total ? "  (agent: " + price.agent_total + " " + (price.currency || "") + ")" : "")) : "—"],
+          [
+            "Book direct",
+            !bookUrl
+              ? "—"
+              : verdict === "pass"
+                ? '<a href="' + esc(bookUrl) + '" rel="noopener" target="_blank">' + esc(bookUrl) + "</a>"
+                : esc(bookUrl) + " (no link: this offer is not safe to quote)",
+          ],
           ["Signed by", esc(header.kid)],
           ["Valid until", esc(payload.valid_until || "—")],
         ];
@@ -541,30 +803,52 @@
       }
 
       // ── actions ───────────────────────────────────────────────────────────
-      function normHost(h) {
-        return String(h).trim().replace(/^https?:\/\//, "").replace(/\/.*$/, "").replace(/^www\./, "");
+      function redirectStop(e, rows) {
+        showStop(
+          "warn",
+          "! Unknown — the node answered with a redirect",
+          rows.concat(
+            checkRow(
+              "warn",
+              "Redirect not followed (VRP §2)",
+              e.message + " answered with a redirect. A browser cannot see where a redirect points, so this page cannot check that it leads to a node URL, and the result is unknown (VRP §9)."
+            )
+          )
+        );
       }
       async function runLive() {
         const btn = $("btnLive");
-        const host = normHost($("host").value);
+        const host = toHost($("host").value);
         if (!host) return showError("Enter a host domain.");
         btn.disabled = true;
         btn.textContent = "Verifying…";
+        const rows = [];
         try {
-          const q =
-            "?check_in=" + encodeURIComponent($("checkIn").value) +
-            "&check_out=" + encodeURIComponent($("checkOut").value) +
-            "&guests=" + encodeURIComponent($("guests").value || "2");
-          const [offerRes, jwksRes] = await Promise.all([
-            fetch("https://" + host + "/api/verified-stay-offer" + q),
-            fetch("https://" + host + "/.well-known/jwks.json"),
-          ]);
-          const offer = await offerRes.json();
-          const jwks = await jwksRes.json();
+          const discUrl = "https://" + host + "/.well-known/vacation-rental.json";
+          const disc = await nodeFetch(discUrl);
+          rows.push(checkRow("pass", "Discovery document fetched from the domain itself", discUrl));
+          const d = checkDiscovery(disc, host);
+          rows.push(...d.rows);
+          if (!d.urlsOk) return showStop("fail", "✕ Not a VRP node — " + d.problems.join("; "), rows);
+          const offerUrl = new URL(disc.verified_stay_offer_endpoint);
+          offerUrl.searchParams.set("check_in", $("checkIn").value);
+          offerUrl.searchParams.set("check_out", $("checkOut").value);
+          offerUrl.searchParams.set("guests", $("guests").value || "2");
+          const [offer, jwks] = await Promise.all([nodeFetch(offerUrl.href), nodeFetch(disc.jwks_url)]);
           const jws = offer && offer.signature && offer.signature.jws;
-          if (!jws) throw new Error("The host response did not contain signature.jws.");
-          render(await verifyJws(jws, jwks), host);
+          if (typeof jws !== "string" || !jws) throw new Error("The host response did not contain signature.jws.");
+          const result = await verifyJws(jws, jwks);
+          render({
+            result,
+            host,
+            own: await hostOwned(host),
+            rows,
+            problems: d.problems,
+            jwksUrl: disc.jwks_url,
+            envelopeOffer: offer && typeof offer === "object" && "offer" in offer ? offer.offer : undefined,
+          });
         } catch (e) {
+          if (e instanceof NodeRedirect) return redirectStop(e, rows);
           showError(e && e.message === "NO_NATIVE_ED25519" ? "NO_NATIVE_ED25519" : "Fetch or verify failed: " + (e && e.message ? e.message : e) + "  (the host may block cross-origin requests, or the domain is wrong).");
         } finally {
           btn.disabled = false;
@@ -577,19 +861,35 @@
         if (!raw) return showError("Paste an offer JSON or a compact JWS.");
         btn.disabled = true;
         btn.textContent = "Verifying…";
+        const rows = [];
         try {
           let jws = raw;
+          let envelopeOffer = null;
           if (raw[0] === "{") {
             const obj = JSON.parse(raw);
             jws = (obj.signature && obj.signature.jws) || obj.jws || "";
             if (!jws) throw new Error("JSON has no signature.jws field.");
+            envelopeOffer = "offer" in obj ? obj.offer : undefined;
           }
-          const payload = jsonFromB64url(jws.split(".")[1]);
-          const host = normHost(payload.canonical_domain || payload.node_id || "");
-          if (!host) throw new Error("Offer payload has no canonical_domain to fetch the key from.");
-          const jwks = await (await fetch("https://" + host + "/.well-known/jwks.json")).json();
-          render(await verifyJws(jws, jwks), host);
+          const payload = jsonFromB64url(String(jws).split(".")[1] || "");
+          const cd = payload && payload.canonical_domain;
+          if (typeof cd !== "string" || !cd) throw new Error("Offer payload has no canonical_domain to fetch the key from.");
+          // The domain law first: nothing is fetched from a name that is not a
+          // host-owned domain in A-label form.
+          const own = await hostOwned(cd);
+          if (own.state === "fail") {
+            return showStop("fail", "✕ Not a VRP offer — not a host-owned domain", [checkRow("fail", "NOT a host-owned domain (VRP §2)", own.detail)]);
+          }
+          const discUrl = "https://" + cd + "/.well-known/vacation-rental.json";
+          const disc = await nodeFetch(discUrl);
+          rows.push(checkRow("pass", "Discovery document fetched from the domain the offer names", discUrl));
+          const d = checkDiscovery(disc, cd);
+          rows.push(...d.rows);
+          if (!d.urlsOk) return showStop("fail", "✕ Not a VRP node — " + d.problems.join("; "), rows);
+          const result = await verifyJws(jws, await nodeFetch(disc.jwks_url));
+          render({ result, host: null, own, rows, problems: d.problems, jwksUrl: disc.jwks_url, envelopeOffer });
         } catch (e) {
+          if (e instanceof NodeRedirect) return redirectStop(e, rows);
           showError(e && e.message === "NO_NATIVE_ED25519" ? "NO_NATIVE_ED25519" : (e && e.message ? e.message : String(e)));
         } finally {
           btn.disabled = false;

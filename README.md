@@ -123,5 +123,7 @@ VRP uses a dual-license boundary (ADR 0010 D7), so the standard is free to imple
 | --- | --- | --- |
 | `spec/`, `schemas/`, `contexts/`, this `README` and the site pages | [CC0 1.0](./LICENSE) (public domain) | The **specification text** and machine-readable spec artifacts — copy and implement the standard freely. |
 | `scripts/`, `examples/` (incl. `examples/conformance/` vectors) | [Apache-2.0](./LICENSE-CODE) | The **reference verification code** and **conformance test vectors** — Apache-2.0, which includes the royalty-free patent grant (§3). |
+| `docs/` (guides, decision records, security documents, the generated source pack) | [CC0 1.0](./LICENSE) (public domain) | The **documentation about the standard** — same terms as the specification text. |
+| `lib/` | [Apache-2.0](./LICENSE-CODE) | The **reference verifier modules** (`vrp-jws.mjs`, `vrp-receipt.mjs`, `vrp-tlog.mjs`); each file carries its own Apache-2.0 header. |
 
 See also the spec-text patent non-assertion commitment in [`PATENTS.md`](./PATENTS.md).

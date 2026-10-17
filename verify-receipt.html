@@ -304,12 +304,15 @@
           var payload = decodePart(parts[1]);
           var data = new TextEncoder().encode(parts[0] + "." + parts[1]);
           var sig = b64urlToBytes(parts[2]);
-          var keys = (jwks && jwks.keys) || [];
+          // VRP §3.1: the key is the one whose kid the JWS header names, and no
+          // other. A header without a kid selects no key.
+          if (typeof header.kid !== "string" || !header.kid) throw new Error("The JWS header carries no kid, so no published key can be selected (VRP §3.1).");
+          var keys = (jwks && Array.isArray(jwks.keys)) ? jwks.keys : [];
           var tried = 0;
           for (var i = 0; i < keys.length; i++) {
             var k = keys[i];
-            if (k.kty !== "OKP" || k.crv !== "Ed25519") continue;
-            if (header.kid && k.kid && header.kid !== k.kid) continue;
+            if (!k || k.kty !== "OKP" || k.crv !== "Ed25519") continue;
+            if (k.kid !== header.kid) continue;
             tried++;
             var cryptoKey = await crypto.subtle.importKey(
               "jwk",
@@ -319,11 +322,96 @@
               ["verify"]
             );
             if (await crypto.subtle.verify({ name: "Ed25519" }, cryptoKey, sig, data)) {
-              return { payload: payload, kid: k.kid || header.kid || null };
+              return { payload: payload, kid: k.kid };
             }
           }
-          if (!tried) throw new Error("No matching Ed25519 key in the JWKS.");
+          if (!tried) throw new Error("No Ed25519 key with kid '" + header.kid + "' in the JWKS (VRP §3.1).");
           throw new Error("Signature did not verify against the published keys.");
+        }
+
+        // ── host-owned domain (VRP v0.1 §2) ──────────────────────────────────
+        // Same rules and the same live lists as /verify; nothing is bundled.
+        var PSL_URL = "https://publicsuffix.org/list/public_suffix_list.dat";
+        var GTLDS_URL = "https://www.icann.org/resources/registries/gtlds/v2/gtlds.json";
+        var CLOSED_TLDS = ["booking", "hotels"]; // §2: closed top-level domains named by the standard
+        var listsPromise = null;
+        function toALabel(label) {
+          if (label === "*" || /^[\x00-\x7f]*$/.test(label)) return label;
+          try {
+            return new URL("https://" + label + "/").hostname;
+          } catch (e) {
+            return label;
+          }
+        }
+        function loadLists() {
+          if (!listsPromise) {
+            listsPromise = Promise.all([
+              fetch(PSL_URL).then(function (r) { return r.ok ? r.text() : Promise.reject(new Error("PSL " + r.status)); }),
+              fetch(GTLDS_URL).then(function (r) { return r.ok ? r.json() : Promise.reject(new Error("gTLD list " + r.status)); }),
+            ]).then(function (res) {
+              var lines = res[0].split("\n");
+              var a = lines.findIndex(function (l) { return l.includes("===BEGIN ICANN DOMAINS==="); });
+              var b = lines.findIndex(function (l) { return l.includes("===END ICANN DOMAINS==="); });
+              if (a < 0 || b < a) throw new Error("PSL ICANN section not found");
+              var rules = lines
+                .slice(a, b)
+                .map(function (l) { return l.trim(); })
+                .filter(function (l) { return l && !l.startsWith("//"); })
+                .map(function (r) {
+                  var ex = r.startsWith("!");
+                  return { ex: ex, labels: (ex ? r.slice(1) : r).split(".").map(toALabel) };
+                });
+              var spec13 = new Set((res[1].gTLDs || []).filter(function (g) { return g.specification13; }).map(function (g) { return g.gTLD; }));
+              return { rules: rules, spec13: spec13 };
+            });
+            listsPromise.catch(function () { listsPromise = null; });
+          }
+          return listsPromise;
+        }
+        // §2 steps 1–3. Returns { state: "pass" | "fail" | "unknown", detail }.
+        async function hostOwned(cd) {
+          var labels = String(cd || "").split(".");
+          if (!labels.every(function (l) { return /^(?!-)[a-z0-9-]{1,63}(?<!-)$/.test(l); })) {
+            return { state: "fail", detail: "Not lowercase ASCII A-labels without a trailing dot." };
+          }
+          var lists;
+          try {
+            lists = await loadLists();
+          } catch (e) {
+            return { state: "unknown", detail: "The Public Suffix List or ICANN's gTLD list could not be fetched, so this is unknown (§2, §9)." };
+          }
+          var exception = null;
+          var longest = 1;
+          lists.rules.forEach(function (r) {
+            if (r.labels.length > labels.length) return;
+            var off = labels.length - r.labels.length;
+            if (!r.labels.every(function (l, i) { return l === "*" || l === labels[off + i]; })) return;
+            if (r.ex) exception = r.labels.length - 1;
+            else longest = Math.max(longest, r.labels.length);
+          });
+          var suffix = exception !== null ? exception : longest;
+          if (labels.length <= suffix) return { state: "fail", detail: cd + " is a public suffix, not a domain anyone holds." };
+          var registrable = labels.slice(-(suffix + 1)).join(".");
+          if (registrable !== cd) {
+            return { state: "fail", detail: cd + " is a name under " + registrable + ", not a domain registered for the host." };
+          }
+          var tld = labels[labels.length - 1];
+          if (lists.spec13.has(tld) || CLOSED_TLDS.includes(tld)) {
+            return { state: "fail", detail: "." + tld + " is a brand or closed top-level domain; every name under it belongs to its operator." };
+          }
+          return { state: "pass", detail: cd + " is its own registrable domain under the ICANN section, not under a brand or closed top-level domain." };
+        }
+        // A browser cannot see where a redirect points, so no redirect from the
+        // issuer is followed: one makes the result unknown (§2, §9).
+        async function nodeFetchJson(url) {
+          var res = await fetch(url, { redirect: "manual", cache: "no-store" });
+          if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400)) {
+            var e = new Error(url + " answered with a redirect. A browser cannot see where it points, so the result is unknown (VRP §2).");
+            e.unknown = true;
+            throw e;
+          }
+          if (!res.ok) throw new Error(url + " answered HTTP " + res.status + ".");
+          return res.json();
         }
 
         // RFC 6962 §2.1.1 — exact mirror of the log's reference implementation.
@@ -452,17 +540,30 @@
             var domain = String(issuer.domain || "").replace(/^www\./, "");
             if (!domain) throw new Error("The receipt names no issuer domain.");
 
+            // VRP §2: the issuer is a host-owned domain in A-label form. Nothing
+            // is fetched from any other name.
+            var own = await hostOwned(domain);
+            if (own.state === "fail") throw new Error("The issuer is not a host-owned domain (VRP §2). " + own.detail);
+            addCheck(own.state === "pass" ? true : null, "Issuer is a host-owned domain (VRP §2)", esc(own.detail));
+
             // Step 1: node key + wrapper signature.
             var jwks;
             try {
-              jwks = await (await fetch("https://" + domain + "/.well-known/jwks.json")).json();
+              jwks = await nodeFetchJson("https://" + domain + "/.well-known/jwks.json");
             } catch (e) {
-              addCheck(false, "Fetch the property's published keys", "https://" + domain + "/.well-known/jwks.json unreachable");
+              if (e && e.unknown) throw e;
+              addCheck(false, "Fetch the property's published keys", esc("https://" + domain + "/.well-known/jwks.json unreachable"));
               throw new Error("Could not fetch the property's published keys.");
             }
-            addCheck(true, "Fetched the property's published keys", "https://" + domain + "/.well-known/jwks.json");
+            addCheck(true, "Fetched the property's published keys", esc("https://" + domain + "/.well-known/jwks.json"));
             await verifyJws(jws, jwks);
             addCheck(true, "Receipt signature verifies against the property domain's Ed25519 key");
+            // The receipt's own words about where it was booked count only when
+            // they name the domain that signed it.
+            var subjectNode = subject.node == null ? "" : String(subject.node).replace(/^www\./, "");
+            if (subjectNode && subjectNode !== domain) {
+              addCheck(false, "The receipt names the domain that signed it", "it names " + esc(subject.node) + ", but " + esc(domain) + " signed it");
+            }
 
             // Step 2: inner attestation signatures.
             var atts = Array.isArray(envelope.attestations) ? envelope.attestations : [];
@@ -559,7 +660,7 @@
             // Facts panel — the promise, in clear text.
             var factsHtml =
               fact("Property", esc(subject.property_name || "")) +
-              fact("Booked directly at", esc(subject.node || domain)) +
+              fact("Booked directly at", esc(domain)) +
               fact("Check-in", esc(subject.check_in || "")) +
               fact("Check-out", esc(subject.check_out || "")) +
               fact("Guests", subject.guests_count) +
@@ -573,7 +674,12 @@
             document.getElementById("raw").textContent = JSON.stringify(envelope, null, 2);
 
             var allHard = checks.every(function (c) { return c.state !== false; });
-            if (allHard && anchored) {
+            if (allHard && own.state !== "pass") {
+              verdictEl.className = "verdict warn";
+              verdictEl.textContent =
+                "UNKNOWN — the signature verifies against " + domain +
+                ", but whether " + domain + " is a host-owned domain could not be checked (VRP §2, §9).";
+            } else if (allHard && anchored) {
               verdictEl.className = "verdict pass";
               verdictEl.textContent =
                 "VERIFIED — this receipt was signed by " + domain +
@@ -590,9 +696,9 @@
               verdictEl.textContent = "NOT VERIFIED — one or more checks failed. Do not rely on this receipt.";
             }
           } catch (err) {
-            addCheck(false, "Verification stopped", esc(err && err.message ? err.message : String(err)));
-            verdictEl.className = "verdict fail";
-            verdictEl.textContent = "NOT VERIFIED — " + (err && err.message ? err.message : "verification failed.");
+            addCheck(err && err.unknown ? null : false, "Verification stopped", esc(err && err.message ? err.message : String(err)));
+            verdictEl.className = "verdict " + (err && err.unknown ? "warn" : "fail");
+            verdictEl.textContent = (err && err.unknown ? "UNKNOWN — " : "NOT VERIFIED — ") + (err && err.message ? err.message : "verification failed.");
           }
           renderChecks();
         }

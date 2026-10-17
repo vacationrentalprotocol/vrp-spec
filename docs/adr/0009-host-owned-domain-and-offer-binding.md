@@ -50,8 +50,11 @@ places:
 6. **§7 had no keywords.** It said "may quote … only when". That is normative
    text in plain English (RFC 8174 §2), but §1.1 now declares BCP 14 and the
    conditions are clearer in capitals.
-7. **The site verifier** (`verify.html`) checked none of the domain rules, so an
-   offer from a platform-issued name could be shown as verified there.
+7. **The site verifiers** (`verify.html`, `verify-receipt.html`) checked none of
+   the domain rules, so an offer or a receipt from a platform-issued name could be
+   shown as verified there. `verify.html` never read the discovery document, and
+   both pages tried a key other than the one named when the JWS header carried no
+   `kid` (`verify.html` also when the `kid` was unknown).
 
 The IETF draft `ietf/draft-abbas-vrp-offer-verification-00` has the same wording
 (lines 173, 213 and 453 of the `.txt`).
@@ -99,12 +102,28 @@ development ("Anything MAY change at any time", semver 2.0.0 item 4). Under
 GOVERNANCE.md §12 this amendment is itself substantive, and this record is its
 ADR.
 
-**D7. Conformance vectors and the site verifier.**
+**D7. Conformance vectors and the site verifiers.**
 `examples/conformance/host-domain/vectors.v0.1.json` (53 cases in five groups,
 three with real Ed25519 signatures), checked by `scripts/verify-host-domain.mjs`
-in `npm test`. `verify.html` fetches both lists live from their publishers (both
-serve `Access-Control-Allow-Origin: *`), applies D1, D2 and D3, and shows
-"unknown" when a list cannot be fetched.
+in `npm test`. `verify.html` and `verify-receipt.html` fetch both lists live from
+their publishers (both serve `Access-Control-Allow-Origin: *`) and show
+"unknown" when a list cannot be fetched. Both pages follow no redirect from a
+node: a browser cannot see where a redirect points, so a redirect is "unknown".
+Both select the key only by the `kid` in the JWS header (§3.1).
+
+- `verify.html`, live offer: D1–D4. It fetches the discovery document from the
+  domain typed, requires its `protocol`, `protocol_version` and
+  `canonical_domain`, takes `jwks_url` and the offer endpoint from it only when
+  both are node URLs, and requires the signed `canonical_domain` to be that
+  domain and the booking URL to be a node URL.
+- `verify.html`, pasted offer: D1, D2, D4 and the discovery half of D3, for the
+  domain the offer names. A pasted offer can come from anywhere, so the page
+  never shows one as safe to quote.
+- `verify-receipt.html`: D1 for the issuer domain, before anything is fetched
+  from it.
+
+The pages are tested in a browser with every request answered locally, not in
+`npm test`.
 
 ## Consequences
 

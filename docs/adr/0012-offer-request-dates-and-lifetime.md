@@ -12,8 +12,9 @@ did not say what those terms must be for in five places:
 1. **The stay asked for.** §7 listed what makes an offer safe to quote, but
    nothing tied the signed offer to the dates and guest count the agent asked
    for. A genuine, fresh offer for other dates or another guest count met every
-   condition. `request` appears in §5 only as a required member, and §5.1 only
-   says the booking URL's `checkIn`, `checkOut` and `guests` match it.
+   condition. In the normative sections `request` appears only in §5's list of
+   required members and in §5.1, which says the booking URL's `checkIn`,
+   `checkOut` and `guests` match it; §15 (informative) says offers echo it.
 2. **Dates.** Nothing required `request.check_in` and `request.check_out` to be
    dates that exist, `check_out` to be later than `check_in`, or `check_in` not
    to have passed. The schema's date pattern `^[0-9]{4}-[0-9]{2}-[0-9]{2}$`
@@ -26,8 +27,8 @@ did not say what those terms must be for in five places:
 4. **Lifetime.** §3.1 spoke of "the maximum offer lifetime" without defining
    it. No rule limited `valid_until − generated_at`, and none kept
    `generated_at` from lying in the future, so an offer could stay quotable for
-   years. The known production node uses 900 seconds (measured 2026-10-17 in 12
-   of 12 offers); the repository's examples use 600.
+   years. The known production node uses 900 seconds (12 of 12 offers fetched
+   2026-10-17 between 10:49 and 16:12 UTC); the repository's examples use 600.
 5. **Schema.** The schema did not require `request`, so an offer without one was
    schema-valid although §7 now has to compare it. `node_id` and `property` were
    made optional in the schema on 2026-06-02 (`f79bb14`, #15) while §5 lists

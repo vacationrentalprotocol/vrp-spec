@@ -1,6 +1,6 @@
 # ADR 0008: Key Lifecycle for Receipt Verifiability (K1–K6, Forward Specification)
 
-**Status:** Accepted — forward specification. K1–K6 have been listed in
+**Status:** Proposed — forward specification. K1–K6 have been listed in
 [`spec/receipt-v1.md`](../../spec/receipt-v1.md) §10 since 2026-06-24; this
 record states the decisions as the standard's own. The v1 verifier is unchanged.
 **Date:** 2026-10-17
@@ -31,7 +31,8 @@ them; the v1 verifier does not change.
 
 - **K1 — Every signature is key-identified.** Each attestation signature carries
   a JWS `kid`, and a receipt records the verifying `kid` per attestation. A `kid`
-  is unique to one key and SHOULD NOT be reused.
+  identifies one key; reusing it for another key would make historical
+  receipts ambiguous.
 - **K2 — The JWKS keeps retired public keys.** After a key stops signing, the
   host domain's JWKS keeps serving its public half for the receipt-retention
   horizon (the longest period a receipt must remain independently verifiable).
@@ -46,18 +47,18 @@ them; the v1 verifier does not change.
   invalidates a receipt.
 - **K4 — Revocation is distinct from rotation and is time-anchored.** `revoked`
   means the private key is believed compromised, and the revocation publishes
-  `vrp_compromised_at`. A receipt proven to predate that instant MAY be treated
-  as authentic; one that cannot be proven to predate it MUST be treated as
-  invalid for that layer (fail-closed). The proof needs an independent time
+  `vrp_compromised_at`. A receipt proven to predate that instant can still be
+  treated as authentic; one that cannot be proven to predate it fails closed
+  and is invalid for that layer. The proof needs an independent time
   anchor — the transparency-log inclusion proof (ADR 0007 D3,
   [transparency-log-v0.1](../../spec/transparency-log-v0.1.md)) — never the
   times asserted inside the possibly forged signature. A receipt intended to
   survive a future revocation, for example one kept as dispute or insurance
   evidence, therefore MUST carry a `tlog` proof.
 - **K5 — Per-layer keys are permitted.** A node MAY sign one layer (for example
-  `payment`) with a different key or `kid` than another. Schemas and verifiers
-  MUST NOT assume one key per receipt; each attestation resolves its own key
-  through its `source` and `kid`.
+  `payment`) with a different key or `kid` than another. Each attestation
+  resolves its own key through its `source` and `kid`, so nothing in the
+  envelope presumes one key per receipt.
 - **K6 — Lifecycle error codes.** A lifecycle-aware verifier adds
   `key_retired_out_of_window`, `key_revoked` and `tlog_required` to the ADR 0007
   D4 registry. The v1 codes are unchanged.

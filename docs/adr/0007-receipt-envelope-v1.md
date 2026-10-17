@@ -1,6 +1,6 @@
 # ADR 0007: Receipt Envelope v1 — Flat `attestations[]` and Decisions D1–D8
 
-**Status:** Accepted — the decisions below have been normative in
+**Status:** Proposed — the decisions below have been normative in
 [`spec/receipt-v1.md`](../../spec/receipt-v1.md) since its first publication
 (2026-06-24); this record states them as the standard's own.
 **Date:** 2026-10-17
@@ -79,8 +79,10 @@ public communication. They describe one implementation, not the standard.
 
 ## Consequences
 
-- The thirty "ADR 0010" citations in this repository now cite ADR 0007; the
-  standard's reasoning no longer points outside the standard.
+- Of the thirty "ADR 0010" citations in this repository, 28 now cite ADR 0007
+  and one, which cited the key-lifecycle section, cites ADR 0008; the last, an
+  internal note, now names GOVERNANCE.md §5. The two "ADR 0011" citations cite
+  ADR 0008. The standard's reasoning no longer points outside the standard.
 - `spec/receipt-v1.md` §2 lists D1–D8 (it said "D1–D7", although §13 of the same
   document is "Neutrality (D8)").
 - Implementation roadmap wording that stood beside these citations — phase

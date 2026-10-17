@@ -24,8 +24,9 @@ import { fileURLToPath } from "node:url";
 export const MAX_LIFETIME_SECONDS = 900;
 export const CLOCK_SKEW_SECONDS = 60;
 // §5: language subtag (2–3 letters), optional script (4 letters), optional
-// region (2 letters or 3 digits). Free text never matches.
-export const LANGUAGE_TAG = /^[A-Za-z]{2,3}(-[A-Za-z]{4})?(-([A-Za-z]{2}|[0-9]{3}))?$/;
+// region (2 letters or 3 digits). Free text never matches. "(?!\n)" keeps an
+// engine whose "$" also matches before a final line break (Python's re) exact.
+export const LANGUAGE_TAG = /^[A-Za-z]{2,3}(-[A-Za-z]{4})?(-([A-Za-z]{2}|[0-9]{3}))?$(?!\n)/;
 
 const DAY_MS = 86400000;
 
@@ -33,8 +34,10 @@ const DAY_MS = 86400000;
 export function parseDate(value) {
   const m = typeof value === "string" && /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
   if (!m) return NaN;
-  const t = Date.UTC(+m[1], +m[2] - 1, +m[3]);
-  const d = new Date(t);
+  // setUTCFullYear, not Date.UTC: Date.UTC reads the years 0–99 as 1900–1999.
+  const d = new Date(0);
+  d.setUTCFullYear(+m[1], +m[2] - 1, +m[3]);
+  const t = d.getTime();
   return d.getUTCFullYear() === +m[1] && d.getUTCMonth() === +m[2] - 1 && d.getUTCDate() === +m[3] ? t : NaN;
 }
 
@@ -43,8 +46,10 @@ export function parseDateTime(value) {
   const m =
     typeof value === "string" && /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(\.\d+)?Z$/.exec(value);
   if (!m) return NaN;
-  const t = Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]);
-  const d = new Date(t);
+  const d = new Date(0);
+  d.setUTCFullYear(+m[1], +m[2] - 1, +m[3]);
+  d.setUTCHours(+m[4], +m[5], +m[6], 0);
+  const t = d.getTime();
   const exists =
     d.getUTCFullYear() === +m[1] &&
     d.getUTCMonth() === +m[2] - 1 &&

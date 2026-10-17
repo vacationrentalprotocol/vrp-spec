@@ -53,20 +53,28 @@ than the current date at the property; it answers with an error. A verifier
 does not know the property's time zone, so §7 asks it for less: `check_in` not
 earlier than the day before its current UTC date. The local date anywhere is at
 most one day behind the UTC date, so a `check_in` earlier than that has passed
-everywhere.
+everywhere. The floor lets through a `check_in` that passed at the property up
+to a day earlier; the node's rule is what stops it. Dates that do not exist
+(30 February, 31 April) are a runtime rule: no pattern can stop them.
 
-**D3. Echoed fields (§5, §7).** What `request` holds is the requester's words,
-not statements by the host. A node MUST NOT copy into the signed payload any
-value from the request other than `check_in`, `check_out`, `guests` and
-`language`. `request.language`, when present, MUST be a BCP 47 language tag of
+**D3. Echoed fields (§5, §7).** `check_in`, `check_out`, `guests` and
+`language` in `request` are the requester's words, not statements by the host;
+`check_in_weekday`, `check_out_weekday` and `nights`, which the known
+production node also signs, are the node's own, computed from the dates. A node
+MUST NOT copy into the signed payload any value from the request other than
+those four. `request.language`, when present, MUST be a BCP 47 language tag of
 the form language subtag (two or three letters), optional script subtag (four
-letters), optional region subtag (two letters or three digits), and SHOULD name
-a language the node writes the offer in. Agents MUST NOT present a value from
-`request` as something the host stated.
+letters), optional region subtag (two letters or three digits), in any letter
+case, and SHOULD name a language the node writes the offer in. The schema's
+pattern ends in `$(?!\n)`, so that an engine whose `$` also matches before a
+final line break (Python's `re`, which some JSON Schema validators use) does
+not accept `"sv\n"`; a vector holds that case. Agents MUST NOT present a value
+from `request` as something the host stated.
 
 **D4. Lifetime (§5, §6, §3.1).** A node MUST set `generated_at` to the time it
 signs. `valid_until` MUST be later than `generated_at` and MUST NOT be more than
-900 seconds after it. An agent MUST treat an offer as not quotable when
+900 seconds after it, the two values compared as written, fractions of a
+second included. An agent MUST treat an offer as not quotable when
 `generated_at` is missing or malformed, more than 60 seconds later than its own
 clock, or when the lifetime is not positive or exceeds 900 seconds. 900 seconds
 is the known production node's lifetime. The 60 seconds allow for clocks out of
@@ -75,13 +83,14 @@ step: at worst an offer stays quotable for 960 seconds by the verifier's clock.
 
 **D5. Schema.** `offerPayload.required` gains `request`. `$defs/date` admits
 months 01–12 and days 01–31 only, `$defs/dateTime` hours 00–23 and minutes and
-seconds 00–59; that a date exists (no 30 February) stays a runtime rule.
+seconds 00–59; that a date exists (no 30 February) stays a runtime rule. These
+patterns and the D3 pattern end in `$(?!\n)`, for the reason D3 gives.
 `request.language` gets the D3 pattern. `node_id` and `property` stay optional in
 the schema.
 
 **D6. Conformance vectors and the site verifier.**
-`examples/conformance/offer-rules/vectors.v0.1.json` (39 cases: lifetime and
-clock 15, dates 10, language 7, the stay asked for 6, plus one offer that meets
+`examples/conformance/offer-rules/vectors.v0.1.json` (44 cases: lifetime and
+clock 16, dates 12, language 9, the stay asked for 6, plus one offer that meets
 every rule), built by `scripts/offer-rules-vectors.mjs` and checked by
 `scripts/verify-offer-rules.mjs` in `npm test`. `scripts/validate-artifacts.mjs`
 gains three negative schema checks (no `request`, a free-text language, month

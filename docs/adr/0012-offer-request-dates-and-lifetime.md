@@ -30,9 +30,14 @@ did not say what those terms must be for in five places:
    years. The known production node uses 900 seconds (12 of 12 offers fetched
    2026-10-17 between 10:49 and 16:12 UTC); the repository's examples use 600.
 5. **Schema.** The schema did not require `request`, so an offer without one was
-   schema-valid although §7 now has to compare it. `node_id` and `property` were
-   made optional in the schema on 2026-06-02 (`f79bb14`, #15) while §5 lists
-   them as required; that is left to its own decision.
+   schema-valid although §7 now has to compare it. The same holds for `node_id`
+   and `property`, which §5 lists as required. The history, read in git: the
+   first version (`aa1ef5b`, 2026-05-20) said "SHOULD include"; #12
+   (`8702057`, 2026-06-02 18:36 +0200) changed §5 to "MUST include" so that it
+   matched the schemas of #11, which required all twelve members; 42 minutes
+   later #15 (`f79bb14`) made `node_id`, `request` and `property` optional in the
+   schema again, calling them "SHOULD-level", without changing §5 and without a
+   record. Spec and schema have disagreed since.
 
 ADR numbers 0010 and 0011 are not used. ADR 0007 and 0008 (#147) replace two
 records the reference implementation kept under those numbers, which this
@@ -85,8 +90,9 @@ step: at worst an offer stays quotable for 960 seconds by the verifier's clock.
 months 01–12 and days 01–31 only, `$defs/dateTime` hours 00–23 and minutes and
 seconds 00–59; that a date exists (no 30 February) stays a runtime rule. These
 patterns and the D3 pattern end in `$(?!\n)`, for the reason D3 gives.
-`request.language` gets the D3 pattern. `node_id` and `property` stay optional in
-the schema.
+`request.language` gets the D3 pattern. `offerPayload.required` also gains
+`node_id` and `property`, which returns the schema to what §5 and #11 say;
+`property` itself still requires only `property_id`.
 
 **D6. Conformance vectors and the site verifier.**
 `examples/conformance/offer-rules/vectors.v0.1.json` (44 cases: lifetime and
@@ -105,7 +111,8 @@ count typed into the page as the stay asked for.
   stay than the one asked for; dates that do not exist, a `check_out` not later
   than `check_in`, a `check_in` that has passed; a `request.language` that is
   not a language tag; a lifetime that is not positive or exceeds 900 seconds; a
-  `generated_at` more than 60 seconds ahead; an offer without `request`.
+  `generated_at` more than 60 seconds ahead; an offer without `request`,
+  `node_id` or `property`.
 - **Known nodes affected: the known production node.** Measured 2026-10-17, its
   ordinary offers (a future stay, without a language and with `sv`) meet every
   rule and validate against the changed schema. For some other requests it signs

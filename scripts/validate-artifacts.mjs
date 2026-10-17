@@ -589,14 +589,12 @@ if (offerSchema && offerExample) {
     "negative: signed offer must require direct_booking_url",
   );
 
-  const withoutShouldFields = structuredClone(offerExample);
-  delete withoutShouldFields.offer.node_id;
-  delete withoutShouldFields.offer.property;
-  assertSchemaValid(
-    offerSchema,
-    withoutShouldFields,
-    "positive: signed offer schema must not require SHOULD-level node_id/property",
-  );
+  // ADR 0012 D5: §5 lists node_id and property as MUST; the schema requires them.
+  for (const member of ["node_id", "property"]) {
+    const without = structuredClone(offerExample);
+    delete without.offer[member];
+    assertSchemaInvalid(offerSchema, without, `negative: signed offer must require ${member}`);
+  }
 
   // ADR 0012: §7 compares request with the stay the agent asked for.
   const withoutRequest = structuredClone(offerExample);

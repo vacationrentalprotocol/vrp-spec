@@ -592,7 +592,7 @@ HemmaBo is a reference implementation and provider/federation using VRP. VRP is 
 
 #### 14. License
 
-Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) (ADR 0010 D7). Patents: a royalty-free patent non-assertion commitment is offered under the Open Web Foundation Agreement 1.0 (Patent-Only) — see [PATENTS.md](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/PATENTS.md).
+Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) ([ADR 0007](https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1) D7). Patents: a royalty-free patent non-assertion commitment is offered under the Open Web Foundation Agreement 1.0 (Patent-Only) — see [PATENTS.md](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/PATENTS.md).
 
 ========================================================================
 ## 3. Well-Known URI v0.1
@@ -721,7 +721,7 @@ https://github.com/protocol-registries/well-known-uris/issues/93 (closed).
 
 #### License
 
-Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) (ADR 0010 D7).
+Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) ([ADR 0007](https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1) D7).
 
 ========================================================================
 ## 4. StayIntent open discovery v0.1
@@ -892,7 +892,7 @@ Ed25519 trust binding that those transports do not specify.
 
 #### License
 
-Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) (ADR 0010 D7).
+Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) ([ADR 0007](https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1) D7).
 
 ========================================================================
 ## 5. Node structure declarations v0.1
@@ -1105,7 +1105,7 @@ extension are implementation steps tracked separately (issue #60, scope items
 
 #### License
 
-Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) (ADR 0010 D7).
+Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) ([ADR 0007](https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1) D7).
 
 ========================================================================
 ## 6. Portable attestations v0.1
@@ -1538,7 +1538,7 @@ above); it uses a documented throwaway test key for the reserved
 
 #### 12. License
 
-Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) (ADR 0010 D7).
+Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) ([ADR 0007](https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1) D7).
 
 ========================================================================
 ## 7. Attestation status (Bitstring Status List) v0.1
@@ -1697,7 +1697,7 @@ data; attestations-only scope).
 
 #### License
 
-Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) (ADR 0010 D7).
+Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) ([ADR 0007](https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1) D7).
 
 ========================================================================
 ## 8. Transparency log v0.1
@@ -1713,7 +1713,7 @@ Specification text: dedicated to the public domain under [CC0 1.0](https://githu
 
 **Updated:** 2026-07-04 — receipt leaves (`vrp_receipt`), leaf hashing rule,
 operator key discovery, STH archival, node read-through proxy, honest
-guarantee wording (issue #60-adjacent; per-booking inclusion proofs)
+guarantee wording ([issue #60](https://github.com/vacationrentalprotocol/vrp-spec/issues/60)-adjacent; per-booking inclusion proofs)
 
 **Canonical context:** https://vacationrentalprotocol.com/contexts/v1
 
@@ -2055,7 +2055,7 @@ including HemmaBo — can rewrite.
 
 #### 13. License
 
-Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) (ADR 0010 D7).
+Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) ([ADR 0007](https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1) D7).
 
 ========================================================================
 ## 9. VRP receipt envelope v1
@@ -2065,7 +2065,7 @@ Specification text: dedicated to the public domain under [CC0 1.0](https://githu
 
 ### VRP Receipt Envelope — Specification v1
 
-**Status:** Public draft (WO-2 rev B, PR-2)
+**Status:** Public draft
 
 **Updated:** 2026-07-04 — §14 issuance wrapper & log anchoring, §15 delivery (verbatim rule), §16 verifier walk-through
 
@@ -2101,8 +2101,8 @@ and RFC 8174 when capitalized.
 - MCP composition profile: [`profiles/mcp-composition-profile.md`](https://vacationrentalprotocol.com/spec/profiles/mcp-composition-profile) — `transport` layer (D6)
 - Receipt JSON Schema: [`schemas/vrp-receipt.v1.schema.json`](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/schemas/vrp-receipt.v1.schema.json)
 - Conformance vectors: [`examples/conformance/receipt/`](https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance/receipt)
-- ADR 0010 (reference repo): receipt envelope decisions D1–D7
-- ADR 0011 (reference repo): key lifecycle K1–K6 (forward spec; §8 below)
+- [ADR 0007](https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1): receipt envelope decisions D1–D8
+- [ADR 0008](https://vacationrentalprotocol.com/docs/adr/0008-key-lifecycle): key lifecycle K1–K6 (forward spec; §10 below)
 
 #### 3. Envelope shape (D1)
 
@@ -2151,8 +2151,8 @@ Each attestation MAY carry a `tlog` inclusion proof. A v1 verifier MUST:
 - Treat a **missing** `tlog` as signature-only verification — not a failure.
 - NOT claim log-anchored properties for an attestation without `tlog`.
 
-Phase-5 dispute/insurance receipts that must survive key revocation MAY require `tlog`
-(see §8 K4).
+Receipts kept as dispute or insurance evidence that must survive key revocation MAY
+require `tlog` (see §10 K4).
 
 #### 6. Verification result and error registry (D4)
 
@@ -2225,7 +2225,7 @@ The first normative profile is MCP `transport` — see
 Profiles MUST sign an **assertion about the interaction**, not unsigned transport bytes.
 Additional profiles (e.g. AP2 `payment`) follow the same envelope rules.
 
-##### 8.1 Argument key casing (cross-link #7)
+##### 8.1 Argument key casing
 
 For MCP transport assertions, tool-call argument keys that feed `arguments_sha256`
 MUST be **`snake_case`**: `check_in`, `check_out`, `guests` — matching core VRP endpoint
@@ -2233,7 +2233,7 @@ parameters ([`v0.1.md`](https://vacationrentalprotocol.com/spec/v0.1) §4). This
 query parameters ([`v0.1.md`](https://vacationrentalprotocol.com/spec/v0.1) §5.1). Normalization before hashing is the
 caller's responsibility; see the normative pin in the MCP profile.
 
-#### 9. Key-discovery layer separation (#5)
+#### 9. Key-discovery layer separation
 
 VRP uses **two key-discovery paths**. Implementers MUST NOT conflate them:
 
@@ -2254,7 +2254,7 @@ each verifying key is published under the host-domain trust root
 #### 10. Key lifecycle — forward spec (K1–K6)
 
 The v1 receipt verifier implements **signature + freshness only**. The following rules
-are **forward spec** for Phase-5 dispute/insurance positioning (ADR 0011). They do not
+are **forward spec** for receipts kept as dispute or insurance evidence (ADR 0008). They do not
 change v1 verifier behavior today.
 
 | Rule | Summary |
@@ -2262,9 +2262,9 @@ change v1 verifier behavior today.
 | **K1** | Every signature carries JWS `kid`; receipts surface verifying `kid` per attestation |
 | **K2** | JWKS MUST retain **retired** public keys for the receipt-retention horizon; metadata: `vrp_key_status` (`active` · `retired` · `revoked`), `vrp_not_before`, `vrp_not_after` |
 | **K3** | Rotation is additive with overlap — retired keys remain resolvable |
-| **K4** | Revocation ≠ rotation; `vrp_compromised_at` anchors fail-closed rules; Phase-5 receipts intended to survive revocation MUST carry `tlog` |
+| **K4** | Revocation ≠ rotation; `vrp_compromised_at` anchors fail-closed rules; receipts intended to survive revocation MUST carry `tlog` |
 | **K5** | Per-layer key separation is permitted (`payment` MAY use a distinct `kid` from `offer`) |
-| **K6** | Phase-5 lifecycle-aware codes: `key_retired_out_of_window`, `key_revoked`, `tlog_required` |
+| **K6** | Lifecycle-aware codes: `key_retired_out_of_window`, `key_revoked`, `tlog_required` |
 
 Until a lifecycle-aware verifier ships, public copy MUST NOT claim long-term
 post-revocation verifiability.
@@ -2376,7 +2376,7 @@ operator by making any rewrite cryptographically detectable.
 #### 17. License
 
 Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE).
-Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) (ADR 0010 D7).
+Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) ([ADR 0007](https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1) D7).
 
 ========================================================================
 ## 10. Booking Proof Chain v0.1

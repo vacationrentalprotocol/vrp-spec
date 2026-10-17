@@ -107,6 +107,14 @@ to accept an offer or attestation are the most sensitive surface in VRP. They do
 not change except through a MAJOR version with an explicit ADR and migration
 guidance.
 
+**Before 1.0.** VRP is in major version zero, which semantic versioning reserves
+for initial development. While VRP is below 1.0, a correction that closes a
+security gap may be made within the current draft version without changing
+`protocol_version`, even where it changes what a verifier accepts. Its ADR
+states the gap, what stops being accepted, which known nodes are affected
+(measured), and the migration path. Such a correction is substantive (§4).
+Every other breaking change waits for the next version.
+
 **Path to 1.0.** VRP reaches 1.0 only after at least one independent
 implementation exists beyond the reference node — a second signing node proves
 VRP is a standard and not a single project's file format. This is a public

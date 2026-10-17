@@ -33,10 +33,12 @@ earlier context.
    `vacation-rental-protocol`, `protocol_version` is `0.1`, and
    `canonical_domain` matches the domain fetched. That domain is a domain
    registered for the host, never a name under a platform's or catalog's
-   domain ([spec §2](../../spec/v0.1.md)).
+   domain, and never under a brand or closed top-level domain such as
+   `.booking`, `.hotels` or `.amazon` ([spec §2](../../spec/v0.1.md)). Follow a
+   redirect only to `https` on that domain or `www.` under it.
    Example: `https://villaakerlyckan.se/.well-known/vacation-rental.json`.
 2. **Keys.** Fetch the JWKS from the discovery document's `jwks_url`, on that
-   same host-owned domain.
+   same host-owned domain or `www.` under it.
    Example: `https://villaakerlyckan.se/.well-known/jwks.json`.
 3. **Offer.** Request a signed verified stay offer from the discovery
    document's `verified_stay_offer_endpoint` with `check_in`, `check_out`,
@@ -64,7 +66,8 @@ earlier context.
    `booking.direct_booking_url`. Its host MUST be the offer's
    `canonical_domain` or `www.` followed by it, and no other name: not another
    name under the node's domain, another node's domain, a platform or catalog
-   domain, an OTA, a link shortener or a redirector. Do not substitute the discovery homepage,
+   domain, an OTA, a link shortener or a redirector. It carries no user name or
+   password and no port other than the `https` default. Do not substitute the discovery homepage,
    `identity.preferred_booking_url`, or any unsigned link. Payment completes
    on that signed URL's own checkout. The agent never collects payment and
    this skill adds no payment tool.

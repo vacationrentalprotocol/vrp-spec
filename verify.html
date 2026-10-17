@@ -122,6 +122,11 @@
         border-color: var(--fail);
         color: var(--fail);
       }
+      .verdict.warn {
+        background: var(--warn-bg);
+        border-color: var(--warn);
+        color: var(--warn);
+      }
       .checks {
         display: grid;
         gap: 0;
@@ -411,6 +416,88 @@
         return { ok, header, key, payload: jsonFromB64url(p) };
       }
 
+      // ── host-owned domain and node URLs (VRP v0.1 §2, §5.1) ───────────────
+      // Both lists are fetched live from their publishers; nothing is bundled.
+      const PSL_URL = "https://publicsuffix.org/list/public_suffix_list.dat";
+      const GTLDS_URL = "https://www.icann.org/resources/registries/gtlds/v2/gtlds.json";
+      const CLOSED_TLDS = ["booking", "hotels"]; // §2: closed top-level domains named by the standard
+      let listsPromise = null;
+      function toALabel(label) {
+        if (label === "*" || /^[\x00-\x7f]*$/.test(label)) return label;
+        try {
+          return new URL("https://" + label + "/").hostname;
+        } catch (e) {
+          return label;
+        }
+      }
+      function loadLists() {
+        if (!listsPromise) {
+          listsPromise = Promise.all([
+            fetch(PSL_URL).then((r) => (r.ok ? r.text() : Promise.reject(new Error("PSL " + r.status)))),
+            fetch(GTLDS_URL).then((r) => (r.ok ? r.json() : Promise.reject(new Error("gTLD list " + r.status)))),
+          ]).then(([psl, gtlds]) => {
+            const lines = psl.split("\n");
+            const a = lines.findIndex((l) => l.includes("===BEGIN ICANN DOMAINS==="));
+            const b = lines.findIndex((l) => l.includes("===END ICANN DOMAINS==="));
+            if (a < 0 || b < a) throw new Error("PSL ICANN section not found");
+            const rules = lines
+              .slice(a, b)
+              .map((l) => l.trim())
+              .filter((l) => l && !l.startsWith("//"))
+              .map((r) => {
+                const ex = r.startsWith("!");
+                return { ex, labels: (ex ? r.slice(1) : r).split(".").map(toALabel) };
+              });
+            const spec13 = new Set((gtlds.gTLDs || []).filter((g) => g.specification13).map((g) => g.gTLD));
+            return { rules, spec13 };
+          });
+          listsPromise.catch(() => (listsPromise = null));
+        }
+        return listsPromise;
+      }
+      // §2 steps 1–3. Returns { state: "pass" | "fail" | "unknown", detail }.
+      async function hostOwned(cd) {
+        const labels = String(cd || "").split(".");
+        if (!labels.every((l) => /^(?!-)[a-z0-9-]{1,63}(?<!-)$/.test(l))) {
+          return { state: "fail", detail: "Not lowercase ASCII A-labels without a trailing dot." };
+        }
+        let lists;
+        try {
+          lists = await loadLists();
+        } catch (e) {
+          return { state: "unknown", detail: "The Public Suffix List or ICANN's gTLD list could not be fetched, so this is unknown (§2, §9)." };
+        }
+        let exception = null;
+        let longest = 1;
+        for (const r of lists.rules) {
+          if (r.labels.length > labels.length) continue;
+          const off = labels.length - r.labels.length;
+          if (!r.labels.every((l, i) => l === "*" || l === labels[off + i])) continue;
+          if (r.ex) exception = r.labels.length - 1;
+          else longest = Math.max(longest, r.labels.length);
+        }
+        const suffix = exception !== null ? exception : longest;
+        if (labels.length <= suffix) return { state: "fail", detail: cd + " is a public suffix, not a domain anyone holds." };
+        const registrable = labels.slice(-(suffix + 1)).join(".");
+        if (registrable !== cd) {
+          return { state: "fail", detail: cd + " is a name under " + registrable + ", not a domain registered for the host." };
+        }
+        const tld = labels[labels.length - 1];
+        if (lists.spec13.has(tld) || CLOSED_TLDS.includes(tld)) {
+          return { state: "fail", detail: "." + tld + " is a brand or closed top-level domain; every name under it belongs to its operator." };
+        }
+        return { state: "pass", detail: cd + " is its own registrable domain under the ICANN section, not under a brand or closed top-level domain." };
+      }
+      // §2 node URL: https, host canonical_domain or www. + it, no userinfo, default port.
+      function isNodeUrl(url, cd) {
+        try {
+          const u = new URL(url);
+          return u.protocol === "https:" && !u.username && !u.password && !u.port && (u.hostname === cd || u.hostname === "www." + cd);
+        } catch (e) {
+          return false;
+        }
+      }
+
       // ── rendering ─────────────────────────────────────────────────────────
       const $ = (id) => document.getElementById(id);
       function esc(v) {
@@ -440,9 +527,10 @@
           "</div></div>"
         );
       }
-      function render(result, queriedHost) {
+      function render(result, queriedHost, own, offNode) {
         const { ok, header, payload } = result;
         const rows = [];
+        const problems = [];
         rows.push(checkRow("pass", "Compact JWS parsed", "Algorithm " + header.alg + ", key id " + header.kid + "."));
         rows.push(
           checkRow(
@@ -464,8 +552,25 @@
         // semantic checks (only meaningful if signature holds)
         if (ok) {
           const cd = payload.canonical_domain || payload.node_id;
+          rows.push(
+            checkRow(
+              own.state === "unknown" ? "warn" : own.state,
+              own.state === "pass"
+                ? "Host-owned domain (VRP §2)"
+                : own.state === "fail"
+                  ? "NOT a host-owned domain (VRP §2)"
+                  : "Host-owned domain could not be checked (VRP §2)",
+              own.detail
+            )
+          );
+          if (own.state === "fail") problems.push("not a host-owned domain");
+          if (offNode.length) {
+            rows.push(checkRow("fail", "Redirected off the node (VRP §2)", offNode.join("  ·  ")));
+            problems.push("redirected off the node");
+          }
           if (queriedHost && cd) {
             const match = cd === queriedHost.toLowerCase().replace(/^www\./, "");
+            if (!match) problems.push("the offer names another domain");
             rows.push(
               checkRow(
                 match ? "pass" : "fail",
@@ -478,11 +583,8 @@
           }
           const url = payload.booking && payload.booking.direct_booking_url;
           if (url && cd) {
-            let onDomain = false;
-            try {
-              const h = new URL(url).hostname;
-              onDomain = new URL(url).protocol === "https:" && (h === cd || h === "www." + cd);
-            } catch (e) {}
+            const onDomain = isNodeUrl(url, cd);
+            if (!onDomain) problems.push("the booking URL is off the node");
             rows.push(
               checkRow(
                 onDomain ? "pass" : "fail",
@@ -518,10 +620,15 @@
           }
         }
 
-        $("verdict").className = "verdict " + (ok ? "pass" : "fail");
-        $("verdict").textContent = ok
-          ? "✓ Verified — signed by " + (payload.canonical_domain || header.kid)
-          : "✕ Not verified — signature does not match";
+        const unknown = ok && !problems.length && own.state === "unknown";
+        $("verdict").className = "verdict " + (!ok || problems.length ? "fail" : unknown ? "warn" : "pass");
+        $("verdict").textContent = !ok
+          ? "✕ Not verified — signature does not match"
+          : problems.length
+            ? "✕ Not a VRP offer — " + problems.join("; ")
+            : unknown
+              ? "! Signature valid — the host-owned domain could not be checked, so this is unknown"
+              : "✓ Verified — signed by " + (payload.canonical_domain || header.kid);
         $("checks").innerHTML = rows.join("");
 
         // facts
@@ -549,7 +656,7 @@
       }
       async function runLive() {
         const btn = $("btnLive");
-        const host = normHost($("host").value);
+        const host = normHost($("host").value).toLowerCase();
         if (!host) return showError("Enter a host domain.");
         btn.disabled = true;
         btn.textContent = "Verifying…";
@@ -566,7 +673,9 @@
           const jwks = await jwksRes.json();
           const jws = offer && offer.signature && offer.signature.jws;
           if (!jws) throw new Error("The host response did not contain signature.jws.");
-          render(await verifyJws(jws, jwks), host);
+          const result = await verifyJws(jws, jwks);
+          const offNode = [offerRes.url, jwksRes.url].filter((u) => u && !isNodeUrl(u, host));
+          render(result, host, await hostOwned(result.payload.canonical_domain || result.payload.node_id), offNode);
         } catch (e) {
           showError(e && e.message === "NO_NATIVE_ED25519" ? "NO_NATIVE_ED25519" : "Fetch or verify failed: " + (e && e.message ? e.message : e) + "  (the host may block cross-origin requests, or the domain is wrong).");
         } finally {
@@ -590,8 +699,10 @@
           const payload = jsonFromB64url(jws.split(".")[1]);
           const host = normHost(payload.canonical_domain || payload.node_id || "");
           if (!host) throw new Error("Offer payload has no canonical_domain to fetch the key from.");
-          const jwks = await (await fetch("https://" + host + "/.well-known/jwks.json")).json();
-          render(await verifyJws(jws, jwks), host);
+          const jwksRes = await fetch("https://" + host + "/.well-known/jwks.json");
+          const result = await verifyJws(jws, await jwksRes.json());
+          const offNode = [jwksRes.url].filter((u) => u && !isNodeUrl(u, host));
+          render(result, host, await hostOwned(result.payload.canonical_domain || result.payload.node_id), offNode);
         } catch (e) {
           showError(e && e.message === "NO_NATIVE_ED25519" ? "NO_NATIVE_ED25519" : (e && e.message ? e.message : String(e)));
         } finally {

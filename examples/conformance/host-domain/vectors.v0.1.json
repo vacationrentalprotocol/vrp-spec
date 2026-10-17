@@ -1,16 +1,36 @@
 {
   "name": "vrp-host-domain-vectors-v0.1",
-  "description": "Host-owned domain (§2), offer-domain binding (§7) and booking-URL host (§5.1). A verifier uses the full ICANN section of the Public Suffix List; these vectors carry only the rules they depend on. expected.reason is null when the check passes.",
+  "description": "Host-owned domain (§2), offer bound to the fetched domain (§7), node URLs and redirects (§2, §5.1). A verifier uses the full ICANN section of the Public Suffix List and ICANN's gTLD list; these vectors carry only the entries they depend on. expected.reason is null when the check passes.",
+  "sources": {
+    "psl": "https://publicsuffix.org/list/public_suffix_list.dat (read 2026-10-17: ICANN section lines 13-11245, PRIVATE section lines 11247-16571; myshopify.com 15873, wixsite.com 16462, booking 7307, hotels 8591, amazon 6959, google 8403, cn 812, 公司.cn 820)",
+    "icann_gtlds": "https://www.icann.org/resources/registries/gtlds/v2/gtlds.json (read 2026-10-17: specification13 true for amazon and google; false for booking and hotels, registry operator Booking.com B.V.)"
+  },
   "psl_icann_rules": [
     "com",
     "uk",
     "co.uk",
     "se",
     "*.ck",
-    "!www.ck"
+    "!www.ck",
+    "cn",
+    "公司.cn",
+    "booking",
+    "hotels",
+    "amazon",
+    "google"
   ],
   "psl_private_rules": [
-    "platform.example"
+    "platform.example",
+    "myshopify.com",
+    "wixsite.com"
+  ],
+  "icann_specification13_tlds": [
+    "amazon",
+    "google"
+  ],
+  "closed_tlds": [
+    "booking",
+    "hotels"
   ],
   "host_owned": [
     {
@@ -37,6 +57,13 @@
     {
       "canonical_domain": "xn--exmple-cua.com",
       "note": "an internationalized name in A-label form",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "example.xn--55qx5d.cn",
+      "note": "one label under the ICANN suffix 公司.cn, compared in A-label form",
       "expected": {
         "reason": null
       }
@@ -85,6 +112,14 @@
       }
     },
     {
+      "canonical_domain": "xn--55qx5d.cn",
+      "admitted_without_a_labels": true,
+      "note": "公司.cn is an ICANN suffix once the rule is in A-label form",
+      "expected": {
+        "reason": "public_suffix"
+      }
+    },
+    {
       "canonical_domain": "example.ck",
       "note": "under *.ck, example.ck is itself a suffix",
       "expected": {
@@ -110,6 +145,80 @@
       "note": "internationalized names use the A-label form",
       "expected": {
         "reason": "malformed_domain"
+      }
+    }
+  ],
+  "real_world": [
+    {
+      "canonical_domain": "example.se",
+      "note": "a domain under the ICANN suffix se",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "villa.myshopify.com",
+      "admitted_by_private_section": true,
+      "note": "PRIVATE-section rule myshopify.com (a site builder's domain)",
+      "expected": {
+        "reason": "not_host_owned"
+      }
+    },
+    {
+      "canonical_domain": "villa.wixsite.com",
+      "admitted_by_private_section": true,
+      "note": "PRIVATE-section rule wixsite.com (a site builder's domain)",
+      "expected": {
+        "reason": "not_host_owned"
+      }
+    },
+    {
+      "canonical_domain": "villa.airbnb.com",
+      "note": "a name under a marketplace's domain",
+      "expected": {
+        "reason": "not_host_owned"
+      }
+    },
+    {
+      "canonical_domain": "villa.hemmabo.com",
+      "note": "a name under an operator's domain, the reference implementation's included",
+      "expected": {
+        "reason": "not_host_owned"
+      }
+    },
+    {
+      "canonical_domain": "annanvilla.exempelplattform.com",
+      "note": "a name under a platform's domain",
+      "expected": {
+        "reason": "not_host_owned"
+      }
+    },
+    {
+      "canonical_domain": "villa.booking",
+      "note": "booking: a closed top-level domain listed in §2 (Booking.com B.V.)",
+      "expected": {
+        "reason": "closed_tld"
+      }
+    },
+    {
+      "canonical_domain": "villa.hotels",
+      "note": "hotels: a closed top-level domain listed in §2 (Booking.com B.V.)",
+      "expected": {
+        "reason": "closed_tld"
+      }
+    },
+    {
+      "canonical_domain": "villa.amazon",
+      "note": "amazon: specification13 true in ICANN's gTLD list",
+      "expected": {
+        "reason": "closed_tld"
+      }
+    },
+    {
+      "canonical_domain": "villa.google",
+      "note": "google: specification13 true in ICANN's gTLD list",
+      "expected": {
+        "reason": "closed_tld"
       }
     }
   ],
@@ -334,10 +443,11 @@
       }
     }
   ],
-  "booking_host": [
+  "node_url": [
     {
       "canonical_domain": "example-host.invalid",
-      "direct_booking_url": "https://example-host.invalid/book",
+      "field": "direct_booking_url",
+      "url": "https://example-host.invalid/book",
       "note": "the node's own domain",
       "expected": {
         "reason": null
@@ -345,7 +455,8 @@
     },
     {
       "canonical_domain": "example-host.invalid",
-      "direct_booking_url": "https://www.example-host.invalid/book",
+      "field": "direct_booking_url",
+      "url": "https://www.example-host.invalid/book",
       "note": "www. under the node's own domain",
       "expected": {
         "reason": null
@@ -353,7 +464,8 @@
     },
     {
       "canonical_domain": "example-host.invalid",
-      "direct_booking_url": "https://EXAMPLE-HOST.invalid/book",
+      "field": "direct_booking_url",
+      "url": "https://EXAMPLE-HOST.invalid/book",
       "note": "hosts compare after URL parsing, which lowercases them",
       "expected": {
         "reason": null
@@ -361,74 +473,207 @@
     },
     {
       "canonical_domain": "example-host.invalid",
-      "direct_booking_url": "https://book.example-host.invalid/",
+      "field": "direct_booking_url",
+      "url": "https://example-host.invalid:443/book",
+      "note": "an explicit default port is the default port",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "direct_booking_url",
+      "url": "https://book.example-host.invalid/",
       "note": "any other name under the node's domain",
       "expected": {
-        "reason": "booking_url_host_mismatch"
+        "reason": "url_host_mismatch"
       }
     },
     {
       "canonical_domain": "example-host.invalid",
-      "direct_booking_url": "https://www.www.example-host.invalid/",
+      "field": "direct_booking_url",
+      "url": "https://www.www.example-host.invalid/",
       "note": "only one www. label",
       "expected": {
-        "reason": "booking_url_host_mismatch"
+        "reason": "url_host_mismatch"
       }
     },
     {
       "canonical_domain": "example-host.invalid",
-      "direct_booking_url": "https://other-host.invalid/book",
+      "field": "direct_booking_url",
+      "url": "https://other-host.invalid/book",
       "note": "another node's domain",
       "expected": {
-        "reason": "booking_url_host_mismatch"
+        "reason": "url_host_mismatch"
       }
     },
     {
       "canonical_domain": "example-host.invalid",
-      "direct_booking_url": "https://www.other-host.invalid/book",
+      "field": "direct_booking_url",
+      "url": "https://www.other-host.invalid/book",
       "note": "www. under another node's domain",
       "expected": {
-        "reason": "booking_url_host_mismatch"
+        "reason": "url_host_mismatch"
       }
     },
     {
       "canonical_domain": "example-host.invalid",
-      "direct_booking_url": "https://example-host.invalid.other-host.invalid/",
+      "field": "direct_booking_url",
+      "url": "https://example-host.invalid.other-host.invalid/",
       "note": "the node's domain as a prefix of another host",
       "expected": {
-        "reason": "booking_url_host_mismatch"
+        "reason": "url_host_mismatch"
       }
     },
     {
       "canonical_domain": "example-host.invalid",
-      "direct_booking_url": "https://wwwexample-host.invalid/",
+      "field": "direct_booking_url",
+      "url": "https://wwwexample-host.invalid/",
       "note": "not a www. label",
       "expected": {
-        "reason": "booking_url_host_mismatch"
+        "reason": "url_host_mismatch"
       }
     },
     {
       "canonical_domain": "example-host.invalid",
-      "direct_booking_url": "https://example-host.invalid@other-host.invalid/",
-      "note": "userinfo before another host",
+      "field": "direct_booking_url",
+      "url": "https://example-host.invalid@other-host.invalid/",
+      "note": "the node's domain as userinfo before another host",
       "expected": {
-        "reason": "booking_url_host_mismatch"
+        "reason": "url_userinfo"
       }
     },
     {
       "canonical_domain": "example-host.invalid",
-      "direct_booking_url": "http://example-host.invalid/book",
+      "field": "direct_booking_url",
+      "url": "https://guest@example-host.invalid/book",
+      "note": "userinfo on the node's own host",
+      "expected": {
+        "reason": "url_userinfo"
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "direct_booking_url",
+      "url": "https://example-host.invalid:8443/book",
+      "note": "a port other than the https default",
+      "expected": {
+        "reason": "url_port"
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "direct_booking_url",
+      "url": "http://example-host.invalid/book",
       "note": "https only (§5.1)",
       "expected": {
-        "reason": "booking_url_not_https"
+        "reason": "url_not_https"
       }
     },
     {
       "canonical_domain": "example-host.invalid",
-      "direct_booking_url": "not a url",
+      "field": "direct_booking_url",
+      "url": "not a url",
       "note": "not an absolute URL",
       "expected": {
-        "reason": "booking_url_invalid"
+        "reason": "url_invalid"
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "jwks_url",
+      "url": "https://example-host.invalid/.well-known/jwks.json",
+      "note": "the JWKS on the node's own domain",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "jwks_url",
+      "url": "https://keys.other-host.invalid/jwks.json",
+      "note": "a JWKS on another host",
+      "expected": {
+        "reason": "url_host_mismatch"
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "verified_stay_offer_endpoint",
+      "url": "https://www.example-host.invalid/api/verified-stay-offer",
+      "note": "the offer endpoint under www.",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "verified_stay_offer_endpoint",
+      "url": "https://api.example-host.invalid/offer",
+      "note": "any other name under the node's domain",
+      "expected": {
+        "reason": "url_host_mismatch"
+      }
+    }
+  ],
+  "redirects": [
+    {
+      "name": "no_redirect",
+      "canonical_domain": "example-host.invalid",
+      "requested": "https://example-host.invalid/.well-known/vacation-rental.json",
+      "chain": [],
+      "note": "the document is served where it was requested",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "name": "to_www",
+      "canonical_domain": "example-host.invalid",
+      "requested": "https://example-host.invalid/.well-known/vacation-rental.json",
+      "chain": [
+        "https://www.example-host.invalid/.well-known/vacation-rental.json"
+      ],
+      "note": "the node's domain redirects to www. under it",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "name": "to_another_host",
+      "canonical_domain": "example-host.invalid",
+      "requested": "https://example-host.invalid/.well-known/vacation-rental.json",
+      "chain": [
+        "https://other-host.invalid/.well-known/vacation-rental.json"
+      ],
+      "note": "a redirect to another node's domain",
+      "expected": {
+        "reason": "redirect_off_node"
+      }
+    },
+    {
+      "name": "via_www_to_another_host",
+      "canonical_domain": "example-host.invalid",
+      "requested": "https://example-host.invalid/.well-known/vacation-rental.json",
+      "chain": [
+        "https://www.example-host.invalid/.well-known/vacation-rental.json",
+        "https://other-host.invalid/.well-known/vacation-rental.json"
+      ],
+      "note": "every hop counts",
+      "expected": {
+        "reason": "redirect_off_node"
+      }
+    },
+    {
+      "name": "to_http",
+      "canonical_domain": "example-host.invalid",
+      "requested": "https://example-host.invalid/.well-known/vacation-rental.json",
+      "chain": [
+        "http://www.example-host.invalid/.well-known/vacation-rental.json"
+      ],
+      "note": "a redirect that leaves https",
+      "expected": {
+        "reason": "redirect_not_https"
       }
     }
   ]

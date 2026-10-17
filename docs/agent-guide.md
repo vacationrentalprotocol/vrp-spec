@@ -19,8 +19,10 @@ Do not use VRP for:
 3. Confirm `protocol_version` is `0.1`.
 4. Confirm `canonical_domain` matches the host-owned domain you fetched from:
    a domain registered for the host, never a name under a platform's or
-   catalog's domain (v0.1 §2).
-5. Fetch the declared JWKS.
+   catalog's domain and never under a brand or closed top-level domain such as
+   `.booking`, `.hotels` or `.amazon` (v0.1 §2).
+5. Fetch the declared JWKS from `jwks_url`, on that domain or `www.` under it.
+   Follow a redirect only to `https` on that domain or `www.` under it.
 6. Request a verified stay offer for the user's dates and guest count.
 7. Verify the compact JWS with the host-domain Ed25519 key, and confirm the
    signed payload's `canonical_domain` is the domain you fetched from (v0.1 §7).

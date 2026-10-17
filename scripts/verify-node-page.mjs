@@ -23,14 +23,11 @@ const TERM = `${ORIGIN}/terms#VRPVacationRental`;
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const vectorsDir = join(repoRoot, "examples/conformance/node-page");
 
+// One pass over the named entities this checker meets, so "&amp;lt;" decodes
+// to "&lt;" and is never unescaped twice.
+const ENTITIES = { amp: "&", lt: "<", gt: ">", quot: '"', "#39": "'", nbsp: " " };
 function decodeEntities(text) {
-  return text
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&nbsp;/g, " ");
+  return text.replace(/&(amp|lt|gt|quot|#39|nbsp);/g, (m, name) => ENTITIES[name] ?? m);
 }
 
 // Attributes of one start tag. `inner` is the text between "<" and ">".
@@ -70,6 +67,30 @@ function checkHref(href, { canonicalDomain } = {}) {
     return { ok: true, target: "verify", host };
   }
   return { ok: false, reason: `href path ${url.pathname} is neither / nor /verify` };
+}
+
+// (c) Link header parsed as RFC 8288 link-values: `<target>; rel="…"`, comma
+// separated. True when some link-value targets the standard's root and carries
+// the URI relation type. No regular expression is built from strings.
+function hasProtocolLink(linkHeader) {
+  return linkHeader.split(",").some((linkValue) => {
+    const open = linkValue.indexOf("<");
+    const close = linkValue.indexOf(">");
+    if (open === -1 || close === -1 || close < open) return false;
+    const target = linkValue.slice(open + 1, close).trim();
+    if (target !== ORIGIN && target !== `${ORIGIN}/`) return false;
+    return linkValue
+      .slice(close + 1)
+      .split(";")
+      .map((param) => param.trim())
+      .some((param) => {
+        const eq = param.indexOf("=");
+        if (eq === -1) return false;
+        const name = param.slice(0, eq).trim().toLowerCase();
+        const value = param.slice(eq + 1).trim().replace(/^"|"$/g, "");
+        return name === "rel" && value.split(/\s+/).includes(REL_URI);
+      });
+  });
 }
 
 export function checkNodePage(html, { canonicalDomain, linkHeader } = {}) {
@@ -118,9 +139,7 @@ export function checkNodePage(html, { canonicalDomain, linkHeader } = {}) {
   }
 
   // (c)–(e): reported, not enforced. (c) is only measurable with response headers.
-  const c = linkHeader === undefined || linkHeader === null
-    ? null
-    : new RegExp(`<${ORIGIN.replace(/[.]/g, "\\.")}/?>\\s*;\\s*rel="${REL_URI.replace(/[.]/g, "\\.")}"`, "i").test(linkHeader);
+  const c = linkHeader === undefined || linkHeader === null ? null : hasProtocolLink(linkHeader);
   const d = html.includes(TERM);
   const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
   const title = titleMatch ? decodeEntities(titleMatch[1]).replace(/\s+/g, " ").trim() : "";

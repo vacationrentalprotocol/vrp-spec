@@ -122,6 +122,19 @@ Any implementer may run the vectors and self-declare conformance. This is the
 no-gatekeeper principle applied to testing: the vectors, not a person, are the
 authority (ADR 0002).
 
+### 6.1 Use of the name
+
+"VRP" and "Vacation Rental Protocol" name this standard. An implementation that
+passes the conformance vectors in this repository MAY describe itself as VRP, as
+a VRP node, or as offering VRP vacation rentals — free of charge, without an
+application and without anyone's approval, by the self-declaration above.
+Describing as VRP a product that does not pass them is misleading. The names are
+held for the standard by its author ([MAINTAINERS.md](MAINTAINERS.md)), not by
+any implementation, the reference implementation included; there is no
+certification-mark programme — the vectors, not a person, decide (ADR 0002).
+How a node names the protocol on its own pages is set out in
+[spec/v0.1.md](spec/v0.1.md) §2.1.
+
 ## 7. Standards track and external registries
 
 VRP is pursued as an open standard and may be advanced through recognized

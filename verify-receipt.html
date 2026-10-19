@@ -457,10 +457,10 @@
             try {
               jwks = await (await fetch("https://" + domain + "/.well-known/jwks.json")).json();
             } catch (e) {
-              addCheck(false, "Fetch the property's published keys", "https://" + domain + "/.well-known/jwks.json unreachable");
+              addCheck(false, "Fetch the property's published keys", esc("https://" + domain + "/.well-known/jwks.json unreachable"));
               throw new Error("Could not fetch the property's published keys.");
             }
-            addCheck(true, "Fetched the property's published keys", "https://" + domain + "/.well-known/jwks.json");
+            addCheck(true, "Fetched the property's published keys", esc("https://" + domain + "/.well-known/jwks.json"));
             await verifyJws(jws, jwks);
             addCheck(true, "Receipt signature verifies against the property domain's Ed25519 key");
 
@@ -562,7 +562,7 @@
               fact("Booked directly at", esc(subject.node || domain)) +
               fact("Check-in", esc(subject.check_in || "")) +
               fact("Check-out", esc(subject.check_out || "")) +
-              fact("Guests", subject.guests_count) +
+              fact("Guests", subject.guests_count == null ? "" : esc(subject.guests_count)) +
               fact("Total price (promised)", subject.total_price != null ? esc(subject.total_price + " " + (subject.currency || "")) : "") +
               fact("Booking reference (privacy-preserving)", esc(subject.booking_ref || "")) +
               fact("Issued by", esc(issuer.did || "")) +

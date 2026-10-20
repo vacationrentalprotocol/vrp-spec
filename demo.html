@@ -372,7 +372,7 @@
           logLine('   found an available window: <b>' + ci + ' → ' + co + '</b>');
           $("envEmpty").style.display = "none";
           $("env").classList.add("sealed");
-          logLine('GET /api/verified-stay-offer → <span class="ok">200</span>  ·  sealed envelope (compact JWS, ' + jws.length + ' bytes)');
+          logLine('GET /api/verified-stay-offer → <span class="ok">200</span>  ·  sealed envelope (compact JWS, ' + esc(jws.length) + ' bytes)');
           setStep("offer", "done");
           await sleep(700);
 

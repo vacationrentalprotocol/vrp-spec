@@ -564,6 +564,16 @@
             if (subjectNode && subjectNode !== domain) {
               addCheck(false, "The receipt names the domain that signed it", "it names " + esc(subject.node) + ", but " + esc(domain) + " signed it");
             }
+            // So does the issuer identifier it shows: a did:web counts only when its
+            // host is the domain that signed it; any other identifier does not.
+            if (issuer.did != null && issuer.did !== "") {
+              var didHost = didWebHost(issuer.did).replace(/^www\./, "");
+              if (!didHost) {
+                addCheck(false, "The issuer identifier names the domain that signed it", "it is " + esc(issuer.did) + ", not a did:web identifier, and " + esc(domain) + " signed it");
+              } else if (didHost !== domain) {
+                addCheck(false, "The issuer identifier names the domain that signed it", "it names " + esc(didHost) + ", but " + esc(domain) + " signed it");
+              }
+            }
 
             // Step 2: inner attestation signatures.
             var atts = Array.isArray(envelope.attestations) ? envelope.attestations : [];

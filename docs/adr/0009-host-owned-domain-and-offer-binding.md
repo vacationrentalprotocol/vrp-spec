@@ -121,7 +121,13 @@ Both select the key only by the `kid` in the JWS header (§3.1).
   never shows one as safe to quote.
 - `verify-receipt.html`: D1 for the issuer domain. Nothing is fetched from a
   name that fails D1; when the lists cannot be fetched, the page still checks
-  the signature, and the result is unknown.
+  the signature, and the result is unknown. The receipt's `subject.node` and
+  `issuer.did`, when present, must name the domain that signed it: `subject.node`
+  equal to it, `issuer.did` a `did:web` whose host is it (a leading `www.`
+  ignored on both). Otherwise the receipt is not verified. "Booked directly at"
+  shows the domain that signed it, not the name the receipt gives. Receipt v1 §3
+  defines `subject` and `issuer` as generic objects; these are the field names
+  the page reads today. Which fields identify the node is not decided here.
 - `demo.html` and `implement.html` also select the key only by `kid`.
 
 The pages were checked in a browser during review, with every request answered

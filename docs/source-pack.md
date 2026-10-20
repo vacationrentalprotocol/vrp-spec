@@ -171,9 +171,54 @@ Required fields:
 
 - `protocol`: MUST be `vacation-rental-protocol`.
 - `protocol_version`: MUST be `0.1`.
-- `canonical_domain`: MUST match the host-owned domain being verified.
-- `jwks_url`: MUST point to the host-domain JWKS.
-- `verified_stay_offer_endpoint`: MUST point to the host-domain verified stay offer endpoint.
+- `canonical_domain`: MUST match the host-owned domain being verified, which is
+  the domain this document is fetched from.
+- `jwks_url`: MUST point to the host-domain JWKS, and MUST be a node URL (below).
+- `verified_stay_offer_endpoint`: MUST point to the host-domain verified stay
+  offer endpoint, and MUST be a node URL (below).
+
+**Host-owned domain.** A VRP node is a domain registered for the host, never a
+name under another party's domain. `canonical_domain` MUST meet all of the
+following:
+
+1. It is lowercase ASCII, with internationalized labels in A-label (`xn--`)
+   form, and has no trailing dot.
+2. It equals its own registrable domain as computed by the
+   [Public Suffix List](https://publicsuffix.org/list/) algorithm using only the
+   rules in the list's ICANN section, each rule compared in A-label form; where
+   no ICANN rule matches, the algorithm's default rule `*` applies. The list's
+   PRIVATE section does not count: it lists domains under which a company hands
+   out names to its customers.
+3. Its top-level domain is not a brand or closed top-level domain, under which
+   every name belongs to the top-level domain's operator. These are:
+   - every top-level domain whose ICANN registry agreement includes
+     Specification 13, marked `"specification13": true` in ICANN's gTLD list
+     (<https://www.icann.org/resources/registries/gtlds/v2/gtlds.json>); and
+   - `booking` and `hotels`, whose registry operator is Booking.com B.V. This
+     list changes only by ADR.
+
+A name under a platform, catalog, marketplace, OTA, site builder or operator
+domain is never a `canonical_domain`, whoever operates that domain.
+`example.com` and `example.co.uk` are host-owned domains; `www.example.com`,
+`villa.platform.example`, `villa.booking` and `villa.amazon` are not. A verifier
+that holds no copy of the ICANN section of the Public Suffix List, or of ICANN's
+gTLD list, MUST treat the node as `unknown` (§9).
+
+**Node URL.** A node URL is an absolute `https` URL whose host is
+`canonical_domain` or `www.` followed by `canonical_domain`, with no userinfo (no
+user name or password) and no port other than the `https` default. Hosts are
+compared after URL parsing, which lowercases them.
+
+**Fetching.** The domain a discovery document, a JWKS or an offer is fetched
+from is the host of the URL the verifier requested. A verifier requests the
+discovery document at `https://{domain}/.well-known/vacation-rental.json` for the
+domain it is verifying, which the document's `canonical_domain` then has to match.
+A verifier MAY follow a redirect only when its target is a node URL of that
+domain; it MUST NOT follow any other redirect, and MUST treat what it would have
+fetched as `unknown` (§9).
+
+Conformance vectors for these rules, §5.1 and §7:
+[`examples/conformance/host-domain/`](https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance/host-domain).
 
 Recommended fields:
 
@@ -344,11 +389,14 @@ lifecycle.
 **Structure.**
 
 - `direct_booking_url` MUST be an absolute `https` URL.
-- Its host MUST be the offer's `canonical_domain`, or a subdomain of that
-  registrable domain. It MUST NOT point at a third-party domain, an OTA, a link
-  shortener, a redirector, or a HemmaBo-operated domain. An agent that cannot
-  confirm the URL host is on the offer's `canonical_domain` MUST treat the
-  direct booking URL as `unknown` (see §9) and MUST NOT route booking to it.
+- It MUST be a node URL (§2) of the offer's `canonical_domain`: its host is the
+  offer's `canonical_domain` or `www.` followed by it, and no other name, with no
+  userinfo and no port other than the `https` default. It MUST NOT point at any
+  other host: another name under the node's domain, another node's domain, a
+  name under a platform, catalog, marketplace or operator domain, an OTA, a link
+  shortener or a redirector. An agent that cannot confirm that it is a node URL
+  MUST treat the direct booking URL as `unknown` (see §9) and MUST NOT route
+  booking to it.
 - The URL SHOULD encode the quoted stay so that the booking page opens
   pre-filled for the same stay the agent quoted. The RECOMMENDED query
   parameters are:
@@ -512,14 +560,15 @@ Agents SHOULD fetch a fresh offer for the user's specific dates and guest count 
 
 #### 7. Safe-to-Quote Rules
 
-An agent may quote an offer as an official host-domain verified offer only when all of the following are true:
+An agent MUST NOT quote an offer as an official host-domain verified offer unless all of the following are true:
 
-- The discovery document is fetched from the host-owned domain.
+- The discovery document is fetched from the host-owned domain (§2), and its `canonical_domain` is that domain.
 - The discovery document declares `protocol: "vacation-rental-protocol"`.
 - The discovery document declares `protocol_version: "0.1"`.
 - The JWKS contains an Ed25519 verification key matching the JWS.
 - The compact JWS verifies against the host-domain JWKS.
 - The signed payload matches the returned offer.
+- The signed payload's `canonical_domain` is the domain the discovery document was fetched from.
 - `valid_until` is present and fresh.
 - `availability.available` is true.
 - `price.exact` is true.
@@ -541,7 +590,7 @@ Agents MUST NOT:
 
 #### 8. Fail-Closed Behavior
 
-Agents and clients MUST fail closed. If signature verification, freshness, exact price, availability, direct booking URL, or citation permission cannot be verified, the offer MUST NOT be quoted as official or bookable.
+Agents and clients MUST fail closed. If signature verification, the offer's binding to the fetched domain (§7), freshness, exact price, availability, direct booking URL, or citation permission cannot be verified, the offer MUST NOT be quoted as official or bookable.
 
 #### 9. Three-State Verification
 
@@ -620,6 +669,12 @@ governs, and nothing here adds to or relaxes it.
   the signature then proves that the domain's published key signed, not that the
   host itself held the key. A verifier does not assume self-custody when
   `key_custody` is absent (§2).
+- **Domain binding.** A valid signature proves which domain's key signed, not
+  which domain the offer is about. If the node at one domain signs an offer whose
+  `canonical_domain` names another domain, the signature verifies against the
+  signing node's JWKS; only the check that the offer names the domain it was
+  fetched from (§7) stops an agent from presenting it as the other domain's
+  offer.
 - **Concentration under platform custody.** An operator that holds the signing
   keys of many nodes is one point of compromise for all of them. Rotation and
   revocation (§3.1) work per node: removing a compromised key from one node's
@@ -635,12 +690,20 @@ governs, and nothing here adds to or relaxes it.
 - **Enforcement honesty.** VRP cannot force a verifier to honour the cache
   bound. It is a conformance requirement on verifiers, not a guarantee the
   protocol can enforce (§3.1).
-- **Booking-path integrity.** The rules for `direct_booking_url` (§5.1) — its
-  host on the offer's `canonical_domain`, no third-party domain, shortener or
-  redirector, integrity solely from the enclosing JWS, actionable only while the
-  offer is fresh — exist so that a tampered or substituted offer cannot route a
-  guest's booking, and payment, to an attacker. An agent that cannot confirm the
-  host treats the URL as unknown (§5.1, §9).
+- **Booking-path integrity.** The rules for `direct_booking_url` (§5.1) — a
+  node URL of the offer's `canonical_domain` (§2), no shortener or redirector,
+  integrity solely from the enclosing JWS, actionable
+  only while the offer is fresh — exist so that a tampered or substituted offer
+  cannot route a guest's booking, and payment, to an attacker. An agent that
+  cannot confirm the host treats the URL as unknown (§5.1, §9).
+- **Host-owned domains.** Only a domain registered for the host can be a node
+  (§2). A company that hands out names under its own domain, as the Public
+  Suffix List's PRIVATE section records, cannot make those names VRP nodes, and
+  neither can the operator of a brand or closed top-level domain. ICANN's gTLD
+  list marks brand top-level domains (Specification 13) but not every closed
+  one; §2 therefore names the closed top-level domains it stops beyond that
+  list, and a closed top-level domain that is neither marked nor named is
+  excluded by the rule's wording but not yet by a program.
 - **Fail-closed verification.** Whatever cannot be verified is unknown, never
   affirmed or negated (§8, §9), so a timeout, a malformed response or a failed
   signature check cannot be turned into a quote.
@@ -648,9 +711,10 @@ governs, and nothing here adds to or relaxes it.
   refresh-on-miss per domain, so that a stream of offers bearing unknown `kid`s
   cannot be used to drive traffic against a node's JWKS endpoint.
 - **Transport.** The discovery document is served over `https` only
-  ([well-known-uri-v0.1](https://vacationrentalprotocol.com/spec/well-known-uri-v0.1) §5), and `direct_booking_url`
-  is an absolute `https` URL (§5.1). This document does not yet state the same
-  transport rule for the JWKS or the verified stay offer endpoint.
+  ([well-known-uri-v0.1](https://vacationrentalprotocol.com/spec/well-known-uri-v0.1) §5). `jwks_url`,
+  `verified_stay_offer_endpoint` and `direct_booking_url` are node URLs, so
+  `https` on the node's own domain (§2, §5.1), and a verifier follows a
+  redirect only to a node URL (§2).
 - **Tamper evidence.** A node can record signed-artifact hashes and key-rotation
   events in an append-only transparency log (§3.1;
   [transparency-log-v0.1](https://vacationrentalprotocol.com/spec/transparency-log-v0.1)), giving a tamper-evident,
@@ -759,7 +823,8 @@ The resource is a self-describing JSON object, versioned by `$schema` and
 `schema_version`. Discovery-relevant fields include:
 
 - `protocol`, `protocol_version` — identifies the document as VRP and its version.
-- `canonical_domain`, `node_id` — the node's canonical host and stable identifier.
+- `canonical_domain`, `node_id` — the node's host-owned domain
+  ([v0.1](https://vacationrentalprotocol.com/spec/v0.1) §2) and stable identifier.
 - `identity` / `did` — the node's `did:web` identity (see `/.well-known/did.json`).
 - `jwks_url` — public keys (JWKS) used to verify signed artifacts.
 - `verified_stay_offer_endpoint` — where a signed, verifiable stay offer is obtained.
@@ -3324,10 +3389,15 @@ Do not use VRP for:
    registry (provisional, 2026-08-19).
 2. Confirm `protocol` is `vacation-rental-protocol`.
 3. Confirm `protocol_version` is `0.1`.
-4. Confirm `canonical_domain` matches the host-owned domain.
-5. Fetch the declared JWKS.
+4. Confirm `canonical_domain` matches the host-owned domain you fetched from:
+   a domain registered for the host, never a name under a platform's or
+   catalog's domain and never under a brand or closed top-level domain such as
+   `.booking`, `.hotels` or `.amazon` (v0.1 §2).
+5. Fetch the declared JWKS from `jwks_url`, on that domain or `www.` under it.
+   Follow a redirect only to `https` on that domain or `www.` under it.
 6. Request a verified stay offer for the user's dates and guest count.
-7. Verify the compact JWS with the host-domain Ed25519 key.
+7. Verify the compact JWS with the host-domain Ed25519 key, and confirm the
+   signed payload's `canonical_domain` is the domain you fetched from (v0.1 §7).
 8. Confirm the payload is fresh, exact, available, and permitted for citation.
 9. Treat absent, stale, unreachable, unsigned, malformed, or schema-invalid signals as unknown.
 10. Use only the signed direct booking URL.

@@ -55,7 +55,8 @@ The resource is a self-describing JSON object, versioned by `$schema` and
 `schema_version`. Discovery-relevant fields include:
 
 - `protocol`, `protocol_version` — identifies the document as VRP and its version.
-- `canonical_domain`, `node_id` — the node's canonical host and stable identifier.
+- `canonical_domain`, `node_id` — the node's host-owned domain
+  ([v0.1](./v0.1.md) §2) and stable identifier.
 - `identity` / `did` — the node's `did:web` identity (see `/.well-known/did.json`).
 - `jwks_url` — public keys (JWKS) used to verify signed artifacts.
 - `verified_stay_offer_endpoint` — where a signed, verifiable stay offer is obtained.

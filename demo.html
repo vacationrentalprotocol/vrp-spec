@@ -314,9 +314,11 @@
       async function verifyJws(jws, jwks) {
         const [h, p, s] = String(jws).trim().split(".");
         const header = jsonFromB64url(h);
-        const keys = (jwks && jwks.keys) || [];
-        const key = keys.find((k) => k.kid === header.kid) || keys.find((k) => k.kty === "OKP" && k.crv === "Ed25519");
-        if (!key) throw new Error("No matching key in host JWKS");
+        // VRP §3.1: the key is the one whose kid the JWS header names, and no other.
+        if (typeof header.kid !== "string" || !header.kid) throw new Error("The JWS header carries no kid");
+        const keys = (jwks && Array.isArray(jwks.keys) && jwks.keys) || [];
+        const key = keys.find((k) => k && k.kid === header.kid);
+        if (!key) throw new Error("No key with that kid in the host JWKS");
         const cryptoKey = await crypto.subtle.importKey("jwk", { kty: "OKP", crv: "Ed25519", x: key.x }, { name: "Ed25519" }, false, ["verify"]);
         const data = new TextEncoder().encode(h + "." + p);
         const ok = await crypto.subtle.verify({ name: "Ed25519" }, cryptoKey, b64urlToBytes(s), data);

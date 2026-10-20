@@ -12,6 +12,7 @@
     "verify-receipt-vectors": "node scripts/verify-receipt-vectors.mjs",
     "verify-offer-vectors": "node scripts/verify-offer-vectors.mjs",
     "verify-tlog-vectors": "node scripts/verify-tlog-vectors.mjs",
+    "verify-host-domain": "node scripts/verify-host-domain.mjs",
     "check-public-routes": "node scripts/check-public-routes.mjs",
     "check-public-routes:live": "node scripts/check-public-routes.mjs --live",
     "check-license": "node scripts/check-license-boundary.mjs",
@@ -20,6 +21,6 @@
     "build-sitemap": "node scripts/build-sitemap.mjs",
     "check-sitemap": "node scripts/build-sitemap.mjs --check",
     "generate-vectors": "node scripts/generate-conformance-vectors.mjs",
-    "test": "npm run validate && npm run verify-vectors && npm run verify-offer-schema && npm run verify-attestations && npm run verify-three-state && npm run verify-receipt-vectors && npm run verify-offer-vectors && npm run verify-tlog-vectors && npm run check-public-routes && npm run check-license && npm run check-source-pack"
+    "test": "npm run validate && npm run verify-vectors && npm run verify-offer-schema && npm run verify-attestations && npm run verify-three-state && npm run verify-receipt-vectors && npm run verify-offer-vectors && npm run verify-tlog-vectors && npm run verify-host-domain && npm run check-public-routes && npm run check-license && npm run check-source-pack"
   }
 }

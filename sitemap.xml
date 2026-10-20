@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://vacationrentalprotocol.com/</loc>
-    <lastmod>2026-10-20</lastmod>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/vrp-vacation-rental</loc>
@@ -26,7 +26,7 @@
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/verify</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/declarations</loc>
@@ -34,7 +34,7 @@
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/implement</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/film</loc>
@@ -66,7 +66,7 @@
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/spec/well-known-uri-v0.1</loc>
-    <lastmod>2026-08-20</lastmod>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/spec/stayintent-discovery-v0.1</loc>
@@ -86,7 +86,7 @@
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/docs/agent-guide</loc>
-    <lastmod>2026-08-31</lastmod>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/docs/implement-vrp</loc>
@@ -149,6 +149,10 @@
     <lastmod>2026-06-02</lastmod>
   </url>
   <url>
+    <loc>https://vacationrentalprotocol.com/examples/conformance/host-domain/vectors.v0.1.json</loc>
+    <lastmod>2026-10-17</lastmod>
+  </url>
+  <url>
     <loc>https://vacationrentalprotocol.com/examples/conformance/stayintent/positive.v0.1.json</loc>
     <lastmod>2026-06-16</lastmod>
   </url>
@@ -182,7 +186,7 @@
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/verify-receipt</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/schemas/vrp-receipt.v1.schema.json</loc>

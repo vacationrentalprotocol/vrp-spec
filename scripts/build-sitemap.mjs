@@ -80,6 +80,7 @@ const ROUTES = [
   ["/spec/node-seal-v0.1", "spec/node-seal-v0.1.md"],
   ["/spec/addon-attestation-layer-v0.1", "spec/addon-attestation-layer-v0.1.md"],
   ["/spec/domain-continuity-v0.1", "spec/domain-continuity-v0.1.md"],
+  ["/spec/node-tool-binding-v0.1", "spec/node-tool-binding-v0.1.md"],
   ["/verify-receipt", "verify-receipt.html"],
   ["/schemas/vrp-receipt.v1.schema.json", "schemas/vrp-receipt.v1.schema.json"],
   ["/docs/conformance-report", "docs/conformance-report.md"],

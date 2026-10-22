@@ -24,6 +24,10 @@ affiliation is disclosed openly precisely because VRP must never depend on it â€
 per ADR 0002, verification resolves to each host's own domain, and neither
 HemmaBo nor any other implementation is a gatekeeper for the standard.
 
+[@hayatabbasjr](https://github.com/hayatabbasjr), the maintainer for project
+continuity, is Rouiada Abbas's daughter, so the two maintainers listed above
+are not independent of each other.
+
 ## Contact
 
 - **Security / vulnerabilities:** follow [SECURITY.md](SECURITY.md). Do not open

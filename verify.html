@@ -526,10 +526,10 @@
         const prop = payload.property || {};
         const req = payload.request || {};
         const facts = [
-          ["Property", prop.name ? prop.name + (prop.city ? ", " + prop.city : "") + (prop.country ? ", " + prop.country : "") : "—"],
-          ["Stay", req.check_in ? req.check_in + " → " + req.check_out + " (" + (req.nights || "?") + " nights, " + (req.guests || "?") + " guests)" : "—"],
-          ["Total price", price.total != null ? price.total + " " + (price.currency || "") + (price.agent_total != null && price.agent_total !== price.total ? "  (agent: " + price.agent_total + " " + (price.currency || "") + ")" : "") : "—"],
-          ["Book direct", payload.booking && payload.booking.direct_booking_url ? '<a href="' + esc(payload.booking.direct_booking_url) + '" rel="noopener" target="_blank">' + esc(payload.booking.direct_booking_url) + "</a>" : "—"],
+          ["Property", prop.name ? esc(prop.name + (prop.city ? ", " + prop.city : "") + (prop.country ? ", " + prop.country : "")) : "—"],
+          ["Stay", req.check_in ? esc(req.check_in + " → " + req.check_out + " (" + (req.nights || "?") + " nights, " + (req.guests || "?") + " guests)") : "—"],
+          ["Total price", price.total != null ? esc(price.total + " " + (price.currency || "") + (price.agent_total != null && price.agent_total !== price.total ? "  (agent: " + price.agent_total + " " + (price.currency || "") + ")" : "")) : "—"],
+          ["Book direct", payload.booking && payload.booking.direct_booking_url ? (/^https:\/\//i.test(String(payload.booking.direct_booking_url)) ? '<a href="' + esc(payload.booking.direct_booking_url) + '" rel="noopener" target="_blank">' + esc(payload.booking.direct_booking_url) + "</a>" : esc(payload.booking.direct_booking_url) + " (not an https URL, so no link)") : "—"],
           ["Signed by", esc(header.kid)],
           ["Valid until", esc(payload.valid_until || "—")],
         ];

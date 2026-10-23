@@ -103,6 +103,15 @@
       ]
     },
     {
+      "source": "/spec/node-tool-binding-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/node-tool-binding-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
       "source": "/docs/what-is-vrp.md",
       "headers": [
         {

@@ -7,6 +7,7 @@ Canonical site: https://vacationrentalprotocol.com/
 Repository: https://github.com/vacationrentalprotocol/vrp-spec
 Current draft: v0.1
 The vacation-rental.json well-known URI suffix is registered in the IANA Well-Known URIs registry (provisional, 2026-08-19): https://www.iana.org/assignments/well-known-uris/
+Vacation Rental Protocol is a participant in the W3C Agent Conformance and Benchmarking Community Group (Rouiada Abbas): https://www.w3.org/community/agent-conformance/participants
 
 ## What is a VRP vacation rental?
 

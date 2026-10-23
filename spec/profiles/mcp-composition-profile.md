@@ -102,7 +102,7 @@ claimed interaction.
 - **Privacy.** Arguments are hashed, not embedded; guest-identifying inputs do
   not land in the receipt.
 - **Key blast radius.** Sharing the offer key for the transport layer is
-  intentional (one moat key) but means key rotation/revocation must preserve
+  intentional (a single shared key for both layers) but means key rotation/revocation must preserve
   historical receipt verifiability (ADR 0010 §3).
 
 ## Relationship to ADR 0010
@@ -128,7 +128,5 @@ call using `camelCase` keys MUST normalize them to `snake_case`
 JSON (recursive key sort) does not change casing — normalization is the caller's
 responsibility.
 
-> This profile is mirrored from the reference implementation
-> (`hemmabo-mcp-server` `spec/profiles/mcp-composition-profile.md` +
-> `lib/vrp-mcp-profile.ts`); the section above is the VRP-spec normative pin for
-> argument-key casing.
+> The section above is the VRP-spec normative pin for argument-key casing;
+> implementations (the HemmaBo reference implementation included) conform to it.

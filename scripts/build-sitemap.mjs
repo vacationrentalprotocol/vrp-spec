@@ -50,6 +50,7 @@ const ROUTES = [
   ["/spec/transparency-log-v0.1", "spec/transparency-log-v0.1.md"],
   ["/spec/attestation-status-bitstring-v0.1", "spec/attestation-status-bitstring-v0.1.md"],
   ["/docs/interop-and-trust-positioning", "docs/interop-and-trust-positioning.md"],
+  ["/docs/interop/cm-ai-docking-port", "docs/interop/cm-ai-docking-port.md"],
   ["/docs/agent-guide", "docs/agent-guide.md"],
   ["/docs/implement-vrp", "docs/implement-vrp.md"],
   ["/docs/implement-attestations", "docs/implement-attestations.md"],

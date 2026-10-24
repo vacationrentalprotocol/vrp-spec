@@ -50,6 +50,7 @@ Definition: https://vacationrentalprotocol.com/vrp-vacation-rental
 - Domain Continuity v0.1 (did:web identity across registrant change / expiry — registration-epoch signal, fail-closed verifier guidance; proposal for discussion): https://vacationrentalprotocol.com/spec/domain-continuity-v0.1
 - Node Tool Binding v0.1 (one capability name, get_verified_stay_offer, and one argument shape across a node's MCP, A2A and WebMCP tool surfaces; node tools only, operators carry their own namespace; proposal for discussion): https://vacationrentalprotocol.com/spec/node-tool-binding-v0.1
 - Interop and trust positioning: https://vacationrentalprotocol.com/docs/interop-and-trust-positioning
+- CM AI Docking Port and VRP, a field-by-field mapping (informative interop note; an independent CM Free node's question and answer mapped onto StayIntent, Core v0.1 and the Node Tool Binding): https://vacationrentalprotocol.com/docs/interop/cm-ai-docking-port
 - ADR 0002: No-Gatekeeper Trust and Interop Positioning: https://vacationrentalprotocol.com/docs/adr/0002-no-gatekeeper-trust-and-interop
 - Agent integration guide: https://vacationrentalprotocol.com/docs/agent-guide
 - Implement VRP signed offers (guide): https://vacationrentalprotocol.com/docs/implement-vrp

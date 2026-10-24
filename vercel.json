@@ -148,6 +148,15 @@
       ]
     },
     {
+      "source": "/docs/interop/cm-ai-docking-port.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/interop/cm-ai-docking-port>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
       "source": "/docs/agent-guide.md",
       "headers": [
         {

@@ -4,6 +4,9 @@
 **Layer:** `transport`
 **Status:** Reference profile for the VRP receipt envelope v1 (see [ADR 0007](../../docs/adr/0007-receipt-envelope-v1.md)).
 **Reference implementation:** `lib/vrp-mcp-profile.ts`; verified by `lib/vrp-receipt.ts`.
+**Sibling:** [`node-tool-binding-v0.1.md`](../node-tool-binding-v0.1.md) binds the
+tool name `get_verified_stay_offer` and its argument keys across a node's MCP, A2A
+and WebMCP surfaces.
 
 ## Purpose
 

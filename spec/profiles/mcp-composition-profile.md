@@ -2,7 +2,7 @@
 
 **Profile version:** 1.0
 **Layer:** `transport`
-**Status:** Reference profile for the VRP receipt envelope v1 (see ADR `0010`).
+**Status:** Reference profile for the VRP receipt envelope v1 (see [ADR 0007](../../docs/adr/0007-receipt-envelope-v1.md)).
 **Reference implementation:** `lib/vrp-mcp-profile.ts`; verified by `lib/vrp-receipt.ts`.
 **Sibling:** [`node-tool-binding-v0.1.md`](../node-tool-binding-v0.1.md) binds the
 tool name `get_verified_stay_offer` and its argument keys across a node's MCP, A2A
@@ -15,7 +15,7 @@ a VRP receipt (`spec/vrp-receipt.v1.schema.json`). It is the first composition
 profile because the node is already MCP-native (`api/mcp.ts`), so it is the
 fastest credible proof that the envelope composes real layers.
 
-## The core rule: sign the assertion, not the transport (ADR 0010 D6)
+## The core rule: sign the assertion, not the transport (ADR 0007 D6)
 
 MCP has **no native message signing**, and the deployed MCP endpoint
 (`api/mcp.ts`) is a **stateless per-request transport**. A tool call is therefore
@@ -55,7 +55,7 @@ The signed payload (`buildMcpTransportAssertion`) is:
   receipt while still letting a verifier confirm *which* call produced the offer.
 - This canonicalization applies **only** to the hash input. It does **not**
   re-derive the JWS signing input — that is always the JWS bytes as received
-  (ADR 0010 D5).
+  (ADR 0007 D5).
 
 ## As a receipt attestation
 
@@ -103,16 +103,16 @@ claimed interaction.
   not land in the receipt.
 - **Key blast radius.** Sharing the offer key for the transport layer is
   intentional (a single shared key for both layers) but means key rotation/revocation must preserve
-  historical receipt verifiability (ADR 0010 §3).
+  historical receipt verifiability ([ADR 0008](../../docs/adr/0008-key-lifecycle.md)).
 
-## Relationship to ADR 0010
+## Relationship to ADR 0007
 
 Implements **D6** (MCP composition profile) on top of the v1 envelope (**D1**
 flat attestations, **D2** freshness, **D3** optional tlog, **D4** partial
-verification + error registry, **D5** verify JWS bytes). This is the Phase-2 /
-step-4 deliverable: the first per-layer composition profile.
+verification + error registry, **D5** verify JWS bytes). It is the first
+per-layer composition profile.
 
-## Argument key casing — NORMATIVE (to-do #7)
+## Argument key casing — NORMATIVE
 
 The keys inside the tool-call `arguments` object that feed `arguments_sha256`
 MUST be **`snake_case`**: `check_in`, `check_out`, `guests`. This matches the VRP

@@ -1,4 +1,4 @@
-// License drift-guard (ADR 0010 D7 — WO-2 #4e).
+// License drift-guard (ADR 0007 D7).
 //
 // Enforces the dual-license boundary so it cannot silently regress:
 //   - spec text  → CC0 1.0   (LICENSE)

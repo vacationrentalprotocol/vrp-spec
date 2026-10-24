@@ -26,7 +26,7 @@ https://vacationrentalprotocol.com/schemas/attestations-v0.1.schema.json
 
 Repository copy: [`attestations-v0.1.schema.json`](./attestations-v0.1.schema.json)
 
-VRP Receipt v1 schema (ADR 0010 — the receipt envelope that wraps offer + transport attestations):
+VRP Receipt v1 schema ([ADR 0007](../docs/adr/0007-receipt-envelope-v1.md) — the receipt envelope that wraps offer + transport attestations):
 
 ```text
 https://vacationrentalprotocol.com/schemas/vrp-receipt.v1.schema.json

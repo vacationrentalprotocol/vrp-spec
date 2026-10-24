@@ -6,7 +6,7 @@
 
 **Updated:** 2026-07-04 — receipt leaves (`vrp_receipt`), leaf hashing rule,
 operator key discovery, STH archival, node read-through proxy, honest
-guarantee wording (issue #60-adjacent; per-booking inclusion proofs)
+guarantee wording ([issue #60](https://github.com/vacationrentalprotocol/vrp-spec/issues/60)-adjacent; per-booking inclusion proofs)
 
 **Canonical context:** https://vacationrentalprotocol.com/contexts/v1
 
@@ -348,4 +348,4 @@ including HemmaBo — can rewrite.
 
 ## 13. License
 
-Specification text: dedicated to the public domain under [CC0 1.0](../LICENSE). Reference code and conformance test vectors: [Apache-2.0](../LICENSE-CODE) (ADR 0010 D7).
+Specification text: dedicated to the public domain under [CC0 1.0](../LICENSE). Reference code and conformance test vectors: [Apache-2.0](../LICENSE-CODE) ([ADR 0007](../docs/adr/0007-receipt-envelope-v1.md) D7).

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The protocol link relation — Vacation Rental Protocol</title>
+    <meta
+      name="description"
+      content="The protocol link relation names the open protocol a page's site implements. A VRP node links to https://vacationrentalprotocol.com/ with rel=protocol in its head and in a visible link."
+    />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/rel/protocol" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <p class="eyebrow">Vacation Rental Protocol</p>
+      <h1>The <code>protocol</code> link relation</h1>
+      <p>
+        A link with the relation <code>protocol</code> says: <em>the site this page belongs to implements the
+        open protocol found at the link target.</em> The target is the protocol's canonical specification
+        site, never an implementation, an operator or a vendor.
+      </p>
+      <p>
+        This page is the identifier of the relation. As a URI it is
+        <code>https://vacationrentalprotocol.com/rel/protocol</code>; in HTML it is written as the keyword
+        <code>protocol</code>. Both denote the same relation.
+      </p>
+
+      <h2>In a VRP node</h2>
+      <p>
+        <a href="/spec/v0.1">VRP v0.1</a> §2.1 <em>Node page identification</em> asks a node to name the
+        protocol on the page at <code>https://{canonical_domain}/</code>:
+      </p>
+      <pre><code>&lt;head&gt;
+  &lt;link rel="protocol" href="https://vacationrentalprotocol.com/"&gt;
+&lt;/head&gt;
+…
+&lt;footer&gt;
+  &lt;a rel="protocol" href="https://vacationrentalprotocol.com/verify?host=example-host.invalid"&gt;VRP-verified&lt;/a&gt;
+&lt;/footer&gt;</code></pre>
+      <p>
+        The head link points at the root of the standard. The visible link points at the root or at the
+        standard's verify page for that node, and its text contains <code>VRP</code>. An HTTP
+        <code>Link</code> header uses the URI form:
+      </p>
+      <pre><code>Link: &lt;https://vacationrentalprotocol.com/&gt;; rel="https://vacationrentalprotocol.com/rel/protocol"</code></pre>
+
+      <h2>What the target may be</h2>
+      <ul>
+        <li><code>https://vacationrentalprotocol.com/</code> — the standard.</li>
+        <li><code>https://vacationrentalprotocol.com/verify?host={canonical_domain}</code> — the standard's in-browser verifier for that node.</li>
+        <li>Nothing else. A <code>rel="protocol"</code> link to a platform or a vendor fails the conformance vectors (ADR 0002: no gatekeeper).</li>
+      </ul>
+
+      <h2>Check a page</h2>
+      <p>
+        <code>scripts/verify-node-page.mjs</code> in the
+        <a href="https://github.com/vacationrentalprotocol/vrp-spec">vrp-spec repository</a> parses the
+        attributes of a page and reports the checks of §2.1; the self-describing vectors live in
+        <code>examples/conformance/node-page/</code>. Run <code>npm run verify-node-page:live -- example-host.invalid</code>
+        against a live node.
+      </p>
+
+      <h2>Registration</h2>
+      <p>
+        The HTML keyword <code>protocol</code> is defined by VRP v0.1 §2.1. On 2026-10-16 it was listed
+        neither on the microformats <code>existing-rel-values</code> page (the HTML registry of
+        <code>rel</code> keywords) nor in the IANA Link Relations registry; the keyword is registered on the
+        microformats page once this section is published. The URI form needs no registration
+        (RFC 8288 §2.1.2, extension relation types).
+      </p>
+
+      <h2>Normative documents</h2>
+      <ul>
+        <li><a href="/spec/v0.1">Core VRP v0.1</a> — §2.1 Node page identification</li>
+        <li><a href="/terms">VRP terms vocabulary</a> — <code>VRPVacationRental</code></li>
+        <li><a href="/vrp-vacation-rental">What is a VRP vacation rental?</a></li>
+      </ul>
+    </main>
+  </body>
+</html>

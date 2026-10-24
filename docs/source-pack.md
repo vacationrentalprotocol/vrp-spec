@@ -183,6 +183,45 @@ Recommended fields:
 - `operator` — MAY carry `name`, `role`, and `key_custody`. `key_custody` declares who holds the node's Ed25519 signing key: `platform` (an operator holds and operates the key on the host's behalf — offers are signed under the host's domain identity and remain independently verifiable against `jwks_url`, but the host does not hold the key itself) or `self` (the host self-custodies their own key). Absent = unspecified; a verifier MUST NOT assume self-custody. This lets an agent reason about exactly what a valid signature guarantees — provenance and integrity in both cases, host self-sovereignty only when `self`.
 - `endpoints`
 
+##### 2.1 Node page identification
+
+A VRP node is found and verified through its discovery document (§2) and its
+signed offers (§5). The pages a guest or an AI model reads are not part of that
+chain, so nothing in v0.1 has required them to name the protocol. The rules
+below make the protocol visible there too. In v0.1 they are SHOULD;
+[ADR 0006](https://vacationrentalprotocol.com/docs/adr/0006-node-page-identification) records that (a) and
+(b) are intended to become MUST in the next MAJOR version, the migration path
+being these two tags.
+
+For the page served at `https://{canonical_domain}/`:
+
+- (a) The document head SHOULD contain
+  `<link rel="protocol" href="https://vacationrentalprotocol.com/">`.
+- (b) The document body SHOULD contain a visible hyperlink carrying
+  `rel="protocol"` whose `href` is on the origin
+  `https://vacationrentalprotocol.com` — the root, or
+  `/verify?host={canonical_domain}` — and whose link text contains the string
+  `VRP`.
+- (c) The response SHOULD carry the HTTP header
+  `Link: <https://vacationrentalprotocol.com/>; rel="https://vacationrentalprotocol.com/rel/protocol"`.
+- (d) schema.org JSON-LD on the page SHOULD mark the lodging with
+  `"additionalType": "https://vacationrentalprotocol.com/terms#VRPVacationRental"`.
+- (e) The page SHOULD describe the property as a VRP vacation rental in its own
+  language (for example «VRP-semesterboende»).
+
+The `href` in (a) and (b) MUST NOT point to an implementation, an operator, or
+any origin other than `https://vacationrentalprotocol.com`: the link names the
+standard, never a vendor. The HTML keyword `protocol` and the extension relation
+type `https://vacationrentalprotocol.com/rel/protocol` denote the same relation;
+see [/rel/protocol](https://vacationrentalprotocol.com/rel/protocol). (a) and
+(b) are checked by `scripts/verify-node-page.mjs` against the vectors in
+`examples/conformance/node-page/`; (c)–(e) are reported, not enforced.
+*Visible* in (b) means rendered visible to a reader. The checker does not
+render a page: it tests the link's own attributes (`hidden`,
+`aria-hidden="true"`, an inline `display: none`). A link hidden by an ancestor
+element or by a stylesheet passes the checker and still fails (b); the checker
+is necessary, not sufficient.
+
 #### 3. JWKS
 
 A VRP host domain publishes an Ed25519 public key set:

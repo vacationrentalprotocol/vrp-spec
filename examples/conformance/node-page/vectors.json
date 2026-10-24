@@ -1,0 +1,87 @@
+{
+  "spec": "spec/v0.1.md §2.1 Node page identification (ADR 0006)",
+  "checker": "scripts/verify-node-page.mjs",
+  "license": "Apache-2.0 — see LICENSE-CODE",
+  "vectors": [
+    {
+      "file": "positive.html",
+      "name": "head link and a visible footer link to the root, text VRP",
+      "canonical_domain": "example-host.invalid",
+      "expected": {
+        "a": true,
+        "b": true,
+        "pass": true
+      }
+    },
+    {
+      "file": "positive-self-closing.html",
+      "name": "self-closing <link … />, footer link to /verify?host=<canonical_domain>, rel with two tokens",
+      "canonical_domain": "example-host.invalid",
+      "expected": {
+        "a": true,
+        "b": true,
+        "pass": true
+      }
+    },
+    {
+      "file": "negative-missing-head-link.html",
+      "name": "no <link rel=\"protocol\"> in the head",
+      "canonical_domain": "example-host.invalid",
+      "expected": {
+        "a": false,
+        "b": true,
+        "pass": false
+      }
+    },
+    {
+      "file": "negative-no-visible-link.html",
+      "name": "footer link to the standard but without rel=\"protocol\"",
+      "canonical_domain": "example-host.invalid",
+      "expected": {
+        "a": true,
+        "b": false,
+        "pass": false
+      }
+    },
+    {
+      "file": "negative-link-to-implementation.html",
+      "name": "rel=\"protocol\" link points at a platform, not the standard (ADR 0002)",
+      "canonical_domain": "example-host.invalid",
+      "expected": {
+        "a": true,
+        "b": false,
+        "pass": false
+      }
+    },
+    {
+      "file": "negative-text-without-vrp.html",
+      "name": "link is right but its text does not contain VRP",
+      "canonical_domain": "example-host.invalid",
+      "expected": {
+        "a": true,
+        "b": false,
+        "pass": false
+      }
+    },
+    {
+      "file": "negative-hidden-link.html",
+      "name": "the rel=\"protocol\" link carries the hidden attribute",
+      "canonical_domain": "example-host.invalid",
+      "expected": {
+        "a": true,
+        "b": false,
+        "pass": false
+      }
+    },
+    {
+      "file": "negative-verify-wrong-host.html",
+      "name": "/verify?host= names another node",
+      "canonical_domain": "example-host.invalid",
+      "expected": {
+        "a": true,
+        "b": false,
+        "pass": false
+      }
+    }
+  ]
+}

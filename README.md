@@ -119,6 +119,10 @@ notes live in [`docs/security/`](./docs/security/):
 - [Key rotation](./docs/security/KEY_ROTATION.md) — additive rotation per spec §3.1, and the current verified live-node key posture.
 - [Incident response](./docs/security/INCIDENT_RESPONSE.md) — handling a compromised host key or JWKS.
 
+## Name
+
+"VRP" and "Vacation Rental Protocol" name this standard. Any implementation that passes the conformance vectors may call itself VRP — free, by self-declaration, with no approval step. See [GOVERNANCE.md §6.1](./GOVERNANCE.md#61-use-of-the-name); a node names the protocol on its own pages as set out in [spec/v0.1.md §2.1](./spec/v0.1.md#21-node-page-identification).
+
 ## License
 
 VRP uses a dual-license boundary (ADR 0010 D7), so the standard is free to implement while the reference code carries an explicit patent grant:

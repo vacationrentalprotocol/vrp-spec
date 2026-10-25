@@ -121,7 +121,7 @@ notes live in [`docs/security/`](./docs/security/):
 
 ## License
 
-VRP uses a dual-license boundary (ADR 0010 D7), so the standard is free to implement while the reference code carries an explicit patent grant:
+VRP uses a dual-license boundary ([ADR 0007](./docs/adr/0007-receipt-envelope-v1.md) D7), so the standard is free to implement while the reference code carries an explicit patent grant:
 
 | Path | License | What |
 | --- | --- | --- |

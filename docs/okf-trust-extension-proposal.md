@@ -6,8 +6,8 @@ the **trust/verifiability layer** OKF deliberately left out — for *all* OKF
 concept types, not just vacation rentals.
 
 **Why this matters for VRP (internal note, do not paste):** as of 2026-06-26 the
-`vrp-spec` repo has 0 forks / 1 star / 0 issues and ADR `0010` lists "implementer
-#2" as still-open. There is **no inbound partner interest yet**. OKF is Google's
+`vrp-spec` repo had 0 forks / 1 star / 0 issues, and a second, independent
+implementation — the condition for 1.0 in GOVERNANCE.md §5 — was still open. There is **no inbound partner interest yet**. OKF is Google's
 distribution surface for agent-readable knowledge; getting a `proof` convention in
 front of that ecosystem is a cheap way to reach the very builders who could become
 implementer #2 — it does not depend on HemmaBo signing nodes first.

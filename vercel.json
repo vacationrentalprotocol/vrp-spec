@@ -103,6 +103,15 @@
       ]
     },
     {
+      "source": "/spec/node-tool-binding-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/node-tool-binding-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
       "source": "/docs/what-is-vrp.md",
       "headers": [
         {
@@ -135,6 +144,15 @@
         {
           "key": "Link",
           "value": "<https://vacationrentalprotocol.com/docs/interop-and-trust-positioning>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/interop/cm-ai-docking-port.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/interop/cm-ai-docking-port>; rel=\"canonical\""
         }
       ]
     },

@@ -30,6 +30,8 @@ Booking Proof Chain v0.1: [spec/proof-chain-v0.1.md](./spec/proof-chain-v0.1.md)
 
 Node Seal v0.1: [spec/node-seal-v0.1.md](./spec/node-seal-v0.1.md)
 
+Node Tool Binding v0.1 (proposal for discussion): [spec/node-tool-binding-v0.1.md](./spec/node-tool-binding-v0.1.md)
+
 VRP JSON-LD context draft: [contexts/v1.jsonld](./contexts/v1.jsonld)
 
 Architecture decision: [ADR 0001 - Portable Attestations v0.1](./docs/adr/0001-portable-attestations-v0.1.md)
@@ -72,9 +74,11 @@ Conformance vectors: [examples/conformance](./examples/conformance)
 
 VRP is deliberately narrower than a full booking or commerce stack. It can
 compose with UCP for checkout and order lifecycle, including lodging flows as
-the UCP lodging profile matures, AP2 for payment mandates, MCP for future tool
-exposure, and A2A for future agent-to-agent bindings. VRP v0.1 does not define
-those runtime flows.
+the UCP lodging profile matures, AP2 for payment mandates, MCP, A2A and WebMCP
+for exposing a node's signed offer as a tool (one name and one argument shape,
+proposed in [Node Tool Binding v0.1](./spec/node-tool-binding-v0.1.md)), and A2A
+for future agent-to-agent bindings. VRP v0.1 does not define those runtime
+flows.
 
 Self-issued host-domain attestations are appropriate for domain-control, node,
 payment-path, and policy facts. Claims that need independent evidence, such as
@@ -121,7 +125,7 @@ notes live in [`docs/security/`](./docs/security/):
 
 ## License
 
-VRP uses a dual-license boundary (ADR 0010 D7), so the standard is free to implement while the reference code carries an explicit patent grant:
+VRP uses a dual-license boundary ([ADR 0007](./docs/adr/0007-receipt-envelope-v1.md) D7), so the standard is free to implement while the reference code carries an explicit patent grant:
 
 | Path | License | What |
 | --- | --- | --- |

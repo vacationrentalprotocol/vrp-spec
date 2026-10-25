@@ -26,7 +26,7 @@ https://vacationrentalprotocol.com/schemas/attestations-v0.1.schema.json
 
 Repository copy: [`attestations-v0.1.schema.json`](./attestations-v0.1.schema.json)
 
-VRP Receipt v1 schema (ADR 0010 — the receipt envelope that wraps offer + transport attestations):
+VRP Receipt v1 schema ([ADR 0007](../docs/adr/0007-receipt-envelope-v1.md) — the receipt envelope that wraps offer + transport attestations):
 
 ```text
 https://vacationrentalprotocol.com/schemas/vrp-receipt.v1.schema.json
@@ -34,7 +34,7 @@ https://vacationrentalprotocol.com/schemas/vrp-receipt.v1.schema.json
 
 Repository copy: [`vrp-receipt.v1.schema.json`](./vrp-receipt.v1.schema.json)
 
-> **Drift contract.** `vrp-receipt.v1.schema.json` is mirrored **byte-equal** from the reference implementation (`hemmabo-mcp-server` `spec/vrp-receipt.v1.schema.json`, the schema consumed by the `verifyReceipt` reference verifier). The two copies MUST stay byte-identical; the receipt conformance vector validates against this copy.
+> **Drift contract.** `vrp-receipt.v1.schema.json` in this repository is the authoritative receipt schema; the receipt conformance vectors validate against it, and any implementation's copy MUST match it. It was first authored alongside the reference implementation; the standard's copy now governs.
 
 Conformance report v0.1 schema (score-free record of one verifier run against one corpus; see [`docs/conformance-report.md`](../docs/conformance-report.md)):
 

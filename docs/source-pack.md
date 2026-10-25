@@ -3746,6 +3746,7 @@ VRP should compose with the agent-commerce stack instead of replacing it.
 | AP2 | Complementary. AP2 can handle cryptographic payment mandates and payment authorization. VRP v0.1 does not define payment mandates or raw payment processing. |
 | MCP | Complementary. MCP can expose retrieval or verification behavior as tools in a future profile. VRP v0.1 defines documents and verification rules, not runtime tools. |
 | A2A | Complementary. A2A can carry future guest-agent and host-agent negotiation. VRP v0.1 does not define an A2A binding. |
+| CM AI Docking Port | An independent, read-only entry point for AI agents into CM Free nodes (AGPL-3.0). Its Request and Response Envelopes map field by field onto the StayIntent query and response, and its signed-offer tool, when exposed, onto the Node Tool Binding; see [the mapping](https://vacationrentalprotocol.com/docs/interop/cm-ai-docking-port). VRP is unchanged by it. |
 | W3C VC 2.0 | Used by VRP Portable Attestations. |
 | VC JOSE/COSE | Canonical v0.1 security format for VRP Portable Attestations as compact JWS with `typ: "vc+jwt"` and `alg: "EdDSA"`. |
 | W3C Data Integrity | Possible future interoperability mapping. VRP v0.1 does not use embedded `proof` objects. |

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Implement VRP | Vacation Rental Protocol</title>
+    <meta name="description" content="A host or provider can implement VRP without becoming a marketplace. The host-owned domain remains the source of truth." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="Implement VRP" />
+    <meta property="og:description" content="A host or provider can implement VRP without becoming a marketplace. The host-owned domain remains the source of truth." />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/implement-vrp" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Implement VRP" />
+    <meta name="twitter:description" content="A host or provider can implement VRP without becoming a marketplace. The host-owned domain remains the source of truth." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/implement-vrp" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/implement-vrp.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/implement-vrp#techarticle",
+  "headline": "Implement VRP",
+  "description": "A host or provider can implement VRP without becoming a marketplace. The host-owned domain remains the source of truth.",
+  "url": "https://vacationrentalprotocol.com/docs/implement-vrp",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/implement-vrp.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/implement-vrp.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/implement-vrp.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/implement-vrp.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="implement-vrp">Implement VRP</h1>
+<p>A host or provider can implement VRP without becoming a marketplace. The host-owned domain remains the source of truth.</p>
+<h2 id="minimum-implementation">Minimum Implementation</h2>
+<ol><li>Publish <code>/.well-known/vacation-rental.json</code>.</li><li>Publish <code>/.well-known/jwks.json</code> with an Ed25519 public key.</li><li>Expose a verified stay offer endpoint.</li><li>Sign verified stay offer payloads with the matching host-domain private key.</li><li>Include availability, exact price, currency, <code>valid_until</code>, direct booking URL, and agent citation permission.</li><li>Return explicit signed false values when a request is unavailable.</li><li>Fail closed when any verification requirement cannot be satisfied.</li></ol>
+<h2 id="discovery-checklist">Discovery Checklist</h2>
+<p>Your discovery document should include:</p>
+<ul><li><code>protocol</code></li><li><code>protocol_version</code></li><li><code>canonical_domain</code></li><li><code>node_id</code></li><li><code>jwks_url</code></li><li><code>verified_stay_offer_endpoint</code></li><li><code>capabilities</code></li></ul>
+<h2 id="offer-checklist">Offer Checklist</h2>
+<p>Your signed offer should include:</p>
+<ul><li>stay request</li><li>property identity</li><li>availability status</li><li>price object with currency and exactness</li><li>direct booking URL</li><li>validity window</li><li>agent permission</li><li>compact JWS signature</li></ul>
+<h2 id="interoperability">Interoperability</h2>
+<p>VRP implementers should keep field names stable and machine-readable. Agents should be able to verify the offer without relying on page text, screenshots, cached listing data, or marketplace mirrors.</p>
+<p>If a value cannot be verified, agents must treat it as unknown. A missing endpoint, failed fetch, invalid JSON response, failed signature, or stale <code>valid_until</code> must never be interpreted as a confirmed negative or a confirmed positive.</p>
+      </article>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VRP Addon Attestation Layer — Specification v0.1 | Vacation Rental Protocol</title>
+    <meta name="description" content="This document defines the semantics of one attestation layer, addon, for add-on services a host sells against an existing offer or stay: late checkout, early check-in, stay extensions, and comparable extras." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="VRP Addon Attestation Layer — Specification v0.1" />
+    <meta property="og:description" content="This document defines the semantics of one attestation layer, addon, for add-on services a host sells against an existing offer or stay: late checkout, early check-in, stay extensions, and comparable extras." />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/spec/addon-attestation-layer-v0.1" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="VRP Addon Attestation Layer — Specification v0.1" />
+    <meta name="twitter:description" content="This document defines the semantics of one attestation layer, addon, for add-on services a host sells against an existing offer or stay: late checkout, early check-in, stay extensions, and comparable extras." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/spec/addon-attestation-layer-v0.1" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/spec/addon-attestation-layer-v0.1.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/spec/addon-attestation-layer-v0.1#techarticle",
+  "headline": "VRP Addon Attestation Layer — Specification v0.1",
+  "description": "This document defines the semantics of one attestation layer, addon, for add-on services a host sells against an existing offer or stay: late checkout, early check-in, stay extensions, and comparable extras.",
+  "url": "https://vacationrentalprotocol.com/spec/addon-attestation-layer-v0.1",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/spec/addon-attestation-layer-v0.1.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/addon-attestation-layer-v0.1.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Specification · <a href="https://vacationrentalprotocol.com/spec/addon-attestation-layer-v0.1.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/addon-attestation-layer-v0.1.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="vrp-addon-attestation-layer-specification-v01">VRP Addon Attestation Layer — Specification v0.1</h1>
+<p><strong>Status:</strong> Public draft — <strong>proposal for discussion</strong> (tracks <a href="https://github.com/vacationrentalprotocol/vrp-spec/issues/63">issue #63</a>). Additive by construction: <code>addon</code> rides the open layer vocabulary of <a href="https://vacationrentalprotocol.com/spec/receipt-v1">Receipt Envelope v1 §3</a> (&quot;a new trust layer = a new <code>attestations[]</code> entry — no central approval is required&quot;). Nothing in this document changes what a receipt-v1 verifier MUST do today.</p>
+<p><strong>Published:</strong> 2026-08-01</p>
+<p><strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
+<p><strong>Builds on:</strong> <a href="https://vacationrentalprotocol.com/spec/receipt-v1">Receipt Envelope v1</a> (layer vocabulary §3, per-attestation freshness D2, signature input rule D5, key lifecycle §10), <a href="https://vacationrentalprotocol.com/spec/v0.1">Core VRP v0.1</a> (signed offers, host JWKS), <a href="https://vacationrentalprotocol.com/spec/proof-chain-v0.1">Booking Proof Chain v0.1</a> (supersession semantics).</p>
+<h2 id="1-scope">1. Scope</h2>
+<p>This document defines the semantics of one attestation layer, <strong><code>addon</code></strong>, for add-on services a host sells against an existing offer or stay: late checkout, early check-in, stay extensions, and comparable extras.</p>
+<p>The gap it closes: these sales already land in the payment rail and in the booking record, but they are not part of the host-signed, independently verifiable trust chain the way the <code>offer</code>, <code>transport</code>, and <code>payment</code> layers are. An agent that can verify *&quot;this stay costs X&quot;* today cannot verify *&quot;and the 2-hour late checkout the guest bought belongs to that same stay, priced by the same host key.&quot;*</p>
+<h2 id="2-layer-semantics">2. Layer semantics</h2>
+<table><thead><tr><th>Property</th><th>Rule</th></tr></thead><tbody><tr><td><code>layer</code></td><td>Exactly <code>&quot;addon&quot;</code></td></tr><tr><td>Cardinality</td><td>One attestation per sold add-on. Multiple add-ons on one stay = multiple <code>addon</code> entries in the flat <code>attestations[]</code> array (receipt-v1 §3)</td></tr><tr><td><code>valid_from</code> / <code>valid_until</code></td><td>MUST be present; evaluated per attestation (D2)</td></tr><tr><td><code>signature</code></td><td>Compact JWS over the addon artifact (D5), signed by a key published in the <strong>same host-node JWKS</strong> as the <code>offer</code> layer. Per-layer key separation is permitted (§10 K5)</td></tr><tr><td><code>source</code></td><td>SHOULD point at the host JWKS used for verification</td></tr><tr><td><code>ref</code></td><td>MUST carry the correlator of the base subject the add-on attaches to (offer id or booking correlator)</td></tr></tbody></table>
+<p>The host is the merchant of record for the add-on; that is why the addon artifact is signed by the host-node key lineage and not by any platform key.</p>
+<h2 id="3-addon-artifact-the-signed-payload">3. Addon artifact (the signed payload)</h2>
+<table><thead><tr><th>Field</th><th>Requirement</th><th>Description</th></tr></thead><tbody><tr><td><code>addon_type</code></td><td>MUST</td><td>Open vocabulary string: <code>late_checkout</code>, <code>early_checkin</code>, <code>extension</code>, … New types need no central approval</td></tr><tr><td><code>description</code></td><td>SHOULD</td><td>Short human-readable label, guest language</td></tr><tr><td><code>quantity</code></td><td>SHOULD</td><td>Number + <code>unit</code> (e.g. <code>{ &quot;value&quot;: 2, &quot;unit&quot;: &quot;hours&quot; }</code>, <code>{ &quot;value&quot;: 1, &quot;unit&quot;: &quot;nights&quot; }</code>)</td></tr><tr><td><code>price</code></td><td>MUST</td><td><code>{ &quot;amount&quot;: …, &quot;currency&quot;: ISO-4217 }</code> — the amount representation MUST match the one used by the receipt's <code>payment</code> layer for the same stay</td></tr><tr><td><code>payment_ref</code></td><td>SHOULD</td><td>Correlator that reconciles this add-on with the <code>payment</code> layer entry (or PSP object) that charged it</td></tr><tr><td><code>issued_at</code></td><td>MUST</td><td>ISO 8601 date-time of sale</td></tr></tbody></table>
+<h2 id="4-verification">4. Verification</h2>
+<ul><li>A v1 verifier that does not recognize <code>addon</code> MUST treat it like any other unknown layer: the JWS is verifiable, the semantics are opaque, and the presence of the entry MUST NOT fail the receipt.</li><li>An addon-aware verifier verifies the JWS per D5, evaluates freshness per D2, and correlates <code>ref</code> against the receipt subject before presenting the add-on as belonging to the stay.</li></ul>
+<h2 id="5-relationship-to-stay-extensions-and-the-proof-chain">5. Relationship to stay extensions and the proof chain</h2>
+<p>An <code>extension</code> add-on attests the <strong>sale</strong>. The resulting change to the stay window itself is a booking-level event and follows <a href="https://vacationrentalprotocol.com/spec/proof-chain-v0.1">Booking Proof Chain v0.1</a> supersession semantics. When a superseding booking artifact exists, the <code>addon</code> attestation SHOULD reference the same booking correlator so the two chains reconcile. An addon attestation is never mutated; corrections are expressed as new attestations, consistent with the append-only spirit of the flat array.</p>
+<h2 id="6-non-goals">6. Non-goals</h2>
+<ul><li>No new endpoint and no new runtime requirement for nodes or agents.</li><li>No central registry of <code>addon_type</code> values (open vocabulary per §3).</li><li>No pricing or policy semantics: how a host prices add-ons stays node-internal and is out of scope here.</li><li>No change to refund mechanics; a refunded add-on is a payment-layer fact.</li></ul>
+<h2 id="7-worked-example-non-normative">7. Worked example (non-normative)</h2>
+<pre><code>{
+  &quot;layer&quot;: &quot;addon&quot;,
+  &quot;valid_from&quot;: &quot;2026-08-01T10:00:00Z&quot;,
+  &quot;valid_until&quot;: &quot;2026-08-02T10:00:00Z&quot;,
+  &quot;ref&quot;: &quot;booking_9f2c…&quot;,
+  &quot;source&quot;: &quot;https://example-host.example/.well-known/jwks.json&quot;,
+  &quot;signature&quot;: &quot;eyJhbGciOiJFZERTQSIsImtpZCI6Im5vZGUtb2ZmZXItMSJ9…&quot;,
+  &quot;artifact&quot;: {
+    &quot;addon_type&quot;: &quot;late_checkout&quot;,
+    &quot;description&quot;: &quot;Late checkout until 14:00&quot;,
+    &quot;quantity&quot;: { &quot;value&quot;: 3, &quot;unit&quot;: &quot;hours&quot; },
+    &quot;price&quot;: { &quot;amount&quot;: &quot;350.00&quot;, &quot;currency&quot;: &quot;SEK&quot; },
+    &quot;payment_ref&quot;: &quot;pi_3Qx…&quot;,
+    &quot;issued_at&quot;: &quot;2026-08-01T09:58:12Z&quot;
+  }
+}</code></pre>
+<h2 id="8-open-questions-for-discussion-in-63">8. Open questions (for discussion in #63)</h2>
+<ol><li>Amount representation: pin minor units, or inherit the node's declared convention from the base offer? (Draft above says: match the <code>payment</code> layer.)</li><li>Should receipt-v2 fold well-known <code>addon_type</code> values into a non-normative appendix for interop hints?</li><li>Refund expression: is a payment-layer fact enough, or does a <code>superseded_by</code>-style pointer between addon attestations earn its place?</li></ol>
+<h2 id="9-neutrality">9. Neutrality</h2>
+<p>The spec is vendor-neutral. HemmaBo is a reference implementer, not an approval authority. Any node, on any stack, can sign and any party can verify an addon attestation without permission from anyone.</p>
+<h2 id="10-license">10. License</h2>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>.</p>
+      </article>
+    </main>
+  </body>
+</html>

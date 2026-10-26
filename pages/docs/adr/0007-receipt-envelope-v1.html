@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ADR 0007: Receipt Envelope v1 — Flat attestations[] and Decisions D1–D8 | Vacation Rental Protocol</title>
+    <meta name="description" content="VRP's receipt envelope is a versioned, verifiable booking record: one object that carries signed attestations from independent trust layers (offer, transport, payment, …) so a verifier can check each layer on its own. The envelope was first designed alongside the reference implementation, and the…" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="ADR 0007: Receipt Envelope v1 — Flat attestations[] and Decisions D1–D8" />
+    <meta property="og:description" content="VRP's receipt envelope is a versioned, verifiable booking record: one object that carries signed attestations from independent trust layers (offer, transport, payment, …) so a verifier can check each layer on its own. The envelope was first designed alongside the reference implementation, and the…" />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="ADR 0007: Receipt Envelope v1 — Flat attestations[] and Decisions D1–D8" />
+    <meta name="twitter:description" content="VRP's receipt envelope is a versioned, verifiable booking record: one object that carries signed attestations from independent trust layers (offer, transport, payment, …) so a verifier can check each layer on its own. The envelope was first designed alongside the reference implementation, and the…" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1#techarticle",
+  "headline": "ADR 0007: Receipt Envelope v1 — Flat attestations[] and Decisions D1–D8",
+  "description": "VRP's receipt envelope is a versioned, verifiable booking record: one object that carries signed attestations from independent trust layers (offer, transport, payment, …) so a verifier can check each layer on its own. The envelope was first designed alongside the reference implementation, and the…",
+  "url": "https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0007-receipt-envelope-v1.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0007-receipt-envelope-v1.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="adr-0007-receipt-envelope-v1-flat-attestations-and-decisions-d1d8">ADR 0007: Receipt Envelope v1 — Flat <code>attestations[]</code> and Decisions D1–D8</h1>
+<p><strong>Status:</strong> Proposed — the decisions below have been normative in <a href="https://vacationrentalprotocol.com/spec/receipt-v1"><code>spec/receipt-v1.md</code></a> since its first publication (2026-06-24); this record states them as the standard's own. <strong>Date:</strong> 2026-10-17</p>
+<p><strong>Related:</strong> ADR 0002 (no-gatekeeper trust and interop), ADR 0005 (the standard is the source of truth), ADR 0008 (key lifecycle), <a href="https://vacationrentalprotocol.com/spec/receipt-v1"><code>spec/receipt-v1.md</code></a>, <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/schemas/vrp-receipt.v1.schema.json"><code>schemas/vrp-receipt.v1.schema.json</code></a>, <a href="https://vacationrentalprotocol.com/spec/profiles/mcp-composition-profile"><code>spec/profiles/mcp-composition-profile.md</code></a>.</p>
+<h2 id="context">Context</h2>
+<p>VRP's receipt envelope is a versioned, verifiable booking record: one object that carries signed attestations from independent trust layers (<code>offer</code>, <code>transport</code>, <code>payment</code>, …) so a verifier can check each layer on its own. The envelope was first designed alongside the reference implementation, and the record of its design decisions stayed in that implementation's repository. This repository cited that record thirty times as &quot;ADR 0010&quot; — in the receipt specification, the MCP profile, the receipt schema, the reference verifier and the license footer of every specification document — so a reader following the reasoning behind the standard left the standard to find it.</p>
+<p>ADR 0005 decides that the artifacts in this repository are authoritative and that no implementation is. This record states the receipt-envelope decisions in the standard's own terms, numbered in this repository's sequence. The implementation's record is not copied and is not authoritative for VRP.</p>
+<h2 id="decision">Decision</h2>
+<p>The decision identifiers D1–D8 keep the meaning they have had in the specification and the schema, so every existing &quot;D2&quot;, &quot;D5&quot; or &quot;D8&quot; citation stays valid.</p>
+<ul><li><strong>D1 — Flat <code>attestations[]</code> is the core.</strong> A v1 receipt is a versioned object (<code>vrp_receipt_version</code>, <code>subject</code>, <code>issuer</code>, <code>attestations</code>) whose attestations form a flat array. A new trust layer is a new array entry; no central approval is needed to add one. Recursive sub-receipts and selective disclosure are reserved as the named, empty optional fields <code>sub_receipt</code> and <code>disclosure</code>, which a v1 verifier does not recurse into or interpret (<a href="https://vacationrentalprotocol.com/spec/receipt-v1">receipt-v1 §3</a>). Simplicity is chosen now; extension points are reserved, not built.</li><li><strong>D2 — Freshness is per attestation.</strong> Every attestation carries <code>valid_from</code> and <code>valid_until</code>, evaluated after its signature is validated, so expiry is expressed per layer rather than once for the whole receipt (§4).</li><li><strong>D3 — The transparency-log proof is optional.</strong> An attestation MAY carry a <code>tlog</code> inclusion proof. A missing proof means signature-only verification, not failure, and no log-anchored property may be claimed without one (§5). The envelope does not claim evidence it does not carry.</li><li><strong>D4 — Partial verification and one error registry.</strong> A verifier reports a status per attestation — <code>verified</code>, <code>expired</code>, <code>invalid</code>, <code>unverifiable</code> — and <code>unverifiable</code> is never presented as <code>verified</code>. Failure codes come from a single normative registry that reuses the existing offer-layer and payment-layer codes instead of inventing new ones (§6, §6.1).</li><li><strong>D5 — The signature input is pinned.</strong> Signatures are verified over the compact-JWS bytes as received; JSON is never re-canonicalized to re-derive the signing input. Where canonical JSON is required for a non-JWS correlator, JCS (RFC 8785) is used (§7). An ad hoc canonicalization diverges between implementations; the received bytes do not.</li><li><strong>D6 — A composition profile signs an assertion about the interaction.</strong> A transport such as MCP has no message signing, so the attestation is the node's signed statement about the interaction, never the unsigned transport bytes. The first profile is MCP <code>transport</code> (§8 and the MCP composition profile).</li><li><strong>D7 — Licensing.</strong> Specification text is dedicated to the public domain under CC0 1.0; reference code and conformance vectors are Apache-2.0, which includes a royalty-free patent grant (<a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/README.md">README</a>, <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/PATENTS.md">PATENTS.md</a>). The standard can then be implemented, and the reference code reused, without a licence or patent negotiation.</li><li><strong>D8 — Neutrality in specification language.</strong> The specification, schema and vectors are vendor-neutral. No implementation, the reference implementation included, is an approval authority; composition profiles are published, not granted (§13; ADR 0002).</li></ul>
+<p>Not carried over from the implementation's record: its delivery phases, its implementation-status tables, its internal code paths, and its rules for its own public communication. They describe one implementation, not the standard.</p>
+<h2 id="consequences">Consequences</h2>
+<ul><li>Of the thirty &quot;ADR 0010&quot; citations in this repository, 28 now cite ADR 0007 and one, which cited the key-lifecycle section, cites ADR 0008; the last, an internal note, now names GOVERNANCE.md §5. The two &quot;ADR 0011&quot; citations cite ADR 0008. The standard's reasoning no longer points outside the standard.</li><li><code>spec/receipt-v1.md</code> §2 lists D1–D8 (it said &quot;D1–D7&quot;, although §13 of the same document is &quot;Neutrality (D8)&quot;).</li><li>Implementation roadmap wording that stood beside these citations — phase numbers, work-order and tracker numbers — is removed from the specification text. No normative requirement changes.</li><li>No schema field, verification rule or conformance vector changes; the receipt schema changes only in <code>description</code> strings.</li></ul>
+<p>This ADR adds no runtime behavior and no new tools.</p>
+      </article>
+    </main>
+  </body>
+</html>

@@ -43,6 +43,7 @@ const ROUTES = [
   ["/docs/first-mover-evidence-memo", "docs/first-mover-evidence-memo.md"],
   ["/contexts/v1", "contexts/v1.jsonld"],
   ["/terms", "terms.html"],
+  ["/rel/protocol", "rel/protocol.html"],
   ["/spec/v0.1", "spec/v0.1.md"],
   ["/spec/attestations-v0.1", "spec/attestations-v0.1.md"],
   ["/spec/well-known-uri-v0.1", "spec/well-known-uri-v0.1.md"],

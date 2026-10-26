@@ -57,6 +57,7 @@ Definition: https://vacationrentalprotocol.com/vrp-vacation-rental
 - Implement portable attestations (guide): https://vacationrentalprotocol.com/docs/implement-attestations
 - VRP JSON-LD context: https://vacationrentalprotocol.com/contexts/v1
 - VRP terms vocabulary: https://vacationrentalprotocol.com/terms
+- The protocol link relation (how a VRP node names the protocol on its own pages): https://vacationrentalprotocol.com/rel/protocol
 - Discovery JSON Schema: https://vacationrentalprotocol.com/schemas/discovery-v0.1.schema.json
 - JWKS JSON Schema: https://vacationrentalprotocol.com/schemas/jwks-v0.1.schema.json
 - Signed offer JSON Schema: https://vacationrentalprotocol.com/schemas/verified-stay-offer-v0.1.schema.json

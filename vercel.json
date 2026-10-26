@@ -241,7 +241,7 @@
       ]
     },
     {
-      "source": "/spec/(.*)",
+      "source": "/spec/((?!.*\\.md$).*)",
       "headers": [
         {
           "key": "Content-Type",
@@ -254,7 +254,7 @@
       ]
     },
     {
-      "source": "/docs/(.*)",
+      "source": "/docs/((?!source-pack$)(?!.*\\.md$).*)",
       "headers": [
         {
           "key": "Content-Type",

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Implement VRP Portable Attestations | Vacation Rental Protocol</title>
+    <meta name="description" content="This guide describes how a host-owned domain can publish VRP Portable Attestations v0.1 without relying on HemmaBo, a central registry, a marketplace, an OTA, a booking intermediary, or a trust scoring service." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="Implement VRP Portable Attestations" />
+    <meta property="og:description" content="This guide describes how a host-owned domain can publish VRP Portable Attestations v0.1 without relying on HemmaBo, a central registry, a marketplace, an OTA, a booking intermediary, or a trust scoring service." />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/implement-attestations" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Implement VRP Portable Attestations" />
+    <meta name="twitter:description" content="This guide describes how a host-owned domain can publish VRP Portable Attestations v0.1 without relying on HemmaBo, a central registry, a marketplace, an OTA, a booking intermediary, or a trust scoring service." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/implement-attestations" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/implement-attestations.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/implement-attestations#techarticle",
+  "headline": "Implement VRP Portable Attestations",
+  "description": "This guide describes how a host-owned domain can publish VRP Portable Attestations v0.1 without relying on HemmaBo, a central registry, a marketplace, an OTA, a booking intermediary, or a trust scoring service.",
+  "url": "https://vacationrentalprotocol.com/docs/implement-attestations",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/implement-attestations.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/implement-attestations.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/implement-attestations.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/implement-attestations.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="implement-vrp-portable-attestations">Implement VRP Portable Attestations</h1>
+<p>This guide describes how a host-owned domain can publish VRP Portable Attestations v0.1 without relying on HemmaBo, a central registry, a marketplace, an OTA, a booking intermediary, or a trust scoring service.</p>
+<p>Portable attestations do not replace core VRP offer verification. A fresh signed offer is still required before an agent may quote availability, exact price, or a direct booking URL.</p>
+<h2 id="minimum-publishing-profile">Minimum Publishing Profile</h2>
+<ol><li>Publish a <code>did:web</code> DID document for the host domain.</li><li>Include an Ed25519 verification method for attestation JWS verification.</li><li>Use a <code>kid</code> controlled by the host-domain DID, such as <code>did:web:example-host.invalid#attestations-ed25519-2026-05</code>.</li><li>Sign credentials as compact JWS with <code>typ: &quot;vc+jwt&quot;</code> and <code>alg: &quot;EdDSA&quot;</code>.</li><li>Include the W3C VC v2 context and the VRP context in the JWS payload.</li><li>Use <code>iat</code> for JWS signing time, and <code>validFrom</code> / <code>validUntil</code> for credential validity.</li><li>Do not include <code>proof</code>, <code>signature</code>, or <code>issuedAt</code> in the credential JSON.</li><li>Publish status only as <code>VRPStatusListEntry</code> unless a future version defines a full W3C Bitstring Status List profile.</li></ol>
+<h2 id="did-web-document">DID Web Document</h2>
+<p>For issuer <code>did:web:example-host.invalid</code>, the DID document is published at:</p>
+<pre><code>https://example-host.invalid/.well-known/did.json</code></pre>
+<p>The DID document should include an attestation verification method that is controlled by the host-domain DID. The same host-domain trust root may also control a separate offer-signing key. The private keys do not need to be the same.</p>
+<p>Example: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/examples/attestations/did-web-document.v0.1.json">did-web-document.v0.1.json</a>.</p>
+<h2 id="context-publishing">Context Publishing</h2>
+<p>VRP terms are defined by the VRP context:</p>
+<pre><code>https://vacationrentalprotocol.com/contexts/v1</code></pre>
+<p>The repository copy is <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/contexts/v1.jsonld">contexts/v1.jsonld</a>. Deployments should serve the canonical extensionless URL above and may also serve <code>/contexts/v1.jsonld</code> as an equivalent copy. Both should return the same JSON-LD document.</p>
+<h2 id="privacy-checklist">Privacy Checklist</h2>
+<p>Do not publish guest reviews, guest outcomes, guest risk, guest scores, or guest history in v0.1.</p>
+<p><code>VRPVerifiedStayCredential</code>, if used, must stay privacy-minimized:</p>
+<ul><li>use an opaque <code>stayRef</code></li><li>use <code>verifiedOfferHash</code></li><li>omit guest name, email, phone, guest DID, and payment details</li><li>omit exact stay dates when they could identify the guest</li><li>omit review text and guest outcome data</li></ul>
+<p>Guest-held credentials and reviews are deferred to a future v0.2 design with selective disclosure.</p>
+      </article>
+    </main>
+  </body>
+</html>

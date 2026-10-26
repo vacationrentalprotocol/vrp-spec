@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ADR 0006: Node Page Identification — Every VRP Node Names VRP Where People and Models Read | Vacation Rental Protocol</title>
+    <meta name="description" content="The standard already binds the protocol's name into every node's machine surface: the discovery document's protocol field is required and constrained to vacation-rental-protocol (schemas/discovery-v0.1.schema.json), every schema $id and the JSON-LD vocabulary live on vacationrentalprotocol.com, and…" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="ADR 0006: Node Page Identification — Every VRP Node Names VRP Where People and Models Read" />
+    <meta property="og:description" content="The standard already binds the protocol's name into every node's machine surface: the discovery document's protocol field is required and constrained to vacation-rental-protocol (schemas/discovery-v0.1.schema.json), every schema $id and the JSON-LD vocabulary live on vacationrentalprotocol.com, and…" />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/adr/0006-node-page-identification" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="ADR 0006: Node Page Identification — Every VRP Node Names VRP Where People and Models Read" />
+    <meta name="twitter:description" content="The standard already binds the protocol's name into every node's machine surface: the discovery document's protocol field is required and constrained to vacation-rental-protocol (schemas/discovery-v0.1.schema.json), every schema $id and the JSON-LD vocabulary live on vacationrentalprotocol.com, and…" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/adr/0006-node-page-identification" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/adr/0006-node-page-identification.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/adr/0006-node-page-identification#techarticle",
+  "headline": "ADR 0006: Node Page Identification — Every VRP Node Names VRP Where People and Models Read",
+  "description": "The standard already binds the protocol's name into every node's machine surface: the discovery document's protocol field is required and constrained to vacation-rental-protocol (schemas/discovery-v0.1.schema.json), every schema $id and the JSON-LD vocabulary live on vacationrentalprotocol.com, and…",
+  "url": "https://vacationrentalprotocol.com/docs/adr/0006-node-page-identification",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/adr/0006-node-page-identification.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0006-node-page-identification.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/adr/0006-node-page-identification.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0006-node-page-identification.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="adr-0006-node-page-identification-every-vrp-node-names-vrp-where-people-and-models-read">ADR 0006: Node Page Identification — Every VRP Node Names VRP Where People and Models Read</h1>
+<p><strong>Status:</strong> Proposed <strong>Date:</strong> 2026-10-17</p>
+<p><strong>Related:</strong> ADR 0002 (no-gatekeeper trust and interop), ADR 0005 (the standard is the source of truth), GOVERNANCE.md §4–§6.</p>
+<h2 id="context">Context</h2>
+<p>The standard already binds the protocol's name into every node's machine surface: the discovery document's <code>protocol</code> field is required and constrained to <code>vacation-rental-protocol</code> (<code>schemas/discovery-v0.1.schema.json</code>), every schema <code>$id</code> and the JSON-LD vocabulary live on <code>vacationrentalprotocol.com</code>, and the vocabulary defines the term <code>VRPVacationRental</code> (&quot;VRP vacation rental&quot;). A VRP-aware agent therefore cannot verify a node without reading the name.</p>
+<p>Nothing in the standard reached the page a guest or an AI model reads. Before this decision, <code>spec/</code>, <code>schemas/</code> and <code>examples/</code> contained no requirement, no recommendation and no test for a node's HTML — no <code>rel=&quot;protocol&quot;</code> link, no visible mention of VRP. The reference node (villaakerlyckan.se, measured 2026-10-16) names VRP in its title, ten times in its body, in a <code>&lt;link rel=&quot;protocol&quot;&gt;</code>, in an HTTP <code>Link</code> header and in its JSON-LD; but it does so because its operator chose to, not because the standard asked. A node built to the letter of v0.1 could serve VRP offers to agents while no human and no model that learns from pages ever saw the word. The open web, not only the MCP channel, has to carry the name for &quot;a VRP vacation rental&quot; to become a category people and models know.</p>
+<p>The standard also had no rule about the name itself: nothing said who may call an implementation VRP. GOVERNANCE.md §6 already establishes that conformance is self-declared against the vectors and that no mark, body or maintainer confers it.</p>
+<p>Two registries were read on 2026-10-16. The IANA Link Relations registry (RFC 8288, &quot;Specification Required&quot;) has no relation type <code>protocol</code>. The microformats <code>existing-rel-values</code> page — the HTML specification's registry for <code>rel</code> keywords — has none either. The HTML keyword can be registered there with a link to the defining section; an HTTP <code>Link</code> header relation that is not registered must be a URI (RFC 8288 §2.1.2).</p>
+<h2 id="decision">Decision</h2>
+<ol><li><code>spec/v0.1.md</code> gains §2.1 *Node page identification*. For the page at <code>https://{canonical_domain}/</code>, a node SHOULD (a) carry <code>&lt;link rel=&quot;protocol&quot; href=&quot;https://vacationrentalprotocol.com/&quot;&gt;</code> in its head and (b) carry a visible hyperlink with <code>rel=&quot;protocol&quot;</code> to the root of <code>https://vacationrentalprotocol.com</code> or to <code>/verify?host={canonical_domain}</code> on that origin, with the string <code>VRP</code> in its link text; and SHOULD (c) send <code>Link: <a href="https://vacationrentalprotocol.com/">https://vacationrentalprotocol.com/</a>; rel=&quot;https://vacationrentalprotocol.com/rel/protocol&quot;</code>, (d) mark its lodging JSON-LD with <code>additionalType: https://vacationrentalprotocol.com/terms#VRPVacationRental</code>, and (e) describe the property as a VRP vacation rental in its own language. The <code>href</code> in (a) and (b) MUST NOT point anywhere but <code>https://vacationrentalprotocol.com</code>: the link names the standard, never a vendor (ADR 0002).</li><li>(a) and (b) are SHOULD in v0.1 and are intended to become MUST in the next MAJOR version (GOVERNANCE.md §5: a new MUST on existing nodes is a breaking change and ships with a migration path). The migration path is the two tags. The checker ships now so any node can self-check before the change.</li><li>The relation is published at <code>https://vacationrentalprotocol.com/rel/protocol</code>. In HTML it is the keyword <code>protocol</code>; in an HTTP <code>Link</code> header it is the extension relation type <code>https://vacationrentalprotocol.com/rel/protocol</code>. Both denote the same relation. After this decision is merged, the keyword is registered on the microformats <code>existing-rel-values</code> page with §2.1 as its defining section. No IANA registration of the bare word is sought: the URI form needs none, and a generic word is unlikely to pass expert review.</li><li><code>scripts/verify-node-page.mjs</code> checks (a) and (b) and reports (c)–(e) against the self-describing vectors in <code>examples/conformance/node-page/</code>, offline, and against a live node with <code>--live {canonical_domain}</code>. It parses HTML attributes; it never matches literal tag text, so a self-closing <code>&lt;link … /&gt;</code> passes. A vector in which the link points at an implementation fails.</li><li>GOVERNANCE.md gains §6.1 *Use of the name*: an implementation that passes the vectors may describe itself as VRP, free and by self-declaration; describing a non-conformant product as VRP is misleading; the names are held for the standard by its author, not by any implementation; there is no certification-mark programme.</li></ol>
+<h2 id="consequences">Consequences</h2>
+<ul><li>A node that follows §2.1 names VRP where a guest reads, where a search engine and a language model read, and where an agent reads. The name travels with the protocol, not with a copyright notice: the specification text and the documentation stay CC0.</li><li>The reference implementation's node template already satisfies (a) and (d) and names the protocol in its title. It fails (b) — its footer link carries <code>rel=&quot;noopener noreferrer&quot;</code> and must gain <code>rel=&quot;protocol&quot;</code> — and (c) — its <code>Link</code> header carries the bare keyword and must use the URI form. Both are changes in the implementation's own repository, made after this decision, and measured live.</li><li>The test chain (<code>npm test</code>) gains <code>verify-node-page</code>; a live variant, <code>verify-node-page:live</code>, takes a domain.</li><li>This is a substantive change (GOVERNANCE.md §4: a new recommendation in a normative document, a new conformance check, and an amendment to GOVERNANCE.md, which §12 makes substantive in itself): at least seven days of review with no maintainer objecting, and approval from two maintainers while two are active.</li><li>Under GOVERNANCE.md §5 it is a <strong>MINOR</strong>, backward-compatible addition, not a MAJOR change: no existing conformant node stops conforming. (a)–(e) are SHOULD. The one MUST NOT — the link target — constrains an element a node adds voluntarily; a node without a <code>rel=&quot;protocol&quot;</code> link is untouched by it. Substantive under §4 and MINOR under §5 are different questions; this decision is both.</li><li>This record cites ADR 0005 (the standard is the source of truth), which is merged before it; the reference stays dead until then.</li><li>Nothing here creates a central issuer, registry or gatekeeper: the link points at an open, CC0 specification, the check runs offline, and the name rule is self-declared against public vectors (ADR 0002).</li></ul>
+<p>This ADR adds one recommendation, one check, one page and one governance section. It changes no signing or verification rule.</p>
+      </article>
+    </main>
+  </body>
+</html>

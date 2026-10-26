@@ -241,11 +241,11 @@
       ]
     },
     {
-      "source": "/spec/(.*).md",
+      "source": "/spec/((?!.*\\.md$).*)",
       "headers": [
         {
           "key": "Content-Type",
-          "value": "text/markdown; charset=utf-8"
+          "value": "text/html; charset=utf-8"
         },
         {
           "key": "Cache-Control",
@@ -254,7 +254,20 @@
       ]
     },
     {
-      "source": "/spec/(.*)",
+      "source": "/docs/((?!source-pack$)(?!.*\\.md$).*)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/html; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    },
+    {
+      "source": "/spec/(.*).md",
       "headers": [
         {
           "key": "Content-Type",
@@ -280,7 +293,7 @@
       ]
     },
     {
-      "source": "/docs/(.*)",
+      "source": "/docs/source-pack",
       "headers": [
         {
           "key": "Content-Type",
@@ -515,7 +528,7 @@
     },
     {
       "source": "/docs/first-mover-evidence-memo",
-      "destination": "/docs/first-mover-evidence-memo.md"
+      "destination": "/pages/docs/first-mover-evidence-memo"
     },
     {
       "source": "/terms",
@@ -523,19 +536,19 @@
     },
     {
       "source": "/spec/v0.1",
-      "destination": "/spec/v0.1.md"
+      "destination": "/pages/spec/v0.1"
     },
     {
       "source": "/spec/attestations-v0.1",
-      "destination": "/spec/attestations-v0.1.md"
+      "destination": "/pages/spec/attestations-v0.1"
     },
     {
       "source": "/docs/interop-and-trust-positioning",
-      "destination": "/docs/interop-and-trust-positioning.md"
+      "destination": "/pages/docs/interop-and-trust-positioning"
     },
     {
       "source": "/docs/adr/0002-no-gatekeeper-trust-and-interop",
-      "destination": "/docs/adr/0002-no-gatekeeper-trust-and-interop.md"
+      "destination": "/pages/docs/adr/0002-no-gatekeeper-trust-and-interop"
     },
     {
       "source": "/schemas/attestations-v0.1",
@@ -567,19 +580,23 @@
     },
     {
       "source": "/spec/:slug",
-      "destination": "/spec/:slug.md"
+      "destination": "/pages/spec/:slug"
+    },
+    {
+      "source": "/docs/source-pack",
+      "destination": "/docs/source-pack.md"
     },
     {
       "source": "/docs/:slug",
-      "destination": "/docs/:slug.md"
+      "destination": "/pages/docs/:slug"
     },
     {
       "source": "/spec/:dir/:slug",
-      "destination": "/spec/:dir/:slug.md"
+      "destination": "/pages/spec/:dir/:slug"
     },
     {
       "source": "/docs/:dir/:slug",
-      "destination": "/docs/:dir/:slug.md"
+      "destination": "/pages/docs/:dir/:slug"
     }
   ]
 }

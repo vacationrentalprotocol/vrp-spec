@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VRP Receipt Envelope — Specification v1 | Vacation Rental Protocol</title>
+    <meta name="description" content="VRP Receipt v1 defines a versioned verifiable booking record: a flat array of signed attestations from independent trust layers (offer, transport, payment, …) assembled by a host node. It composes the existing VRP signed stay offer (v0.1.md) and composition profiles…" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="VRP Receipt Envelope — Specification v1" />
+    <meta property="og:description" content="VRP Receipt v1 defines a versioned verifiable booking record: a flat array of signed attestations from independent trust layers (offer, transport, payment, …) assembled by a host node. It composes the existing VRP signed stay offer (v0.1.md) and composition profiles…" />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/spec/receipt-v1" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="VRP Receipt Envelope — Specification v1" />
+    <meta name="twitter:description" content="VRP Receipt v1 defines a versioned verifiable booking record: a flat array of signed attestations from independent trust layers (offer, transport, payment, …) assembled by a host node. It composes the existing VRP signed stay offer (v0.1.md) and composition profiles…" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/spec/receipt-v1" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/spec/receipt-v1.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/spec/receipt-v1#techarticle",
+  "headline": "VRP Receipt Envelope — Specification v1",
+  "description": "VRP Receipt v1 defines a versioned verifiable booking record: a flat array of signed attestations from independent trust layers (offer, transport, payment, …) assembled by a host node. It composes the existing VRP signed stay offer (v0.1.md) and composition profiles…",
+  "url": "https://vacationrentalprotocol.com/spec/receipt-v1",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/spec/receipt-v1.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/receipt-v1.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Specification · <a href="https://vacationrentalprotocol.com/spec/receipt-v1.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/receipt-v1.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="vrp-receipt-envelope-specification-v1">VRP Receipt Envelope — Specification v1</h1>
+<p><strong>Status:</strong> Public draft</p>
+<p><strong>Updated:</strong> 2026-07-04 — §14 issuance wrapper &amp; log anchoring, §15 delivery (verbatim rule), §16 verifier walk-through</p>
+<p><strong>Published:</strong> 2026-06-24 (revised 2026-07-04)</p>
+<p><strong>Envelope version:</strong> <code>1.0</code></p>
+<p><strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
+<p><strong>Machine-readable schema:</strong> <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/schemas/vrp-receipt.v1.schema.json"><code>schemas/vrp-receipt.v1.schema.json</code></a></p>
+<p><strong>Reference verifier:</strong> <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/lib/vrp-receipt.mjs"><code>lib/vrp-receipt.mjs</code></a> (Apache-2.0)</p>
+<h2 id="1-scope">1. Scope</h2>
+<p>VRP Receipt v1 defines a versioned <strong>verifiable booking record</strong>: a flat array of signed attestations from independent trust layers (<code>offer</code>, <code>transport</code>, <code>payment</code>, …) assembled by a host node. It composes the existing VRP signed stay offer (<a href="https://vacationrentalprotocol.com/spec/v0.1"><code>v0.1.md</code></a>) and composition profiles (<a href="https://vacationrentalprotocol.com/spec/profiles/mcp-composition-profile"><code>profiles/mcp-composition-profile.md</code></a>) without making HemmaBo or any operator a gatekeeper.</p>
+<p>This specification is <strong>not</strong> a runtime tool surface, OTA, marketplace, central registry, or booking intermediary. It does not change Portable Attestations v0.1 (<a href="https://vacationrentalprotocol.com/spec/attestations-v0.1"><code>attestations-v0.1.md</code></a>) — especially not its §3 trust model.</p>
+<p>The keywords MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are interpreted as in RFC 2119 and RFC 8174 when capitalized.</p>
+<h2 id="2-references">2. References</h2>
+<ul><li>Core VRP v0.1: <a href="https://vacationrentalprotocol.com/spec/v0.1"><code>v0.1.md</code></a> — JWKS discovery (§3), signed offers (§5)</li><li>Portable Attestations v0.1: <a href="https://vacationrentalprotocol.com/spec/attestations-v0.1"><code>attestations-v0.1.md</code></a> — <code>did:web</code> VC layer (§3–§8)</li><li>MCP composition profile: <a href="https://vacationrentalprotocol.com/spec/profiles/mcp-composition-profile"><code>profiles/mcp-composition-profile.md</code></a> — <code>transport</code> layer (D6)</li><li>Receipt JSON Schema: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/schemas/vrp-receipt.v1.schema.json"><code>schemas/vrp-receipt.v1.schema.json</code></a></li><li>Conformance vectors: <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance/receipt"><code>examples/conformance/receipt/</code></a></li><li><a href="https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1">ADR 0007</a>: receipt envelope decisions D1–D8</li><li><a href="https://vacationrentalprotocol.com/docs/adr/0008-key-lifecycle">ADR 0008</a>: key lifecycle K1–K6 (forward spec; §10 below)</li></ul>
+<h2 id="3-envelope-shape-d1">3. Envelope shape (D1)</h2>
+<p>A v1 receipt MUST be a JSON object with:</p>
+<table><thead><tr><th>Field</th><th>Required</th><th>Description</th></tr></thead><tbody><tr><td><code>vrp_receipt_version</code></td><td>MUST</td><td>Exactly <code>&quot;1.0&quot;</code> for v1 verifiers</td></tr><tr><td><code>subject</code></td><td>MUST</td><td>What the receipt is about (property, stay window, offer id — generic object)</td></tr><tr><td><code>issuer</code></td><td>MUST</td><td>Node identity that assembled the receipt</td></tr><tr><td><code>attestations</code></td><td>MUST</td><td><strong>Flat</strong> array; min length 1</td></tr></tbody></table>
+<p>Each attestation object MUST include:</p>
+<table><thead><tr><th>Field</th><th>Required</th><th>Description</th></tr></thead><tbody><tr><td><code>layer</code></td><td>MUST</td><td>Open vocabulary string, e.g. <code>offer</code>, <code>transport</code>, <code>payment</code></td></tr><tr><td><code>valid_from</code></td><td>MUST</td><td>ISO 8601 date-time (D2)</td></tr><tr><td><code>valid_until</code></td><td>MUST</td><td>ISO 8601 date-time (D2)</td></tr></tbody></table>
+<p>Each attestation object MAY include:</p>
+<table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td><code>source</code></td><td>URL where the verifying public key is published (typically host JWKS)</td></tr><tr><td><code>signature</code></td><td>Compact JWS over the layer artifact (D5)</td></tr><tr><td><code>ref</code></td><td>Opaque correlator (offer id, transaction id, …)</td></tr><tr><td><code>tlog</code></td><td>Optional transparency-log inclusion proof (D3)</td></tr><tr><td><code>sub_receipt</code></td><td><strong>Reserved v2</strong> — recursive sub-receipt; v1 verifiers MUST NOT recurse</td></tr><tr><td><code>disclosure</code></td><td><strong>Reserved v2</strong> — selective-disclosure pointer; v1 verifiers MUST NOT interpret</td></tr></tbody></table>
+<p>A new trust layer = a new <code>attestations[]</code> entry. No central approval is required.</p>
+<h2 id="4-per-attestation-freshness-d2">4. Per-attestation freshness (D2)</h2>
+<p>Every attestation MUST carry <code>valid_from</code> and <code>valid_until</code>. A v1 verifier MUST reject an attestation whose verification time is before <code>valid_from</code> (<code>not_yet_valid</code>) or after <code>valid_until</code> (<code>sig_expired</code>) <strong>after</strong> the JWS signature is validated.</p>
+<p>Freshness is evaluated <strong>per attestation</strong>, not once for the whole receipt.</p>
+<h2 id="5-transparency-log-field-d3">5. Transparency log field (D3)</h2>
+<p>Each attestation MAY carry a <code>tlog</code> inclusion proof. A v1 verifier MUST:</p>
+<ul><li>Treat a <strong>missing</strong> <code>tlog</code> as signature-only verification — not a failure.</li><li>NOT claim log-anchored properties for an attestation without <code>tlog</code>.</li></ul>
+<p>Receipts kept as dispute or insurance evidence that must survive key revocation MAY require <code>tlog</code> (see §10 K4).</p>
+<h2 id="6-verification-result-and-error-registry-d4">6. Verification result and error registry (D4)</h2>
+<p>A v1 verifier MUST return <strong>partial verification</strong>: per-attestation status, not a single boolean. Envelope-level fields:</p>
+<table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody><tr><td><code>receipt_valid</code></td><td>Structurally valid v1 receipt (version + schema)</td></tr><tr><td><code>fully_verified</code></td><td><code>true</code> only when <strong>every</strong> attestation has status <code>verified</code></td></tr><tr><td><code>attestations[]</code></td><td>Per-layer <code>{ index, layer, status, error, kid }</code></td></tr><tr><td><code>errors[]</code></td><td>Envelope-level codes when <code>receipt_valid</code> is false</td></tr></tbody></table>
+<p>Per-attestation <code>status</code> values:</p>
+<table><thead><tr><th>Status</th><th>Meaning</th></tr></thead><tbody><tr><td><code>verified</code></td><td>Signature valid and inside freshness window</td></tr><tr><td><code>expired</code></td><td>Signature valid but outside freshness window</td></tr><tr><td><code>invalid</code></td><td>Signature check failed (e.g. <code>sig_invalid</code>)</td></tr><tr><td><code>unverifiable</code></td><td>Layer present but cannot be checked (missing signature or key)</td></tr></tbody></table>
+<p><code>unverifiable</code> is <strong>distinct</strong> from <code>verified</code>. A receipt MUST NOT represent an unverifiable layer as verified.</p>
+<h3 id="61-normative-error-codes-v1">6.1 Normative error codes (v1)</h3>
+<p><strong>Envelope / signature level:</strong></p>
+<ul><li><code>unsupported_version</code> — <code>vrp_receipt_version</code> ≠ <code>&quot;1.0&quot;</code></li><li><code>malformed_receipt</code> — fails schema / empty <code>attestations[]</code></li><li><code>malformed_attestation</code></li><li><code>missing_validity_window</code></li><li><code>sig_invalid</code></li><li><code>sig_expired</code></li><li><code>not_yet_valid</code></li><li><code>key_unresolvable</code></li><li><code>layer_unverifiable</code></li><li><code>canonicalization_mismatch</code></li></ul>
+<p><strong>VRP offer-layer</strong> (reused from core offer verification):</p>
+<ul><li><code>agent_permission_denied</code>, <code>not_available</code>, <code>price_not_exact</code>, <code>direct_booking_url_missing</code></li></ul>
+<p><strong>AP2 payment-layer</strong> (reused from AP2 mandate verification):</p>
+<ul><li><code>mandate_expired</code>, <code>mandate_missing_amount</code>, <code>invalid_charge_amount</code>, <code>amount_exceeds_mandate</code>, <code>currency_mismatch</code>, <code>merchant_mismatch</code>, <code>cart_mismatch</code></li></ul>
+<p>The reference verifier in <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/lib/vrp-receipt.mjs"><code>lib/vrp-receipt.mjs</code></a> implements the envelope-level codes above for v1 receipt verification. Layer-specific offer/AP2 codes apply when a profile-aware verifier interprets attestation payloads.</p>
+<h2 id="7-signature-input-rule-d5">7. Signature input rule (D5)</h2>
+<p>The signature MUST be verified over the <strong>compact-JWS bytes as received</strong>. A v1 verifier MUST NOT re-canonicalize JSON to re-derive the signing input.</p>
+<p>Where canonical JSON is required for <strong>non-JWS correlators</strong> (e.g. MCP <code>arguments_sha256</code>), implementations MUST use JCS (RFC 8785). That canonicalization applies only to the hash input — not to JWS verification. See <a href="https://vacationrentalprotocol.com/spec/profiles/mcp-composition-profile"><code>profiles/mcp-composition-profile.md</code></a>.</p>
+<h2 id="8-composition-profiles-d6">8. Composition profiles (D6)</h2>
+<p>Composition profiles define how an external interaction becomes an attestation entry. The first normative profile is MCP <code>transport</code> — see <a href="https://vacationrentalprotocol.com/spec/profiles/mcp-composition-profile"><code>profiles/mcp-composition-profile.md</code></a>.</p>
+<p>Profiles MUST sign an <strong>assertion about the interaction</strong>, not unsigned transport bytes. Additional profiles (e.g. AP2 <code>payment</code>) follow the same envelope rules.</p>
+<h3 id="81-argument-key-casing">8.1 Argument key casing</h3>
+<p>For MCP transport assertions, tool-call argument keys that feed <code>arguments_sha256</code> MUST be <strong><code>snake_case</code></strong>: <code>check_in</code>, <code>check_out</code>, <code>guests</code> — matching core VRP endpoint parameters (<a href="https://vacationrentalprotocol.com/spec/v0.1"><code>v0.1.md</code></a> §4). This is <strong>distinct</strong> from camelCase booking URL query parameters (<a href="https://vacationrentalprotocol.com/spec/v0.1"><code>v0.1.md</code></a> §5.1). Normalization before hashing is the caller's responsibility; see the normative pin in the MCP profile.</p>
+<h2 id="9-key-discovery-layer-separation">9. Key-discovery layer separation</h2>
+<p>VRP uses <strong>two key-discovery paths</strong>. Implementers MUST NOT conflate them:</p>
+<table><thead><tr><th>Layer</th><th>Artifact</th><th>Key discovery</th><th>Typical <code>kid</code> form</th></tr></thead><tbody><tr><td><strong>Offer + receipt attestations</strong></td><td>Compact JWS (<code>offer</code>, <code>transport</code>, …)</td><td>Fetch <code>https://{host}/.well-known/jwks.json</code> directly (<a href="https://vacationrentalprotocol.com/spec/v0.1"><code>v0.1.md</code></a> §3)</td><td>Plain string <code>kid</code> matched against JWKS</td></tr><tr><td><strong>Portable Attestations (VC)</strong></td><td><code>application/vc+jwt</code> credentials</td><td>Resolve issuer <code>did:web:{host}</code> → <code>https://{host}/.well-known/did.json</code> (<a href="https://vacationrentalprotocol.com/spec/attestations-v0.1"><code>attestations-v0.1.md</code></a> §3)</td><td>DID URL <code>kid</code> on verification method</td></tr></tbody></table>
+<p>The live reference verifier for <strong>receipt v1</strong> resolves keys via <strong><code>attestation.source</code> → JWKS</strong> and matches JWS <code>kid</code> — it does <strong>not</strong> resolve <code>did:web</code> documents for receipt layers. Portable Attestations remain a separate verification path with their own conformance vectors (<a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance/attestations"><code>examples/conformance/attestations/</code></a>).</p>
+<p>Offer signatures and attestation VC signatures MAY use separate private keys as long as each verifying key is published under the host-domain trust root (<a href="https://vacationrentalprotocol.com/spec/attestations-v0.1"><code>attestations-v0.1.md</code></a> §3 — unchanged by this document).</p>
+<h2 id="10-key-lifecycle-forward-spec-k1k6">10. Key lifecycle — forward spec (K1–K6)</h2>
+<p>The v1 receipt verifier implements <strong>signature + freshness only</strong>. The following rules are <strong>forward spec</strong> for receipts kept as dispute or insurance evidence (ADR 0008). They do not change v1 verifier behavior today.</p>
+<table><thead><tr><th>Rule</th><th>Summary</th></tr></thead><tbody><tr><td><strong>K1</strong></td><td>Every signature carries JWS <code>kid</code>; receipts surface verifying <code>kid</code> per attestation</td></tr><tr><td><strong>K2</strong></td><td>JWKS MUST retain <strong>retired</strong> public keys for the receipt-retention horizon; metadata: <code>vrp_key_status</code> (<code>active</code> · <code>retired</code> · <code>revoked</code>), <code>vrp_not_before</code>, <code>vrp_not_after</code></td></tr><tr><td><strong>K3</strong></td><td>Rotation is additive with overlap — retired keys remain resolvable</td></tr><tr><td><strong>K4</strong></td><td>Revocation ≠ rotation; <code>vrp_compromised_at</code> anchors fail-closed rules; receipts intended to survive revocation MUST carry <code>tlog</code></td></tr><tr><td><strong>K5</strong></td><td>Per-layer key separation is permitted (<code>payment</code> MAY use a distinct <code>kid</code> from <code>offer</code>)</td></tr><tr><td><strong>K6</strong></td><td>Lifecycle-aware codes: <code>key_retired_out_of_window</code>, <code>key_revoked</code>, <code>tlog_required</code></td></tr></tbody></table>
+<p>Until a lifecycle-aware verifier ships, public copy MUST NOT claim long-term post-revocation verifiability.</p>
+<h2 id="11-licensing-d7">11. Licensing (D7)</h2>
+<ul><li><strong>Specification text</strong> (this document): <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a></li><li><strong>Reference code + conformance vectors</strong>: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> with explicit patent grant</li></ul>
+<h2 id="12-conformance">12. Conformance</h2>
+<p>Conformance vectors live in <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance/receipt"><code>examples/conformance/receipt/</code></a>. They use a <strong>shared throwaway Ed25519 test key</strong> (<code>kid</code>: <code>vrp-vectors-2026-01-01-01</code>) — never a production host key (D6 test isolation).</p>
+<p>Every <code>npm test</code> run executes <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/scripts/verify-receipt-vectors.mjs"><code>scripts/verify-receipt-vectors.mjs</code></a>, which MUST pass at minimum:</p>
+<table><thead><tr><th>Vector</th><th>Expectation</th></tr></thead><tbody><tr><td><code>01-offer-transport-verified.json</code></td><td><code>fully_verified: true</code>; <code>offer</code> + <code>transport</code> both <code>verified</code></td></tr><tr><td><code>03-tampered-signature.json</code></td><td>Manipulated JWS byte → <code>sig_invalid</code>; <code>fully_verified: false</code></td></tr></tbody></table>
+<p>Additional vectors cover partial verification (<code>02</code>), expiry (<code>04</code>), unsupported version (<code>05</code>), and malformed envelope (<code>06</code>).</p>
+<p>Implementers SHOULD treat vector output equality with <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/lib/vrp-receipt.mjs"><code>lib/vrp-receipt.mjs</code></a> as the interoperability bar for v1 receipt verification.</p>
+<h2 id="13-neutrality-d8">13. Neutrality (D8)</h2>
+<p>The spec, schema, and vectors are vendor-neutral. HemmaBo is a reference implementer, not an approval authority. Composition profiles are published, not centrally granted.</p>
+<h2 id="14-issuance-wrapper-and-log-anchoring-envelope-level">14. Issuance wrapper and log anchoring (envelope level)</h2>
+<p>An issued receipt MUST be delivered as a <strong>compact JWS signed by the issuing node's key</strong> — the same <code>did:web</code>-published key material as the node's other VRP artifacts — whose payload is the v1 envelope (§3). This wrapper is what makes the receipt log-anchorable at the envelope level:</p>
+<ul><li>The transparency-log leaf for a receipt is <code>sha256:{hex}</code> over the <strong>exact wrapper-JWS string as issued</strong> (<a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">Transparency Log</a> §4.1), recorded with <code>artifact_type: vrp_receipt</code>. No JSON canonicalization is ever applied — the signed bytes are the one hashable form.</li><li>Envelope-level anchoring is <strong>external by hash</strong>: the inclusion proof is fetched from the log by leaf hash and lives outside the receipt. It cannot live inside the receipt — the leaf hash does not exist until the receipt's bytes are final. The per-attestation <code>tlog</code> member (§5) is unchanged and remains available for anchoring individual layer artifacts.</li><li>Wrapper verification follows D5 (§7): over the JWS bytes as received, never re-canonicalized.</li></ul>
+<p>The wrapper does not alter the envelope's trust semantics: attestations inside the receipt still verify per layer (§6), and log inclusion never makes an invalid attestation valid (<a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">Transparency Log</a> §8).</p>
+<h2 id="15-delivery-normative">15. Delivery (normative)</h2>
+<p>Because the log leaf binds the receipt's <strong>exact bytes</strong> (§14), delivery MUST preserve them:</p>
+<ul><li>A receipt wrapper JWS MUST be delivered to its holder <strong>byte-verbatim</strong>.</li><li>A receipt wrapper JWS MUST NOT be embedded inline in the flowing text of an email body, chat message, or any medium that re-wraps or re-encodes text. Line wrapping, whitespace normalization, or character substitution silently change the bytes — the signature may even still validate after trimming, but the leaf hash will not match, making a correctly issued receipt unprovable against the log.</li><li>The holder-facing message SHOULD instead carry a <strong>link</strong> to a surface that serves the JWS string verbatim with a copy affordance (for example the node's own guest surface), together with the verification link.</li></ul>
+<h2 id="16-proving-a-receipt-against-the-log-verifier-walk-through">16. Proving a receipt against the log (verifier walk-through)</h2>
+<p>Any party can execute this procedure with the receipt and public interfaces only — no credentials, no contacting the node's operator:</p>
+<ol><li>Obtain the receipt wrapper JWS <strong>verbatim</strong> (§15).</li><li>Verify the wrapper signature against the issuing node's published keys (<code>did:web</code> / JWKS). This proves who issued the receipt and that its content is intact.</li><li>Compute <code>sha256:{hex}</code> over the exact JWS string. This is the leaf identity.</li><li>Fetch the inclusion proof and an STH for that hash — from the node's read-through proxy or from the log operator directly; the two surfaces are interchangeable because of step 5.</li><li>Verify the STH signature against the <strong>log operator's</strong> published key (<a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">Transparency Log</a> §5.1) — never against a key the node serves.</li><li>Recompute the Merkle root from the leaf hash, leaf index, tree size, and audit path (RFC 6962 §2.1.1). The inclusion claim holds <strong>iff</strong> the recomputed root equals the STH's <code>root_hash</code>; a failed recomputation falsifies it.</li><li>To additionally remove trust in the log operator, obtain a second tree head (archived, <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">Transparency Log</a> §7.1, or independently observed) and verify the consistency proof between the two tree sizes.</li></ol>
+<p>What this proves, in the layered formulation of <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">Transparency Log</a> §8.1: the exact promised terms — price, conditions, issuer, time — existed and were recorded in the log no later than the STH timestamp, tamper-evidently; steps 1–6 require no trust in the node, and step 7 removes the remaining trust in the log operator by making any rewrite cryptographically detectable.</p>
+<h2 id="17-license">17. License</h2>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (<a href="https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1">ADR 0007</a> D7).</p>
+      </article>
+    </main>
+  </body>
+</html>

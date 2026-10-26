@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VRP Attestation Status — W3C Bitstring Status List binding v0.1 | Vacation Rental Protocol</title>
+    <meta name="description" content="This document profiles the W3C Bitstring Status List v1.0 as the standards-conformant status and revocation mechanism for VRP Portable Attestations. It fulfils the forward hook in attestations-v0.1 §6, which states that *&quot;if a future VRP version uses BitstringStatusListEntry, the status list MUST…" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="VRP Attestation Status — W3C Bitstring Status List binding v0.1" />
+    <meta property="og:description" content="This document profiles the W3C Bitstring Status List v1.0 as the standards-conformant status and revocation mechanism for VRP Portable Attestations. It fulfils the forward hook in attestations-v0.1 §6, which states that *&quot;if a future VRP version uses BitstringStatusListEntry, the status list MUST…" />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/spec/attestation-status-bitstring-v0.1" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="VRP Attestation Status — W3C Bitstring Status List binding v0.1" />
+    <meta name="twitter:description" content="This document profiles the W3C Bitstring Status List v1.0 as the standards-conformant status and revocation mechanism for VRP Portable Attestations. It fulfils the forward hook in attestations-v0.1 §6, which states that *&quot;if a future VRP version uses BitstringStatusListEntry, the status list MUST…" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/spec/attestation-status-bitstring-v0.1" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/spec/attestation-status-bitstring-v0.1.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/spec/attestation-status-bitstring-v0.1#techarticle",
+  "headline": "VRP Attestation Status — W3C Bitstring Status List binding v0.1",
+  "description": "This document profiles the W3C Bitstring Status List v1.0 as the standards-conformant status and revocation mechanism for VRP Portable Attestations. It fulfils the forward hook in attestations-v0.1 §6, which states that *\"if a future VRP version uses BitstringStatusListEntry, the status list MUST…",
+  "url": "https://vacationrentalprotocol.com/spec/attestation-status-bitstring-v0.1",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/spec/attestation-status-bitstring-v0.1.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/attestation-status-bitstring-v0.1.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Specification · <a href="https://vacationrentalprotocol.com/spec/attestation-status-bitstring-v0.1.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/attestation-status-bitstring-v0.1.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="vrp-attestation-status-w3c-bitstring-status-list-binding-v01">VRP Attestation Status — W3C Bitstring Status List binding v0.1</h1>
+<p><strong>Status:</strong> Public draft <strong>Date:</strong> 2026-06-16</p>
+<h2 id="1-purpose">1. Purpose</h2>
+<p>This document profiles the <a href="https://www.w3.org/TR/vc-bitstring-status-list/">W3C Bitstring Status List v1.0</a> as the standards-conformant status and revocation mechanism for VRP Portable Attestations. It fulfils the forward hook in <a href="https://vacationrentalprotocol.com/spec/attestations-v0.1">attestations-v0.1</a> §6, which states that *&quot;if a future VRP version uses <code>BitstringStatusListEntry</code>, the status list MUST follow the W3C Bitstring Status List format completely.&quot;*</p>
+<p>It does not introduce a new VRP status format. It <strong>binds</strong> VRP to the W3C standard, constraining only: the issuer (a <code>did:web</code> host domain), the signature (Ed25519, the same key family as VRP signed offers and attestations), the unknown-status fail-safe, the no-guest-data rule, and the credential layer it applies to.</p>
+<h2 id="2-scope-attestations-only-not-stay-offers">2. Scope — attestations only, not stay offers</h2>
+<p>This mechanism applies to <strong>long-lived credentials</strong>: VRP Portable Attestations.</p>
+<p>It MUST NOT be applied to the signed verified stay offer (vrp-spec <a href="https://vacationrentalprotocol.com/spec/v0.1">v0.1</a>). A stay offer is ephemeral — it carries a short <code>valid_until</code> and is invalidated by <strong>expiry</strong>, not by a status list. Revocation infrastructure for a 15-minute credential is unnecessary and MUST NOT be required.</p>
+<h2 id="3-credentialstatus-in-an-attestation">3. <code>credentialStatus</code> in an attestation</h2>
+<p>A VRP Portable Attestation MAY include a <code>credentialStatus</code> of type <code>BitstringStatusListEntry</code>:</p>
+<pre><code>{
+  &quot;id&quot;: &quot;https://villaakerlyckan.se/.well-known/vrp/status/attestations-bitstring-v0.1.json#94&quot;,
+  &quot;type&quot;: &quot;BitstringStatusListEntry&quot;,
+  &quot;statusPurpose&quot;: &quot;revocation&quot;,
+  &quot;statusListIndex&quot;: &quot;94&quot;,
+  &quot;statusListCredential&quot;: &quot;https://villaakerlyckan.se/.well-known/vrp/status/attestations-bitstring-v0.1.json&quot;
+}</code></pre>
+<ul><li><code>type</code> MUST be <code>BitstringStatusListEntry</code>.</li><li><code>statusPurpose</code> MUST be <code>revocation</code> or <code>suspension</code>.</li><li><code>statusListIndex</code> MUST be a base-10 string encoding an integer ≥ 0, unique within the referenced list.</li><li><code>statusListCredential</code> MUST be an HTTPS URL controlled by the issuer host domain, resolving to a <code>BitstringStatusListCredential</code>.</li></ul>
+<h2 id="4-the-status-list-credential">4. The status list credential</h2>
+<p>The status list MUST be a <code>BitstringStatusListCredential</code> per the W3C spec, signed by the issuer host domain (Ed25519, <code>did:web</code>):</p>
+<pre><code>{
+  &quot;@context&quot;: [&quot;https://www.w3.org/ns/credentials/v2&quot;],
+  &quot;type&quot;: [&quot;VerifiableCredential&quot;, &quot;BitstringStatusListCredential&quot;],
+  &quot;issuer&quot;: &quot;did:web:villaakerlyckan.se&quot;,
+  &quot;validFrom&quot;: &quot;2026-06-16T00:00:00Z&quot;,
+  &quot;credentialSubject&quot;: {
+    &quot;id&quot;: &quot;https://villaakerlyckan.se/.well-known/vrp/status/attestations-bitstring-v0.1.json#list&quot;,
+    &quot;type&quot;: &quot;BitstringStatusList&quot;,
+    &quot;statusPurpose&quot;: &quot;revocation&quot;,
+    &quot;encodedList&quot;: &quot;uH4sIAAAAAAAAA-3BMQ...&quot;
+  }
+}</code></pre>
+<ul><li><code>credentialSubject.type</code> MUST be <code>BitstringStatusList</code>.</li><li><code>credentialSubject.statusPurpose</code> MUST match the entry's <code>statusPurpose</code>.</li><li><code>encodedList</code> MUST be the multibase base64url (no padding, <code>u</code> prefix) encoding of the GZIP-compressed bitstring. The <strong>uncompressed</strong> bitstring MUST be at least 16 KB (131,072 bits) — the W3C default minimum for herd privacy.</li><li>The credential MUST be Ed25519-signed by the issuer <code>did:web</code> so verifiers authenticate it without trusting transport alone.</li><li>It MUST be served over HTTPS on the issuer host domain, and SHOULD be <code>no-store</code> or short-cache so revocations propagate quickly.</li></ul>
+<h2 id="5-verification">5. Verification</h2>
+<p>A verifier:</p>
+<ol><li>Resolves <code>statusListCredential</code> and verifies its signature against the issuer <code>did:web</code> JWKS.</li><li>Decodes <code>encodedList</code> (multibase → GZIP-inflate → bitstring) and reads the bit at <code>statusListIndex</code>.</li><li>For <code>statusPurpose: revocation</code>, a set bit (1) means <strong>revoked</strong>; for <code>suspension</code>, a set bit means <strong>suspended</strong>.</li></ol>
+<p><strong>Unknown-status fail-safe (carried from <a href="https://vacationrentalprotocol.com/spec/attestations-v0.1">attestations-v0.1</a> §6):</strong> if the status list is absent, stale, unreachable, malformed, unsigned, or not controlled by the issuer host domain, the verifier MUST treat the credential status as <strong>unknown</strong>. Unknown status MUST NOT be converted into either revoked or not-revoked.</p>
+<h2 id="6-no-gatekeeper-and-privacy">6. No-gatekeeper and privacy</h2>
+<ul><li><strong>Optional and additive.</strong> A VRP attestation verifies standalone (<code>did:web</code> + signature). A status check is an additional layer and MUST NOT be a precondition for the protocol or a gate operated by any central party.</li><li><strong>Privacy.</strong> The bitstring discloses only revoked/not-revoked per index. The ≥16 KB herd minimum means one fetch covers many credentials and the issuer does not learn which credential a verifier checked. The status list MUST NOT contain guest identity, booking identity, or any guest data.</li></ul>
+<h2 id="7-relationship-to-the-transparency-log">7. Relationship to the transparency log</h2>
+<p>A status list is <strong>mutable by design</strong> — revocation flips a bit. This is <strong>complementary to, not in conflict with</strong>, the append-only <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">transparency log</a>:</p>
+<ul><li><strong>Transparency log</strong> — append-only, tamper-evident record that a credential *was issued* (append-only, tamper-evident).</li><li><strong>Status list</strong> — current, mutable record of whether a credential *is still valid* (revocation/suspension).</li></ul>
+<p>This mirrors the web PKI model (append-only Certificate Transparency logs alongside CRL/OCSP revocation). The two layers answer different questions and both are optional and host-operated.</p>
+<h2 id="8-migration-from-vrpstatuslistentry">8. Migration from <code>VRPStatusListEntry</code></h2>
+<p><a href="https://vacationrentalprotocol.com/spec/attestations-v0.1">attestations-v0.1</a> §6 defines an interim <code>VRPStatusListEntry</code> / <code>VRPStatusList</code> shape. Issuers adopting this profile:</p>
+<ul><li>SHOULD migrate <code>credentialStatus</code> from <code>VRPStatusListEntry</code> to <code>BitstringStatusListEntry</code>.</li><li>MAY serve both during transition (the legacy <code>VRPStatusList</code> JSON and the <code>BitstringStatusListCredential</code>).</li><li>Verifiers SHOULD prefer <code>BitstringStatusListEntry</code> when present.</li></ul>
+<h2 id="9-conformance">9. Conformance</h2>
+<p>Implementations MUST follow <a href="https://www.w3.org/TR/vc-bitstring-status-list/">W3C Bitstring Status List v1.0</a> completely for the entry and credential data model and the <code>encodedList</code> encoding. This profile only adds the VRP constraints in §§3–6 (issuer = <code>did:web</code> host domain; Ed25519 signature; unknown-status fail-safe; no guest data; attestations-only scope).</p>
+<h2 id="references">References</h2>
+<ul><li><a href="https://www.w3.org/TR/vc-bitstring-status-list/">W3C Bitstring Status List v1.0</a></li><li><a href="https://www.w3.org/TR/vc-data-model-2.0/">W3C Verifiable Credentials Data Model v2.0</a></li><li>VRP Portable Attestations: <a href="https://vacationrentalprotocol.com/spec/attestations-v0.1">attestations-v0.1</a> (§6 Status and Revocation)</li><li>VRP Transparency Log: <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">transparency-log-v0.1</a></li><li>VRP core: <a href="https://vacationrentalprotocol.com/spec/v0.1">v0.1</a></li></ul>
+<h2 id="license">License</h2>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (<a href="https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1">ADR 0007</a> D7).</p>
+      </article>
+    </main>
+  </body>
+</html>

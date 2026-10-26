@@ -47,7 +47,7 @@ export function resolveTarget(target, srcFile) {
   }
   const url = repoPathToUrl(repoPath);
   // Keep the fragment only for canonical doc/spec pages (same rendered page).
-  return url.startsWith(ORIGIN) ? url + suffix : url;
+  return url.startsWith(`${ORIGIN}/`) ? url + suffix : url;
 }
 
 export const LINK_RE = /(!?\[[^\]]*\])\(([^)\s]+)((?:\s+"[^"]*")?)\)/g;

@@ -1,0 +1,680 @@
+{
+  "name": "vrp-host-domain-vectors-v0.1",
+  "description": "Host-owned domain (§2), offer bound to the fetched domain (§7), node URLs and redirects (§2, §5.1). A verifier uses the full ICANN section of the Public Suffix List and ICANN's gTLD list; these vectors carry only the entries they depend on. expected.reason is null when the check passes.",
+  "sources": {
+    "psl": "https://publicsuffix.org/list/public_suffix_list.dat (read 2026-10-17: ICANN section lines 13-11245, PRIVATE section lines 11247-16571; myshopify.com 15873, wixsite.com 16462, booking 7307, hotels 8591, amazon 6959, google 8403, cn 812, 公司.cn 820)",
+    "icann_gtlds": "https://www.icann.org/resources/registries/gtlds/v2/gtlds.json (read 2026-10-17: specification13 true for amazon and google; false for booking and hotels, registry operator Booking.com B.V.)"
+  },
+  "psl_icann_rules": [
+    "com",
+    "uk",
+    "co.uk",
+    "se",
+    "*.ck",
+    "!www.ck",
+    "cn",
+    "公司.cn",
+    "booking",
+    "hotels",
+    "amazon",
+    "google"
+  ],
+  "psl_private_rules": [
+    "platform.example",
+    "myshopify.com",
+    "wixsite.com"
+  ],
+  "icann_specification13_tlds": [
+    "amazon",
+    "google"
+  ],
+  "closed_tlds": [
+    "booking",
+    "hotels"
+  ],
+  "host_owned": [
+    {
+      "canonical_domain": "example.com",
+      "note": "one label under the ICANN suffix com",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "example.co.uk",
+      "note": "one label under the two-label ICANN suffix co.uk",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "note": "no ICANN rule matches .invalid, so the default rule * applies",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "xn--exmple-cua.com",
+      "note": "an internationalized name in A-label form",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "example.xn--55qx5d.cn",
+      "note": "one label under the ICANN suffix 公司.cn, compared in A-label form",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "host.example.ck",
+      "note": "the wildcard rule *.ck makes example.ck a suffix",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "www.ck",
+      "note": "the exception rule !www.ck makes www.ck registrable",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "www.example.com",
+      "note": "a name under the host's domain is not the node's domain",
+      "expected": {
+        "reason": "not_host_owned"
+      }
+    },
+    {
+      "canonical_domain": "villa.platform.example",
+      "admitted_by_private_section": true,
+      "note": "a name a platform hands out under its own domain; the PRIVATE-section rule platform.example does not count",
+      "expected": {
+        "reason": "not_host_owned"
+      }
+    },
+    {
+      "canonical_domain": "com",
+      "note": "a public suffix is not a domain anyone holds",
+      "expected": {
+        "reason": "public_suffix"
+      }
+    },
+    {
+      "canonical_domain": "co.uk",
+      "note": "a public suffix is not a domain anyone holds",
+      "expected": {
+        "reason": "public_suffix"
+      }
+    },
+    {
+      "canonical_domain": "xn--55qx5d.cn",
+      "admitted_without_a_labels": true,
+      "note": "公司.cn is an ICANN suffix once the rule is in A-label form",
+      "expected": {
+        "reason": "public_suffix"
+      }
+    },
+    {
+      "canonical_domain": "example.ck",
+      "note": "under *.ck, example.ck is itself a suffix",
+      "expected": {
+        "reason": "public_suffix"
+      }
+    },
+    {
+      "canonical_domain": "Example.com",
+      "note": "canonical_domain is lowercase",
+      "expected": {
+        "reason": "malformed_domain"
+      }
+    },
+    {
+      "canonical_domain": "example.com.",
+      "note": "no trailing dot",
+      "expected": {
+        "reason": "malformed_domain"
+      }
+    },
+    {
+      "canonical_domain": "exämple.com",
+      "note": "internationalized names use the A-label form",
+      "expected": {
+        "reason": "malformed_domain"
+      }
+    }
+  ],
+  "real_world": [
+    {
+      "canonical_domain": "example.se",
+      "note": "a domain under the ICANN suffix se",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "villa.myshopify.com",
+      "admitted_by_private_section": true,
+      "note": "PRIVATE-section rule myshopify.com (a site builder's domain)",
+      "expected": {
+        "reason": "not_host_owned"
+      }
+    },
+    {
+      "canonical_domain": "villa.wixsite.com",
+      "admitted_by_private_section": true,
+      "note": "PRIVATE-section rule wixsite.com (a site builder's domain)",
+      "expected": {
+        "reason": "not_host_owned"
+      }
+    },
+    {
+      "canonical_domain": "villa.airbnb.com",
+      "note": "a name under a marketplace's domain",
+      "expected": {
+        "reason": "not_host_owned"
+      }
+    },
+    {
+      "canonical_domain": "villa.hemmabo.com",
+      "note": "a name under an operator's domain, the reference implementation's included",
+      "expected": {
+        "reason": "not_host_owned"
+      }
+    },
+    {
+      "canonical_domain": "annanvilla.exempelplattform.com",
+      "note": "a name under a platform's domain",
+      "expected": {
+        "reason": "not_host_owned"
+      }
+    },
+    {
+      "canonical_domain": "villa.booking",
+      "note": "booking: a closed top-level domain listed in §2 (Booking.com B.V.)",
+      "expected": {
+        "reason": "closed_tld"
+      }
+    },
+    {
+      "canonical_domain": "villa.hotels",
+      "note": "hotels: a closed top-level domain listed in §2 (Booking.com B.V.)",
+      "expected": {
+        "reason": "closed_tld"
+      }
+    },
+    {
+      "canonical_domain": "villa.amazon",
+      "note": "amazon: specification13 true in ICANN's gTLD list",
+      "expected": {
+        "reason": "closed_tld"
+      }
+    },
+    {
+      "canonical_domain": "villa.google",
+      "note": "google: specification13 true in ICANN's gTLD list",
+      "expected": {
+        "reason": "closed_tld"
+      }
+    }
+  ],
+  "offer_binding": [
+    {
+      "name": "offer_names_fetched_domain",
+      "note": "discovery, JWKS and the signed offer all name the domain they were fetched from",
+      "fetched_domain": "example-host.invalid",
+      "discovery": {
+        "canonical_domain": "example-host.invalid"
+      },
+      "jwks": {
+        "keys": [
+          {
+            "kty": "OKP",
+            "crv": "Ed25519",
+            "kid": "example-host.invalid-test-vector-2026",
+            "use": "sig",
+            "alg": "EdDSA",
+            "key_ops": [
+              "verify"
+            ],
+            "x": "8R0pcKv0FNVbtVUQg8hjC6qKPHEG-34D2pGt_yHOKeY"
+          }
+        ]
+      },
+      "input": {
+        "kind": "signed_verified_stay_offer",
+        "protocol_version": "0.1",
+        "offer": {
+          "kind": "verified_stay_offer",
+          "protocol_version": "0.1",
+          "canonical_domain": "example-host.invalid",
+          "node_id": "example-host.invalid",
+          "generated_at": "2026-06-02T12:00:00Z",
+          "valid_until": "2026-06-02T12:10:00Z",
+          "request": {
+            "check_in": "2026-09-12",
+            "check_out": "2026-09-15",
+            "guests": 2
+          },
+          "property": {
+            "property_id": "example-property",
+            "name": "Example Host Stay",
+            "url": "https://example-host.invalid/"
+          },
+          "availability": {
+            "available": true,
+            "source": "official_host_domain"
+          },
+          "price": {
+            "currency": "EUR",
+            "public_total": 123400,
+            "agent_total": 123400,
+            "minor_unit": true,
+            "exact": true
+          },
+          "booking": {
+            "direct_booking_url": "https://example-host.invalid/book?offer_id=test-vector"
+          },
+          "agent_permission": {
+            "may_quote_as_official_direct_offer": true,
+            "must_not_claim_ota_comparison_without_signed_ota_price": true
+          }
+        },
+        "signature": {
+          "format": "jws_compact",
+          "alg": "EdDSA",
+          "kid": "example-host.invalid-test-vector-2026",
+          "jws": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCIsImtpZCI6ImV4YW1wbGUtaG9zdC5pbnZhbGlkLXRlc3QtdmVjdG9yLTIwMjYifQ.eyJraW5kIjoidmVyaWZpZWRfc3RheV9vZmZlciIsInByb3RvY29sX3ZlcnNpb24iOiIwLjEiLCJjYW5vbmljYWxfZG9tYWluIjoiZXhhbXBsZS1ob3N0LmludmFsaWQiLCJub2RlX2lkIjoiZXhhbXBsZS1ob3N0LmludmFsaWQiLCJnZW5lcmF0ZWRfYXQiOiIyMDI2LTA2LTAyVDEyOjAwOjAwWiIsInZhbGlkX3VudGlsIjoiMjAyNi0wNi0wMlQxMjoxMDowMFoiLCJyZXF1ZXN0Ijp7ImNoZWNrX2luIjoiMjAyNi0wOS0xMiIsImNoZWNrX291dCI6IjIwMjYtMDktMTUiLCJndWVzdHMiOjJ9LCJwcm9wZXJ0eSI6eyJwcm9wZXJ0eV9pZCI6ImV4YW1wbGUtcHJvcGVydHkiLCJuYW1lIjoiRXhhbXBsZSBIb3N0IFN0YXkiLCJ1cmwiOiJodHRwczovL2V4YW1wbGUtaG9zdC5pbnZhbGlkLyJ9LCJhdmFpbGFiaWxpdHkiOnsiYXZhaWxhYmxlIjp0cnVlLCJzb3VyY2UiOiJvZmZpY2lhbF9ob3N0X2RvbWFpbiJ9LCJwcmljZSI6eyJjdXJyZW5jeSI6IkVVUiIsInB1YmxpY190b3RhbCI6MTIzNDAwLCJhZ2VudF90b3RhbCI6MTIzNDAwLCJtaW5vcl91bml0Ijp0cnVlLCJleGFjdCI6dHJ1ZX0sImJvb2tpbmciOnsiZGlyZWN0X2Jvb2tpbmdfdXJsIjoiaHR0cHM6Ly9leGFtcGxlLWhvc3QuaW52YWxpZC9ib29rP29mZmVyX2lkPXRlc3QtdmVjdG9yIn0sImFnZW50X3Blcm1pc3Npb24iOnsibWF5X3F1b3RlX2FzX29mZmljaWFsX2RpcmVjdF9vZmZlciI6dHJ1ZSwibXVzdF9ub3RfY2xhaW1fb3RhX2NvbXBhcmlzb25fd2l0aG91dF9zaWduZWRfb3RhX3ByaWNlIjp0cnVlfX0.H7TpEL462nLg5UyhxO_c5WZLlQhHO_fGm-FaV5DCuJACKzTvmjVMa5un6sUxahXChsFdC39F2o7ZaQ7AsG6LDw"
+        }
+      },
+      "expected": {
+        "signature_valid": true,
+        "reason": null
+      }
+    },
+    {
+      "name": "offer_names_another_domain",
+      "note": "the node at example-host.invalid validly signs an offer naming other-host.invalid, with a booking URL on that domain; the signature verifies, the offer is still not other-host.invalid's",
+      "fetched_domain": "example-host.invalid",
+      "discovery": {
+        "canonical_domain": "example-host.invalid"
+      },
+      "jwks": {
+        "keys": [
+          {
+            "kty": "OKP",
+            "crv": "Ed25519",
+            "kid": "example-host.invalid-test-vector-2026",
+            "use": "sig",
+            "alg": "EdDSA",
+            "key_ops": [
+              "verify"
+            ],
+            "x": "8R0pcKv0FNVbtVUQg8hjC6qKPHEG-34D2pGt_yHOKeY"
+          }
+        ]
+      },
+      "input": {
+        "kind": "signed_verified_stay_offer",
+        "protocol_version": "0.1",
+        "offer": {
+          "kind": "verified_stay_offer",
+          "protocol_version": "0.1",
+          "canonical_domain": "other-host.invalid",
+          "node_id": "other-host.invalid",
+          "generated_at": "2026-06-02T12:00:00Z",
+          "valid_until": "2026-06-02T12:10:00Z",
+          "request": {
+            "check_in": "2026-09-12",
+            "check_out": "2026-09-15",
+            "guests": 2
+          },
+          "property": {
+            "property_id": "example-property",
+            "name": "Example Host Stay",
+            "url": "https://other-host.invalid/"
+          },
+          "availability": {
+            "available": true,
+            "source": "official_host_domain"
+          },
+          "price": {
+            "currency": "EUR",
+            "public_total": 123400,
+            "agent_total": 123400,
+            "minor_unit": true,
+            "exact": true
+          },
+          "booking": {
+            "direct_booking_url": "https://other-host.invalid/book?offer_id=test-vector"
+          },
+          "agent_permission": {
+            "may_quote_as_official_direct_offer": true,
+            "must_not_claim_ota_comparison_without_signed_ota_price": true
+          }
+        },
+        "signature": {
+          "format": "jws_compact",
+          "alg": "EdDSA",
+          "kid": "example-host.invalid-test-vector-2026",
+          "jws": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCIsImtpZCI6ImV4YW1wbGUtaG9zdC5pbnZhbGlkLXRlc3QtdmVjdG9yLTIwMjYifQ.eyJraW5kIjoidmVyaWZpZWRfc3RheV9vZmZlciIsInByb3RvY29sX3ZlcnNpb24iOiIwLjEiLCJjYW5vbmljYWxfZG9tYWluIjoib3RoZXItaG9zdC5pbnZhbGlkIiwibm9kZV9pZCI6Im90aGVyLWhvc3QuaW52YWxpZCIsImdlbmVyYXRlZF9hdCI6IjIwMjYtMDYtMDJUMTI6MDA6MDBaIiwidmFsaWRfdW50aWwiOiIyMDI2LTA2LTAyVDEyOjEwOjAwWiIsInJlcXVlc3QiOnsiY2hlY2tfaW4iOiIyMDI2LTA5LTEyIiwiY2hlY2tfb3V0IjoiMjAyNi0wOS0xNSIsImd1ZXN0cyI6Mn0sInByb3BlcnR5Ijp7InByb3BlcnR5X2lkIjoiZXhhbXBsZS1wcm9wZXJ0eSIsIm5hbWUiOiJFeGFtcGxlIEhvc3QgU3RheSIsInVybCI6Imh0dHBzOi8vb3RoZXItaG9zdC5pbnZhbGlkLyJ9LCJhdmFpbGFiaWxpdHkiOnsiYXZhaWxhYmxlIjp0cnVlLCJzb3VyY2UiOiJvZmZpY2lhbF9ob3N0X2RvbWFpbiJ9LCJwcmljZSI6eyJjdXJyZW5jeSI6IkVVUiIsInB1YmxpY190b3RhbCI6MTIzNDAwLCJhZ2VudF90b3RhbCI6MTIzNDAwLCJtaW5vcl91bml0Ijp0cnVlLCJleGFjdCI6dHJ1ZX0sImJvb2tpbmciOnsiZGlyZWN0X2Jvb2tpbmdfdXJsIjoiaHR0cHM6Ly9vdGhlci1ob3N0LmludmFsaWQvYm9vaz9vZmZlcl9pZD10ZXN0LXZlY3RvciJ9LCJhZ2VudF9wZXJtaXNzaW9uIjp7Im1heV9xdW90ZV9hc19vZmZpY2lhbF9kaXJlY3Rfb2ZmZXIiOnRydWUsIm11c3Rfbm90X2NsYWltX290YV9jb21wYXJpc29uX3dpdGhvdXRfc2lnbmVkX290YV9wcmljZSI6dHJ1ZX19.XvmzMg2udUYptbzVmp5eTgqNVMB0uUQY94feon0glDNeBQ5MOZG_KuJFV32MUe4JGtB8heupZHKOfgbnQZIiBA"
+        }
+      },
+      "expected": {
+        "signature_valid": true,
+        "reason": "offer_domain_mismatch"
+      }
+    },
+    {
+      "name": "discovery_names_another_domain",
+      "note": "a discovery document fetched from example-host.invalid that declares another canonical_domain",
+      "fetched_domain": "example-host.invalid",
+      "discovery": {
+        "canonical_domain": "other-host.invalid"
+      },
+      "jwks": {
+        "keys": [
+          {
+            "kty": "OKP",
+            "crv": "Ed25519",
+            "kid": "example-host.invalid-test-vector-2026",
+            "use": "sig",
+            "alg": "EdDSA",
+            "key_ops": [
+              "verify"
+            ],
+            "x": "8R0pcKv0FNVbtVUQg8hjC6qKPHEG-34D2pGt_yHOKeY"
+          }
+        ]
+      },
+      "input": {
+        "kind": "signed_verified_stay_offer",
+        "protocol_version": "0.1",
+        "offer": {
+          "kind": "verified_stay_offer",
+          "protocol_version": "0.1",
+          "canonical_domain": "example-host.invalid",
+          "node_id": "example-host.invalid",
+          "generated_at": "2026-06-02T12:00:00Z",
+          "valid_until": "2026-06-02T12:10:00Z",
+          "request": {
+            "check_in": "2026-09-12",
+            "check_out": "2026-09-15",
+            "guests": 2
+          },
+          "property": {
+            "property_id": "example-property",
+            "name": "Example Host Stay",
+            "url": "https://example-host.invalid/"
+          },
+          "availability": {
+            "available": true,
+            "source": "official_host_domain"
+          },
+          "price": {
+            "currency": "EUR",
+            "public_total": 123400,
+            "agent_total": 123400,
+            "minor_unit": true,
+            "exact": true
+          },
+          "booking": {
+            "direct_booking_url": "https://example-host.invalid/book?offer_id=test-vector"
+          },
+          "agent_permission": {
+            "may_quote_as_official_direct_offer": true,
+            "must_not_claim_ota_comparison_without_signed_ota_price": true
+          }
+        },
+        "signature": {
+          "format": "jws_compact",
+          "alg": "EdDSA",
+          "kid": "example-host.invalid-test-vector-2026",
+          "jws": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCIsImtpZCI6ImV4YW1wbGUtaG9zdC5pbnZhbGlkLXRlc3QtdmVjdG9yLTIwMjYifQ.eyJraW5kIjoidmVyaWZpZWRfc3RheV9vZmZlciIsInByb3RvY29sX3ZlcnNpb24iOiIwLjEiLCJjYW5vbmljYWxfZG9tYWluIjoiZXhhbXBsZS1ob3N0LmludmFsaWQiLCJub2RlX2lkIjoiZXhhbXBsZS1ob3N0LmludmFsaWQiLCJnZW5lcmF0ZWRfYXQiOiIyMDI2LTA2LTAyVDEyOjAwOjAwWiIsInZhbGlkX3VudGlsIjoiMjAyNi0wNi0wMlQxMjoxMDowMFoiLCJyZXF1ZXN0Ijp7ImNoZWNrX2luIjoiMjAyNi0wOS0xMiIsImNoZWNrX291dCI6IjIwMjYtMDktMTUiLCJndWVzdHMiOjJ9LCJwcm9wZXJ0eSI6eyJwcm9wZXJ0eV9pZCI6ImV4YW1wbGUtcHJvcGVydHkiLCJuYW1lIjoiRXhhbXBsZSBIb3N0IFN0YXkiLCJ1cmwiOiJodHRwczovL2V4YW1wbGUtaG9zdC5pbnZhbGlkLyJ9LCJhdmFpbGFiaWxpdHkiOnsiYXZhaWxhYmxlIjp0cnVlLCJzb3VyY2UiOiJvZmZpY2lhbF9ob3N0X2RvbWFpbiJ9LCJwcmljZSI6eyJjdXJyZW5jeSI6IkVVUiIsInB1YmxpY190b3RhbCI6MTIzNDAwLCJhZ2VudF90b3RhbCI6MTIzNDAwLCJtaW5vcl91bml0Ijp0cnVlLCJleGFjdCI6dHJ1ZX0sImJvb2tpbmciOnsiZGlyZWN0X2Jvb2tpbmdfdXJsIjoiaHR0cHM6Ly9leGFtcGxlLWhvc3QuaW52YWxpZC9ib29rP29mZmVyX2lkPXRlc3QtdmVjdG9yIn0sImFnZW50X3Blcm1pc3Npb24iOnsibWF5X3F1b3RlX2FzX29mZmljaWFsX2RpcmVjdF9vZmZlciI6dHJ1ZSwibXVzdF9ub3RfY2xhaW1fb3RhX2NvbXBhcmlzb25fd2l0aG91dF9zaWduZWRfb3RhX3ByaWNlIjp0cnVlfX0.H7TpEL462nLg5UyhxO_c5WZLlQhHO_fGm-FaV5DCuJACKzTvmjVMa5un6sUxahXChsFdC39F2o7ZaQ7AsG6LDw"
+        }
+      },
+      "expected": {
+        "signature_valid": null,
+        "reason": "discovery_domain_mismatch"
+      }
+    }
+  ],
+  "node_url": [
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "direct_booking_url",
+      "url": "https://example-host.invalid/book",
+      "note": "the node's own domain",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "direct_booking_url",
+      "url": "https://www.example-host.invalid/book",
+      "note": "www. under the node's own domain",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "direct_booking_url",
+      "url": "https://EXAMPLE-HOST.invalid/book",
+      "note": "hosts compare after URL parsing, which lowercases them",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "direct_booking_url",
+      "url": "https://example-host.invalid:443/book",
+      "note": "an explicit default port is the default port",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "direct_booking_url",
+      "url": "https://book.example-host.invalid/",
+      "note": "any other name under the node's domain",
+      "expected": {
+        "reason": "url_host_mismatch"
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "direct_booking_url",
+      "url": "https://www.www.example-host.invalid/",
+      "note": "only one www. label",
+      "expected": {
+        "reason": "url_host_mismatch"
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "direct_booking_url",
+      "url": "https://other-host.invalid/book",
+      "note": "another node's domain",
+      "expected": {
+        "reason": "url_host_mismatch"
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "direct_booking_url",
+      "url": "https://www.other-host.invalid/book",
+      "note": "www. under another node's domain",
+      "expected": {
+        "reason": "url_host_mismatch"
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "direct_booking_url",
+      "url": "https://example-host.invalid.other-host.invalid/",
+      "note": "the node's domain as a prefix of another host",
+      "expected": {
+        "reason": "url_host_mismatch"
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "direct_booking_url",
+      "url": "https://wwwexample-host.invalid/",
+      "note": "not a www. label",
+      "expected": {
+        "reason": "url_host_mismatch"
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "direct_booking_url",
+      "url": "https://example-host.invalid@other-host.invalid/",
+      "note": "the node's domain as userinfo before another host",
+      "expected": {
+        "reason": "url_userinfo"
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "direct_booking_url",
+      "url": "https://guest@example-host.invalid/book",
+      "note": "userinfo on the node's own host",
+      "expected": {
+        "reason": "url_userinfo"
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "direct_booking_url",
+      "url": "https://example-host.invalid:8443/book",
+      "note": "a port other than the https default",
+      "expected": {
+        "reason": "url_port"
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "direct_booking_url",
+      "url": "http://example-host.invalid/book",
+      "note": "https only (§5.1)",
+      "expected": {
+        "reason": "url_not_https"
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "direct_booking_url",
+      "url": "not a url",
+      "note": "not an absolute URL",
+      "expected": {
+        "reason": "url_invalid"
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "jwks_url",
+      "url": "https://example-host.invalid/.well-known/jwks.json",
+      "note": "the JWKS on the node's own domain",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "jwks_url",
+      "url": "https://keys.other-host.invalid/jwks.json",
+      "note": "a JWKS on another host",
+      "expected": {
+        "reason": "url_host_mismatch"
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "verified_stay_offer_endpoint",
+      "url": "https://www.example-host.invalid/api/verified-stay-offer",
+      "note": "the offer endpoint under www.",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "canonical_domain": "example-host.invalid",
+      "field": "verified_stay_offer_endpoint",
+      "url": "https://api.example-host.invalid/offer",
+      "note": "any other name under the node's domain",
+      "expected": {
+        "reason": "url_host_mismatch"
+      }
+    }
+  ],
+  "redirects": [
+    {
+      "name": "no_redirect",
+      "canonical_domain": "example-host.invalid",
+      "requested": "https://example-host.invalid/.well-known/vacation-rental.json",
+      "chain": [],
+      "note": "the document is served where it was requested",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "name": "to_www",
+      "canonical_domain": "example-host.invalid",
+      "requested": "https://example-host.invalid/.well-known/vacation-rental.json",
+      "chain": [
+        "https://www.example-host.invalid/.well-known/vacation-rental.json"
+      ],
+      "note": "the node's domain redirects to www. under it",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "name": "to_another_host",
+      "canonical_domain": "example-host.invalid",
+      "requested": "https://example-host.invalid/.well-known/vacation-rental.json",
+      "chain": [
+        "https://other-host.invalid/.well-known/vacation-rental.json"
+      ],
+      "note": "a redirect to another node's domain",
+      "expected": {
+        "reason": "redirect_off_node"
+      }
+    },
+    {
+      "name": "via_www_to_another_host",
+      "canonical_domain": "example-host.invalid",
+      "requested": "https://example-host.invalid/.well-known/vacation-rental.json",
+      "chain": [
+        "https://www.example-host.invalid/.well-known/vacation-rental.json",
+        "https://other-host.invalid/.well-known/vacation-rental.json"
+      ],
+      "note": "every hop counts",
+      "expected": {
+        "reason": "redirect_off_node"
+      }
+    },
+    {
+      "name": "to_http",
+      "canonical_domain": "example-host.invalid",
+      "requested": "https://example-host.invalid/.well-known/vacation-rental.json",
+      "chain": [
+        "http://www.example-host.invalid/.well-known/vacation-rental.json"
+      ],
+      "note": "a redirect that leaves https",
+      "expected": {
+        "reason": "redirect_not_https"
+      }
+    }
+  ]
+}

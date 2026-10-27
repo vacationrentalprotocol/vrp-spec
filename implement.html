@@ -666,7 +666,9 @@ export function signOffer(offer) {
       async function selfVerify(jws, jwks) {
         const [h, p, s] = jws.split(".");
         const header = JSON.parse(new TextDecoder().decode(b64urlToBytes(h)));
-        const jwk = (jwks.keys || []).find((k) => k.kid === header.kid) || jwks.keys[0];
+        // VRP §3.1: the key is the one whose kid the JWS header names, and no other.
+        const jwk = (jwks.keys || []).find((k) => typeof header.kid === "string" && header.kid && k.kid === header.kid);
+        if (!jwk) return false;
         const cryptoKey = await crypto.subtle.importKey("jwk", { kty: "OKP", crv: "Ed25519", x: jwk.x }, { name: "Ed25519" }, false, ["verify"]);
         const data = new TextEncoder().encode(h + "." + p);
         return crypto.subtle.verify({ name: "Ed25519" }, cryptoKey, b64urlToBytes(s), data);

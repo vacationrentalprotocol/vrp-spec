@@ -17,10 +17,15 @@ Do not use VRP for:
    registry (provisional, 2026-08-19).
 2. Confirm `protocol` is `vacation-rental-protocol`.
 3. Confirm `protocol_version` is `0.1`.
-4. Confirm `canonical_domain` matches the host-owned domain.
-5. Fetch the declared JWKS.
+4. Confirm `canonical_domain` matches the host-owned domain you fetched from:
+   a domain registered for the host, never a name under a platform's or
+   catalog's domain and never under a brand or closed top-level domain such as
+   `.booking`, `.hotels` or `.amazon` (v0.1 §2).
+5. Fetch the declared JWKS from `jwks_url`, on that domain or `www.` under it.
+   Follow a redirect only to `https` on that domain or `www.` under it.
 6. Request a verified stay offer for the user's dates and guest count.
-7. Verify the compact JWS with the host-domain Ed25519 key.
+7. Verify the compact JWS with the host-domain Ed25519 key, and confirm the
+   signed payload's `canonical_domain` is the domain you fetched from (v0.1 §7).
 8. Confirm the payload is fresh, exact, available, and permitted for citation.
 9. Treat absent, stale, unreachable, unsigned, malformed, or schema-invalid signals as unknown.
 10. Use only the signed direct booking URL.

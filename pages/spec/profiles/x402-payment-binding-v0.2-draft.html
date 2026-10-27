@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VRP x402 Payment Binding — v0.2 DRAFT | Vacation Rental Protocol</title>
+    <meta name="description" content="Status: DRAFT — NOT NORMATIVE. This document proposes the concrete binding for the booking.payment_options[] slot reserved in v0.1.md §5.2. Until the activation criteria in §2 are met, a node MUST NOT publish payment_options — this draft strengthens v0.1's &quot;a node SHOULD omit it&quot; to a MUST NOT for…" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="VRP x402 Payment Binding — v0.2 DRAFT" />
+    <meta property="og:description" content="Status: DRAFT — NOT NORMATIVE. This document proposes the concrete binding for the booking.payment_options[] slot reserved in v0.1.md §5.2. Until the activation criteria in §2 are met, a node MUST NOT publish payment_options — this draft strengthens v0.1's &quot;a node SHOULD omit it&quot; to a MUST NOT for…" />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/spec/profiles/x402-payment-binding-v0.2-draft" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="VRP x402 Payment Binding — v0.2 DRAFT" />
+    <meta name="twitter:description" content="Status: DRAFT — NOT NORMATIVE. This document proposes the concrete binding for the booking.payment_options[] slot reserved in v0.1.md §5.2. Until the activation criteria in §2 are met, a node MUST NOT publish payment_options — this draft strengthens v0.1's &quot;a node SHOULD omit it&quot; to a MUST NOT for…" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/spec/profiles/x402-payment-binding-v0.2-draft" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/spec/profiles/x402-payment-binding-v0.2-draft.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/spec/profiles/x402-payment-binding-v0.2-draft#techarticle",
+  "headline": "VRP x402 Payment Binding — v0.2 DRAFT",
+  "description": "Status: DRAFT — NOT NORMATIVE. This document proposes the concrete binding for the booking.payment_options[] slot reserved in v0.1.md §5.2. Until the activation criteria in §2 are met, a node MUST NOT publish payment_options — this draft strengthens v0.1's \"a node SHOULD omit it\" to a MUST NOT for…",
+  "url": "https://vacationrentalprotocol.com/spec/profiles/x402-payment-binding-v0.2-draft",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/spec/profiles/x402-payment-binding-v0.2-draft.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/profiles/x402-payment-binding-v0.2-draft.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Specification · <a href="https://vacationrentalprotocol.com/spec/profiles/x402-payment-binding-v0.2-draft.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/profiles/x402-payment-binding-v0.2-draft.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="vrp-x402-payment-binding-v02-draft">VRP x402 Payment Binding — v0.2 DRAFT</h1>
+<p><strong>Status: DRAFT — NOT NORMATIVE.</strong> This document proposes the concrete binding for the <code>booking.payment_options[]</code> slot reserved in <a href="https://vacationrentalprotocol.com/spec/v0.1"><code>v0.1.md</code></a> §5.2. Until the activation criteria in §2 are met, a node MUST NOT publish <code>payment_options</code> — this draft <strong>strengthens</strong> v0.1's &quot;a node SHOULD omit it&quot; to a MUST NOT for the reserved-and-unactivated window — and an agent MUST NOT treat its presence as a defined, honorable payment path, the latter exactly as v0.1 specifies. Nothing in this draft weakens v0.1.</p>
+<p>The keywords MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are interpreted as in RFC 2119 and RFC 8174 when capitalized.</p>
+<h2 id="1-why-now">1. Why now</h2>
+<p>v0.1 §5.2 reserved the slot until &quot;a winning rail and a non-US settlement path exist.&quot; Both conditions have since moved:</p>
+<ul><li><strong>Rail:</strong> x402 was contributed to the Linux Foundation; the x402 Foundation launched operationally on 2026-07-14 with premier members including Adyen, AWS, Amex, Circle, Cloudflare, Coinbase, Google, Mastercard, Shopify, Stripe, and Visa. Spec v2 (2025-12-09) is stable enough to bind against.</li><li><strong>Non-US settlement:</strong> USDC/EURC are MiCA-compliant e-money tokens; an EU/Swedish host accepting stablecoin for its own stays requires no CASP licence (merchant self-acceptance is not a regulated crypto-asset service).</li><li><strong>Payer capability:</strong> an AI agent autonomously producing a valid EIP-3009 <code>transferWithAuthorization</code> — the x402 v2 <code>exact</code>-scheme primitive — has been demonstrated (HemmaBo payer spike, 2026-07-20).</li></ul>
+<p>What has NOT yet been demonstrated is live settlement to a real host node. Hence: draft, with activation criteria.</p>
+<h2 id="2-activation-criteria">2. Activation criteria</h2>
+<p>This binding becomes eligible for normative status (v0.2) only when ALL hold:</p>
+<ol><li>At least one live node has received an on-chain x402 settlement for a real stay, to the host's own wallet, verified end to end.</li><li>A facilitator path (hosted or self-hosted) is confirmed available to the node's jurisdiction under terms compatible with public documentation.</li><li>The reference verifier validates the §5 receipt binding against live bytes.</li></ol>
+<h2 id="3-the-paymentoptions-entry-proposed-shape">3. The <code>payment_options[]</code> entry (proposed shape)</h2>
+<pre><code>{
+  &quot;rail&quot;: &quot;x402&quot;,
+  &quot;x402_version&quot;: 2,
+  &quot;scheme&quot;: &quot;exact&quot;,
+  &quot;network&quot;: &quot;eip155:8453&quot;,
+  &quot;asset&quot;: &quot;0x…&quot;,
+  &quot;asset_eip712&quot;: { &quot;name&quot;: &quot;EURC&quot;, &quot;version&quot;: &quot;2&quot; },
+  &quot;pay_to&quot;: &quot;0x…&quot;,
+  &quot;amount_atomic&quot;: &quot;1430000000&quot;,
+  &quot;currency&quot;: &quot;EURC&quot;,
+  &quot;offer_binding&quot;: &quot;sha256-jws&quot;
+}</code></pre>
+<ul><li><code>network</code> is CAIP-2. <code>amount_atomic</code> is a base-10 string in the asset's atomic units and MUST equal the signed <code>price</code> converted at no spread — the one-honest-total rule applies across rails.</li><li><code>asset_eip712</code> is REQUIRED for the <code>exact</code>/EVM scheme: the asset contract's EIP-712 domain (<code>name</code>, <code>version</code>), which the payer signs against and the wire-level <code>PaymentRequirements.extra</code> must carry — live facilitators reject requirements without it (proven in the 2026-07-20 Base Sepolia settlement run). Publishing it inside the signed offer means the payer never has to fetch or guess the domain: a node MUST publish values that match the asset contract's own <code>name()</code>/<code>version()</code>.</li><li><strong><code>pay_to</code> MUST be the host's own wallet.</strong> Never an intermediary, OTA, or infrastructure operator. This restates the v0.1 §5.2 invariant; a verifier MUST fail an offer whose <code>pay_to</code> is attested to belong to anyone but the host of <code>canonical_domain</code>.</li><li>Rails MUST NOT gate discovery, verification, or offer retrieval (no-gatekeeper, v0.1 §1). <code>payment_options</code> is additive next to <code>direct_booking_url</code>, never a replacement.</li><li>The entry rides INSIDE the signed offer payload (verifiable class, v0.1 §5.4): the same Ed25519 JWS that pins the price pins the payment rail.</li></ul>
+<h2 id="4-offer-hash-binding-the-chain-that-makes-the-chain">4. Offer-hash binding (the chain that makes the chain)</h2>
+<p>Without binding, a payment and an offer are only narratively linked. The binding rule:</p>
+<ul><li><strong><code>offer_hash</code></strong> = lowercase hex SHA-256 over the offer's <strong>compact-JWS bytes as received</strong> — the same no-recanonicalization input rule as receipt D5 (<a href="https://vacationrentalprotocol.com/spec/receipt-v1"><code>receipt-v1.md</code></a> §7).</li><li>For the <code>exact</code> scheme on EVM networks, the EIP-3009 <code>nonce</code> (bytes32) MUST equal <code>offer_hash</code>.</li></ul>
+<p>Consequences, both intended:</p>
+<ol><li>The on-chain authorization is cryptographically bound to exactly one signed offer — the signature the payer's wallet produces covers the nonce, so no post-hoc relabeling can attach the payment to a different offer.</li><li>EIP-3009 contracts reject nonce reuse per payer, so <strong>one offer settles at most once per payer</strong> — replay of a paid offer fails on-chain, at the asset contract, with no protocol machinery.</li></ol>
+<p>Rejected alternative: carrying <code>offer_hash</code> in an unsigned x402 payload extension field. The EIP-3009 signature does not cover extension fields, so the binding would be assertable but not cryptographic.</p>
+<p>Offer-request freshness (agent-supplied nonce echoed inside the signed offer) is a complementary, separately scoped proposal and is NOT part of this binding; <code>valid_until</code> remains the freshness bound (v0.1 §6).</p>
+<h2 id="5-receipt-attestation-layer-payment">5. Receipt attestation (<code>layer: &quot;payment&quot;</code>)</h2>
+<p>Receipt v1's open <code>layer</code> vocabulary already admits <code>payment</code> (<a href="https://vacationrentalprotocol.com/spec/receipt-v1"><code>receipt-v1.md</code></a> §3) — no envelope change. The x402 profile of that layer asserts:</p>
+<pre><code>{
+  &quot;layer&quot;: &quot;payment&quot;,
+  &quot;valid_from&quot;: &quot;…&quot;,
+  &quot;valid_until&quot;: &quot;…&quot;,
+  &quot;ref&quot;: &quot;0x&lt;settlement transaction hash&gt;&quot;,
+  &quot;signature&quot;: &quot;&lt;compact JWS over the assertion below&gt;&quot;
+}</code></pre>
+<p>The signed assertion MUST include: <code>offer_hash</code>, <code>tx_hash</code>, <code>network</code>, <code>payer</code>, <code>pay_to</code>, <code>amount_atomic</code>, <code>asset</code>. A profile-aware verifier MUST check: <code>offer_hash</code> matches the receipt's offer-layer JWS bytes; <code>pay_to</code> and <code>amount_atomic</code> match the signed offer's <code>payment_options</code> entry; and, when chain access is available, that <code>tx_hash</code> is a finalized transfer matching all of the above. Per-attestation status stays four-valued (<code>verified|expired|unverifiable|invalid</code>) — chain-unreachable yields <code>unverifiable</code>, never a fabricated pass.</p>
+<h2 id="6-out-of-scope-for-v02">6. Out of scope for v0.2</h2>
+<ul><li><strong>Refund settlement on-rail.</strong> <code>rules.refund_schedule</code> (v0.1 §5.3) remains the computable predicate deciding *how much*; by which rail a refund is returned stays host-operational. A rail with no chargeback primitive makes the signed, computable schedule MORE load-bearing, not less.</li><li>Sessions/<code>upto</code>/batch schemes; non-EVM networks (the <code>exact</code>/EVM binding comes first because it is what live facilitators settle today).</li><li>Any custody, pooling, or forwarding construction. There is deliberately no shape in which funds pass through an intermediary.</li></ul>
+      </article>
+    </main>
+  </body>
+</html>

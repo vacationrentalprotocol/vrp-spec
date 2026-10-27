@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ADR 0003: GitHub Organization Segregation and Standard-vs-Implementation Separation | Vacation Rental Protocol</title>
+    <meta name="description" content="VRP's specification text, conformance vectors, and JSON Schemas are the standard. HemmaBo is a reference implementation and a standards contributor, not the owner of truth (ADR 0001, ADR 0002)." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="ADR 0003: GitHub Organization Segregation and Standard-vs-Implementation Separation" />
+    <meta property="og:description" content="VRP's specification text, conformance vectors, and JSON Schemas are the standard. HemmaBo is a reference implementation and a standards contributor, not the owner of truth (ADR 0001, ADR 0002)." />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/adr/0003-github-org-segregation" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="ADR 0003: GitHub Organization Segregation and Standard-vs-Implementation Separation" />
+    <meta name="twitter:description" content="VRP's specification text, conformance vectors, and JSON Schemas are the standard. HemmaBo is a reference implementation and a standards contributor, not the owner of truth (ADR 0001, ADR 0002)." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/adr/0003-github-org-segregation" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/adr/0003-github-org-segregation.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/adr/0003-github-org-segregation#techarticle",
+  "headline": "ADR 0003: GitHub Organization Segregation and Standard-vs-Implementation Separation",
+  "description": "VRP's specification text, conformance vectors, and JSON Schemas are the standard. HemmaBo is a reference implementation and a standards contributor, not the owner of truth (ADR 0001, ADR 0002).",
+  "url": "https://vacationrentalprotocol.com/docs/adr/0003-github-org-segregation",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/adr/0003-github-org-segregation.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0003-github-org-segregation.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/adr/0003-github-org-segregation.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0003-github-org-segregation.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="adr-0003-github-organization-segregation-and-standard-vs-implementation-separation">ADR 0003: GitHub Organization Segregation and Standard-vs-Implementation Separation</h1>
+<p><strong>Status:</strong> Accepted <strong>Date:</strong> 2026-08-16 (proposed) · 2026-08-17 (accepted)</p>
+<h2 id="context">Context</h2>
+<p>VRP's specification text, conformance vectors, and JSON Schemas are the standard. HemmaBo is a reference implementation and a standards contributor, not the owner of truth (ADR 0001, ADR 0002).</p>
+<p>Until 2026-08-16, the specification repository lived under an individual GitHub account that also holds HemmaBo product repositories. That namespace made the standard read as a product artifact of one operator, which is in tension with the neutrality the protocol asserts: the host-owned domain is the source of truth, verification is decentralized, and no operator is a central issuer, registry, or trust authority.</p>
+<p>Comparable open standards keep their source in a neutral organization namespace rather than an individual or product account — for example WHATWG, W3C, the JSON Schema organization, and the OpenAPI Initiative. A standard becomes credible as a standard, in part, by not being owned by the namespace of one of its implementers.</p>
+<p>The canonical standards home is the domain <code>vacationrentalprotocol.com</code>. That does not change. This decision concerns only the source namespace and the governance around it.</p>
+<h2 id="decision">Decision</h2>
+<p>VRP source will live in a neutral GitHub organization, <code>vacationrentalprotocol</code>, whose name mirrors the canonical domain. The organization is separate from any single implementer's product account.</p>
+<p><strong>Namespace, not a change of people.</strong> Neutrality is achieved through the repository namespace (<code>github.com/vacationrentalprotocol/...</code>), not by changing who maintains the work. Organization ownership is transferable to a further-neutral account later through organization settings alone, without a repository migration. This is not a one-way door.</p>
+<p><strong>Two-owner governance from the start.</strong> The organization begins with two owners so that maintenance does not depend on a single person. Maintainers are recorded in <code>MAINTAINERS.md</code>. This meets the widely recommended practice of at least two owners for a standards organization. Adding or changing owners is an organization-settings operation and does not affect the specification.</p>
+<p><strong>Neutrality is conformance-via-vectors.</strong> Conformance to VRP is established against the published specification and the signed, runnable conformance vectors — never against the HemmaBo reference node. The editor and maintainers are bound by the no-gatekeeper rules of ADR 0002: VRP MUST NOT require HemmaBo, or any operator, as issuer, verifier, registry, scorer, booking intermediary, or trust authority. A reference implementation demonstrates the standard; it does not define it.</p>
+<p><strong>Canonicalization of repository references.</strong> Repository references throughout the corpus — README, source pack, IETF draft, sitemap, generator constants, and related documents — are updated to <code>vacationrentalprotocol/vrp-spec</code>. The canonical domain remains <code>vacationrentalprotocol.com</code>; defensive domains such as <code>.net</code> and <code>.org</code> 301-redirect to <code>.com</code> and are never canonical.</p>
+<p><strong>Operational continuity.</strong> The public site at <code>vacationrentalprotocol.com</code> is built from this repository by a hosting provider on push. The hosting project and its Git integration are re-pointed to the new organization so that deployments continue after the transfer.</p>
+<p><strong>Versioning as a governance commitment.</strong> VRP 1.0 is earned, not declared. 1.0 is locked only when the wire format is frozen and at least one independent implementation interoperates. Within a MAJOR version, signature semantics and verification rules MUST NOT change in breaking ways. This commitment is recorded in <code>GOVERNANCE.md</code>.</p>
+<p>The migration proceeds as an ordered sequence: (S1) create the organization; (S2) establish two owners; (S3) install the hosting Git app on the organization before transfer; (S4) transfer the repository; (S5) verify the transfer and that the old paths redirect; (S6) land the governance documents and commit this ADR.</p>
+<h2 id="consequences">Consequences</h2>
+<p>The standard's source namespace no longer reads as one implementer's product path, reinforcing the neutrality asserted by ADR 0001 and ADR 0002. The change is structural and reversible only in the direction of more neutrality: ownership can move to a further-neutral account without touching the repository.</p>
+<p>GitHub sets automatic redirects on transfer, so existing links to the old namespace continue to resolve; canonicalizing the references removes the residual product-branded path from published text.</p>
+<p>The transfer resets some repository and integration state that must be re-established explicitly — notably the hosting provider's deploy trigger. This is a one-time operational cost rather than an ongoing one.</p>
+<p>Separation is the first of three steps toward 1.0. The remaining steps are independent of the namespace: a second, independent node — an implementation that is not the reference runtime — and a frozen wire format. Only then is 1.0 a stability promise the project can honestly make.</p>
+<h2 id="addendum-2026-08-17-at-acceptance">Addendum (2026-08-17, at acceptance)</h2>
+<p>The migration described above was executed on 2026-08-16 and 2026-08-17:</p>
+<ul><li>The repository is now <code>vacationrentalprotocol/vrp-spec</code>, owned by the organization; the previous path 301-redirects to it.</li><li>Repository references were canonicalized to the new path across the corpus.</li><li>The hosting project was re-pointed to the new organization, and its deploy trigger — which the transfer had reset — was reconnected.</li></ul>
+<p>This addendum introduces no normative changes.</p>
+      </article>
+    </main>
+  </body>
+</html>

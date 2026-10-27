@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Key Rotation | Vacation Rental Protocol</title>
+    <meta name="description" content="How a VRP node changes its Ed25519 signing key without breaking verification. Spec §3.1 is normative; this document restates the requirement plainly and records the current, verified behaviour of the reference node." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="Key Rotation" />
+    <meta property="og:description" content="How a VRP node changes its Ed25519 signing key without breaking verification. Spec §3.1 is normative; this document restates the requirement plainly and records the current, verified behaviour of the reference node." />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/security/KEY_ROTATION" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Key Rotation" />
+    <meta name="twitter:description" content="How a VRP node changes its Ed25519 signing key without breaking verification. Spec §3.1 is normative; this document restates the requirement plainly and records the current, verified behaviour of the reference node." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/security/KEY_ROTATION" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/security/KEY_ROTATION.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/security/KEY_ROTATION#techarticle",
+  "headline": "Key Rotation",
+  "description": "How a VRP node changes its Ed25519 signing key without breaking verification. Spec §3.1 is normative; this document restates the requirement plainly and records the current, verified behaviour of the reference node.",
+  "url": "https://vacationrentalprotocol.com/docs/security/KEY_ROTATION",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/security/KEY_ROTATION.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/security/KEY_ROTATION.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/security/KEY_ROTATION.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/security/KEY_ROTATION.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="key-rotation">Key Rotation</h1>
+<p>How a VRP node changes its Ed25519 signing key without breaking verification. <a href="https://vacationrentalprotocol.com/spec/v0.1">Spec §3.1</a> is normative; this document restates the requirement plainly and records the current, verified behaviour of the reference node.</p>
+<h2 id="the-one-rule-everything-follows">The one rule everything follows</h2>
+<p>A node's signing authority is the set of keys published at its <code>/.well-known/jwks.json</code>. Because there is no central issuer, <strong>the JWKS is the only revocation authority</strong>: a key is valid exactly while it appears in the JWKS, and not one moment longer. Rotation and revocation are both just *edits to that published set*.</p>
+<h2 id="what-the-spec-requires-31">What the spec requires (§3.1)</h2>
+<p>Rotation is <strong>additive</strong> — you add the new key before you remove the old one, so there is always a window in which both verify:</p>
+<ol><li><strong>Generate</strong> a new Ed25519 key with a fresh <code>kid</code>. A <code>kid</code> that encodes a date and sequence (e.g. <code>example.com-2026-05-18-01</code>) helps operators order keys — but a verifier treats <code>kid</code> as opaque and infers nothing (trust, recency, status) from it.</li><li><strong>Publish</strong> the new key <strong>alongside</strong> the old one in the JWKS.</li><li><strong>Switch signing</strong> to the new key: new offers are signed with the new <code>kid</code>.</li><li><strong>Keep the old key</strong> in the JWKS until <strong>every offer signed with it has passed its <code>valid_until</code></strong>. The retention window therefore equals the maximum offer lifetime — while it lasts, offers already issued under the old key still verify.</li><li><strong>Remove</strong> the old key from the JWKS.</li></ol>
+<p>Because the old key is retained until its last offer has expired, no live offer breaks.</p>
+<h3 id="two-independent-numbers-do-not-conflate">Two independent numbers — do not conflate</h3>
+<p>The spec is explicit that these are separate controls (<a href="https://vacationrentalprotocol.com/spec/v0.1">§3.1</a>):</p>
+<ul><li><strong>Retention window (rotation).</strong> Keep the old key until the offers it signed have passed <code>valid_until</code>. This is set by *offer lifetime*, not by a fixed clock.</li><li><strong>JWKS cache cap = 5 minutes (revocation latency).</strong> A conforming verifier MUST NOT cache a JWKS for longer than 5 minutes. This bounds how long a *removed* key is still accepted, so a node SHOULD serve <code>jwks.json</code> with <code>Cache-Control: max-age=300</code> (5 minutes) or less. The node may only *shorten* this window, never lengthen it. <strong>This 5-minute figure is the verifier cache limit — it is not a rotation overlap.</strong></li><li><strong>Refresh on miss.</strong> An offer bearing a <code>kid</code> the verifier does not hold forces an immediate JWKS re-fetch, so a newly published key is picked up on first use.</li></ul>
+<h2 id="verified-live-behaviour-reference-node">Verified live behaviour (reference node)</h2>
+<p>Fetched directly from the reference node (<code>https://villaakerlyckan.se/.well-known/jwks.json</code>), the current state is a normal steady state — <strong>one active key, no rotation in progress</strong>:</p>
+<ul><li>The JWKS serves a <strong>single</strong> Ed25519 key, <code>kid: villaakerlyckan.se-2026-05-18-01</code> (<code>kty: OKP</code>, <code>crv: Ed25519</code>, <code>alg: EdDSA</code>, <code>use: sig</code>).</li><li>It is served with <strong><code>Cache-Control: public, max-age=300</code></strong> — the recommended ≤ 5-minute cache window.</li></ul>
+<p>A single key is the expected steady state; a second key appears in the JWKS only *transiently during a rotation*, for exactly as long as the old key's outstanding offers remain fresh (step 4 above). This document does <strong>not</strong> assert any fixed overlap schedule — the overlap lasts as long as the offer-lifetime rule requires.</p>
+<table><thead><tr><th>Phase</th><th>JWKS contains</th><th>Signing with</th><th>A verifier can trust offers signed by</th></tr></thead><tbody><tr><td>steady state (now)</td><td>one key</td><td>that key</td><td>that key</td></tr><tr><td>rotation start</td><td>old <strong>+ new</strong></td><td>new</td><td>old <strong>and</strong> new</td></tr><tr><td>overlap (until old key's last offer passes <code>valid_until</code>)</td><td>old + new</td><td>new</td><td>old and new</td></tr><tr><td>after retire</td><td>new</td><td>new</td><td>new only</td></tr></tbody></table>
+<p>After the old key is removed, any offer still bearing its <code>kid</code> becomes <strong>Unknown</strong> and MUST NOT be quoted — the agent should fetch a fresh offer (<a href="https://vacationrentalprotocol.com/spec/v0.1">spec §6, §9</a>).</p>
+<h2 id="what-an-implementer-must-do">What an implementer must do</h2>
+<ul><li><strong>Publish before you sign.</strong> Add the new key to the JWKS *before* signing any offer with it (an unknown <code>kid</code> also triggers an immediate JWKS refresh).</li><li><strong>Serve a short <code>Cache-Control</code>.</strong> Use <code>max-age=300</code> (5 minutes) or less on <code>jwks.json</code>; never longer. The reference node already does this.</li><li><strong>Retain the old key through the overlap.</strong> Keep it until the last offer it signed has passed <code>valid_until</code>, so no still-fresh offer is stranded.</li><li><strong>Never reuse a <code>kid</code>.</strong> Give every key a distinct, stable identifier.</li><li><strong>Optionally log the event.</strong> A node MAY record <code>key added</code> / <code>key removed</code> (with <code>kid</code> and timestamp) in its <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">transparency log</a> for a tamper-evident history of which key was valid when.</li></ul>
+<h2 id="rotation-is-not-revocation">Rotation is not revocation</h2>
+<p>Routine rotation retires the old key by *timing* — you remove it only after its offers have expired, so nothing breaks. <strong>Compromise</strong> is different: the old key must be removed <strong>immediately</strong>, even though that also invalidates the operator's own legitimate offers signed with it. See <a href="https://vacationrentalprotocol.com/docs/security/INCIDENT_RESPONSE">INCIDENT_RESPONSE.md</a>.</p>
+      </article>
+    </main>
+  </body>
+</html>

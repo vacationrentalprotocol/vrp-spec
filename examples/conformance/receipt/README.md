@@ -3,8 +3,8 @@
 Apache-2.0 — see [`LICENSE-CODE`](../../../LICENSE-CODE).
 
 These vectors exercise the v1 receipt envelope verifier
-([`lib/vrp-receipt.mjs`](../../../lib/vrp-receipt.mjs)), mirrored from the reference
-implementation (`hemmabo-mcp-server` `spec/vectors/`).
+([`lib/vrp-receipt.mjs`](../../../lib/vrp-receipt.mjs)). They are maintained in
+this repository as the standard's conformance set.
 
 ## Test key (D6 — not production)
 

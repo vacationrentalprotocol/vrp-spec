@@ -138,12 +138,35 @@ function stripLeadingSlash(value) {
   return value.replace(/^\//, "");
 }
 
-function routeMatchesSource(route, source) {
-  if (source.includes("(.*)")) {
-    const [prefix, suffix] = source.split("(.*)");
-    return route.startsWith(prefix) && route.endsWith(suffix);
+// Mirror Vercel's header `source` matching (path-to-regexp): text outside
+// parentheses is literal, a parenthesised group is a regular expression
+// (`(.*)`, or a group with a negative lookahead such as `((?!.*\.md$).*)`,
+// the form Vercel documents for rewrites), and the whole pattern is anchored.
+function sourceToRegExp(source) {
+  let pattern = "";
+  let i = 0;
+  while (i < source.length) {
+    if (source[i] !== "(") {
+      pattern += source[i].replace(/[.+?^${}|[\]\\]/g, "\\$&");
+      i++;
+      continue;
+    }
+    let depth = 0;
+    const start = i;
+    do {
+      if (source[i] === "(") depth++;
+      else if (source[i] === ")") depth--;
+      i++;
+    } while (i < source.length && depth > 0);
+    if (depth !== 0) throw new Error(`vercel.json: unbalanced parentheses in header source ${source}`);
+    pattern += source.slice(start, i);
   }
-  return route === source;
+  return new RegExp(`^${pattern}$`);
+}
+
+function routeMatchesSource(route, source) {
+  if (!source.includes("(")) return route === source;
+  return sourceToRegExp(source).test(route);
 }
 
 // Mirror Vercel's rewrite matching: `source` is a path-to-regexp pattern in
@@ -200,6 +223,9 @@ function headerContentType(route) {
     const contentType = entry.headers?.find((header) => header.key.toLowerCase() === "content-type");
     if (contentType) values.push(contentType.value);
   }
+  // Two rules that set different Content-Type values on one route would make
+  // the served type depend on rule order; keep header rules disjoint instead.
+  if (new Set(values).size > 1) fail(`vercel.json: conflicting Content-Type rules for ${route}: ${values.join(" | ")}`);
   return values.at(-1) || null;
 }
 

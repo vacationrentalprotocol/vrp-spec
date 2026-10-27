@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VRP Threat Model (v0.1) | Vacation Rental Protocol</title>
+    <meta name="description" content="A short, STRIDE-oriented threat model for the core Vacation Rental Protocol. It covers the four things that decide whether an AI agent can trust a stay offer:" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="VRP Threat Model (v0.1)" />
+    <meta property="og:description" content="A short, STRIDE-oriented threat model for the core Vacation Rental Protocol. It covers the four things that decide whether an AI agent can trust a stay offer:" />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/security/THREAT_MODEL" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="VRP Threat Model (v0.1)" />
+    <meta name="twitter:description" content="A short, STRIDE-oriented threat model for the core Vacation Rental Protocol. It covers the four things that decide whether an AI agent can trust a stay offer:" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/security/THREAT_MODEL" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/security/THREAT_MODEL.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/security/THREAT_MODEL#techarticle",
+  "headline": "VRP Threat Model (v0.1)",
+  "description": "A short, STRIDE-oriented threat model for the core Vacation Rental Protocol. It covers the four things that decide whether an AI agent can trust a stay offer:",
+  "url": "https://vacationrentalprotocol.com/docs/security/THREAT_MODEL",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/security/THREAT_MODEL.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/security/THREAT_MODEL.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/security/THREAT_MODEL.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/security/THREAT_MODEL.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="vrp-threat-model-v01">VRP Threat Model (v0.1)</h1>
+<p>A short, STRIDE-oriented threat model for the core Vacation Rental Protocol. It covers the four things that decide whether an AI agent can trust a stay offer:</p>
+<ol><li><strong>Ed25519 signing</strong> of verified stay offers,</li><li>the <strong>JWKS</strong> that publishes the verification keys,</li><li><strong>host-domain control as the source of truth</strong>, and</li><li>what happens when a <strong>host signing key is compromised</strong>.</li></ol>
+<p>It does <strong>not</strong> model OTA, marketplace, ranking, or payment-processor scenarios — VRP has none of those (see <a href="https://vacationrentalprotocol.com/docs/adr/0002-no-gatekeeper-trust-and-interop">ADR 0002</a>). The normative rules referenced here live in <a href="https://vacationrentalprotocol.com/spec/v0.1">spec §3–§9</a>; this document only makes the trust boundaries and attacker goals explicit.</p>
+<h2 id="trust-root">Trust root</h2>
+<p>The root of trust is <strong>domain control</strong> (<code>did:web</code>): a VRP node's signing keys are whatever the host-owned domain serves at its JWKS. There is no central issuer, registry, or accreditation authority to appeal to. Consequently:</p>
+<ul><li>A valid signature proves the offer came from whoever controls the host domain.</li><li>If the domain itself is taken over (DNS, TLS, or hosting compromise), the attacker *is* the source of truth as far as the protocol can tell. <strong>Domain-level security is out of scope for VRP</strong> and is the operator's responsibility (<a href="https://vacationrentalprotocol.com/spec/v0.1">spec §3.1</a>).</li></ul>
+<h2 id="assets">Assets</h2>
+<table><thead><tr><th>Asset</th><th>Why it matters</th></tr></thead><tbody><tr><td>Host <strong>private signing key</strong></td><td>Whoever holds it can mint offers that verify as official.</td></tr><tr><td><strong>JWKS</strong> (<code>/.well-known/jwks.json</code>)</td><td>The *only* revocation authority — a key is valid exactly while it is present here.</td></tr><tr><td><strong>Discovery document</strong> (<code>/.well-known/vacation-rental.json</code>)</td><td>Points agents at the JWKS and the offer endpoint.</td></tr><tr><td><strong>Signed stay offer</strong></td><td>Carries the quoteable facts (price, availability, <code>valid_until</code>, booking URL).</td></tr></tbody></table>
+<h2 id="actors">Actors</h2>
+<ul><li><strong>Host / operator</strong> — controls the domain and the signing key; the legitimate signer.</li><li><strong>Verifying agent</strong> — an AI agent or client that fetches, verifies, and quotes offers. Must <strong>fail closed</strong> (<a href="https://vacationrentalprotocol.com/spec/v0.1">spec §8</a>).</li><li><strong>Network attacker</strong> — can intercept or modify traffic that is not integrity-protected.</li><li><strong>Key thief</strong> — has obtained the host's private signing key but does *not* control the domain.</li><li><strong>Domain attacker</strong> — controls what the host domain serves (out of scope, listed for completeness).</li></ul>
+<h2 id="stride">STRIDE</h2>
+<h3 id="spoofing-pretend-to-be-the-host">Spoofing — &quot;pretend to be the host&quot;</h3>
+<ul><li>*Threat:* an attacker serves a forged offer or an unsigned &quot;offer&quot; and hopes the agent quotes it as official.</li><li>*Mitigation:* every quoteable fact is inside a compact Ed25519 JWS whose key must be present in the host domain's JWKS. An agent MUST verify the signature against the JWKS and MUST NOT quote anything unsigned or unverifiable (<a href="https://vacationrentalprotocol.com/spec/v0.1">spec §5, §7, §8</a>). Fetching the discovery document and JWKS over HTTPS from the host domain binds identity to domain control.</li><li>*Residual risk:* a <strong>domain attacker</strong> can publish their own keys and sign freely — no key-level control detects this. Out of scope (domain security is the operator's).</li></ul>
+<h3 id="tampering-change-price-dates-or-the-booking-url">Tampering — &quot;change price, dates, or the booking URL&quot;</h3>
+<ul><li>*Threat:* alter the offer in transit — bump the price, extend <code>valid_until</code>, or swap the <code>direct_booking_url</code> for an attacker-controlled destination.</li><li>*Mitigation:* integrity comes solely from the JWS over the payload; any change invalidates the signature. The <code>direct_booking_url</code> is a signed field, and an agent MUST reject a booking URL whose host is not the offer's <code>canonical_domain</code> (<a href="https://vacationrentalprotocol.com/spec/v0.1">spec §5.1</a>). There is no separate, spoofable side-channel for these facts.</li></ul>
+<h3 id="repudiation-deny-having-offered-these-terms">Repudiation — &quot;deny having offered these terms&quot;</h3>
+<ul><li>*Threat:* a host later disputes which price or refund terms were in force at quote time.</li><li>*Mitigation:* the signed payload binds the terms (including <code>rules.refund_schedule</code>) to a specific key and moment; a verifier can prove after the fact exactly what was signed. A node MAY additionally record key events in an append-only <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">transparency log</a> for a tamper-evident history of which key was valid when.</li></ul>
+<h3 id="information-disclosure-leak-the-key-or-private-data">Information disclosure — &quot;leak the key or private data&quot;</h3>
+<ul><li>*Threat:* exposure of the <strong>private signing key</strong> is the critical loss (see *Compromised host key* below). VRP offers themselves carry public offer facts, not secrets.</li><li>*Mitigation:* only public keys are ever published (in the JWKS). Key custody is declared via <code>operator.key_custody</code> (<code>self</code> or <code>platform</code>) so an agent knows what a valid signature guarantees (<a href="https://vacationrentalprotocol.com/spec/v0.1">spec §2</a>). Protecting the private key at rest is the operator's responsibility.</li></ul>
+<h3 id="denial-of-service-make-verification-fail-or-flood-the-node">Denial of service — &quot;make verification fail or flood the node&quot;</h3>
+<ul><li>*Threat:* make the JWKS or offer endpoint unreachable, or drive verifiers into excessive JWKS fetches using offers with unknown <code>kid</code>s.</li><li>*Mitigation:* unreachable is treated as <strong>Unknown</strong>, never as a valid offer — the agent fails closed rather than quoting stale data (<a href="https://vacationrentalprotocol.com/spec/v0.1">spec §8, §9</a>). Verifiers SHOULD rate-limit or coalesce refresh-on-miss per domain to avoid amplification (<a href="https://vacationrentalprotocol.com/spec/v0.1">spec §3.1</a>). The JWKS is a small, CDN-cacheable document. Availability of a given node's infrastructure is out of scope for the protocol.</li></ul>
+<h3 id="elevation-of-privilege-get-a-bad-offer-treated-as-official">Elevation of privilege — &quot;get a bad offer treated as official&quot;</h3>
+<ul><li>*Threat:* make a stale, unavailable, or unsigned value cross the line into &quot;official host-domain verified offer.&quot;</li><li>*Mitigation:* the Safe-to-Quote gate (<a href="https://vacationrentalprotocol.com/spec/v0.1">spec §7</a>) requires *all* of: signature verifies, <code>valid_until</code> fresh, <code>availability.available</code> true, <code>price.exact</code> true, direct booking URL present, and explicit agent permission. Three-state verification (<a href="https://vacationrentalprotocol.com/spec/v0.1">spec §9</a>) forbids inferring Affirmed from Unknown. A lower verifiability class must never be presented as a higher one (<a href="https://vacationrentalprotocol.com/spec/v0.1">spec §5.4</a>).</li></ul>
+<h2 id="central-scenario-compromised-host-key">Central scenario: compromised host key</h2>
+<p>An attacker who steals the <strong>private signing key</strong> (but does not control the domain) can mint fresh, well-formed offers with a future <code>valid_until</code> — so <strong>freshness alone does not stop them</strong>. The only thing that de-trusts them is the key being absent from the JWKS the verifier holds. This drives two protocol controls:</p>
+<ul><li>The compromised key MUST be <strong>removed from the JWKS immediately</strong>. Its presence is the entire trust signal; removing it makes every offer signed with it unverifiable, including the operator's own legitimate ones — this is intentional, because a verifier cannot tell the attacker's signatures from the host's.</li><li>A conforming verifier MUST NOT cache a JWKS for longer than <strong>5 minutes</strong>, so a removed key is fully de-trusted within that window. This bound is a conformance requirement, not something VRP can force on a non-conforming verifier (<a href="https://vacationrentalprotocol.com/spec/v0.1">spec §3.1</a>).</li></ul>
+<p>Handling is detailed in <a href="https://vacationrentalprotocol.com/docs/security/KEY_ROTATION">KEY_ROTATION.md</a> and <a href="https://vacationrentalprotocol.com/docs/security/INCIDENT_RESPONSE">INCIDENT_RESPONSE.md</a>.</p>
+<h2 id="explicitly-out-of-scope">Explicitly out of scope</h2>
+<ul><li><strong>Domain compromise</strong> (DNS / TLS / hosting takeover) — the attacker becomes the source of truth; no key-level mechanism can detect it.</li><li><strong>OTA / marketplace / ranking / payment-processor</strong> attack scenarios — VRP is none of these.</li><li><strong>The HemmaBo product</strong> and any specific host's server-side application.</li></ul>
+      </article>
+    </main>
+  </body>
+</html>

@@ -138,3 +138,11 @@ which checks the behavioral rules in `spec/v0.1.md` §8–§9:
 
 These vectors are an interoperability aid for implementers. They do not create a
 central validator, issuer, registry, certification service, or trust authority.
+
+## Node page vectors
+
+How a node names the protocol on the page people and models read — a
+`<link rel="protocol">` in the head and a visible `<a rel="protocol">` on the
+standard's origin with `VRP` in its text — is checked against
+[`node-page/`](./node-page/) (`vectors.json` + one HTML page per case). See
+[`spec/v0.1.md`](../../spec/v0.1.md) §2.1 and `npm test` (`verify-node-page`).

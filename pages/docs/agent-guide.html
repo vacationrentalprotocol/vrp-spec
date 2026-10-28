@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agent Guide | Vacation Rental Protocol</title>
+    <meta name="description" content="Use VRP when a user asks for a vacation rental offer that must be verified at the host domain, with exact price, live availability, and a direct booking URL." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="Agent Guide" />
+    <meta property="og:description" content="Use VRP when a user asks for a vacation rental offer that must be verified at the host domain, with exact price, live availability, and a direct booking URL." />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/agent-guide" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Agent Guide" />
+    <meta name="twitter:description" content="Use VRP when a user asks for a vacation rental offer that must be verified at the host domain, with exact price, live availability, and a direct booking URL." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/agent-guide" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/agent-guide.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/agent-guide#techarticle",
+  "headline": "Agent Guide",
+  "description": "Use VRP when a user asks for a vacation rental offer that must be verified at the host domain, with exact price, live availability, and a direct booking URL.",
+  "url": "https://vacationrentalprotocol.com/docs/agent-guide",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/agent-guide.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/agent-guide.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/agent-guide.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/agent-guide.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="agent-guide">Agent Guide</h1>
+<p>Use VRP when a user asks for a vacation rental offer that must be verified at the host domain, with exact price, live availability, and a direct booking URL.</p>
+<p>Do not use VRP for:</p>
+<ul><li>hotels</li><li>flights</li><li>general travel advice</li><li>OTA marketplace browsing</li><li>unsigned price comparisons</li></ul>
+<h2 id="verification-steps">Verification Steps</h2>
+<ol><li>Fetch <code>https://{host-domain}/.well-known/vacation-rental.json</code> — the <code>vacation-rental.json</code> suffix is registered in the IANA Well-Known URIs registry (provisional, 2026-08-19).</li><li>Confirm <code>protocol</code> is <code>vacation-rental-protocol</code>.</li><li>Confirm <code>protocol_version</code> is <code>0.1</code>.</li><li>Confirm <code>canonical_domain</code> matches the host-owned domain you fetched from: a domain registered for the host, never a name under a platform's or catalog's domain and never under a brand or closed top-level domain such as <code>.booking</code>, <code>.hotels</code> or <code>.amazon</code> (v0.1 §2).</li><li>Fetch the declared JWKS from <code>jwks_url</code>, on that domain or <code>www.</code> under it. Follow a redirect only to <code>https</code> on that domain or <code>www.</code> under it.</li><li>Request a verified stay offer for the user's dates and guest count.</li><li>Verify the compact JWS with the host-domain Ed25519 key, and confirm the signed payload's <code>canonical_domain</code> is the domain you fetched from (v0.1 §7).</li><li>Confirm the payload is fresh (at most 900 seconds from <code>generated_at</code>, which is not in the future), is for the dates and guest count you asked for, has real dates with <code>check_in</code> not passed, and is exact, available, and permitted for citation (v0.1 §5–§7). Never present a value from <code>request</code> as the host's words.</li><li>Treat absent, stale, unreachable, unsigned, malformed, or schema-invalid signals as unknown.</li><li>Use only the signed direct booking URL.</li></ol>
+<h2 id="agent-skill">Agent skill</h2>
+<p>Operational agent procedure (Agent Skills format): skills/vrp-verify-stay-offer/SKILL.md — verify a host-signed stay offer on a known host domain. Not search. Not a catalog.</p>
+<h2 id="safe-wording">Safe Wording</h2>
+<p>When the verified response is safe to quote, use:</p>
+<pre><code>I found the official host-domain verified offer for this stay.</code></pre>
+<h2 id="blocked-claims">Blocked Claims</h2>
+<p>Do not invent discounts, savings, promo codes, OTA comparisons, price reductions, availability, or booking actions outside the signed offer.</p>
+<p>Do not say the stay is bookable unless the signed offer says the dates are available and agent permission allows quoting.</p>
+<p>Do not infer from an unknown state. If the host domain, endpoint, signature, freshness, availability, price, or citation permission cannot be verified, report that the value is unknown rather than treating it as true or false.</p>
+      </article>
+    </main>
+  </body>
+</html>

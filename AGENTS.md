@@ -14,9 +14,14 @@ test vectors (`examples/conformance`). Node.js scripts validate the artifacts.
   `validate` + `verify-vectors` + `verify-attestations` + `verify-three-state` +
   `check-public-routes`, all against local fixtures (no network). Add the `:live`
   variants (e.g. `npm run check-public-routes:live`) to hit live URLs.
-- **No build step.** To preview the site locally, serve the repo root with any
-  static file server (e.g. `python3 -m http.server 4180`) and open `index.html` /
-  `verify.html`.
+- **Generated pages.** Every Markdown document under `spec/` and `docs/` is
+  rendered to an HTML page under `pages/` (`npm run build-pages`), served at
+  the document's clean URL; the `.md` file stays as the Markdown twin for agents.
+  After editing a `.md` file run `npm run build-pages` (and `npm run build-source-pack`
+  when the file is in the source-pack manifest) and commit the output; CI fails
+  on a stale page (`check-pages`). No other build step: to preview the site
+  locally, serve the repo root with any static file server (e.g.
+  `python3 -m http.server 4180`) and open `index.html` / `verify.html`.
 
 ## Source truth: sync to origin/main BEFORE reading or building
 

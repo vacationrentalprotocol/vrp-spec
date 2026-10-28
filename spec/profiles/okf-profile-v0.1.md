@@ -203,7 +203,7 @@ it cannot produce a JWS that verifies against the host domain's `did:web` keys.
   **MUST NOT** contain guest personal data or secrets.
 - Key publication, rotation, and revocation happen at `jwks_url` / `did:web`, not
   in the document.
-- The single moat key signs the offer; the OKF document only *carries* that proof.
+- The node's single signing key signs the offer; the OKF document only *carries* that proof.
   Key rotation must preserve historical verifiability of previously rendered
   proofs (cf. MCP profile "key blast radius").
 

@@ -3454,10 +3454,12 @@ The capability takes the parameters of the verified stay offer endpoint
 
 The tool surface and the offer are on the same domain:
 
-- The MCP endpoint URL's host, the agent card's endpoint host and the host
-  that served the card, and the page origin that registered the WebMCP tool
-  MUST be the offer's `canonical_domain` or a subdomain of it, the rule Core
-  §5.1 sets for `direct_booking_url`.
+- The MCP endpoint URL, the agent card's endpoint URL and the URL that served
+  the card, and the page origin that registered the WebMCP tool MUST be node
+  URLs (Core §2) of the offer's `canonical_domain`: their host is
+  `canonical_domain` or `www.` followed by it, and no other name, the rule Core
+  §5.1 sets for `direct_booking_url`. Another name under the node's domain is
+  not the node's surface: it may be served by another party.
 - An agent MUST check that the offer's `canonical_domain` is the domain that
   served the surface. An offer that arrives through a surface on another
   domain is an operator tool's result (§7) and MUST be treated as such,

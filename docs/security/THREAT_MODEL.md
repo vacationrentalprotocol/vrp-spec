@@ -103,8 +103,14 @@ registry, or accreditation authority to appeal to. Consequently:
 - *Threat:* make a stale, unavailable, or unsigned value cross the line into
   "official host-domain verified offer."
 - *Mitigation:* the Safe-to-Quote gate ([spec §7](../../spec/v0.1.md)) requires
-  *all* of: signature verifies, `valid_until` fresh, `availability.available` true,
-  `price.exact` true, direct booking URL present, and explicit agent permission.
+  every condition it lists, among them: the signature verifies; the offer names
+  the domain it was fetched from, a host-owned domain (§2); it is for the dates
+  and guest count the agent asked for, with real dates and a `check_in` that has
+  not passed; `valid_until` is fresh and at most 900 seconds after a
+  `generated_at` that is not in the future; `availability.available` and
+  `price.exact` are true; the direct booking URL is a node URL; and the host
+  grants explicit agent permission. A value the node echoes from the request is
+  never the host's statement (§5).
   Three-state verification ([spec §9](../../spec/v0.1.md)) forbids inferring Affirmed
   from Unknown. A lower verifiability class must never be presented as a higher one
   ([spec §5.4](../../spec/v0.1.md)).

@@ -546,6 +546,20 @@
           ? t
           : NaN;
       }
+      // §5: a YYYY-MM-DD date that exists, as ms at UTC midnight; NaN otherwise.
+      function parseDate(v) {
+        const m = typeof v === "string" && /^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
+        if (!m) return NaN;
+        // setUTCFullYear, not Date.UTC: Date.UTC reads the years 0–99 as 1900–1999.
+        const d = new Date(0);
+        d.setUTCFullYear(+m[1], +m[2] - 1, +m[3]);
+        const t = d.getTime();
+        return d.getUTCFullYear() === +m[1] && d.getUTCMonth() === +m[2] - 1 && d.getUTCDate() === +m[3] ? t : NaN;
+      }
+      // §5: language subtag, optional script, optional region. Free text never matches.
+      const LANGUAGE_TAG = /^[A-Za-z]{2,3}(-[A-Za-z]{4})?(-([A-Za-z]{2}|[0-9]{3}))?$(?!\n)/;
+      const MAX_LIFETIME_MS = 900 * 1000; // §5
+      const CLOCK_SKEW_MS = 60 * 1000; // §6
       // §2 and §7: the discovery document of `domain`.
       function checkDiscovery(doc, domain) {
         const d = doc && typeof doc === "object" ? doc : {};
@@ -615,7 +629,7 @@
       // ctx: result (verifyJws), host (the domain the offer was fetched from,
       // null when pasted), own (hostOwned), rows and problems so far, jwksUrl,
       // envelopeOffer (the unsigned copy; null for a bare JWS, undefined when
-      // the envelope has none).
+      // the envelope has none), asked (the stay asked for; null when pasted).
       function render(ctx) {
         const { ok, header, payload } = ctx.result;
         const own = ctx.own;
@@ -736,6 +750,72 @@
             if (!fresh) notQuotable.push("the offer has expired");
           }
 
+          // §5, §6: lifetime and clock.
+          const ga = parseDateTime(payload.generated_at);
+          if (isNaN(ga)) {
+            rows.push(checkRow("warn", "generated_at is missing or malformed", JSON.stringify(payload.generated_at) + " — VRP §6: the offer must not be quoted."));
+            notQuotable.push("generated_at is missing or malformed");
+          } else {
+            const lifeOk = !isNaN(vu) && vu > ga && vu - ga <= MAX_LIFETIME_MS;
+            const clockOk = ga <= Date.now() + CLOCK_SKEW_MS;
+            rows.push(
+              checkRow(
+                lifeOk && clockOk ? "pass" : "warn",
+                lifeOk && clockOk ? "Lifetime is at most 900 seconds" : !clockOk ? "generated_at lies in the future" : "Lifetime is not between 0 and 900 seconds",
+                "generated_at " + payload.generated_at + ", valid_until " + payload.valid_until + " (VRP §5, §6)."
+              )
+            );
+            if (!clockOk) notQuotable.push("generated_at is more than 60 seconds ahead");
+            if (!isNaN(vu) && !lifeOk) notQuotable.push("the lifetime is not between 0 and 900 seconds");
+          }
+
+          // §5, §7: the dates, the language tag and the stay asked for.
+          const req = payload.request && typeof payload.request === "object" ? payload.request : null;
+          if (!req) {
+            rows.push(checkRow("warn", "No request in the signed payload", "VRP §7 compares it with the stay asked for."));
+            notQuotable.push("the offer carries no request");
+          } else {
+            const ci = parseDate(req.check_in);
+            const co = parseDate(req.check_out);
+            const dayBefore = Math.floor(Date.now() / 86400000) * 86400000 - 86400000;
+            const datesOk = !isNaN(ci) && !isNaN(co) && co > ci;
+            const passed = !isNaN(ci) && ci < dayBefore;
+            rows.push(
+              checkRow(
+                datesOk && !passed ? "pass" : "warn",
+                !datesOk ? "The dates do not form a stay" : passed ? "check_in has passed" : "Real dates, check_out after check_in, not in the past",
+                "check_in " + JSON.stringify(req.check_in) + ", check_out " + JSON.stringify(req.check_out) + " (VRP §5, §7)."
+              )
+            );
+            if (!datesOk) notQuotable.push("the dates do not form a stay");
+            if (passed) notQuotable.push("check_in has passed");
+            if ("language" in req) {
+              const tagOk = typeof req.language === "string" && LANGUAGE_TAG.test(req.language);
+              rows.push(
+                checkRow(
+                  tagOk ? "pass" : "warn",
+                  tagOk ? "request.language is a language tag" : "request.language is NOT a language tag",
+                  (tagOk ? "" : "It is the requester's text, signed by the node; never read it as the host's words. ") + "(VRP §5)"
+                )
+              );
+              if (!tagOk) notQuotable.push("request.language is not a language tag");
+            }
+            if (ctx.asked) {
+              const same = req.check_in === ctx.asked.check_in && req.check_out === ctx.asked.check_out && req.guests === ctx.asked.guests;
+              rows.push(
+                checkRow(
+                  same ? "pass" : "warn",
+                  same ? "The offer is for the stay you asked for" : "The offer is NOT for the stay you asked for",
+                  "Asked " + ctx.asked.check_in + " → " + ctx.asked.check_out + ", " + ctx.asked.guests + " guests; signed " +
+                    JSON.stringify(req.check_in) + " → " + JSON.stringify(req.check_out) + ", " + JSON.stringify(req.guests) + " guests (VRP §7)."
+                )
+              );
+              if (!same) notQuotable.push("the offer is not for the stay asked for");
+            } else {
+              notQuotable.push("this page does not know which stay a pasted offer was asked for");
+            }
+          }
+
           const flags = [
             [payload.availability, "available", "Available", "availability.available"],
             [payload.price, "exact", "Exact total price", "price.exact"],
@@ -845,6 +925,11 @@
             rows,
             problems: d.problems,
             jwksUrl: disc.jwks_url,
+            asked: {
+              check_in: offerUrl.searchParams.get("check_in"),
+              check_out: offerUrl.searchParams.get("check_out"),
+              guests: Number(offerUrl.searchParams.get("guests")),
+            },
             envelopeOffer: offer && typeof offer === "object" && "offer" in offer ? offer.offer : undefined,
           });
         } catch (e) {
@@ -887,7 +972,7 @@
           rows.push(...d.rows);
           if (!d.urlsOk) return showStop("fail", "✕ Not a VRP node — " + d.problems.join("; "), rows);
           const result = await verifyJws(jws, await nodeFetch(disc.jwks_url));
-          render({ result, host: null, own, rows, problems: d.problems, jwksUrl: disc.jwks_url, envelopeOffer });
+          render({ result, host: null, own, rows, problems: d.problems, jwksUrl: disc.jwks_url, envelopeOffer, asked: null });
         } catch (e) {
           if (e instanceof NodeRedirect) return redirectStop(e, rows);
           showError(e && e.message === "NO_NATIVE_ED25519" ? "NO_NATIVE_ED25519" : (e && e.message ? e.message : String(e)));

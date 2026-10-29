@@ -62,7 +62,7 @@
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/spec/v0.1</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/spec/attestations-v0.1</loc>
@@ -122,7 +122,7 @@
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/schemas/verified-stay-offer-v0.1.schema.json</loc>
-    <lastmod>2026-07-24</lastmod>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-result-v0.1.schema.json</loc>
@@ -158,6 +158,10 @@
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/examples/conformance/host-domain/vectors.v0.1.json</loc>
+    <lastmod>2026-10-17</lastmod>
+  </url>
+  <url>
+    <loc>https://vacationrentalprotocol.com/examples/conformance/offer-rules/vectors.v0.1.json</loc>
     <lastmod>2026-10-17</lastmod>
   </url>
   <url>

@@ -49,9 +49,15 @@ earlier context.
    fetched from; an offer that names another domain is not that domain's
    offer, even when its signature verifies.
 5. **Safe to quote** ([spec §7](../../spec/v0.1.md) — all must hold):
-   `valid_until` present and fresh, `availability.available` true,
-   `price.exact` true, a direct booking URL present, and
-   `agent_permission.may_quote_as_official_direct_offer` true. When safe, the
+   `valid_until` present and fresh, at most 900 seconds after `generated_at`,
+   and `generated_at` not more than 60 seconds ahead of your clock; the signed
+   `request` is the stay you asked for (same `check_in`, `check_out`,
+   `guests`), its dates exist, `check_out` is after `check_in`, and
+   `check_in` is not earlier than the day before today's UTC date;
+   `availability.available` true, `price.exact` true, a direct booking URL
+   present, and `agent_permission.may_quote_as_official_direct_offer` true.
+   What `request` holds, `language` included, is the requester's words echoed
+   back; never present it as the host's. When safe, the
    canonical phrase is: "I found the official host-domain verified offer for
    this stay."
 6. **Quote the signed total only.** Quote only the signed exact total inside

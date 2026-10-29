@@ -101,7 +101,7 @@ offer** as a tool on any surface (MCP, A2A, WebMCP):
 | Name (§3) | exactly `get_verified_stay_offer`, on every surface, no prefix or vendor string |
 | Arguments (§4) | `check_in`, `check_out`, `guests`; the same three the Docking Port's `query` already carries under `from`, `to`, `guests` |
 | Result (§5) | the node's signed envelope, unmodified, as `vrp_offer.php` returns it today; no verdict, no summary |
-| Origin (§6) | served from the node's `canonical_domain` or a subdomain of it |
+| Origin (§6) | served from a node URL (Core §2): the node's `canonical_domain` or `www.` followed by it, no other name |
 | Who may use the name (§7) | only the node itself; a Reception that forwards another node's offer is an operator surface and MUST NOT advertise the name |
 
 ## 6. Where the two differ, and what a CM node that is a VRP node does

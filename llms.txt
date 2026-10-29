@@ -72,6 +72,8 @@ Definition: https://vacationrentalprotocol.com/vrp-vacation-rental
 - Example verified stay offer (not quoteable): https://vacationrentalprotocol.com/examples/verified-stay-offer.not-quoteable.v0.1.json
 - Example attestation bundle: https://vacationrentalprotocol.com/examples/attestations/attestation-bundle.v0.1.json
 - Three-state conformance fixtures: https://vacationrentalprotocol.com/examples/conformance/three-state-verification.v0.1.json
+- Host-domain conformance vectors (host-owned domain, offer bound to the fetched domain, booking-URL host): https://vacationrentalprotocol.com/examples/conformance/host-domain/vectors.v0.1.json
+- Offer-rules conformance vectors (the stay asked for, real and future dates, the language tag, a lifetime of at most 900 seconds): https://vacationrentalprotocol.com/examples/conformance/offer-rules/vectors.v0.1.json
 - StayIntent conformance fixtures (positive + no-match): https://vacationrentalprotocol.com/examples/conformance/stayintent/positive.v0.1.json
 - StayIntent conformance fixture (no-match): https://vacationrentalprotocol.com/examples/conformance/stayintent/no-match.v0.1.json
 - Conformance report v0.1 (score-free record of one verifier run against one corpus): https://vacationrentalprotocol.com/docs/conformance-report

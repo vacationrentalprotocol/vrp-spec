@@ -277,9 +277,25 @@ export function summarize(md) {
   const chosen = paragraphs.find((para) => !isMetadata(para) && !isBoilerplate(para)) || paragraphs[0] || [];
   let description = mdPlain(chosen.join(" "));
   description = description.replace(/\s+/g, " ").trim();
-  if (description.length > 300) {
-    const cut = description.slice(0, 300);
-    description = cut.slice(0, cut.lastIndexOf(" ")).replace(/[,;:]$/, "") + "…";
-  }
-  return { title, description };
+  return { title, description: capDescription(description) };
+}
+
+/**
+ * A meta description of at most DESCRIPTION_MAX characters. Search engines show about
+ * 155–160 and cut the rest (Bing Webmaster Tools, 2026-10-29, on /spec/v0.1: "Meta Description
+ * too long or too short", 243 characters; 17 of the 39 rendered pages were over 160). The cut
+ * falls on the last sentence end that fits, so the description is whole sentences; when no
+ * sentence end fits, on the last word, with an ellipsis.
+ */
+export const DESCRIPTION_MAX = 155;
+
+export function capDescription(text) {
+  const description = text.replace(/\s+/g, " ").trim();
+  if (description.length <= DESCRIPTION_MAX) return description;
+  const head = description.slice(0, DESCRIPTION_MAX + 1);
+  let end = -1;
+  for (const m of head.matchAll(/[.!?]["”)]?(?= |$)/g)) end = m.index + m[0].length;
+  if (end >= 60) return description.slice(0, end);
+  const cut = description.slice(0, DESCRIPTION_MAX - 1);
+  return cut.slice(0, cut.lastIndexOf(" ")).replace(/[,;:]$/, "") + "…";
 }

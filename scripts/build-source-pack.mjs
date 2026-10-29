@@ -92,7 +92,7 @@ function htmlDoc(bodyHtml) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>VRP Source Pack — the full standard on one page</title>
-    <meta name="description" content="The full Vacation Rental Protocol (VRP) open standard on one HTML page — importable directly into AI notebooks such as Google NotebookLM, ChatGPT and Claude." />
+    <meta name="description" content="The full Vacation Rental Protocol (VRP) open standard on one HTML page, importable into AI notebooks such as Google NotebookLM, ChatGPT and Claude." />
     <meta name="robots" content="index,follow" />
     <link rel="canonical" href="${ORIGIN}/source-pack" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

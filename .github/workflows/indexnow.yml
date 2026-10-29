@@ -1,0 +1,51 @@
+name: IndexNow
+# After every production deploy on Vercel, tell the IndexNow engines (Bing, Yandex, Seznam,
+# Naver; DuckDuckGo reads Bing) which pages exist: every <loc> of the live sitemap.xml, in one
+# call. Measured 2026-10-29T14:44Z: vacationrentalprotocol.com had no IndexNow key and no
+# submission; a cold search found no page of the domain. The key file at the site root
+# (<key>.txt) is public by design: IndexNow reads it to verify the submission. No action,
+# no secret; a few seconds once per production deploy. Preview deploys are ignored.
+
+on:
+  deployment_status:
+
+permissions: {}
+
+jobs:
+  submit:
+    name: Submit sitemap.xml to IndexNow
+    if: >-
+      github.event.deployment_status.state == 'success' &&
+      contains(github.event.deployment_status.environment, 'Production')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      HOST: vacationrentalprotocol.com
+      INDEXNOW_KEY: b8001c6db0706b1748490b3dbad6e7f6
+    steps:
+      - name: Read the live sitemap and verify the key file
+        run: |
+          set -euo pipefail
+          curl -fsS "https://${HOST}/sitemap.xml" -o sitemap.xml
+          grep -o '<loc>[^<]*</loc>' sitemap.xml | sed 's#</\?loc>##g' | grep "^https://${HOST}/" | head -n 10000 > urls.txt
+          test -s urls.txt
+          KEY_URL="https://${HOST}/${INDEXNOW_KEY}.txt"
+          test "$(curl -fsS "${KEY_URL}")" = "${INDEXNOW_KEY}"
+          echo "KEY_URL=${KEY_URL}" >> "$GITHUB_ENV"
+          echo "$(wc -l < urls.txt) URLs, key file OK"
+
+      - name: POST to api.indexnow.org
+        run: |
+          set -euo pipefail
+          jq -Rn --arg host "${HOST}" --arg key "${INDEXNOW_KEY}" --arg keyLocation "${KEY_URL}" \
+            '{host: $host, key: $key, keyLocation: $keyLocation, urlList: [inputs]}' urls.txt > body.json
+          STATUS=$(curl -sS -o response.txt -w '%{http_code}' \
+            -H 'Content-Type: application/json; charset=utf-8' \
+            --data-binary @body.json https://api.indexnow.org/indexnow || echo "000")
+          echo "IndexNow answered HTTP ${STATUS} for $(wc -l < urls.txt) URLs"
+          cat response.txt || true
+          # 200 = accepted, 202 = accepted, key validation pending. Anything else is a defect.
+          case "${STATUS}" in
+            200|202) ;;
+            *) exit 1 ;;
+          esac

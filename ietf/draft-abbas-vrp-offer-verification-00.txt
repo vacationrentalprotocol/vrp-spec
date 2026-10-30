@@ -450,13 +450,15 @@ Abbas                    Expires 31 January 2027                [Page 8]
 Internet-Draft           VRP Offer Verification                July 2026
 
 
-   *  Its host MUST be the offer's canonical_domain, or a subdomain of
-      that registrable domain.  It MUST NOT point at a third-party
-      domain, an OTA, a link shortener, a redirector, or any operator-
-      owned domain other than the host's.  A verifier that cannot
-      confirm the URL host is on the offer's canonical_domain MUST treat
-      the direct booking URL as unknown (Section 6.4) and MUST NOT route
-      booking to it.
+   *  Its host MUST be the offer's canonical_domain, or www. followed by
+      it, and no other name, with no userinfo and no port other than the
+      https default.  It MUST NOT point at any other host: another name
+      under the node's domain, another node's domain, a name under a
+      platform, catalog, marketplace or operator domain, an OTA, a link
+      shortener or a redirector.  A verifier that cannot confirm that
+      the URL host is the offer's canonical_domain or www. followed by
+      it MUST treat the direct booking URL as unknown (Section 6.4) and
+      MUST NOT route booking to it.
 
    *  The URL SHOULD encode the quoted stay so the booking page opens
       pre-filled for the same stay.  The RECOMMENDED query parameters
@@ -493,8 +495,6 @@ Internet-Draft           VRP Offer Verification                July 2026
    *  While the offer is fresh, a verifier MAY present and route the
       user to direct_booking_url subject to the safe-to-quote rules
       (Section 6.2).
-
-
 
 
 

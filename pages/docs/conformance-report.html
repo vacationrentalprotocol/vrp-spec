@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Conformance report v0.1 | Vacation Rental Protocol</title>
+    <meta name="description" content="A conformance report records one run of one verifier against one named VRP conformance corpus, in a form a stranger can re-run and compare." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="Conformance report v0.1" />
+    <meta property="og:description" content="A conformance report records one run of one verifier against one named VRP conformance corpus, in a form a stranger can re-run and compare." />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/conformance-report" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Conformance report v0.1" />
+    <meta name="twitter:description" content="A conformance report records one run of one verifier against one named VRP conformance corpus, in a form a stranger can re-run and compare." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/conformance-report" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/conformance-report.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/conformance-report#techarticle",
+  "headline": "Conformance report v0.1",
+  "description": "A conformance report records one run of one verifier against one named VRP conformance corpus, in a form a stranger can re-run and compare.",
+  "url": "https://vacationrentalprotocol.com/docs/conformance-report",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/conformance-report.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/conformance-report.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/conformance-report.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/conformance-report.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="conformance-report-v01">Conformance report v0.1</h1>
+<p>A conformance report records <strong>one run of one verifier against one named VRP conformance corpus</strong>, in a form a stranger can re-run and compare. It answers three questions and nothing else: what code ran, against which exact vectors, and what came out per vector.</p>
+<p>It is <strong>score-free</strong>. There is no number to rank by. A report is not a trust, safety, compliance, certification or whole-agent verdict. It is not a registry of nodes and not a catalogue of implementations.</p>
+<h2 id="the-three-parts">The three parts</h2>
+<ol><li><strong>Per-vector outcomes.</strong> Every vector in the corpus gets exactly one of five outcomes:</li></ol>
+<table><thead><tr><th>Outcome</th><th>Meaning</th></tr></thead><tbody><tr><td><code>pass</code></td><td>The engine's observed result equals the vector's <code>expected</code> block, and the vector expects acceptance.</td></tr><tr><td><code>reject-as-required</code></td><td>The observed result equals <code>expected</code>, and the vector expects rejection.</td></tr><tr><td><code>not-exercised</code></td><td>The vector was not run (excluded, unsupported, skipped).</td></tr><tr><td><code>inconclusive</code></td><td>The engine ran but the observed result does not equal <code>expected</code>, or evidence is incomplete.</td></tr><tr><td><code>void</code></td><td>The run could not produce a result at all (infrastructure unavailable, harness error).</td></tr></tbody></table>
+<p>   Missing evidence never becomes <code>pass</code>.</p>
+<ol><li><strong>Reproducibility binding.</strong> The report names the engine (repository, revision, file digest), the corpus (path, version, content digest), the configuration, the runtime environment and the run instant. Two parties with the same binding should get the same outcomes.</li></ol>
+<ol><li><strong>Declared must-fail controls.</strong> At least one vector the engine MUST reject is declared up front. If a declared control is observed as anything but <code>reject-as-required</code>, the report sets <code>discriminates: false</code>: the harness cannot tell the relevant behavior apart, and no aggregate may be published from it.</li></ol>
+<p>An <strong>aggregate</strong> is optional and consists of counts only: the full denominator, how many vectors were exercised, how many were distinguished (<code>pass</code> plus <code>reject-as-required</code>). <code>not-exercised</code>, <code>inconclusive</code> and <code>void</code> can never raise the distinguished count.</p>
+<h2 id="artifacts">Artifacts</h2>
+<ul><li>JSON Schema: <code>https://vacationrentalprotocol.com/schemas/conformance-report-v0.1.schema.json</code></li><li>Filled example, reference verifier against the signed-offer corpus: <code>https://vacationrentalprotocol.com/examples/conformance/reports/offer.reference-verifier.v0.1.json</code></li></ul>
+<p>The example covers exactly one corpus, <code>examples/conformance/offer/</code> (five self-describing signed-offer vectors). Its declared must-fail control is <code>03-tampered-signature</code>. Other VRP corpora (<code>receipt/</code>, <code>stayintent/</code>, the three-state fixtures, the attestation bundle) are reported separately, one report each.</p>
+<h2 id="corpus-digest">Corpus digest</h2>
+<p>A directory corpus is digested as the <code>sha256sum</code> manifest of its <code>*.json</code> files in <code>LC_ALL=C</code> sort order, then the SHA-256 of that manifest text:</p>
+<pre><code>cd examples/conformance/offer &amp;&amp; ls *.json | LC_ALL=C sort | xargs sha256sum | sha256sum</code></pre>
+<p>The <code>method</code> field in the report carries this command so the digest can be recomputed without reading this page.</p>
+<h2 id="producing-a-report-for-your-own-verifier">Producing a report for your own verifier</h2>
+<ol><li>Run your verifier over every vector in one corpus, using each vector's embedded <code>jwks</code>, <code>input</code> and <code>clock</code>.</li><li>For each vector, record <code>expected</code> (copied from the vector) and <code>observed</code> (what your verifier returned, same shape).</li><li>Assign the outcome by the table above.</li><li>Bind engine, corpus digest, config, environment and <code>run_at</code>.</li><li>Declare the must-fail controls you ran and what you observed.</li><li>Validate the file against the schema. Publish it wherever you like; VRP keeps no registry of reports.</li></ol>
+<h2 id="license">License</h2>
+<p>Specification text on this page and the schema under <code>schemas/</code> are <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. The conformance vectors and the example report under <code>examples/conformance/</code>, and any harness under <code>scripts/</code>, are <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a>, which carries the royalty-free patent grant. See the <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/README.md#license">README license table</a>.</p>
+      </article>
+    </main>
+  </body>
+</html>

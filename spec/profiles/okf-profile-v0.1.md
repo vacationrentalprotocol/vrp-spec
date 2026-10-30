@@ -117,9 +117,8 @@ Notes:
   **verified JWS payload wins** and the frontmatter value is discarded.
 - `price.agent_total` is the host's signed direct price; `public_total` is the
   website total. An agent **SHOULD** quote `agent_total` (offer-schema rule:
-  "Agents SHOULD quote agent_total as the direct total"). The saving is the
-  verifiable difference `public_total − agent_total`, both signed — no separate
-  discount field is invented (`must_not_invent_discounts`).
+  "Agents SHOULD quote agent_total as the direct total"). Both totals are
+  signed; no separate discount field is invented (`must_not_invent_discounts`).
 
 ## Verification behavior — NORMATIVE (fail-closed)
 
@@ -164,9 +163,11 @@ it is normative here:
   price wins** and the rendered value is discarded — never treated as a second
   opinion or an average.
 - `agent_total` is actionable as the direct price **only** when the verified
-  `agent_permission.may_quote_as_official_direct_offer` is `true`. The saving is
-  the signed difference `public_total − agent_total`; an agent **MUST NOT** invent
-  a discount not present in the signed payload (`must_not_invent_discounts`).
+  `agent_permission.may_quote_as_official_direct_offer` is `true`. An agent
+  **MUST NOT** invent a discount not present in the signed payload
+  (`must_not_invent_discounts`), nor, as `spec/v0.1.md` §7 already requires,
+  savings, promo codes, OTA comparisons, or price reductions. The difference
+  between `public_total` and `agent_total` is not a saving.
 
 Net: **price provenance is a property of the signature, not of the format, the
 page, or the path.** A marketplace that re-hosts the concept cannot forge this —
@@ -202,7 +203,7 @@ it cannot produce a JWS that verifies against the host domain's `did:web` keys.
   **MUST NOT** contain guest personal data or secrets.
 - Key publication, rotation, and revocation happen at `jwks_url` / `did:web`, not
   in the document.
-- The single moat key signs the offer; the OKF document only *carries* that proof.
+- The node's single signing key signs the offer; the OKF document only *carries* that proof.
   Key rotation must preserve historical verifiability of previously rendered
   proofs (cf. MCP profile "key blast radius").
 

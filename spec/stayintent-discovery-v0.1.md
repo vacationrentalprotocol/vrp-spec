@@ -127,8 +127,9 @@ adds price or ranking has rebuilt the OTA it replaces.
 - OTA OpenTravel Hotel Amenity Codes (HAC) where a mapping exists,
 - (future) the UCP hospitality namespace when published.
 
-The alias table is maintained in the reference implementation
-(`AMENITY_SCHEMA_MAP`), not redefined here. Geo uses Wikidata QID + OSM.
+The alias table maps these codes to the vocabularies above; an implementation
+provides the concrete lookup (for example `AMENITY_SCHEMA_MAP`). Geo uses
+Wikidata QID + OSM.
 
 ## 8. Conformance
 
@@ -139,11 +140,11 @@ The alias table is maintained in the reference implementation
   `match: "no"`, empty `nodes`. (Mirrors VRP's failure-mode fixtures.)
 - **Reference verifier** (`scripts/verify-stayintent.mjs`): independently checks a
   response shape + that a pointed node's offer verifies — anyone can run it.
-- **Reference implementation:** the deterministic capability+geo filter
-  (HemmaBo `api/search-properties.ts`, pure DB, no LLM) is the normative conformant
-  surface. HemmaBo's free-text `api/federation/search` (LLM upstream) is a
-  **non-normative** convenience layer and is NOT the StayIntent contract until its
-  upstream is deterministic.
+- **Conformance:** the StayIntent contract is defined by this specification and
+  its conformance vectors. A conformant surface is any deterministic
+  capability+geo filter that satisfies them (for example a pure-DB, no-LLM
+  filter). A free-text, LLM-upstream search is a **non-normative** convenience
+  layer and is NOT the StayIntent contract until its upstream is deterministic.
 
 ## 9. Relationship to UCP / A2A
 
@@ -160,4 +161,4 @@ Ed25519 trust binding that those transports do not specify.
 
 ## License
 
-Specification text: dedicated to the public domain under [CC0 1.0](../LICENSE). Reference code and conformance test vectors: [Apache-2.0](../LICENSE-CODE) (ADR 0010 D7).
+Specification text: dedicated to the public domain under [CC0 1.0](../LICENSE). Reference code and conformance test vectors: [Apache-2.0](../LICENSE-CODE) ([ADR 0007](../docs/adr/0007-receipt-envelope-v1.md) D7).

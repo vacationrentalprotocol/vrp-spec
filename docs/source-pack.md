@@ -42,12 +42,13 @@ URL is authoritative.**
 11. [Node Seal v0.1](https://vacationrentalprotocol.com/spec/node-seal-v0.1)
 12. [Addon attestation layer v0.1](https://vacationrentalprotocol.com/spec/addon-attestation-layer-v0.1)
 13. [Domain continuity v0.1](https://vacationrentalprotocol.com/spec/domain-continuity-v0.1)
-14. [Implement VRP signed offers](https://vacationrentalprotocol.com/docs/implement-vrp)
-15. [Implement portable attestations](https://vacationrentalprotocol.com/docs/implement-attestations)
-16. [Agent integration guide](https://vacationrentalprotocol.com/docs/agent-guide)
-17. [Interop and trust positioning](https://vacationrentalprotocol.com/docs/interop-and-trust-positioning)
-18. [First-mover evidence memo](https://vacationrentalprotocol.com/docs/first-mover-evidence-memo)
-19. Appendix: machine artifacts (schemas, context, live node)
+14. [Node tool binding v0.1](https://vacationrentalprotocol.com/spec/node-tool-binding-v0.1)
+15. [Implement VRP signed offers](https://vacationrentalprotocol.com/docs/implement-vrp)
+16. [Implement portable attestations](https://vacationrentalprotocol.com/docs/implement-attestations)
+17. [Agent integration guide](https://vacationrentalprotocol.com/docs/agent-guide)
+18. [Interop and trust positioning](https://vacationrentalprotocol.com/docs/interop-and-trust-positioning)
+19. [First-mover evidence memo](https://vacationrentalprotocol.com/docs/first-mover-evidence-memo)
+20. Appendix: machine artifacts (schemas, context, live node)
 
 ========================================================================
 ## 1. What is VRP?
@@ -150,6 +151,15 @@ VRP v0.1 is a no-gatekeeper protocol. Verification MUST NOT require HemmaBo, a V
 
 VRP may compose with adjacent agent-commerce standards. UCP can handle checkout and order lifecycle, including lodging flows as the UCP lodging profile matures; AP2 can handle payment mandates; a future agent-native settlement rail (e.g. x402) is reserved but not defined (see §5.2); MCP can expose future tool bindings; and A2A can carry future agent-to-agent negotiation. VRP v0.1 does not define those runtime flows.
 
+##### 1.1 Conventions
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this
+document are to be interpreted as described in BCP 14
+([RFC 2119](https://www.rfc-editor.org/rfc/rfc2119),
+[RFC 8174](https://www.rfc-editor.org/rfc/rfc8174)) when, and only when, they
+appear in all capitals, as shown here.
+
 #### 2. Discovery Document
 
 A VRP host domain publishes:
@@ -162,9 +172,54 @@ Required fields:
 
 - `protocol`: MUST be `vacation-rental-protocol`.
 - `protocol_version`: MUST be `0.1`.
-- `canonical_domain`: MUST match the host-owned domain being verified.
-- `jwks_url`: MUST point to the host-domain JWKS.
-- `verified_stay_offer_endpoint`: MUST point to the host-domain verified stay offer endpoint.
+- `canonical_domain`: MUST match the host-owned domain being verified, which is
+  the domain this document is fetched from.
+- `jwks_url`: MUST point to the host-domain JWKS, and MUST be a node URL (below).
+- `verified_stay_offer_endpoint`: MUST point to the host-domain verified stay
+  offer endpoint, and MUST be a node URL (below).
+
+**Host-owned domain.** A VRP node is a domain registered for the host, never a
+name under another party's domain. `canonical_domain` MUST meet all of the
+following:
+
+1. It is lowercase ASCII, with internationalized labels in A-label (`xn--`)
+   form, and has no trailing dot.
+2. It equals its own registrable domain as computed by the
+   [Public Suffix List](https://publicsuffix.org/list/) algorithm using only the
+   rules in the list's ICANN section, each rule compared in A-label form; where
+   no ICANN rule matches, the algorithm's default rule `*` applies. The list's
+   PRIVATE section does not count: it lists domains under which a company hands
+   out names to its customers.
+3. Its top-level domain is not a brand or closed top-level domain, under which
+   every name belongs to the top-level domain's operator. These are:
+   - every top-level domain whose ICANN registry agreement includes
+     Specification 13, marked `"specification13": true` in ICANN's gTLD list
+     (<https://www.icann.org/resources/registries/gtlds/v2/gtlds.json>); and
+   - `booking` and `hotels`, whose registry operator is Booking.com B.V. This
+     list changes only by ADR.
+
+A name under a platform, catalog, marketplace, OTA, site builder or operator
+domain is never a `canonical_domain`, whoever operates that domain.
+`example.com` and `example.co.uk` are host-owned domains; `www.example.com`,
+`villa.platform.example`, `villa.booking` and `villa.amazon` are not. A verifier
+that holds no copy of the ICANN section of the Public Suffix List, or of ICANN's
+gTLD list, MUST treat the node as `unknown` (§9).
+
+**Node URL.** A node URL is an absolute `https` URL whose host is
+`canonical_domain` or `www.` followed by `canonical_domain`, with no userinfo (no
+user name or password) and no port other than the `https` default. Hosts are
+compared after URL parsing, which lowercases them.
+
+**Fetching.** The domain a discovery document, a JWKS or an offer is fetched
+from is the host of the URL the verifier requested. A verifier requests the
+discovery document at `https://{domain}/.well-known/vacation-rental.json` for the
+domain it is verifying, which the document's `canonical_domain` then has to match.
+A verifier MAY follow a redirect only when its target is a node URL of that
+domain; it MUST NOT follow any other redirect, and MUST treat what it would have
+fetched as `unknown` (§9).
+
+Conformance vectors for these rules, §5.1 and §7:
+[`examples/conformance/host-domain/`](https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance/host-domain).
 
 Recommended fields:
 
@@ -172,6 +227,45 @@ Recommended fields:
 - `capabilities`
 - `operator` — MAY carry `name`, `role`, and `key_custody`. `key_custody` declares who holds the node's Ed25519 signing key: `platform` (an operator holds and operates the key on the host's behalf — offers are signed under the host's domain identity and remain independently verifiable against `jwks_url`, but the host does not hold the key itself) or `self` (the host self-custodies their own key). Absent = unspecified; a verifier MUST NOT assume self-custody. This lets an agent reason about exactly what a valid signature guarantees — provenance and integrity in both cases, host self-sovereignty only when `self`.
 - `endpoints`
+
+##### 2.1 Node page identification
+
+A VRP node is found and verified through its discovery document (§2) and its
+signed offers (§5). The pages a guest or an AI model reads are not part of that
+chain, so nothing in v0.1 has required them to name the protocol. The rules
+below make the protocol visible there too. In v0.1 they are SHOULD;
+[ADR 0006](https://vacationrentalprotocol.com/docs/adr/0006-node-page-identification) records that (a) and
+(b) are intended to become MUST in the next MAJOR version, the migration path
+being these two tags.
+
+For the page served at `https://{canonical_domain}/`:
+
+- (a) The document head SHOULD contain
+  `<link rel="protocol" href="https://vacationrentalprotocol.com/">`.
+- (b) The document body SHOULD contain a visible hyperlink carrying
+  `rel="protocol"` whose `href` is on the origin
+  `https://vacationrentalprotocol.com` — the root, or
+  `/verify?host={canonical_domain}` — and whose link text contains the string
+  `VRP`.
+- (c) The response SHOULD carry the HTTP header
+  `Link: <https://vacationrentalprotocol.com/>; rel="https://vacationrentalprotocol.com/rel/protocol"`.
+- (d) schema.org JSON-LD on the page SHOULD mark the lodging with
+  `"additionalType": "https://vacationrentalprotocol.com/terms#VRPVacationRental"`.
+- (e) The page SHOULD describe the property as a VRP vacation rental in its own
+  language (for example «VRP-semesterboende»).
+
+The `href` in (a) and (b) MUST NOT point to an implementation, an operator, or
+any origin other than `https://vacationrentalprotocol.com`: the link names the
+standard, never a vendor. The HTML keyword `protocol` and the extension relation
+type `https://vacationrentalprotocol.com/rel/protocol` denote the same relation;
+see [/rel/protocol](https://vacationrentalprotocol.com/rel/protocol). (a) and
+(b) are checked by `scripts/verify-node-page.mjs` against the vectors in
+`examples/conformance/node-page/`; (c)–(e) are reported, not enforced.
+*Visible* in (b) means rendered visible to a reader. The checker does not
+render a page: it tests the link's own attributes (`hidden`,
+`aria-hidden="true"`, an inline `display: none`). A link hidden by an ancestor
+element or by a stylesheet passes the checker and still fails (b); the checker
+is necessary, not sufficient.
 
 #### 3. JWKS
 
@@ -207,7 +301,7 @@ JWKS.
 **Rotation.** To rotate, a node MUST publish the new key alongside the old one in
 its JWKS and sign new offers with the new key's `kid`. It SHOULD retain the old
 key in the JWKS until every offer signed with it has passed its `valid_until`, so
-the retention overlap equals the maximum offer lifetime. A node SHOULD use a `kid`
+the retention overlap equals the maximum offer lifetime (900 seconds, §5). A node SHOULD use a `kid`
 that encodes a date and sequence (e.g. `example.com-2026-05-18-01`) so operators
 can order keys; a verifier MUST treat `kid` as opaque and MUST NOT infer trust,
 recency, or status from its value.
@@ -304,6 +398,38 @@ The signed payload MUST include:
 - `booking`
 - `agent_permission`
 
+**The stay asked for.** `request` is the stay the offer is for, as it was asked
+for at the offer endpoint (§4): `check_in` and `check_out` are dates in
+`YYYY-MM-DD` form, and `guests` is an integer of at least 1.
+
+- `check_in` and `check_out` MUST be dates that exist in the calendar
+  ([RFC 3339](https://www.rfc-editor.org/rfc/rfc3339) `full-date`), and
+  `check_out` MUST be later than `check_in`.
+- A node MUST NOT sign an offer for dates that break these rules, or whose
+  `check_in` is earlier than the current date at the property. It answers with
+  an error instead.
+- `check_in`, `check_out`, `guests` and `language` are the requester's words,
+  echoed back; they are not statements by the host. `check_in_weekday`,
+  `check_out_weekday` and `nights`, when present, are the node's own, computed
+  from the two dates. A node MUST NOT copy into the signed payload any value
+  from the request other than those four. `request.language`, when present,
+  MUST be a [BCP 47](https://www.rfc-editor.org/info/bcp47) language tag made of
+  a language subtag (two or three letters), optionally a script subtag (four
+  letters) and optionally a region subtag (two letters or three digits), joined
+  by hyphens; letter case does not matter, as in BCP 47. It SHOULD name a
+  language the node writes the offer in.
+
+**Lifetime.** `generated_at` and `valid_until` are UTC date-times in the form
+the schema pins ([RFC 3339](https://www.rfc-editor.org/rfc/rfc3339)
+`date-time`, ending in `Z`). A node MUST set `generated_at` to the time it signs
+the offer. `valid_until` MUST be later than `generated_at` and MUST NOT be more
+than 900 seconds (15 minutes) after it. The two values are compared as written,
+fractions of a second included.
+
+Conformance vectors for the stay asked for, the dates, the language tag and the
+lifetime (§5, §6, §7):
+[`examples/conformance/offer-rules/`](https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance/offer-rules).
+
 The signed payload MAY also include host-verified direct-source facts, so an
 agent can verify (not just read) the node's positioning:
 
@@ -314,6 +440,13 @@ agent can verify (not just read) the node's positioning:
 - `price.no_add_on_fees` — `true` asserts the quoted total has no add-on
   booking, service, or cleaning fees (the displayed price is the total paid).
   This is the node's own fee structure, never an OTA comparison.
+- `price.minor_unit` — the unit of every amount in `price` (`public_total`,
+  `agent_total`, `total`, each `breakdown[].nightly_rate`, each
+  `adjustments[].amount`, the `reconciliation` sums). `true`: integers in the
+  currency's minor unit (cents, öre): `29100` is 291.00 EUR. `false`: whole
+  currency units: `8930` is 8 930 SEK. The schema requires the flag, and it
+  applies to the whole `price` object; a consumer reads it before it quotes,
+  converts or displays an amount.
 
 The envelope and payload structure is pinned by
 [`schemas/verified-stay-offer-v0.1.schema.json`](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/schemas/verified-stay-offer-v0.1.schema.json),
@@ -335,11 +468,14 @@ lifecycle.
 **Structure.**
 
 - `direct_booking_url` MUST be an absolute `https` URL.
-- Its host MUST be the offer's `canonical_domain`, or a subdomain of that
-  registrable domain. It MUST NOT point at a third-party domain, an OTA, a link
-  shortener, a redirector, or a HemmaBo-operated domain. An agent that cannot
-  confirm the URL host is on the offer's `canonical_domain` MUST treat the
-  direct booking URL as `unknown` (see §9) and MUST NOT route booking to it.
+- It MUST be a node URL (§2) of the offer's `canonical_domain`: its host is the
+  offer's `canonical_domain` or `www.` followed by it, and no other name, with no
+  userinfo and no port other than the `https` default. It MUST NOT point at any
+  other host: another name under the node's domain, another node's domain, a
+  name under a platform, catalog, marketplace or operator domain, an OTA, a link
+  shortener or a redirector. An agent that cannot confirm that it is a node URL
+  MUST treat the direct booking URL as `unknown` (see §9) and MUST NOT route
+  booking to it.
 - The URL SHOULD encode the quoted stay so that the booking page opens
   pre-filled for the same stay the agent quoted. The RECOMMENDED query
   parameters are:
@@ -499,19 +635,38 @@ class violation, not a promotion.
 
 Agents MUST treat an offer as non-quoteable if `valid_until` is missing, malformed, or expired.
 
+Agents MUST also treat an offer as non-quoteable if `generated_at` is missing or
+malformed, if `generated_at` is more than 60 seconds later than the agent's
+current time, or if `valid_until` is not later than `generated_at` or is more
+than 900 seconds after it (§5). The 60 seconds allow for clocks that are not
+exactly in step; they do not lengthen the lifetime.
+
 Agents SHOULD fetch a fresh offer for the user's specific dates and guest count before presenting a final price or booking URL.
 
 #### 7. Safe-to-Quote Rules
 
-An agent may quote an offer as an official host-domain verified offer only when all of the following are true:
+An agent MUST NOT quote an offer as an official host-domain verified offer unless all of the following are true:
 
-- The discovery document is fetched from the host-owned domain.
+- The discovery document is fetched from the host-owned domain (§2), and its `canonical_domain` is that domain.
 - The discovery document declares `protocol: "vacation-rental-protocol"`.
 - The discovery document declares `protocol_version: "0.1"`.
 - The JWKS contains an Ed25519 verification key matching the JWS.
 - The compact JWS verifies against the host-domain JWKS.
 - The signed payload matches the returned offer.
+- The signed payload's `canonical_domain` is the domain the discovery document was fetched from.
 - `valid_until` is present and fresh.
+- `generated_at` and `valid_until` meet §5 and §6: `valid_until` is later than
+  `generated_at` and at most 900 seconds after it, and `generated_at` is not more
+  than 60 seconds later than the agent's current time.
+- `request.check_in` and `request.check_out` are dates that exist,
+  `request.check_out` is later than `request.check_in`, and `request.check_in`
+  is not earlier than the day before the agent's current date in UTC. The local
+  date anywhere is at most one day behind the UTC date, so a `check_in` earlier
+  than that has passed everywhere; the node itself applies the property's own
+  date (§5).
+- `request.check_in`, `request.check_out` and `request.guests` are the dates and
+  the guest count the agent asked for.
+- `request.language`, when present, has the form §5 gives.
 - `availability.available` is true.
 - `price.exact` is true.
 - A direct booking URL is present.
@@ -529,10 +684,11 @@ Agents MUST NOT:
 - Say the stay is bookable unless `availability.available` is true and agent permission allows quoting.
 - Quote a final total unless `price.exact` is true in the signed offer.
 - Route booking action anywhere except the signed direct booking URL.
+- Present a value from `request` as something the host stated (§5).
 
 #### 8. Fail-Closed Behavior
 
-Agents and clients MUST fail closed. If signature verification, freshness, exact price, availability, direct booking URL, or citation permission cannot be verified, the offer MUST NOT be quoted as official or bookable.
+Agents and clients MUST fail closed. If signature verification, the offer's binding to the fetched domain and to the stay asked for (§7), freshness and lifetime (§5, §6), the dates (§5), exact price, availability, direct booking URL, or citation permission cannot be verified, the offer MUST NOT be quoted as official or bookable.
 
 #### 9. Three-State Verification
 
@@ -590,9 +746,131 @@ villaakerlyckan.se
 
 HemmaBo is a reference implementation and provider/federation using VRP. VRP is neutral and implementable by others.
 
-#### 14. License
+#### 14. Security Considerations
 
-Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) (ADR 0010 D7). Patents: a royalty-free patent non-assertion commitment is offered under the Open Web Foundation Agreement 1.0 (Patent-Only) — see [PATENTS.md](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/PATENTS.md).
+This section is informative. It gathers the security properties and limits that
+this document states elsewhere; where a rule applies, the section that states it
+governs, and nothing here adds to or relaxes it.
+
+- **The root of trust is domain control.** The key set a verifier trusts is
+  whatever the host domain serves at `jwks.json` (§3). Rotation and revocation
+  protect against a leaked signing key while the domain stays under the
+  operator's control. They do not protect against compromise of the domain
+  itself: an attacker who can serve the domain's `jwks.json` can publish their
+  own keys, and no key-level mechanism can detect that. DNS, TLS and hosting
+  security are the operator's responsibility and out of scope for VRP (§3.1).
+- **What a valid signature proves.** A signature that verifies against the host
+  domain's JWKS proves that a key the domain publishes signed exactly these
+  terms (§5): provenance and integrity of the offer. Who holds the private key
+  can be declared per node in `operator.key_custody` (§2). With `self`, the host
+  holds it. With `platform`, an operator holds and uses it on the host's behalf;
+  the signature then proves that the domain's published key signed, not that the
+  host itself held the key. A verifier does not assume self-custody when
+  `key_custody` is absent (§2).
+- **Domain binding.** A valid signature proves which domain's key signed, not
+  which domain the offer is about. If the node at one domain signs an offer whose
+  `canonical_domain` names another domain, the signature verifies against the
+  signing node's JWKS; only the check that the offer names the domain it was
+  fetched from (§7) stops an agent from presenting it as the other domain's
+  offer.
+- **The stay asked for.** A genuine offer for other dates or another guest
+  count verifies like any other offer from the node. Only the comparison with
+  what the agent asked for (§7) stops an agent from quoting it for the wrong
+  stay.
+- **Echoed request fields.** A node signs whatever it copies from the request.
+  If it copied free text, anyone could get a host-signed sentence of their own
+  choosing by asking for it. §5 therefore limits what is copied to the stay and
+  a language tag, and §7 forbids presenting either as the host's words.
+- **Offer lifetime.** A leaked key mints fresh offers whatever the lifetime
+  (§3.1), but an offer the node itself signed stays quotable after a price or
+  availability change for at most its lifetime. §5 caps that at 900 seconds, and
+  the check on `generated_at` (§6) keeps a start time in the future from
+  stretching it.
+- **Concentration under platform custody.** An operator that holds the signing
+  keys of many nodes is one point of compromise for all of them. Rotation and
+  revocation (§3.1) work per node: removing a compromised key from one node's
+  JWKS de-trusts it for that node, within the cache bound. A key that several
+  nodes publish is de-trusted only where it is removed.
+- **Key compromise and revocation latency.** Offer freshness (`valid_until`,
+  §6) does not bound a compromise: whoever holds a leaked key can mint fresh
+  offers. Revocation is removal of the key from the JWKS, and its latency is the
+  verifier's five-minute JWKS cache bound (§3.1). Removing a compromised key also
+  invalidates the operator's own offers signed with it; that is intentional,
+  because the operator's and an attacker's signatures are indistinguishable under
+  the same key (§3.1).
+- **Enforcement honesty.** VRP cannot force a verifier to honour the cache
+  bound. It is a conformance requirement on verifiers, not a guarantee the
+  protocol can enforce (§3.1).
+- **Booking-path integrity.** The rules for `direct_booking_url` (§5.1) — a
+  node URL of the offer's `canonical_domain` (§2), no shortener or redirector,
+  integrity solely from the enclosing JWS, actionable
+  only while the offer is fresh — exist so that a tampered or substituted offer
+  cannot route a guest's booking, and payment, to an attacker. An agent that
+  cannot confirm the host treats the URL as unknown (§5.1, §9).
+- **Host-owned domains.** Only a domain registered for the host can be a node
+  (§2). A company that hands out names under its own domain, as the Public
+  Suffix List's PRIVATE section records, cannot make those names VRP nodes, and
+  neither can the operator of a brand or closed top-level domain. ICANN's gTLD
+  list marks brand top-level domains (Specification 13) but not every closed
+  one; §2 therefore names the closed top-level domains it stops beyond that
+  list, and a closed top-level domain that is neither marked nor named is
+  excluded by the rule's wording but not yet by a program.
+- **Fail-closed verification.** Whatever cannot be verified is unknown, never
+  affirmed or negated (§8, §9), so a timeout, a malformed response or a failed
+  signature check cannot be turned into a quote.
+- **Amplification.** §3.1 asks verifiers to rate-limit or coalesce
+  refresh-on-miss per domain, so that a stream of offers bearing unknown `kid`s
+  cannot be used to drive traffic against a node's JWKS endpoint.
+- **Transport.** The discovery document is served over `https` only
+  ([well-known-uri-v0.1](https://vacationrentalprotocol.com/spec/well-known-uri-v0.1) §5). `jwks_url`,
+  `verified_stay_offer_endpoint` and `direct_booking_url` are node URLs, so
+  `https` on the node's own domain (§2, §5.1), and a verifier follows a
+  redirect only to a node URL (§2).
+- **Tamper evidence.** A node can record signed-artifact hashes and key-rotation
+  events in an append-only transparency log (§3.1;
+  [transparency-log-v0.1](https://vacationrentalprotocol.com/spec/transparency-log-v0.1)), giving a tamper-evident,
+  not immutable, history for later disputes about which key was valid when.
+
+Further reading: the threat model
+([`docs/security/THREAT_MODEL.md`](https://vacationrentalprotocol.com/docs/security/THREAT_MODEL)), key
+rotation ([`docs/security/KEY_ROTATION.md`](https://vacationrentalprotocol.com/docs/security/KEY_ROTATION))
+and incident response
+([`docs/security/INCIDENT_RESPONSE.md`](https://vacationrentalprotocol.com/docs/security/INCIDENT_RESPONSE)).
+
+#### 15. Privacy Considerations
+
+This section is informative.
+
+- **Public, site-wide metadata.** The discovery document and the JWKS describe
+  the site and its keys; they are public and machine-readable.
+  [well-known-uri-v0.1](https://vacationrentalprotocol.com/spec/well-known-uri-v0.1) §5 keeps guest personal data
+  and secrets out of the discovery document. The JWKS carries public keys only
+  (§3); this document states no separate rule for it.
+- **Offers echo the request.** A verified stay offer echoes the requested dates
+  and guest count (`request`, §4, §5) and is short-lived (at most 900 seconds,
+  §5, §6).
+  None of the fields this document requires identifies a guest.
+- **No verifier identity.** This document defines no authentication or verifier
+  identity for fetching the discovery document, the JWKS or an offer (§2–§4), so
+  a node learns no more about the requester than any web server learns from an
+  HTTP request.
+- **Stay details in the booking URL.** The `checkIn`, `checkOut` and `guests`
+  query parameters that §5.1 recommends put the quoted dates and guest count
+  into `direct_booking_url`, so they reach browser history and server logs
+  wherever the URL is followed.
+- **Correlation through the booking URL.** The optional offer reference
+  identifier in `direct_booking_url` (§5.1) lets the host node correlate a
+  booking-page visit with the offer it issued. It is not needed for verification
+  (§5.1). This document sets no limit on how long such correlation data is kept;
+  that is the host's decision.
+
+Portable attestations and the transparency log carry their own privacy sections
+([attestations-v0.1](https://vacationrentalprotocol.com/spec/attestations-v0.1) §9,
+[transparency-log-v0.1](https://vacationrentalprotocol.com/spec/transparency-log-v0.1) §9).
+
+#### 16. License
+
+Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) ([ADR 0007](https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1) D7). Patents: a royalty-free patent non-assertion commitment is offered under the Open Web Foundation Agreement 1.0 (Patent-Only) — see [PATENTS.md](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/PATENTS.md).
 
 ========================================================================
 ## 3. Well-Known URI v0.1
@@ -657,7 +935,8 @@ The resource is a self-describing JSON object, versioned by `$schema` and
 `schema_version`. Discovery-relevant fields include:
 
 - `protocol`, `protocol_version` — identifies the document as VRP and its version.
-- `canonical_domain`, `node_id` — the node's canonical host and stable identifier.
+- `canonical_domain`, `node_id` — the node's host-owned domain
+  ([v0.1](https://vacationrentalprotocol.com/spec/v0.1) §2) and stable identifier.
 - `identity` / `did` — the node's `did:web` identity (see `/.well-known/did.json`).
 - `jwks_url` — public keys (JWKS) used to verify signed artifacts.
 - `verified_stay_offer_endpoint` — where a signed, verifiable stay offer is obtained.
@@ -721,7 +1000,7 @@ https://github.com/protocol-registries/well-known-uris/issues/93 (closed).
 
 #### License
 
-Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) (ADR 0010 D7).
+Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) ([ADR 0007](https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1) D7).
 
 ========================================================================
 ## 4. StayIntent open discovery v0.1
@@ -858,8 +1137,9 @@ adds price or ranking has rebuilt the OTA it replaces.
 - OTA OpenTravel Hotel Amenity Codes (HAC) where a mapping exists,
 - (future) the UCP hospitality namespace when published.
 
-The alias table is maintained in the reference implementation
-(`AMENITY_SCHEMA_MAP`), not redefined here. Geo uses Wikidata QID + OSM.
+The alias table maps these codes to the vocabularies above; an implementation
+provides the concrete lookup (for example `AMENITY_SCHEMA_MAP`). Geo uses
+Wikidata QID + OSM.
 
 #### 8. Conformance
 
@@ -870,11 +1150,11 @@ The alias table is maintained in the reference implementation
   `match: "no"`, empty `nodes`. (Mirrors VRP's failure-mode fixtures.)
 - **Reference verifier** (`scripts/verify-stayintent.mjs`): independently checks a
   response shape + that a pointed node's offer verifies — anyone can run it.
-- **Reference implementation:** the deterministic capability+geo filter
-  (HemmaBo `api/search-properties.ts`, pure DB, no LLM) is the normative conformant
-  surface. HemmaBo's free-text `api/federation/search` (LLM upstream) is a
-  **non-normative** convenience layer and is NOT the StayIntent contract until its
-  upstream is deterministic.
+- **Conformance:** the StayIntent contract is defined by this specification and
+  its conformance vectors. A conformant surface is any deterministic
+  capability+geo filter that satisfies them (for example a pure-DB, no-LLM
+  filter). A free-text, LLM-upstream search is a **non-normative** convenience
+  layer and is NOT the StayIntent contract until its upstream is deterministic.
 
 #### 9. Relationship to UCP / A2A
 
@@ -891,7 +1171,7 @@ Ed25519 trust binding that those transports do not specify.
 
 #### License
 
-Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) (ADR 0010 D7).
+Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) ([ADR 0007](https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1) D7).
 
 ========================================================================
 ## 5. Node structure declarations v0.1
@@ -1104,7 +1384,7 @@ extension are implementation steps tracked separately (issue #60, scope items
 
 #### License
 
-Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) (ADR 0010 D7).
+Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) ([ADR 0007](https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1) D7).
 
 ========================================================================
 ## 6. Portable attestations v0.1
@@ -1537,7 +1817,7 @@ above); it uses a documented throwaway test key for the reserved
 
 #### 12. License
 
-Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) (ADR 0010 D7).
+Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) ([ADR 0007](https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1) D7).
 
 ========================================================================
 ## 7. Attestation status (Bitstring Status List) v0.1
@@ -1696,7 +1976,7 @@ data; attestations-only scope).
 
 #### License
 
-Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) (ADR 0010 D7).
+Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) ([ADR 0007](https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1) D7).
 
 ========================================================================
 ## 8. Transparency log v0.1
@@ -1712,7 +1992,7 @@ Specification text: dedicated to the public domain under [CC0 1.0](https://githu
 
 **Updated:** 2026-07-04 — receipt leaves (`vrp_receipt`), leaf hashing rule,
 operator key discovery, STH archival, node read-through proxy, honest
-guarantee wording (issue #60-adjacent; per-booking inclusion proofs)
+guarantee wording ([issue #60](https://github.com/vacationrentalprotocol/vrp-spec/issues/60)-adjacent; per-booking inclusion proofs)
 
 **Canonical context:** https://vacationrentalprotocol.com/contexts/v1
 
@@ -2030,11 +2310,13 @@ scores may be derivable from a log entry.
 
 #### 11. Conformance
 
-A future revision will publish signed conformance vectors under
-`examples/conformance/log/`: a documented test log key, a signed STH, an
-inclusion proof for a known leaf, and a consistency proof between two tree
-sizes — verifiable the same way the attestation vectors are. For this v0.1
-draft, conformance vectors are deferred.
+Signed conformance vectors are published under
+[`examples/conformance/log/`](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/examples/conformance/log/README.md): a
+documented test log key (`did:web:example-log.invalid`), a signed STH,
+inclusion proofs for a known leaf (positive and negative), and consistency
+proofs between two tree sizes — verifiable the same way the attestation
+vectors are (`npm test`, `verify-tlog-vectors`). The reference verifier is
+[`lib/vrp-tlog.mjs`](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/lib/vrp-tlog.mjs).
 
 #### 12. Non-Goals
 
@@ -2052,7 +2334,7 @@ including HemmaBo — can rewrite.
 
 #### 13. License
 
-Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) (ADR 0010 D7).
+Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE). Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) ([ADR 0007](https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1) D7).
 
 ========================================================================
 ## 9. VRP receipt envelope v1
@@ -2062,7 +2344,7 @@ Specification text: dedicated to the public domain under [CC0 1.0](https://githu
 
 ### VRP Receipt Envelope — Specification v1
 
-**Status:** Public draft (WO-2 rev B, PR-2)
+**Status:** Public draft
 
 **Updated:** 2026-07-04 — §14 issuance wrapper & log anchoring, §15 delivery (verbatim rule), §16 verifier walk-through
 
@@ -2074,7 +2356,7 @@ Specification text: dedicated to the public domain under [CC0 1.0](https://githu
 
 **Machine-readable schema:** [`schemas/vrp-receipt.v1.schema.json`](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/schemas/vrp-receipt.v1.schema.json)
 
-**Reference verifier:** [`lib/vrp-receipt.mjs`](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/lib/vrp-receipt.mjs) (Apache-2.0; mirrors `hemmabo-mcp-server` `lib/vrp-receipt.ts`)
+**Reference verifier:** [`lib/vrp-receipt.mjs`](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/lib/vrp-receipt.mjs) (Apache-2.0)
 
 #### 1. Scope
 
@@ -2098,8 +2380,8 @@ and RFC 8174 when capitalized.
 - MCP composition profile: [`profiles/mcp-composition-profile.md`](https://vacationrentalprotocol.com/spec/profiles/mcp-composition-profile) — `transport` layer (D6)
 - Receipt JSON Schema: [`schemas/vrp-receipt.v1.schema.json`](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/schemas/vrp-receipt.v1.schema.json)
 - Conformance vectors: [`examples/conformance/receipt/`](https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance/receipt)
-- ADR 0010 (reference repo): receipt envelope decisions D1–D7
-- ADR 0011 (reference repo): key lifecycle K1–K6 (forward spec; §8 below)
+- [ADR 0007](https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1): receipt envelope decisions D1–D8
+- [ADR 0008](https://vacationrentalprotocol.com/docs/adr/0008-key-lifecycle): key lifecycle K1–K6 (forward spec; §10 below)
 
 #### 3. Envelope shape (D1)
 
@@ -2148,8 +2430,8 @@ Each attestation MAY carry a `tlog` inclusion proof. A v1 verifier MUST:
 - Treat a **missing** `tlog` as signature-only verification — not a failure.
 - NOT claim log-anchored properties for an attestation without `tlog`.
 
-Phase-5 dispute/insurance receipts that must survive key revocation MAY require `tlog`
-(see §8 K4).
+Receipts kept as dispute or insurance evidence that must survive key revocation MAY
+require `tlog` (see §10 K4).
 
 #### 6. Verification result and error registry (D4)
 
@@ -2222,7 +2504,7 @@ The first normative profile is MCP `transport` — see
 Profiles MUST sign an **assertion about the interaction**, not unsigned transport bytes.
 Additional profiles (e.g. AP2 `payment`) follow the same envelope rules.
 
-##### 8.1 Argument key casing (cross-link #7)
+##### 8.1 Argument key casing
 
 For MCP transport assertions, tool-call argument keys that feed `arguments_sha256`
 MUST be **`snake_case`**: `check_in`, `check_out`, `guests` — matching core VRP endpoint
@@ -2230,7 +2512,7 @@ parameters ([`v0.1.md`](https://vacationrentalprotocol.com/spec/v0.1) §4). This
 query parameters ([`v0.1.md`](https://vacationrentalprotocol.com/spec/v0.1) §5.1). Normalization before hashing is the
 caller's responsibility; see the normative pin in the MCP profile.
 
-#### 9. Key-discovery layer separation (#5)
+#### 9. Key-discovery layer separation
 
 VRP uses **two key-discovery paths**. Implementers MUST NOT conflate them:
 
@@ -2251,7 +2533,7 @@ each verifying key is published under the host-domain trust root
 #### 10. Key lifecycle — forward spec (K1–K6)
 
 The v1 receipt verifier implements **signature + freshness only**. The following rules
-are **forward spec** for Phase-5 dispute/insurance positioning (ADR 0011). They do not
+are **forward spec** for receipts kept as dispute or insurance evidence (ADR 0008). They do not
 change v1 verifier behavior today.
 
 | Rule | Summary |
@@ -2259,9 +2541,9 @@ change v1 verifier behavior today.
 | **K1** | Every signature carries JWS `kid`; receipts surface verifying `kid` per attestation |
 | **K2** | JWKS MUST retain **retired** public keys for the receipt-retention horizon; metadata: `vrp_key_status` (`active` · `retired` · `revoked`), `vrp_not_before`, `vrp_not_after` |
 | **K3** | Rotation is additive with overlap — retired keys remain resolvable |
-| **K4** | Revocation ≠ rotation; `vrp_compromised_at` anchors fail-closed rules; Phase-5 receipts intended to survive revocation MUST carry `tlog` |
+| **K4** | Revocation ≠ rotation; `vrp_compromised_at` anchors fail-closed rules; receipts intended to survive revocation MUST carry `tlog` |
 | **K5** | Per-layer key separation is permitted (`payment` MAY use a distinct `kid` from `offer`) |
-| **K6** | Phase-5 lifecycle-aware codes: `key_retired_out_of_window`, `key_revoked`, `tlog_required` |
+| **K6** | Lifecycle-aware codes: `key_retired_out_of_window`, `key_revoked`, `tlog_required` |
 
 Until a lifecycle-aware verifier ships, public copy MUST NOT claim long-term
 post-revocation verifiability.
@@ -2373,7 +2655,7 @@ operator by making any rewrite cryptographically detectable.
 #### 17. License
 
 Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE).
-Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) (ADR 0010 D7).
+Reference code and conformance test vectors: [Apache-2.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE) ([ADR 0007](https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1) D7).
 
 ========================================================================
 ## 10. Booking Proof Chain v0.1
@@ -3086,7 +3368,311 @@ statement and any party can evaluate one without permission from anyone.
 Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE).
 
 ========================================================================
-## 14. Implement VRP signed offers
+## 14. Node tool binding v0.1
+
+*Canonical source: <https://vacationrentalprotocol.com/spec/node-tool-binding-v0.1>*
+========================================================================
+
+### VRP Node Tool Binding — Specification v0.1
+
+**Status:** Public draft — **proposal for discussion** (tracks
+[issue #156](https://github.com/vacationrentalprotocol/vrp-spec/issues/156)).
+Additive by construction: Core v0.1 defines documents and verification rules,
+not runtime tools, and that does not change here. This document binds the one
+name and the one argument shape a node uses when it chooses to expose its
+signed offer as a tool. A node that exposes no tool surface is unaffected, and
+nothing here changes what a v0.1 verifier MUST do today.
+
+**Published:** 2026-10-21
+
+**Repository:** https://github.com/vacationrentalprotocol/vrp-spec
+
+**Builds on:** [Core VRP v0.1](https://vacationrentalprotocol.com/spec/v0.1) (§2 discovery document, §3 JWKS,
+§4 endpoint parameters, §5 signed offer, §5.1 `direct_booking_url`, §6–§9
+freshness, safe-to-quote, fail-closed, three-state verification),
+[Well-Known URI v0.1](https://vacationrentalprotocol.com/spec/well-known-uri-v0.1),
+[MCP composition profile](https://vacationrentalprotocol.com/spec/profiles/mcp-composition-profile) (the tool
+name in the transport assertion, `snake_case` argument keys).
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this
+document are to be interpreted as described in BCP 14
+([RFC 2119](https://www.rfc-editor.org/rfc/rfc2119),
+[RFC 8174](https://www.rfc-editor.org/rfc/rfc8174)) when, and only when, they
+appear in all capitals, as shown here.
+
+#### 1. Scope
+
+A VRP node publishes its facts as documents on its own domain (Core v0.1).
+Agents increasingly reach a site through tool-calling surfaces as well: a
+Model Context Protocol (MCP) server, an Agent2Agent (A2A) agent card, or a
+tool a page registers in the browser through WebMCP. Each surface has its own
+way to name a capability. Without a binding, the same node would call the same
+capability by three names, and an agent that learned one would not recognise
+the other two. Left to implementers, the name becomes an operator's instead of
+the protocol's.
+
+This document binds, for every tool surface a node exposes:
+
+- the **name** of the capability that returns the node's signed verified stay
+  offer (§3);
+- its **arguments** (§4);
+- its **result** (§5);
+- the **origin** the surface is served from (§6);
+- who may use the name (§7).
+
+Out of scope: how an agent finds a node (StayIntent discovery, open-web
+search), search or ranking of any kind, payment, and any tool other than the
+one bound here. A node MAY expose other tools under names of its own choosing;
+this document does not name them.
+
+#### 2. Terms
+
+- **Node**: a host-owned VRP node as in Core v0.1: one `canonical_domain`,
+  one discovery document, one JWKS, one verified stay offer endpoint.
+- **Tool surface** (surface): a machine interface on which a node lists
+  callable capabilities. This version binds three: MCP (`tools/list` on the
+  node's MCP endpoint), A2A (the `skills` array of the node's agent card) and
+  WebMCP (a tool the node's page registers with the browser's model context).
+- **Node tool**: a tool served by the node itself, from the node's own domain,
+  returning the node's own signed offer.
+- **Operator tool**: a tool served by any party other than the node (a
+  platform, a verifier, a directory) that fetches or verifies a node's offer.
+
+#### 3. The capability name
+
+The capability that returns the node's signed verified stay offer is named:
+
+```text
+get_verified_stay_offer
+```
+
+- A node that exposes this capability on any tool surface MUST use this exact
+  name on that surface, and MUST use the same name on every surface it
+  exposes.
+- The name MUST appear exactly as written: lowercase, `snake_case`, no prefix,
+  no suffix, no version, no vendor, operator, brand or domain string.
+  `acme_get_verified_stay_offer`, `example_com_get_verified_stay_offer` and
+  `get_verified_stay_offer_v1` are not this capability.
+- Where a surface has more than one name-like field, the binding is to the
+  field a client uses to **call** the capability:
+
+| Surface | Field bound to the name | Where it is defined |
+| --- | --- | --- |
+| MCP | `name` of the tool in the `tools/list` result, the `name` a `tools/call` request carries | Model Context Protocol, Tools |
+| A2A | `id` of the skill in the agent card's `skills[]` | Agent2Agent Protocol, AgentCard and AgentSkill |
+| WebMCP | `name` passed to `registerTool()` | Web Model Context API (W3C Web Machine Learning Community Group draft) |
+
+- Human-readable fields next to the bound one (MCP `title` and
+  `annotations.title`, A2A skill `name`, every `description`) are not bound and
+  MAY be localised.
+
+**Why no prefix.** The name identifies a protocol capability, not an operator.
+The node's identity is its domain, and every surface already carries that
+domain: the MCP endpoint URL, the agent card's endpoint URL and the host that
+served the card, the page's origin. Putting the domain or the operator into
+the name would say the same thing twice and would make every node's capability
+a different word. Clients tell same-named tools apart by the server they came
+from: MCP leaves that disambiguation to the client, and WebMCP requires a name
+to be unique within one document, not across the web.
+
+#### 4. Arguments
+
+The capability takes the parameters of the verified stay offer endpoint
+(Core v0.1 §4), with the same names and formats:
+
+| Argument | Type | Requirement |
+| --- | --- | --- |
+| `check_in` | string, `YYYY-MM-DD` | REQUIRED |
+| `check_out` | string, `YYYY-MM-DD` | REQUIRED |
+| `guests` | integer, at least 1 | REQUIRED |
+
+- Keys are `snake_case`, as in Core v0.1 §4 and the MCP composition profile's
+  normative casing section. A node MAY additionally accept the `camelCase`
+  aliases `checkIn` and `checkOut` that `direct_booking_url` query strings use
+  (Core §5.1), but MUST accept the `snake_case` form.
+- A node MUST NOT require any other argument. It MAY accept optional ones.
+- On every surface the arguments are one JSON object with these keys: the
+  `arguments` of an MCP `tools/call`, the single data part of an A2A message,
+  the input of a WebMCP `execute()`.
+
+#### 5. Result
+
+- The result is the node's **signed verified stay offer envelope** for exactly
+  these arguments: the same envelope the verified stay offer endpoint returns
+  (Core §4–§5), with `offer` (the signed payload) and `signature` (`format`,
+  `alg: EdDSA`, `kid`, `jws`) as
+  [`schemas/verified-stay-offer-v0.1.schema.json`](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/schemas/verified-stay-offer-v0.1.schema.json)
+  pins them.
+- The node MUST return the envelope unmodified, as signed. The tool is a
+  transport for the signed document, not a second source of truth: it MUST NOT
+  replace the signature with a verdict, a summary or a re-serialised payload.
+- The node MUST NOT claim in the tool's description or result that the offer
+  is verified. Verification is the agent's (§8). The description SHOULD say
+  that the tool does not verify the signature and SHOULD name the node's JWKS
+  path.
+- Per surface: MCP returns the envelope as the `tools/call` result content
+  (JSON text and, where the client supports it, `structuredContent`); A2A
+  returns it as a data part of the task's artifact or message; WebMCP returns
+  it as the `execute()` return value.
+- Unavailable dates, a closed property or a rejected request are expressed as
+  Core v0.1 expresses them (a non-quoteable offer under §7, or the endpoint's
+  own error); the tool MUST NOT invent an offer. An error on the surface
+  itself (an MCP result with `isError`, a failed A2A task, a rejected WebMCP
+  promise) is an unverified outcome: the agent MUST NOT quote anything from
+  it.
+
+#### 6. Origin binding
+
+The tool surface and the offer are on the same domain:
+
+- The MCP endpoint URL, the agent card's endpoint URL and the URL that served
+  the card, and the page origin that registered the WebMCP tool MUST be node
+  URLs (Core §2) of the offer's `canonical_domain`: their host is
+  `canonical_domain` or `www.` followed by it, and no other name, the rule Core
+  §5.1 sets for `direct_booking_url`. Another name under the node's domain is
+  not the node's surface: it may be served by another party.
+- An agent MUST check that the offer's `canonical_domain` is the domain that
+  served the surface. An offer that arrives through a surface on another
+  domain is an operator tool's result (§7) and MUST be treated as such,
+  whatever the tool is named.
+- The JWKS the agent verifies against is the one the node's own discovery
+  document names (`jwks_url`, Core §2), fetched from the node's domain, never
+  a key set delivered through the tool surface.
+
+#### 7. Who may use the name
+
+- Only a node tool (§2) MAY be advertised under the name
+  `get_verified_stay_offer`.
+- An operator tool MUST NOT be advertised under this name on the operator's
+  tool list, card or page. It SHOULD carry a name in the operator's own
+  namespace, so an agent can tell a node's own voice from a third party's.
+  Accepting the bare name inbound as a compatibility alias, without listing
+  it, is not advertising.
+- The name is part of the protocol, not of any implementation. No operator,
+  the reference implementer included, has a say over it beyond this
+  repository's process ([GOVERNANCE.md](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/GOVERNANCE.md)).
+
+#### 8. Verification is the agent's
+
+Nothing on a tool surface is a trust signal: not the name, not the
+description, not the annotations, not a signature on the card, not the
+transport. An agent:
+
+1. MUST verify the returned envelope's signature against the JWKS the node's
+   discovery document names (Core §3, §9), exactly as it would for an envelope
+   fetched over HTTPS;
+2. MUST apply the freshness, safe-to-quote and fail-closed rules
+   (Core §6–§8);
+3. MUST take the guest to the `direct_booking_url` inside the verified
+   payload, and to nothing else (Core §5.1);
+4. SHOULD treat tool descriptions as untrusted text.
+
+A tool call is not a signed artifact (MCP composition profile). It is one more
+way to fetch the signed document.
+
+#### 9. Where the surfaces live (informative)
+
+This version adds no field to the discovery document. Agents find a node's
+surfaces by each surface's own convention:
+
+- A2A: the agent card at `/.well-known/agent-card.json` on the node's domain.
+- MCP: the node's MCP endpoint URL, published where the node's clients read
+  it (MCP's own discovery conventions were still drafts at the time of
+  writing), always on the node's domain.
+- WebMCP: the node's own pages, when loaded in a browser that implements the
+  API.
+
+A future revision MAY add an optional discovery field that lists a node's
+surfaces.
+
+#### 10. Conformance
+
+A node conforms to this document when, for every tool surface it exposes:
+
+1. the surface lists exactly one capability named `get_verified_stay_offer`
+   (§3);
+2. that capability takes `check_in`, `check_out` and `guests`, and requires
+   nothing else (§4);
+3. its result for given arguments is the same signed envelope the node's
+   verified stay offer endpoint returns for the same arguments, and that
+   envelope verifies against the node's JWKS with `canonical_domain` equal to
+   the surface's domain (§5, §6).
+
+The name check is three reads of the node and one comparison: the MCP tool
+list, the agent card's skill ids and the page's registered tool name are
+either one string or they are not. Conformance vectors for this document (a
+node's three surfaces and the expected outcome) are to be added to
+[`examples/conformance/`](https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance) before it leaves proposal
+status (GOVERNANCE.md §4, §6).
+
+#### 11. Security considerations
+
+- **Name squatting.** Any server can list a tool called
+  `get_verified_stay_offer`. The name proves nothing; §6 and §8 do. An agent
+  that trusts a tool because of its name has left the protocol.
+- **Description injection.** Tool descriptions, skill descriptions and card
+  text are attacker-controlled on a hostile server. Agents SHOULD treat them
+  as data.
+- **Cross-origin offers.** A surface on domain A that returns an offer whose
+  `canonical_domain` is B is not A's node tool (§6). The offer may still
+  verify against B's JWKS; it is then B's offer, obtained through A, and A's
+  surface is an operator tool.
+- **Duplicate registration.** WebMCP rejects a second registration under a
+  name already registered in the document; a node page registers the
+  capability once.
+- **Keys.** Nothing here moves a key. The node signs with the same key as its
+  endpoint (Core §3); rotation and revocation are Core §3.1.
+
+#### 12. Privacy considerations
+
+The arguments are two dates and a guest count, as in Core §4 and §15. A node
+MUST NOT require guest-identifying input to return the offer. An agent SHOULD
+NOT send more than the three arguments.
+
+#### 13. Relationship to other documents
+
+- **MCP composition profile.** The receipt's `transport` attestation names the
+  tool that served the offer (`"tool": "get_verified_stay_offer"`). This
+  document is where that name is bound, so an assertion and a surface agree by
+  construction.
+- **UCP.** The Universal Commerce Protocol binds its capability names
+  one-to-one to the tools that carry them; this document takes the same
+  approach for one VRP capability.
+- **Core v0.1** stays the only source of what the envelope means and how it
+  is verified.
+
+#### 14. Reference implementation (informative)
+
+The reference node, `villaakerlyckan.se`, exposes the capability on all three
+surfaces under the bound name, with the arguments of §4 and the result of §5.
+Read from production on 2026-10-21 (UTC): the node's MCP manifest, its agent
+card and its page name the capability `get_verified_stay_offer`, one string on
+all three. The platform that operates the node lists its own offer tool under
+an operator-namespaced name (`vrp_get_verified_stay_offer`), per §7. HemmaBo is
+a reference implementer, not an approval authority.
+
+#### 15. Open questions (for discussion in #156)
+
+1. Should the discovery document gain an optional field that lists a node's
+   tool surfaces, or is each surface's own well-known convention enough?
+2. Should the WebMCP binding also bind the `inputSchema` byte for byte, or
+   only the three argument names and types?
+3. Should operator tools be required (MUST) rather than recommended (SHOULD)
+   to carry a namespace prefix?
+
+#### 16. Neutrality
+
+The spec is vendor-neutral. HemmaBo is a reference implementer, not an
+approval authority. Any node, on any stack, can expose the capability under
+this name, and any agent can verify the result without permission from anyone.
+
+#### 17. License
+
+Specification text: dedicated to the public domain under [CC0 1.0](https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE).
+
+========================================================================
+## 15. Implement VRP signed offers
 
 *Canonical source: <https://vacationrentalprotocol.com/docs/implement-vrp>*
 ========================================================================
@@ -3137,7 +3723,7 @@ VRP implementers should keep field names stable and machine-readable. Agents sho
 If a value cannot be verified, agents must treat it as unknown. A missing endpoint, failed fetch, invalid JSON response, failed signature, or stale `valid_until` must never be interpreted as a confirmed negative or a confirmed positive.
 
 ========================================================================
-## 15. Implement portable attestations
+## 16. Implement portable attestations
 
 *Canonical source: <https://vacationrentalprotocol.com/docs/implement-attestations>*
 ========================================================================
@@ -3196,7 +3782,7 @@ Do not publish guest reviews, guest outcomes, guest risk, guest scores, or guest
 Guest-held credentials and reviews are deferred to a future v0.2 design with selective disclosure.
 
 ========================================================================
-## 16. Agent integration guide
+## 17. Agent integration guide
 
 *Canonical source: <https://vacationrentalprotocol.com/docs/agent-guide>*
 ========================================================================
@@ -3220,11 +3806,20 @@ Do not use VRP for:
    registry (provisional, 2026-08-19).
 2. Confirm `protocol` is `vacation-rental-protocol`.
 3. Confirm `protocol_version` is `0.1`.
-4. Confirm `canonical_domain` matches the host-owned domain.
-5. Fetch the declared JWKS.
+4. Confirm `canonical_domain` matches the host-owned domain you fetched from:
+   a domain registered for the host, never a name under a platform's or
+   catalog's domain and never under a brand or closed top-level domain such as
+   `.booking`, `.hotels` or `.amazon` (v0.1 §2).
+5. Fetch the declared JWKS from `jwks_url`, on that domain or `www.` under it.
+   Follow a redirect only to `https` on that domain or `www.` under it.
 6. Request a verified stay offer for the user's dates and guest count.
-7. Verify the compact JWS with the host-domain Ed25519 key.
-8. Confirm the payload is fresh, exact, available, and permitted for citation.
+7. Verify the compact JWS with the host-domain Ed25519 key, and confirm the
+   signed payload's `canonical_domain` is the domain you fetched from (v0.1 §7).
+8. Confirm the payload is fresh (at most 900 seconds from `generated_at`, which
+   is not in the future), is for the dates and guest count you asked for, has
+   real dates with `check_in` not passed, and is exact, available, and permitted
+   for citation (v0.1 §5–§7). Never present a value from `request` as the
+   host's words.
 9. Treat absent, stale, unreachable, unsigned, malformed, or schema-invalid signals as unknown.
 10. Use only the signed direct booking URL.
 
@@ -3249,7 +3844,7 @@ Do not say the stay is bookable unless the signed offer says the dates are avail
 Do not infer from an unknown state. If the host domain, endpoint, signature, freshness, availability, price, or citation permission cannot be verified, report that the value is unknown rather than treating it as true or false.
 
 ========================================================================
-## 17. Interop and trust positioning
+## 18. Interop and trust positioning
 
 *Canonical source: <https://vacationrentalprotocol.com/docs/interop-and-trust-positioning>*
 ========================================================================
@@ -3339,6 +3934,7 @@ VRP should compose with the agent-commerce stack instead of replacing it.
 | MCP | Complementary. MCP can expose retrieval or verification behavior as tools in a future profile. VRP v0.1 defines documents and verification rules, not runtime tools. |
 | A2A | Complementary. A2A can carry future guest-agent and host-agent negotiation. VRP v0.1 does not define an A2A binding. |
 | A2A Agent Card | A node may publish an A2A Agent Card at `https://{host-domain}/.well-known/agent-card.json`. Its `provider` is the host. It may carry a data-only extension with `uri` `https://vacationrentalprotocol.com/spec/v0.1` and `required: false`, whose `params` repeat the VRP v0.1 §2 discovery fields of the same host domain. Its skills name only tools the host domain serves, and it lists no A2A interface the host domain does not serve. The card describes the node; it is not a registry entry and does not replace verification of the signed offer against `jwks_url`. |
+| CM AI Docking Port | An independent, read-only entry point for AI agents into CM Free nodes (AGPL-3.0). Its Request and Response Envelopes map field by field onto the StayIntent query and response, and its signed-offer tool, when exposed, onto the Node Tool Binding; see [the mapping](https://vacationrentalprotocol.com/docs/interop/cm-ai-docking-port). VRP is unchanged by it. |
 | W3C VC 2.0 | Used by VRP Portable Attestations. |
 | VC JOSE/COSE | Canonical v0.1 security format for VRP Portable Attestations as compact JWS with `typ: "vc+jwt"` and `alg: "EdDSA"`. |
 | W3C Data Integrity | Possible future interoperability mapping. VRP v0.1 does not use embedded `proof` objects. |
@@ -3375,7 +3971,7 @@ payment providers, search indexes, and host tools interoperate while VRP keeps
 the host-domain offer proof gatekeeper-free.
 
 ========================================================================
-## 18. First-mover evidence memo
+## 19. First-mover evidence memo
 
 *Canonical source: <https://vacationrentalprotocol.com/docs/first-mover-evidence-memo>*
 ========================================================================
@@ -3449,7 +4045,7 @@ IETF standards-track approval, and it is not a directory of nodes or properties
 #### Reference implementation
 
 - **Protocol:** Vacation Rental Protocol v0.1 (this repository)
-- **Runtime:** [HemmaBo](https://hemmabo.com) — infrastructure, not trust root for offers
+- **Runtime:** [HemmaBo](https://www.hemmabo.com/) — infrastructure, not trust root for offers
 - **Proof node:** [villaakerlyckan.se](https://villaakerlyckan.se)
 
 HemmaBo is a reference implementation and standards contributor, not a central issuer, registry, OTA, marketplace, or booking intermediary.
@@ -3465,7 +4061,7 @@ VRP does not replace UCP checkout, Stripe payments, MCP tools, or search engines
 - [Core spec v0.1](https://vacationrentalprotocol.com/spec/v0.1)
 
 ========================================================================
-## 19. Appendix — machine artifacts
+## 20. Appendix — machine artifacts
 
 The documents above are the human-readable standard. The following machine
 artifacts are referenced by URL rather than inlined; fetch them directly when

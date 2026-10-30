@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VRP Spec — Test Coverage Analysis | Vacation Rental Protocol</title>
+    <meta name="description" content="This document analyzes the current automated-verification coverage of the repository and proposes prioritized areas for improvement." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="VRP Spec — Test Coverage Analysis" />
+    <meta property="og:description" content="This document analyzes the current automated-verification coverage of the repository and proposes prioritized areas for improvement." />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/test-coverage-analysis" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="VRP Spec — Test Coverage Analysis" />
+    <meta name="twitter:description" content="This document analyzes the current automated-verification coverage of the repository and proposes prioritized areas for improvement." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/test-coverage-analysis" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/test-coverage-analysis.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/test-coverage-analysis#techarticle",
+  "headline": "VRP Spec — Test Coverage Analysis",
+  "description": "This document analyzes the current automated-verification coverage of the repository and proposes prioritized areas for improvement.",
+  "url": "https://vacationrentalprotocol.com/docs/test-coverage-analysis",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/test-coverage-analysis.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/test-coverage-analysis.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/test-coverage-analysis.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/test-coverage-analysis.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="vrp-spec-test-coverage-analysis">VRP Spec — Test Coverage Analysis</h1>
+<p><strong>Date:</strong> 2026-06-02 <strong>Scope:</strong> <code>vacationrentalprotocol/vrp-spec</code> (protocol specification, JSON Schema, JSON-LD context, example payloads, and the published website).</p>
+<p>This document analyzes the current automated-verification coverage of the repository and proposes prioritized areas for improvement. It is an analysis and backlog, not a set of finished tests.</p>
+<h2 id="follow-up-status">Follow-up status</h2>
+<p>The first validation gate now exists: <code>npm test</code> parses JSON/JSON-LD artifacts, validates Portable Attestations examples against <code>schemas/attestations-v0.1.schema.json</code>, and runs negative privacy/proof guardrails. This follow-up adds core schemas for discovery, JWKS, signed offers, and verifier results. Real Ed25519/JWS conformance vectors now also exist under <code>examples/conformance/</code>, verified end-to-end by <code>npm test</code> together with their failure modes (tampered payload, unknown <code>kid</code>, wrong key, expired <code>valid_until</code>).</p>
+<p>The high-value gaps identified in this document now have automated coverage in <code>npm test</code>: core artifact schemas, real JWS offer vectors, real signed attestation-credential vectors verified against an issuer <code>did:web</code> document, three-state conformance, context/vocabulary consistency, status-list round trips, privacy negatives, and public route/link checks.</p>
+<h2 id="baseline-before-validation-prs">Baseline before validation PRs</h2>
+<p>Before the first validation PRs, the repository had <strong>no automated tests and no CI</strong>:</p>
+<ul><li>No <code>package.json</code>, test runner, or test directory.</li><li>No <code>.github/workflows/</code> — nothing runs on push or pull request.</li><li>The only machine-readable validation artifact is <code>schemas/attestations-v0.1.schema.json</code>, but nothing exercises it.</li></ul>
+<p>What ships in the repo that *is* mechanically checkable today:</p>
+<ul><li>1 JSON Schema (<code>schemas/attestations-v0.1.schema.json</code>, Draft 2020-12).</li><li>1 JSON-LD context (<code>contexts/v1.jsonld</code>).</li><li>13 example JSON payloads under <code>examples/</code> (8 attestation, 5 core/protocol).</li><li>Normative spec text with explicit <code>MUST</code>/<code>SHOULD</code> rules in <code>spec/v0.1.md</code> and <code>spec/attestations-v0.1.md</code>.</li><li>A static website (<code>index.html</code>, <code>styles.css</code>, <code>terms.html</code>) and routing config (<code>vercel.json</code>).</li></ul>
+<p>Baseline observations from a one-off manual check (not yet automated):</p>
+<ul><li>All 8 attestation examples <strong>currently validate</strong> against the attestations schema. This is good — but it is not guarded, so it can silently regress.</li><li>The two <code>verified-stay-offer.*</code> examples have <strong>divergent shapes</strong> (see Gap 3 below) and are covered by <strong>no schema at all</strong>.</li></ul>
+<h2 id="coverage-gaps-and-proposed-test-areas">Coverage gaps and proposed test areas</h2>
+<h3 id="priority-1-stand-up-a-ci-validation-gate-foundational">Priority 1 — Stand up a CI validation gate (foundational)</h3>
+<p>Everything below depends on having a place to run checks. Add a GitHub Actions workflow (and a thin <code>package.json</code> or a Python script) that runs on every PR and:</p>
+<ul><li>Asserts every <code>*.json</code> / <code>*.jsonld</code> file parses as valid JSON.</li><li>Validates each <code>examples/attestations/*.json</code> against <code>schemas/attestations-v0.1.schema.json</code> (e.g. <code>ajv-cli</code> or Python <code>jsonschema</code>).</li><li>Fails the build on any error.</li></ul>
+<p>This converts the currently-implicit &quot;the examples happen to be valid&quot; into an enforced invariant. It is the single highest-leverage addition.</p>
+<h3 id="priority-1-schema-coverage-for-the-core-protocol-artifacts">Priority 1 — Schema coverage for the *core* protocol artifacts</h3>
+<p>The JSON Schema only covers the Portable Attestations layer. The core VRP artifacts defined normatively in <code>spec/v0.1.md</code> §2–§5 have <strong>no machine-readable schema</strong>:</p>
+<ul><li>Discovery document (<code>spec/v0.1.md</code> §2 — required: <code>protocol</code>, <code>protocol_version</code>, <code>canonical_domain</code>, <code>jwks_url</code>, <code>verified_stay_offer_endpoint</code>). Example: <code>examples/discovery.v0.1.json</code>.</li><li>JWKS (<code>§3</code>). Example: <code>examples/jwks.v0.1.json</code>.</li><li>Signed verified stay offer envelope + payload (<code>§5</code>). Examples: <code>examples/verified-stay-offer.*.json</code>.</li></ul>
+<p>Proposed: author <code>schemas/discovery-v0.1.schema.json</code>, <code>schemas/jwks-v0.1.schema.json</code>, <code>schemas/verified-stay-offer-v0.1.schema.json</code>, and <code>schemas/verified-stay-offer-verification-result-v0.1.schema.json</code>, then validate the core examples against them in CI. Without these, the most important interop surface (what an agent actually fetches and verifies) is unguarded.</p>
+<h3 id="priority-2-examplespec-drift-already-present-inconsistencies">Priority 2 — Example/spec drift (already-present inconsistencies)</h3>
+<p>Tests would have caught these baseline issues; follow-up validation now covers the resolved structure:</p>
+<ol><li><strong>Two incompatible <code>verified-stay-offer</code> shapes.</strong> <code>verified-stay-offer.not-quoteable.v0.1.json</code> is the *signed-offer envelope* shape (<code>kind</code>, <code>protocol_version</code>, <code>offer</code>, <code>signature</code>). <code>verified-stay-offer-verification-result.safe-to-quote.v0.1.json</code> is a different *verification-result* shape (<code>verified</code>, <code>agent_citation</code>, <code>official_offer_summary</code>, <code>agent_guardrails</code>). These are now named as distinct object kinds and pinned by separate schemas.</li></ol>
+<ol><li><strong>Signed payload missing <code>SHOULD</code> fields.</strong> The <code>not-quoteable</code> offer previously omitted <code>request</code> and <code>property</code>, which <code>spec/v0.1.md</code> lists in the signed payload. The example now includes them, and the signed-offer schema validates their shape when present. Since ADR 0012 the schema requires <code>request</code>, <code>node_id</code> and <code>property</code>, as §5 does; §7 compares <code>request</code> with the stay the agent asked for.</li></ol>
+<h3 id="priority-2-schema-context-vocabulary-consistency-done">Priority 2 — Schema ↔ context ↔ vocabulary consistency (done)</h3>
+<p><code>contexts/v1.jsonld</code>, <code>schemas/attestations-v0.1.schema.json</code>, and the repository copy of the <code>/terms</code> vocabulary page (<code>terms.html</code>) now stay in lockstep through CI validation:</p>
+<ul><li>Every VRP term used by the Portable Attestations schema has a matching term in <code>contexts/v1.jsonld</code>.</li><li>Every <code>vrp:</code> term in the context has a corresponding anchor in <code>terms.html</code>, and every vocabulary anchor has a context definition.</li></ul>
+<p>Still useful later:</p>
+<ul><li>Full JSON-LD expansion with a JSON-LD processor.</li></ul>
+<h3 id="priority-2-cryptographic-jws-test-vectors-done">Priority 2 — Cryptographic / JWS test vectors (done)</h3>
+<p>Signing and verification (compact JWS, EdDSA over Ed25519) is the heart of the protocol. The placeholder examples elsewhere (<code>&quot;&lt;compact JWS&gt;&quot;</code>, <code>&quot;&lt;base64url-public-key&gt;&quot;</code>) are now complemented by real, verifiable vectors:</p>
+<ul><li><code>examples/conformance/</code> holds a real (test-only) Ed25519 key pair, a signed offer, and the matching JWKS. <code>scripts/verify-conformance-vectors.mjs</code> does a genuine end-to-end Ed25519 verification in CI.</li><li>Negative vectors are covered: signature over a mutated payload, <code>kid</code> absent from JWKS, a different key for the same <code>kid</code>, and an expired <code>valid_until</code> (valid signature but not fresh). These directly back the §7/§8 rules.</li><li><code>examples/conformance/attestations/</code> holds a real (test-only) signed attestation bundle plus the issuer <code>did:web</code> document. <code>scripts/verify-attestation-vectors.mjs</code> verifies each credential compact JWS against the DID document and enforces the <code>spec/attestations-v0.1.md</code> §8 steps (typ/alg, context, type, validity window, no embedded proof) plus the same negative cases (tampered payload, unknown <code>kid</code>, wrong key). The attestation key is a separate test key from the offer key, exercising the §3 offer/attestation key-separation rule. The <code>compactJws</code> values in <code>examples/attestations/attestation-bundle.v0.1.json</code> remain non-cryptographic shape placeholders.</li></ul>
+<p>This gives independent implementers something concrete to test their verifiers against, which is the whole point of an interop spec.</p>
+<h3 id="priority-3-behavioral-conformance-vectors-for-agent-rules-done">Priority 3 — Behavioral / conformance vectors for agent rules (done)</h3>
+<p><code>spec/v0.1.md</code> defines precise behavioral <code>MUST</code>s (Safe-to-Quote §7, Fail-Closed §8, Three-State Verification §9) and <code>examples/three-state- verification.md</code> already works through four scenarios in prose. These are now covered by machine-readable fixtures plus one explicit fresh positive case:</p>
+<ul><li><code>discovery-timeout-is-unknown</code></li><li><code>invalid-signature-is-unknown-for-quoteable-facts</code></li><li><code>expired-valid-until-is-not-fresh</code></li><li><code>fresh-available-offer-is-affirmed</code></li><li><code>fresh-explicit-unavailable-is-negated</code></li></ul>
+<p><code>npm test</code> runs <code>scripts/verify-three-state-fixtures.mjs</code> against <code>examples/conformance/three-state-verification.v0.1.json</code>, keeping the prose examples honest and giving implementers a concrete behavioral conformance suite.</p>
+<h3 id="priority-3-status-list-revocation-round-trip-done">Priority 3 — Status list / revocation round-trip (done)</h3>
+<p><code>spec/attestations-v0.1.md</code> §6 and <code>examples/attestations/status-list.v0.1.json</code> define revocation/suspension. <code>npm test</code> now checks that every example credential's <code>credentialStatus</code> resolves through <code>statusListUrl</code> / <code>statusRef</code> into the example status list, that issuer and purpose match, that <code>credentialStatus.id</code> is <code>statusListUrl#statusRef</code>, and that each referenced status yields a defined state (<code>valid</code> / <code>revoked</code> / <code>suspended</code>).</p>
+<p>Negative checks cover missing status refs, issuer mismatch, purpose mismatch, duplicate status refs, and mismatched status-entry fragment IDs.</p>
+<h3 id="priority-3-privacy-guardrails-as-explicit-negative-tests-done">Priority 3 — Privacy guardrails as explicit negative tests (done)</h3>
+<p>The schema already forbids guest PII in <code>VRPVerifiedStay</code> subjects (<code>not</code> clauses for <code>guestName</code>, <code>guestEmail</code>, <code>checkIn</code>, <code>guestScore</code>, etc.). <code>npm test</code> now mutates the verified-stay example with every forbidden guest identity, exact-date, review, outcome, risk, score, and history field, and asserts that each payload fails schema validation.</p>
+<h3 id="priority-4-docs-links-and-deployment-routing-done">Priority 4 — Docs, links, and deployment routing (done)</h3>
+<ul><li><code>npm test</code> runs <code>scripts/check-public-routes.mjs</code>.</li><li>The check validates Markdown cross-references, canonical URLs in <code>README</code>, <code>llms.txt</code>, and <code>sitemap.xml</code>, local route resolution through <code>vercel.json</code>, and expected Vercel <code>Content-Type</code> headers.</li><li><code>npm run check-public-routes:live</code> can be run after deploy to confirm sitemap URLs answer <code>200</code> on <code>https://vacationrentalprotocol.com</code> with the expected content types.</li></ul>
+<h2 id="suggested-sequencing">Suggested sequencing</h2>
+<ol><li>Done: CI workflow + JSON parse + attestations-schema validation (P1).</li><li>Done in follow-up: core-artifact schemas (discovery, JWKS, signed offer, verifier result) + validate examples (P1).</li><li>Done: resolve the <code>verified-stay-offer</code> shape drift and add negative PII fixtures (P2).</li><li>Done: real JWS test vectors + signature verification in CI (P2).</li><li>Done: context/vocabulary consistency checks (P2-P3).</li><li>Done: three-state conformance fixtures (P2-P3).</li><li>Done: link checking and Vercel route checks (P4).</li><li>Done: status-list round-trip checks (P3).</li></ol>
+<p>Steps 1–2 alone move the repo from &quot;examples are validated by hand, sometimes&quot; to &quot;every PR proves the published artifacts are internally consistent,&quot; which is the core promise of an interoperability spec.</p>
+      </article>
+    </main>
+  </body>
+</html>

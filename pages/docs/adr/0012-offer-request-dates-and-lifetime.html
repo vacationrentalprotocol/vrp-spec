@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ADR 0012: The Stay Asked For, Real Dates, Echoed Fields and Offer Lifetime | Vacation Rental Protocol</title>
+    <meta name="description" content="A signed offer proves that the host domain's key signed exactly these terms (§5)." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="ADR 0012: The Stay Asked For, Real Dates, Echoed Fields and Offer Lifetime" />
+    <meta property="og:description" content="A signed offer proves that the host domain's key signed exactly these terms (§5)." />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/adr/0012-offer-request-dates-and-lifetime" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="ADR 0012: The Stay Asked For, Real Dates, Echoed Fields and Offer Lifetime" />
+    <meta name="twitter:description" content="A signed offer proves that the host domain's key signed exactly these terms (§5)." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/adr/0012-offer-request-dates-and-lifetime" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/adr/0012-offer-request-dates-and-lifetime.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/adr/0012-offer-request-dates-and-lifetime#techarticle",
+  "headline": "ADR 0012: The Stay Asked For, Real Dates, Echoed Fields and Offer Lifetime",
+  "description": "A signed offer proves that the host domain's key signed exactly these terms (§5).",
+  "url": "https://vacationrentalprotocol.com/docs/adr/0012-offer-request-dates-and-lifetime",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/adr/0012-offer-request-dates-and-lifetime.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0012-offer-request-dates-and-lifetime.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/adr/0012-offer-request-dates-and-lifetime.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0012-offer-request-dates-and-lifetime.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="adr-0012-the-stay-asked-for-real-dates-echoed-fields-and-offer-lifetime">ADR 0012: The Stay Asked For, Real Dates, Echoed Fields and Offer Lifetime</h1>
+<p><strong>Status:</strong> Proposed <strong>Date:</strong> 2026-10-17 (proposed)</p>
+<h2 id="context">Context</h2>
+<p>A signed offer proves that the host domain's key signed exactly these terms (§5). On top of ADR 0009 (head <code>3691630</code> of its pull request), <code>spec/v0.1.md</code> did not say what those terms must be for in five places:</p>
+<ol><li><strong>The stay asked for.</strong> §7 listed what makes an offer safe to quote, but nothing tied the signed offer to the dates and guest count the agent asked for. A genuine, fresh offer for other dates or another guest count met every condition. In the normative sections <code>request</code> appears only in §5's list of required members and in §5.1, which says the booking URL's <code>checkIn</code>, <code>checkOut</code> and <code>guests</code> match it; §15 (informative) says offers echo it.</li><li><strong>Dates.</strong> Nothing required <code>request.check_in</code> and <code>request.check_out</code> to be dates that exist, <code>check_out</code> to be later than <code>check_in</code>, or <code>check_in</code> not to have passed. The schema's date pattern <code>^[0-9]{4}-[0-9]{2}-[0-9]{2}$</code> accepts <code>2026-13-01</code> and <code>2026-02-30</code>, and a JavaScript <code>Date</code> turns <code>2027-02-30T00:00:00Z</code> into 2 March 2027 instead of rejecting it.</li><li><strong>Echoed fields.</strong> Everything inside the JWS is signed, so whatever a node copies from the request becomes a host-signed value. Nothing limited what may be copied. The schema typed <code>request.language</code> as any string, so free text from a requester could be signed by the host's key.</li><li><strong>Lifetime.</strong> §3.1 spoke of &quot;the maximum offer lifetime&quot; without defining it. No rule limited <code>valid_until − generated_at</code>, and none kept <code>generated_at</code> from lying in the future, so an offer could stay quotable for years. The known production node uses 900 seconds (12 of 12 offers fetched 2026-10-17 between 10:49 and 16:12 UTC); the repository's examples use 600.</li><li><strong>Schema.</strong> The schema did not require <code>request</code>, so an offer without one was schema-valid although §7 now has to compare it. The same holds for <code>node_id</code> and <code>property</code>, which §5 lists as required. The history, read in git: the first version (<code>aa1ef5b</code>, 2026-05-20) said &quot;SHOULD include&quot;; #12 (<code>8702057</code>, 2026-06-02 18:36 +0200) changed §5 to &quot;MUST include&quot; so that it matched the schemas of #11, which required all twelve members; 42 minutes later #15 (<code>f79bb14</code>) made <code>node_id</code>, <code>request</code> and <code>property</code> optional in the schema again, calling them &quot;SHOULD-level&quot;, without changing §5 and without a record. Spec and schema have disagreed since.</li></ol>
+<p>ADR numbers 0010 and 0011 are not used. ADR 0007 and 0008 (#147) replace two records the reference implementation kept under those numbers, which this repository cited for months; a record of this repository with the same number would make those citations ambiguous.</p>
+<h2 id="decision">Decision</h2>
+<p><strong>D1. The stay asked for (§7).</strong> A new condition: <code>request.check_in</code>, <code>request.check_out</code> and <code>request.guests</code> are the dates and the guest count the agent asked for. A verifier that does not know what was asked for (a pasted offer, for example) cannot meet it.</p>
+<p><strong>D2. Dates (§5, §7).</strong> <code>check_in</code> and <code>check_out</code> MUST be dates that exist (RFC 3339 <code>full-date</code>), and <code>check_out</code> MUST be later than <code>check_in</code>. A node MUST NOT sign an offer for dates that break this, or whose <code>check_in</code> is earlier than the current date at the property; it answers with an error. A verifier does not know the property's time zone, so §7 asks it for less: <code>check_in</code> not earlier than the day before its current UTC date. The local date anywhere is at most one day behind the UTC date, so a <code>check_in</code> earlier than that has passed everywhere. The floor lets through a <code>check_in</code> that passed at the property up to a day earlier; the node's rule is what stops it. Dates that do not exist (30 February, 31 April) are a runtime rule: no pattern can stop them.</p>
+<p><strong>D3. Echoed fields (§5, §7).</strong> <code>check_in</code>, <code>check_out</code>, <code>guests</code> and <code>language</code> in <code>request</code> are the requester's words, not statements by the host; <code>check_in_weekday</code>, <code>check_out_weekday</code> and <code>nights</code>, which the known production node also signs, are the node's own, computed from the dates. A node MUST NOT copy into the signed payload any value from the request other than those four. <code>request.language</code>, when present, MUST be a BCP 47 language tag of the form language subtag (two or three letters), optional script subtag (four letters), optional region subtag (two letters or three digits), in any letter case, and SHOULD name a language the node writes the offer in. The schema's pattern ends in <code>$(?!\n)</code>, so that an engine whose <code>$</code> also matches before a final line break (Python's <code>re</code>, which some JSON Schema validators use) does not accept <code>&quot;sv\n&quot;</code>; a vector holds that case. Agents MUST NOT present a value from <code>request</code> as something the host stated.</p>
+<p><strong>D4. Lifetime (§5, §6, §3.1).</strong> A node MUST set <code>generated_at</code> to the time it signs. <code>valid_until</code> MUST be later than <code>generated_at</code> and MUST NOT be more than 900 seconds after it, the two values compared as written, fractions of a second included. An agent MUST treat an offer as not quotable when <code>generated_at</code> is missing or malformed, more than 60 seconds later than its own clock, or when the lifetime is not positive or exceeds 900 seconds. 900 seconds is the known production node's lifetime. The 60 seconds allow for clocks out of step: at worst an offer stays quotable for 960 seconds by the verifier's clock. §3.1's &quot;maximum offer lifetime&quot; now names the 900 seconds.</p>
+<p><strong>D5. Schema.</strong> <code>offerPayload.required</code> gains <code>request</code>. <code>$defs/date</code> admits months 01–12 and days 01–31 only, <code>$defs/dateTime</code> hours 00–23 and minutes and seconds 00–59; that a date exists (no 30 February) stays a runtime rule. These patterns and the D3 pattern end in <code>$(?!\n)</code>, for the reason D3 gives. <code>request.language</code> gets the D3 pattern. <code>offerPayload.required</code> also gains <code>node_id</code> and <code>property</code>, which returns the schema to what §5 and #11 say; <code>property</code> itself still requires only <code>property_id</code>.</p>
+<p><strong>D6. Conformance vectors and the site verifier.</strong> <code>examples/conformance/offer-rules/vectors.v0.1.json</code> (44 cases: lifetime and clock 16, dates 12, language 9, the stay asked for 6, plus one offer that meets every rule), built by <code>scripts/offer-rules-vectors.mjs</code> and checked by <code>scripts/verify-offer-rules.mjs</code> in <code>npm test</code>. <code>scripts/validate-artifacts.mjs</code> gains five negative schema checks (no <code>request</code>, no <code>node_id</code>, no <code>property</code>, a free-text language, month 13). <code>verify.html</code> applies D1–D4 to a live offer, with the dates and guest count typed into the page as the stay asked for.</p>
+<h2 id="consequences">Consequences</h2>
+<ul><li><strong>Version class.</strong> D1–D5 change what a verifier accepts, a MAJOR-class change under GOVERNANCE.md §5, made within the v0.1 public draft under its &quot;Before 1.0&quot; paragraph (ADR 0009 D6). What stops being accepted: offers for another stay than the one asked for; dates that do not exist, a <code>check_out</code> not later than <code>check_in</code>, a <code>check_in</code> that has passed; a <code>request.language</code> that is not a language tag; a lifetime that is not positive or exceeds 900 seconds; a <code>generated_at</code> more than 60 seconds ahead; an offer without <code>request</code>, <code>node_id</code> or <code>property</code>.</li><li><strong>Known nodes affected: the known production node.</strong> Measured 2026-10-17 before its change (18:13 UTC): its ordinary offers (a future stay, without a language and with <code>sv</code>) met every rule and validated against the changed schema, and it also signed offers for a <code>check_in</code> that had passed, for month 13, and with free text as <code>request.language</code>. It changed in its own repository. Measured after that change was live (18:44 UTC): those requests are answered 400 (<code>checkin_in_past</code>, <code>invalid_date</code>), free text is left out of <code>request</code>, and ordinary offers are as before, with a 900-second lifetime. The condition this record set, that change live and measured before acceptance, is met.</li><li><strong>Substantive</strong> under GOVERNANCE.md §4 and §12: this record, seven days of review and two approvals while two maintainers are active.</li><li><strong>Migration path.</strong> A node validates the dates, refuses a past <code>check_in</code> by the property's own date, copies only the four request members, sends a language tag or nothing, and keeps the lifetime at 900 seconds or less with <code>generated_at</code> at signing time. A verifier passes the stay it asked for to its check and applies the date, language and lifetime rules. <code>vacationrentalprotocol/vrp-verify</code> and the reference implementation follow in their own repositories.</li><li>The examples in this repository already meet every rule: their lifetime is 600 seconds, their stays lie after their clocks, and none carries <code>request.language</code>. No signed example changes.</li><li>The IETF draft keeps the old wording until its next revision.</li><li>Neutrality: the rules apply to every node and every verifier alike, the reference implementation included (ADR 0002).</li></ul>
+      </article>
+    </main>
+  </body>
+</html>

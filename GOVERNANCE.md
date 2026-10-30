@@ -55,7 +55,10 @@ a MAJOR version and maintainer consensus (§4, §5):
 security response, and control of the project's domains, repositories, and
 release process — if the lead maintainer becomes unavailable. The continuity
 maintainer may add maintainers under §8 to restore active stewardship. (VRP has
-no central signing keys; each node holds its own — see §2.)
+no central signing keys: each node signs under its own domain's key set, and
+verification MUST NOT require HemmaBo — see §2 and spec/v0.1.md. Who holds a
+node's key is declared per node in `operator.key_custody`; HemmaBo-operated
+nodes may use `platform` custody, and the reference node does.)
 
 ## 4. Decision-making
 
@@ -104,6 +107,14 @@ to accept an offer or attestation are the most sensitive surface in VRP. They do
 not change except through a MAJOR version with an explicit ADR and migration
 guidance.
 
+**Before 1.0.** VRP is in major version zero, which semantic versioning reserves
+for initial development. While VRP is below 1.0, a correction that closes a
+security gap may be made within the current draft version without changing
+`protocol_version`, even where it changes what a verifier accepts. Its ADR
+states the gap, what stops being accepted, which known nodes are affected
+(measured), and the migration path. Such a correction is substantive (§4).
+Every other breaking change waits for the next version.
+
 **Path to 1.0.** VRP reaches 1.0 only after at least one independent
 implementation exists beyond the reference node — a second signing node proves
 VRP is a standard and not a single project's file format. This is a public
@@ -118,6 +129,19 @@ not conferred by a VRP-issued mark, a certification body, or maintainer approval
 Any implementer may run the vectors and self-declare conformance. This is the
 no-gatekeeper principle applied to testing: the vectors, not a person, are the
 authority (ADR 0002).
+
+### 6.1 Use of the name
+
+"VRP" and "Vacation Rental Protocol" name this standard. An implementation that
+passes the conformance vectors in this repository MAY describe itself as VRP, as
+a VRP node, or as offering VRP vacation rentals — free of charge, without an
+application and without anyone's approval, by the self-declaration above.
+Describing as VRP a product that does not pass them is misleading. The names are
+held for the standard by its author ([MAINTAINERS.md](MAINTAINERS.md)), not by
+any implementation, the reference implementation included; there is no
+certification-mark programme — the vectors, not a person, decide (ADR 0002).
+How a node names the protocol on its own pages is set out in
+[spec/v0.1.md](spec/v0.1.md) §2.1.
 
 ## 7. Standards track and external registries
 

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Draft: OKF trust-extension proposal (ready to post to GoogleCloudPlatform/knowledge-catalog) | Vacation Rental Protocol</title>
+    <meta name="description" content="Why this matters for VRP (internal note, do not paste): as of 2026-06-26 the vrp-spec repo had 0 forks / 1 star / 0 issues, and a second, independent…" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="Draft: OKF trust-extension proposal (ready to post to GoogleCloudPlatform/knowledge-catalog)" />
+    <meta property="og:description" content="Why this matters for VRP (internal note, do not paste): as of 2026-06-26 the vrp-spec repo had 0 forks / 1 star / 0 issues, and a second, independent…" />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/okf-trust-extension-proposal" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Draft: OKF trust-extension proposal (ready to post to GoogleCloudPlatform/knowledge-catalog)" />
+    <meta name="twitter:description" content="Why this matters for VRP (internal note, do not paste): as of 2026-06-26 the vrp-spec repo had 0 forks / 1 star / 0 issues, and a second, independent…" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/okf-trust-extension-proposal" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/okf-trust-extension-proposal.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/okf-trust-extension-proposal#techarticle",
+  "headline": "Draft: OKF trust-extension proposal (ready to post to GoogleCloudPlatform/knowledge-catalog)",
+  "description": "Why this matters for VRP (internal note, do not paste): as of 2026-06-26 the vrp-spec repo had 0 forks / 1 star / 0 issues, and a second, independent…",
+  "url": "https://vacationrentalprotocol.com/docs/okf-trust-extension-proposal",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/okf-trust-extension-proposal.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/okf-trust-extension-proposal.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/okf-trust-extension-proposal.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/okf-trust-extension-proposal.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="draft-okf-trust-extension-proposal-ready-to-post-to-googlecloudplatformknowledge-catalog">Draft: OKF trust-extension proposal (ready to post to <code>GoogleCloudPlatform/knowledge-catalog</code>)</h1>
+<p><strong>Status:</strong> Draft — not yet posted. This is the text to open as a GitHub issue (or discussion) on the OKF repo when we decide to plant the flag. It positions VRP as the <strong>trust/verifiability layer</strong> OKF deliberately left out — for *all* OKF concept types, not just vacation rentals.</p>
+<p><strong>Why this matters for VRP (internal note, do not paste):</strong> as of 2026-06-26 the <code>vrp-spec</code> repo had 0 forks / 1 star / 0 issues, and a second, independent implementation — the condition for 1.0 in GOVERNANCE.md §5 — was still open. There is <strong>no inbound partner interest yet</strong>. OKF is Google's distribution surface for agent-readable knowledge; getting a <code>proof</code> convention in front of that ecosystem is a cheap way to reach the very builders who could become implementer #2 — it does not depend on HemmaBo signing nodes first.</p>
+<hr>
+<h2 id="issue-title">Issue title</h2>
+<blockquote>Proposal: an opt-in <code>proof</code> extension convention for verifiable OKF concepts</blockquote>
+<h2 id="body-paste-from-here">Body (paste from here)</h2>
+<h3 id="summary">Summary</h3>
+<p>OKF v0.1 standardizes how a concept is *described* (markdown + YAML frontmatter, required <code>type</code>, consumers preserve unknown keys) but is explicit that trust, governance, and serving are out of scope. For a growing class of concepts — priced offers, datasets, metrics, API contracts — a consuming agent needs to know not just *what the concept says* but *whether it provably came from the claimed source*. OKF has no convention for that today.</p>
+<p>This proposes a <strong>minimal, opt-in, schema-free convention</strong> (not a spec change): a reserved-by-convention <code>proof</code> frontmatter key carrying a detached signature, so that any producer can make a concept *verifiable* and any consumer can fail closed on an invalid one — while non-verifying consumers ignore it exactly as OKF already requires for unknown keys.</p>
+<h3 id="non-goals-kept-faithful-to-okfs-minimalism">Non-goals (kept faithful to OKF's minimalism)</h3>
+<ul><li><strong>No new required field.</strong> <code>type</code> stays the only requirement. <code>proof</code> is opt-in.</li><li><strong>No central authority, no registry, no runtime.</strong> Verification is standalone against keys the producer publishes (e.g. <code>did:web</code> / JWKS), consistent with OKF's &quot;no central authority&quot; stance.</li><li><strong>No domain schema.</strong> The convention says *how to carry and verify a proof*, not what any concept type means.</li></ul>
+<h3 id="proposed-convention">Proposed convention</h3>
+<pre><code>---
+type: VacationRental
+title: &quot;Example property&quot;
+resource: https://example.com
+proof:
+  alg: EdDSA                       # signature algorithm
+  kid: &lt;key id&gt;                    # key identifier in the producer's key set
+  keys: https://example.com/.well-known/jwks.json   # how to resolve verification keys
+  issuer: did:web:example.com      # who is asserting this concept
+  sig: &lt;compact JWS over the concept's signed payload&gt;
+---</code></pre>
+<h3 id="consumer-rules-fail-closed">Consumer rules (fail-closed)</h3>
+<ol><li>If <code>proof</code> is absent → treat the concept as <strong>descriptive only</strong> (today's behavior; unchanged).</li><li>If <code>proof</code> is present, a consumer that intends to *act* on the concept MUST: resolve <code>issuer</code>/<code>keys</code>, verify <code>sig</code> over the signed payload, and confirm the <code>issuer</code>/origin matches where the concept was served.</li><li>If <code>proof</code> is present but does not verify (bad signature, origin mismatch, expired) → the concept MUST be treated as <strong>untrusted</strong>, never as verified.</li><li>Trust is the verifier's result — never asserted by the document, the <code>type</code>, or the file path.</li></ol>
+<h3 id="reference-implementation">Reference implementation</h3>
+<p>The <strong>Vacation Rental Protocol</strong> (https://vacationrentalprotocol.com, spec under CC0) is a working instance of exactly this pattern for <code>type: VacationRental</code> concepts: a host domain serves a signed offer, and an agent verifies the price and availability came from that domain before quoting or booking — 0% intermediary. Live: <code>curl https://villaakerlyckan.se/.well-known/vacation-rental.json</code>. VRP's profile mapping OKF ↔ proof is published at <code>spec/profiles/okf-profile-v0.1.md</code> in <code>vacationrentalprotocol/vrp-spec</code>.</p>
+<p>We are offering this as a generalizable convention because the trust gap is not specific to rentals — any priced or sourced OKF concept has it.</p>
+<h3 id="question-for-maintainers">Question for maintainers</h3>
+<p>Would the OKF project accept (a) a documented <code>proof</code> convention in the spec's &quot;extension keys&quot; guidance, or (b) at minimum a link from OKF docs to independent trust profiles like VRP that demonstrate it? Happy to open a PR for whichever shape fits OKF's minimalism.</p>
+      </article>
+    </main>
+  </body>
+</html>

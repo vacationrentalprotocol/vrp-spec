@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VRP Well-Known URI — vacation-rental.json — Specification v0.1 | Vacation Rental Protocol</title>
+    <meta name="description" content="VRP defines the well-known URI suffix vacation-rental.json (RFC 8615). A client that already knows a host's domain issues a single request:" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="VRP Well-Known URI — vacation-rental.json — Specification v0.1" />
+    <meta property="og:description" content="VRP defines the well-known URI suffix vacation-rental.json (RFC 8615). A client that already knows a host's domain issues a single request:" />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/spec/well-known-uri-v0.1" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="VRP Well-Known URI — vacation-rental.json — Specification v0.1" />
+    <meta name="twitter:description" content="VRP defines the well-known URI suffix vacation-rental.json (RFC 8615). A client that already knows a host's domain issues a single request:" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/spec/well-known-uri-v0.1" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/spec/well-known-uri-v0.1.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/spec/well-known-uri-v0.1#techarticle",
+  "headline": "VRP Well-Known URI — vacation-rental.json — Specification v0.1",
+  "description": "VRP defines the well-known URI suffix vacation-rental.json (RFC 8615). A client that already knows a host's domain issues a single request:",
+  "url": "https://vacationrentalprotocol.com/spec/well-known-uri-v0.1",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/spec/well-known-uri-v0.1.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/well-known-uri-v0.1.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Specification · <a href="https://vacationrentalprotocol.com/spec/well-known-uri-v0.1.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/well-known-uri-v0.1.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="vrp-well-known-uri-vacation-rentaljson-specification-v01">VRP Well-Known URI — <code>vacation-rental.json</code> — Specification v0.1</h1>
+<p><strong>Status:</strong> Draft. The <code>vacation-rental.json</code> well-known URI suffix is registered in the IANA Well-Known URIs registry (provisional, 2026-08-19): https://www.iana.org/assignments/well-known-uris/</p>
+<p><strong>Published:</strong> 2026-06-19 (revised 2026-08-20)</p>
+<p><strong>Change controller:</strong> Vacation Rental Protocol (VRP) — Rouiada Abbas, author/maintainer; hello@vacationrentalprotocol.com</p>
+<p><strong>Canonical context:</strong> https://vacationrentalprotocol.com/contexts/v1</p>
+<p><strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
+<h2 id="1-scope">1. Scope</h2>
+<p>VRP defines the well-known URI suffix <strong><code>vacation-rental.json</code></strong> (RFC 8615). A client that already knows a host's domain issues a single request:</p>
+<pre><code>GET https://{host}/.well-known/vacation-rental.json</code></pre>
+<p>to discover, in one site-wide document, that the origin is a bookable vacation-rental node and how to interact with it. The model mirrors OpenID Connect discovery (<code>/.well-known/openid-configuration</code>): probe one URL, receive a structured configuration, with no per-host hard-coding.</p>
+<ul><li>Applicable scheme(s): <strong><code>https</code> only</strong>.</li><li>Media type: <strong><code>application/json</code></strong>.</li><li><strong>One origin per node.</strong> Each property is its own host-owned origin, so the document describes the whole site — the site-wide case RFC 8615 is intended for. There is no multi-publisher / shared-host concern.</li></ul>
+<h2 id="2-the-name">2. The name</h2>
+<p><code>vacation-rental.json</code> is the <strong>descriptive discovery document</strong> for a VRP node: it names the resource (a vacation-rental node's site-wide configuration), and it is the suffix the core VRP specification (<a href="https://vacationrentalprotocol.com/spec/v0.1"><code>v0.1.md</code></a> §2) defines and that the reference implementation and verifier fetch in practice. It is registered by the Vacation Rental Protocol — the standard that defines it — as a descriptive resource name (cf. <code>security.txt</code>, <code>assetlinks.json</code>), not a generic land-grab.</p>
+<p>For transition compatibility a node MAY additionally serve the same document at the longer alias <code>/.well-known/vacation-rental-protocol.json</code>; clients <strong>SHOULD</strong> use <code>vacation-rental.json</code>. Node identity is additionally published at the already-registered <code>did.json</code> (<code>did:web</code>), whose DID document advertises this resource via a <code>service</code> entry.</p>
+<h2 id="3-resource-format-informative">3. Resource format (informative)</h2>
+<p>The resource is a self-describing JSON object, versioned by <code>$schema</code> and <code>schema_version</code>. Discovery-relevant fields include:</p>
+<ul><li><code>protocol</code>, <code>protocol_version</code> — identifies the document as VRP and its version.</li><li><code>canonical_domain</code>, <code>node_id</code> — the node's host-owned domain (<a href="https://vacationrentalprotocol.com/spec/v0.1">v0.1</a> §2) and stable identifier.</li><li><code>identity</code> / <code>did</code> — the node's <code>did:web</code> identity (see <code>/.well-known/did.json</code>).</li><li><code>jwks_url</code> — public keys (JWKS) used to verify signed artifacts.</li><li><code>verified_stay_offer_endpoint</code> — where a signed, verifiable stay offer is obtained.</li><li><code>capabilities</code>, <code>endpoints</code> — supported operations and their URLs.</li><li><code>availability</code>, <code>pricing</code>, <code>policies</code>, <code>media</code> — structured, public property facts.</li><li><code>structure_declarations</code> — falsifiable commercial-structure claims, each carrying its own class and verification procedure (see <a href="https://vacationrentalprotocol.com/spec/structure-declarations-v0.1"><code>structure-declarations-v0.1.md</code></a>). Like every other field here, declarations gain no authority from this location (§4): verifiable-class claims are trusted by executing their procedures.</li></ul>
+<p>Clients <strong>MUST</strong> ignore unknown fields and <strong>MUST</strong> treat the document as advisory metadata only (see §4).</p>
+<h2 id="4-trust-model-normative">4. Trust model (normative)</h2>
+<p><strong>Trust is not derived from the well-known location</strong>; its presence confers no authority. Authoritative offers are <strong>Ed25519-signed on the host's own domain</strong> and verify standalone against the node's published keys (<code>jwks_url</code> / <code>did:web</code>), independent of any central party. An <strong>optional</strong> public append-only Merkle transparency log (RFC 6962; see https://vacationrentalprotocol.com/spec/transparency-log-v0.1) records signed-artifact hashes so that after-the-fact tampering is detectable. A client <strong>SHOULD</strong> verify signatures; it <strong>MUST NOT</strong> treat the discovery document itself as proof of any claim.</p>
+<h2 id="5-security-privacy-considerations">5. Security &amp; privacy considerations</h2>
+<ul><li>Served over <code>https</code> only.</li><li>The document is public, machine-readable metadata; it <strong>MUST NOT</strong> contain guest personal data or secrets.</li><li>Verification keys are published separately (<code>jwks_url</code>, <code>did:web</code>); key rotation is handled there, not in this document.</li></ul>
+<h2 id="6-reference-implementation">6. Reference implementation</h2>
+<p>HemmaBo (https://hemmabo.com) is the reference implementation. Live example:</p>
+<pre><code>curl https://villaakerlyckan.se/.well-known/vacation-rental.json</code></pre>
+<p>The same document is also served at the alias path <code>/.well-known/vacation-rental-protocol.json</code> for transition; new clients <strong>SHOULD</strong> use <code>vacation-rental.json</code>.</p>
+<h2 id="7-iana-considerations">7. IANA considerations</h2>
+<p>This document is the specification reference for the provisional registration of the <code>vacation-rental.json</code> well-known URI suffix in the IANA Well-Known URIs registry (RFC 8615), registered 2026-08-19: https://www.iana.org/assignments/well-known-uris/ Registration history: https://github.com/protocol-registries/well-known-uris/issues/93 (closed).</p>
+<ul><li><strong>URI suffix:</strong> <code>vacation-rental.json</code></li><li><strong>Change controller:</strong> Vacation Rental Protocol (VRP) — Rouiada Abbas; hello@vacationrentalprotocol.com</li><li><strong>Status:</strong> provisional (registered 2026-08-19)</li><li><strong>Specification document:</strong> this page.</li></ul>
+<h2 id="license">License</h2>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (<a href="https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1">ADR 0007</a> D7).</p>
+      </article>
+    </main>
+  </body>
+</html>

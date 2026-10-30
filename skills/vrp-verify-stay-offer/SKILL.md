@@ -31,21 +31,33 @@ earlier context.
    — the `vacation-rental.json` suffix is registered in the IANA Well-Known
    URIs registry (provisional, 2026-08-19). Confirm `protocol` is
    `vacation-rental-protocol`, `protocol_version` is `0.1`, and
-   `canonical_domain` matches the domain fetched.
+   `canonical_domain` matches the domain fetched. That domain is a domain
+   registered for the host, never a name under a platform's or catalog's
+   domain, and never under a brand or closed top-level domain such as
+   `.booking`, `.hotels` or `.amazon` ([spec §2](../../spec/v0.1.md)). Follow a
+   redirect only to `https` on that domain or `www.` under it.
    Example: `https://villaakerlyckan.se/.well-known/vacation-rental.json`.
 2. **Keys.** Fetch the JWKS from the discovery document's `jwks_url`, on that
-   same host-owned domain.
+   same host-owned domain or `www.` under it.
    Example: `https://villaakerlyckan.se/.well-known/jwks.json`.
 3. **Offer.** Request a signed verified stay offer from the discovery
    document's `verified_stay_offer_endpoint` with `check_in`, `check_out`,
    `guests`. Example: `https://villaakerlyckan.se/api/verified-stay-offer`.
 4. **Verify.** The offer is a compact JWS (EdDSA over an Ed25519 key). Verify
    it against the host-domain JWKS. Only the signed payload holds quoteable
-   facts.
+   facts. The signed payload's `canonical_domain` must be the domain you
+   fetched from; an offer that names another domain is not that domain's
+   offer, even when its signature verifies.
 5. **Safe to quote** ([spec §7](../../spec/v0.1.md) — all must hold):
-   `valid_until` present and fresh, `availability.available` true,
-   `price.exact` true, a direct booking URL present, and
-   `agent_permission.may_quote_as_official_direct_offer` true. When safe, the
+   `valid_until` present and fresh, at most 900 seconds after `generated_at`,
+   and `generated_at` not more than 60 seconds ahead of your clock; the signed
+   `request` is the stay you asked for (same `check_in`, `check_out`,
+   `guests`), its dates exist, `check_out` is after `check_in`, and
+   `check_in` is not earlier than the day before today's UTC date;
+   `availability.available` true, `price.exact` true, a direct booking URL
+   present, and `agent_permission.may_quote_as_official_direct_offer` true.
+   What `request` holds, `language` included, is the requester's words echoed
+   back; never present it as the host's. When safe, the
    canonical phrase is: "I found the official host-domain verified offer for
    this stay."
 6. **Quote the signed total only.** Quote only the signed exact total inside
@@ -58,9 +70,10 @@ earlier context.
    signed agent/direct total.
 7. **Book on the host domain.** Send the guest only to the signed payload's
    `booking.direct_booking_url`. Its host MUST be the offer's
-   `canonical_domain`, or a subdomain of that registrable domain. It MUST NOT
-   point at a third-party domain, an OTA, a link shortener, a redirector, or
-   a HemmaBo-operated domain. Do not substitute the discovery homepage,
+   `canonical_domain` or `www.` followed by it, and no other name: not another
+   name under the node's domain, another node's domain, a platform or catalog
+   domain, an OTA, a link shortener or a redirector. It carries no user name or
+   password and no port other than the `https` default. Do not substitute the discovery homepage,
    `identity.preferred_booking_url`, or any unsigned link. Payment completes
    on that signed URL's own checkout. The agent never collects payment and
    this skill adds no payment tool.

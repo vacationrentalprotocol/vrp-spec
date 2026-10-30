@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VRP Portable Attestations - Specification v0.1 | Vacation Rental Protocol</title>
+    <meta name="description" content="VRP Portable Attestations v0.1 defines privacy-minimized Verifiable Credentials for portable trust history around VRP host nodes, payment paths, policy…" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="VRP Portable Attestations - Specification v0.1" />
+    <meta property="og:description" content="VRP Portable Attestations v0.1 defines privacy-minimized Verifiable Credentials for portable trust history around VRP host nodes, payment paths, policy…" />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/spec/attestations-v0.1" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="VRP Portable Attestations - Specification v0.1" />
+    <meta name="twitter:description" content="VRP Portable Attestations v0.1 defines privacy-minimized Verifiable Credentials for portable trust history around VRP host nodes, payment paths, policy…" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/spec/attestations-v0.1" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/spec/attestations-v0.1.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/spec/attestations-v0.1#techarticle",
+  "headline": "VRP Portable Attestations - Specification v0.1",
+  "description": "VRP Portable Attestations v0.1 defines privacy-minimized Verifiable Credentials for portable trust history around VRP host nodes, payment paths, policy…",
+  "url": "https://vacationrentalprotocol.com/spec/attestations-v0.1",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/spec/attestations-v0.1.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/attestations-v0.1.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Specification · <a href="https://vacationrentalprotocol.com/spec/attestations-v0.1.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/attestations-v0.1.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="vrp-portable-attestations---specification-v01">VRP Portable Attestations - Specification v0.1</h1>
+<p><strong>Status:</strong> Public draft</p>
+<p><strong>Published:</strong> 2026-05-31</p>
+<p><strong>Canonical context:</strong> https://vacationrentalprotocol.com/contexts/v1</p>
+<p><strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
+<h2 id="1-scope">1. Scope</h2>
+<p>VRP Portable Attestations v0.1 defines privacy-minimized Verifiable Credentials for portable trust history around VRP host nodes, payment paths, policy snapshots, and optionally verified stays.</p>
+<p>Core VRP proves that a concrete offer is real. Portable attestations prove selected trust history without making HemmaBo, or any other operator, the authority over truth.</p>
+<p>This specification is an open standard layer on top of VRP. It does not define runtime tools, an OTA, a marketplace, a booking intermediary, a central issuer, a central registry, a ranking engine, a trust score, or a HemmaBo certification service.</p>
+<p>VRP Portable Attestations v0.1 are intentionally no-gatekeeper. A verifier MAY apply its own trust policy, but the specification MUST NOT require a VRP-operated trusted issuer registry, HemmaBo approval, host accreditation program, certification company, or central discovery index before an attestation can be verified.</p>
+<h2 id="2-references">2. References</h2>
+<p>Portable Attestations v0.1 uses:</p>
+<ul><li>W3C Verifiable Credentials Data Model 2.0: https://www.w3.org/TR/vc-data-model/</li><li>W3C Securing Verifiable Credentials using JOSE and COSE: https://www.w3.org/TR/vc-jose-cose/</li><li>W3C Decentralized Identifiers (DIDs) 1.0: https://www.w3.org/TR/did-core/</li><li><code>did:web</code> method: https://w3c-ccg.github.io/did-method-web/</li><li>Universal Commerce Protocol (UCP): https://ucp.dev/</li><li>Agent Payments Protocol (AP2): https://ap2-protocol.org/</li><li>Model Context Protocol (MCP): https://modelcontextprotocol.io/</li><li>Agent2Agent Protocol (A2A): https://a2a-protocol.org/</li></ul>
+<p>VRP Portable Attestations may compose with adjacent agent-commerce standards, but does not replace them:</p>
+<ul><li>UCP may handle checkout, order lifecycle, and merchant-of-record commerce flows, including lodging flows as the UCP lodging profile matures.</li><li>AP2 may handle cryptographic payment mandates and payment authorization.</li><li>MCP may expose future retrieval or verification behavior as tools, but v0.1 defines no runtime tools.</li><li>A2A may carry future guest-agent and host-agent negotiation, but v0.1 defines no A2A binding.</li></ul>
+<p>The keywords MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are to be interpreted as described in RFC 2119 and RFC 8174 when they appear in all capitals.</p>
+<h2 id="3-trust-model">3. Trust Model</h2>
+<p>Each attestation is issued by the DID controlled by the host-owned domain that controls the relevant VRP node facts.</p>
+<p>The v0.1 issuer form is:</p>
+<pre><code>did:web:{host-domain}</code></pre>
+<p>Example:</p>
+<pre><code>did:web:villaakerlyckan.se</code></pre>
+<p>The host-domain DID document is the trust root for attestation verification. Offer signatures and attestation signatures MAY use separate <code>kid</code> values and separate private keys as long as the verification keys are controlled by the same host-domain trust root. Implementations MUST NOT require the private key used for VRP offers to be the same private key used for VRP attestations.</p>
+<p>For <code>did:web:{host-domain}</code>, the DID document is published at:</p>
+<pre><code>https://{host-domain}/.well-known/did.json</code></pre>
+<p>The attestation JWS <code>kid</code> MUST be a DID URL controlled by the issuer DID. The referenced verification method SHOULD be listed in <code>assertionMethod</code> or otherwise be usable for assertion verification by the issuer DID. A host-domain DID MAY publish separate verification methods for VRP offers and VRP attestations.</p>
+<p>Example DID document: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/examples/attestations/did-web-document.v0.1.json"><code>did-web-document.v0.1.json</code></a>.</p>
+<p>HemmaBo may publish a reference implementation and help author this standard. HemmaBo MUST NOT be required as an issuer, registry, scorer, booking intermediary, OTA, marketplace, or trust authority for portable attestations to verify.</p>
+<p>Self-issued host-domain attestations are appropriate only for facts controlled by the host domain, such as node metadata, discovery URLs, key identifiers, payment-path routing facts, policy hashes, and privacy-minimized stay references. v0.1 MUST NOT treat self-issued host-domain attestations as independent proof of guest identity, right-to-let, local license status, property ownership, insurance coverage, or legal compliance.</p>
+<p>Claims that require independent evidence MAY be defined in a future VRP profile as third-party credentials. If such profiles are defined, issuer trust remains a verifier policy decision and MUST NOT require a mandatory HemmaBo or VRP trusted issuer registry.</p>
+<h2 id="4-credential-encoding">4. Credential Encoding</h2>
+<p>Portable Attestations v0.1 credentials are Verifiable Credentials conforming to the W3C Verifiable Credentials Data Model 2.0.</p>
+<p>The unsecured credential payload MUST include:</p>
+<ul><li><code>@context</code>, including <code>https://www.w3.org/ns/credentials/v2</code></li><li><code>@context</code>, including <code>https://vacationrentalprotocol.com/contexts/v1</code></li><li><code>type</code>, including <code>VerifiableCredential</code> and one VRP credential type</li><li><code>issuer</code>, using the host-domain DID</li><li><code>iat</code>, as the registered JWT signing-time claim</li><li><code>validFrom</code></li><li><code>validUntil</code></li><li><code>credentialSubject</code></li></ul>
+<p>The VRP context defines VRP extension terms only. It does not replace the W3C VC v2 context. Implementations MUST NOT omit <code>https://www.w3.org/ns/credentials/v2</code> when using <code>https://vacationrentalprotocol.com/contexts/v1</code>.</p>
+<p>The unsecured credential payload MUST NOT include:</p>
+<ul><li><code>proof</code></li><li><code>signature</code></li><li><code>issuedAt</code></li></ul>
+<p>The compact JWS payload MUST include the registered JWT <code>iat</code> claim. The <code>iat</code> claim represents the signing time of the JWS envelope. It is distinct from <code>validFrom</code> and <code>validUntil</code>, which define the validity period of the credential data.</p>
+<p>The compact JWS protected header MUST include:</p>
+<pre><code>{
+  &quot;typ&quot;: &quot;vc+jwt&quot;,
+  &quot;alg&quot;: &quot;EdDSA&quot;,
+  &quot;kid&quot;: &quot;did:web:example-host.invalid#attestations-ed25519-2026-05&quot;
+}</code></pre>
+<p>The <code>kid</code> MUST identify an Ed25519 verification key controlled by the credential issuer DID. <code>alg</code> MUST be <code>EdDSA</code>.</p>
+<p>The <code>kid</code> SHOULD be purpose-specific enough to support key rotation and separation, for example <code>#attestations-ed25519-2026-05</code>. A verifier MUST NOT infer a trust score, certification level, or HemmaBo approval from a <code>kid</code> value.</p>
+<p>The compact JWS envelope is the signature:</p>
+<pre><code>BASE64URL(UTF8(protected-header)) &quot;.&quot; BASE64URL(UTF8(payload)) &quot;.&quot; BASE64URL(signature)</code></pre>
+<p>Credential JSON MUST NOT duplicate that signature with a <code>signature</code> or <code>proof</code> property.</p>
+<h2 id="5-credential-types">5. Credential Types</h2>
+<h3 id="51-vrphostdomaincredential">5.1 VRPHostDomainCredential</h3>
+<p><code>VRPHostDomainCredential</code> attests host-domain VRP node facts, such as canonical domain, discovery URL, JWKS URL, and supported VRP protocol version.</p>
+<p>The <code>credentialSubject</code> SHOULD identify the host-domain DID and SHOULD include:</p>
+<ul><li><code>type</code>: <code>VRPHostDomain</code></li><li><code>canonicalDomain</code></li><li><code>vrpDiscoveryUrl</code></li><li><code>jwksUrl</code></li><li><code>protocol</code></li><li><code>protocolVersion</code></li><li><code>domainControlAttested</code></li></ul>
+<p>This credential does not make the issuer a central certifier of other nodes. It is a portable statement by the host-domain DID about its own node facts.</p>
+<h3 id="52-vrppaymentpathcredential">5.2 VRPPaymentPathCredential</h3>
+<p><code>VRPPaymentPathCredential</code> attests payment path facts for a host-domain direct booking flow. It is about routing and control of the payment path, not guest payment outcomes.</p>
+<p>The <code>credentialSubject</code> SHOULD include:</p>
+<ul><li><code>type</code>: <code>VRPPaymentPath</code></li><li><code>canonicalDomain</code></li><li><code>paymentProcessor</code></li><li><code>checkoutDomain</code></li><li><code>directBookingDomain</code></li><li><code>merchantOfRecord</code></li><li><code>paymentFactsSource</code></li></ul>
+<p>This credential MUST NOT include guest identity, booking identity, card data, payment status, refunds, disputes, risk scores, or guest outcomes.</p>
+<h3 id="53-vrppolicysnapshotcredential">5.3 VRPPolicySnapshotCredential</h3>
+<p><code>VRPPolicySnapshotCredential</code> attests a privacy-minimized snapshot of host-domain policies. It is intended to preserve policy provenance without embedding guest data.</p>
+<p>The <code>credentialSubject</code> SHOULD include:</p>
+<ul><li><code>type</code>: <code>VRPPolicySnapshot</code></li><li><code>canonicalDomain</code></li><li><code>policyRef</code></li><li><code>policyUrl</code></li><li><code>policyHash</code></li><li><code>policyVersion</code></li><li><code>appliesTo</code></li></ul>
+<p>The policy hash SHOULD be computed over the canonical policy artifact or an explicitly documented canonicalization of it. A verifier MUST NOT treat a policy snapshot as proof of a guest-specific outcome.</p>
+<h3 id="54-vrpverifiedstaycredential">5.4 VRPVerifiedStayCredential</h3>
+<p><code>VRPVerifiedStayCredential</code> is OPTIONAL in v0.1. If used, it attests that a stay reference is linked to a previously verified VRP offer without identifying the guest.</p>
+<p>The <code>credentialSubject</code> SHOULD include:</p>
+<ul><li><code>type</code>: <code>VRPVerifiedStay</code></li><li><code>stayRef</code></li><li><code>verifiedOfferHash</code></li><li><code>coarseStayPeriod</code>, if a period is included</li><li><code>canonicalDomain</code></li><li><code>propertyRef</code>, only when it does not identify the guest</li></ul>
+<p><code>VRPVerifiedStayCredential</code> MUST NOT include:</p>
+<ul><li>guest name</li><li>guest email</li><li>guest phone number</li><li>guest DID</li><li>payment instrument</li><li>exact stay dates when they could identify a guest</li><li>check-in or check-out timestamps</li><li>review text</li><li>guest outcome</li><li>guest risk</li><li>guest score</li><li>guest history</li></ul>
+<p><code>stayRef</code> MUST be opaque and non-reversible. <code>verifiedOfferHash</code> SHOULD be the SHA-256 hash of the exact compact JWS string for the verified stay offer that was used for the stay, encoded as <code>sha256:{hex}</code> or <code>sha256:{base64url}</code>.</p>
+<p>Issuers SHOULD omit <code>coarseStayPeriod</code> when month-level or season-level disclosure could identify the guest. Guest-held credentials, reviews, and selective disclosure are deferred to v0.2.</p>
+<h3 id="55-vrppropertyattestedclaimscredential">5.5 VRPPropertyAttestedClaimsCredential</h3>
+<p><code>VRPPropertyAttestedClaimsCredential</code> attests a host-signed, tri-state manifest of per-property claims — amenities and policies the host affirms or negates. Its purpose is to let an agent rely on a host-domain fact, including a <strong>negation</strong>, with the same confidence as an affirmation. A negation an OTA cannot publish on the host's behalf (&quot;cats are not allowed&quot;) is as actionable to an agent as a yes.</p>
+<p><strong>Scope.</strong> This credential proves <strong>host attestation and integrity</strong> — that the host domain asserted these claims and that the manifest is tamper-evident under the issuer's key. It does not prove third-party-verified truth. As with every VRP attestation, no operator is the authority over truth; a verifier applies its own trust policy (§3).</p>
+<p>The <code>credentialSubject</code> SHOULD include:</p>
+<ul><li><code>type</code>: <code>VRPPropertyClaimsManifest</code></li><li><code>canonicalDomain</code></li><li><code>appliesTo</code>, carrying the <code>propertyRef</code> the manifest describes</li><li><code>claims</code>: an array of claim objects</li></ul>
+<p>Each entry in <code>claims</code> MUST include:</p>
+<ul><li><code>claim</code>: an opaque claim key. It MUST match <code>^[a-z][a-z0-9_]*$</code> (lowercase snake_case) and MUST name the amenity or policy affirmatively (see <strong>Polarity</strong> below). Nodes SHOULD use keys from the (non-normative) VRP amenity/policy key registry when one exists for the property, and MAY mint their own key for a property the registry does not cover.</li><li><code>state</code>: either <code>affirmed</code> (the host asserts the claim is true) or <code>negated</code> (the host asserts the claim is false).</li></ul>
+<p><strong>Polarity.</strong> A claim key MUST name the property or policy affirmatively; the <code>state</code> field alone carries polarity. Keys that encode a negation in the name MUST NOT be used — for example a <code>no_</code>/<code>not_</code> prefix, <code>_not_</code> anywhere (such as <code>pets_not_allowed</code>), or a <code>_forbidden</code>/<code>_prohibited</code>/<code>_banned</code>/<code>_disallowed</code> suffix. Assert <code>pets_cats</code> with <code>state: negated</code>, never <code>no_cats</code>, <code>pets_not_allowed</code>, or <code>cats_forbidden</code>. The schema and conformance verifier reject these forms as a best-effort guard; the normative requirement is affirmative naming, which a pattern cannot fully enumerate. This keeps <code>affirmed</code>/<code>negated</code> the single source of polarity so two nodes' manifests stay comparable (the reason to federate at all).</p>
+<p>Each entry MAY include:</p>
+<ul><li><code>verified_at</code>: an ISO 8601 calendar date (<code>YYYY-MM-DD</code>) on which the host last attested this specific claim. When the host has not attested the claim, <code>verified_at</code> MUST be omitted — it MUST NOT be present as <code>null</code>. It is distinct from the credential's <code>validFrom</code>/<code>validUntil</code>, which bound the signature's validity.</li></ul>
+<p><strong>Tri-state semantics.</strong> A claim key present with <code>state: affirmed</code> is Affirmed. A claim key present with <code>state: negated</code> is Negated. A claim key <strong>absent</strong> from <code>claims</code> is Unknown: a verifier MUST NOT infer it as either true or false. Unknown is never encoded as a stored value.</p>
+<p><strong>Uniqueness.</strong> A <code>claims</code> array MUST NOT contain the same <code>claim</code> key more than once. A verifier that encounters a duplicate key MUST treat the manifest as malformed.</p>
+<p><strong>Supersession.</strong> When an issuer publishes more than one <code>VRPPropertyAttestedClaimsCredential</code> for the same <code>appliesTo.propertyRef</code>, the manifest with the latest <code>validFrom</code> governs, and a verifier MUST prefer it. Issuers SHOULD revoke superseded manifests through the status list (§6) so a stale manifest cannot be replayed as current.</p>
+<p>The credential is signed and verified exactly as every other VRP portable attestation (§3, §4, §8): a compact Ed25519 JWS whose protected header carries <code>typ: &quot;vc+jwt&quot;</code>, <code>alg: &quot;EdDSA&quot;</code>, and a <code>kid</code> resolving to an assertion key in the issuer's <code>did:web</code> document. A verifier MUST verify the signature over the compact-JWS bytes as received and MUST NOT re-canonicalize the payload.</p>
+<h3 id="56-vrpregulatoryregistrationcredential">5.6 VRPRegulatoryRegistrationCredential</h3>
+<p><code>VRPRegulatoryRegistrationCredential</code> attests the node's short-term-rental registration identifier for its jurisdiction, carried with an explicit <strong>evidence level</strong> so the credential is exactly as trustworthy as the checking that stands behind it — never more.</p>
+<p><code>credentialSubject</code> fields:</p>
+<ul><li><code>id</code> — the node's <code>did:web</code> identity.</li><li><code>type</code> — <code>VRPRegulatoryRegistration</code>.</li><li><code>canonicalDomain</code> — the node's canonical host.</li><li><code>registrationId</code> — the registration identifier as issued under the jurisdiction's scheme.</li><li><code>authority</code> (optional) — the registering authority, as declared.</li><li><code>jurisdiction</code> — the property's jurisdiction (country name or code). Jurisdiction-neutral by construction: the field is a declaration, never an enumeration; a node in any country carries its registration the same way.</li><li><code>evidence</code> — one of: against nothing. The subject then MUST carry a <code>disclaimer</code>, and a verifier MUST NOT treat the credential as independent proof of registration or local license status (the §3 trust model is unchanged: the signature proves the node *published* exactly this claim, not that a state agrees with it). jurisdiction's machine-queryable register; <code>verifiedAt</code> is then REQUIRED. for the registration (eIDAS QEAA-class). Not reachable in v0.1; listed so the gradient is stable when it arrives.<ul><li><code>self_declared</code> — the host provided the identifier; it has been checked</li><li><code>registry_verified</code> — the identifier was checked against the</li><li><code>state_attested</code> — RESERVED: the authority itself issued a credential</li></ul></li><li><code>verifiedAt</code> (required at <code>registry_verified</code>) — when the register check was performed.</li><li><code>disclaimer</code> (required at <code>self_declared</code>).</li></ul>
+<p>The evidence level upgrades <strong>in place</strong>: the same credential shape moves from <code>self_declared</code> to <code>registry_verified</code> when a jurisdiction's register becomes machine-checkable, with no change for consumers. Signing never upgrades evidence.</p>
+<p>*(Informative: registration identifiers on listings are a legal requirement in a growing set of jurisdictions — e.g. EU Regulation 2024/1028 as member states bring registers online. This credential gives such an identifier a signed, revocable, portable carrier.)*</p>
+<h2 id="6-status-and-revocation">6. Status and Revocation</h2>
+<p>Portable Attestations v0.1 defines <code>VRPStatusListEntry</code> for simple status and revocation.</p>
+<p>This specification does not claim compatibility with W3C <code>BitstringStatusListEntry</code>. If a future VRP version uses <code>BitstringStatusListEntry</code>, the status list MUST follow the W3C Bitstring Status List format completely, including the required <code>BitstringStatusListCredential</code> data model.</p>
+<p>A credential MAY include <code>credentialStatus</code>:</p>
+<pre><code>{
+  &quot;id&quot;: &quot;https://example-host.invalid/.well-known/vrp/status/attestations-v0.1.json#host-domain-2026-05&quot;,
+  &quot;type&quot;: &quot;VRPStatusListEntry&quot;,
+  &quot;statusPurpose&quot;: &quot;revocation&quot;,
+  &quot;statusListUrl&quot;: &quot;https://example-host.invalid/.well-known/vrp/status/attestations-v0.1.json&quot;,
+  &quot;statusRef&quot;: &quot;host-domain-2026-05&quot;
+}</code></pre>
+<p>For <code>VRPStatusListEntry</code>:</p>
+<ul><li><code>type</code> MUST be <code>VRPStatusListEntry</code>.</li><li><code>statusPurpose</code> MUST be <code>revocation</code> or <code>suspension</code>.</li><li><code>statusListUrl</code> MUST be an HTTPS URL controlled by the issuer host domain.</li><li><code>statusRef</code> MUST be opaque and unique within the referenced status list.</li></ul>
+<p>The status list document SHOULD use this shape:</p>
+<pre><code>{
+  &quot;@context&quot;: [&quot;https://vacationrentalprotocol.com/contexts/v1&quot;],
+  &quot;type&quot;: &quot;VRPStatusList&quot;,
+  &quot;issuer&quot;: &quot;did:web:example-host.invalid&quot;,
+  &quot;statusPurpose&quot;: &quot;revocation&quot;,
+  &quot;validFrom&quot;: &quot;2026-05-31T00:00:00Z&quot;,
+  &quot;validUntil&quot;: &quot;2026-06-30T00:00:00Z&quot;,
+  &quot;entries&quot;: [
+    {
+      &quot;statusRef&quot;: &quot;host-domain-2026-05&quot;,
+      &quot;status&quot;: &quot;valid&quot;
+    }
+  ]
+}</code></pre>
+<p>If status is absent, stale, unreachable, malformed, or not controlled by the issuer host domain, verifiers MUST treat the credential status as unknown. Unknown status MUST NOT be converted into either revoked or not revoked.</p>
+<h2 id="7-bundles">7. Bundles</h2>
+<p>A VRP attestation bundle is a transport container for one or more compact JWS credentials. A bundle does not create trust by itself.</p>
+<p>Bundle entries SHOULD include:</p>
+<ul><li><code>type</code></li><li><code>mediaType</code>: <code>application/vc+jwt</code></li><li><code>compactJws</code></li></ul>
+<p>Bundle entries MUST NOT require a HemmaBo endpoint or registry. Future retrieval mechanisms may be defined later, but this v0.1 specification does not define MCP tools or new runtime endpoints.</p>
+<p>If future MCP tools are specified, their names SHOULD use <code>snake_case</code>, such as:</p>
+<ul><li><code>verify_vrp_attestations</code></li><li><code>get_vrp_attestation_bundle</code></li></ul>
+<p>The following names are out of scope for VRP Portable Attestations:</p>
+<ul><li><code>issue_certificate</code></li><li><code>hemmabo_trust_score</code></li><li><code>vrp.attestations.verify</code></li></ul>
+<h2 id="8-verification">8. Verification</h2>
+<p>A verifier of a v0.1 portable attestation MUST:</p>
+<ol><li>Decode the compact JWS protected header and payload.</li><li>Confirm <code>typ</code> is <code>vc+jwt</code>.</li><li>Confirm <code>alg</code> is <code>EdDSA</code>.</li><li>Resolve the issuer DID from the credential <code>issuer</code>.</li><li>Confirm the <code>kid</code> identifies an Ed25519 verification key controlled by that issuer DID.</li><li>Verify the compact JWS signature.</li><li>Confirm the credential includes the W3C VC v2 context and the VRP v1 context.</li><li>Confirm the credential type is one of the v0.1 VRP credential types.</li><li>Confirm <code>validFrom</code> and <code>validUntil</code> are present and current.</li><li>Confirm there is no <code>proof</code>, <code>signature</code>, or <code>issuedAt</code> property in the credential JSON.</li><li>Apply the privacy rules for the credential type.</li><li>Resolve and check <code>credentialStatus</code> when present.</li></ol>
+<p>Attestations do not replace core VRP offer verification. A valid attestation MUST NOT make an unsigned, expired, unavailable, inexact, or non-quoteable VRP offer safe to quote.</p>
+<h2 id="9-privacy-and-gdpr">9. Privacy and GDPR</h2>
+<p>Portable Attestations v0.1 uses data minimization as a protocol requirement.</p>
+<p>Credentials MUST NOT publish guest reviews, guest outcomes, guest risk, guest scores, or guest history.</p>
+<p>Credentials MUST NOT include direct guest identifiers such as name, email address, phone number, payment instrument, guest DID, or exact stay dates that can identify the guest.</p>
+<p><code>VRPVerifiedStayCredential</code>, if used, MUST use <code>stayRef</code>, <code>verifiedOfferHash</code>, and at most a coarse non-identifying period such as a month or season. Issuers SHOULD omit the period when it could identify the guest.</p>
+<p>Guest-held credentials and reviews are out of scope for v0.1 and are deferred to v0.2, where selective disclosure such as SD-JWT can be evaluated.</p>
+<h2 id="10-machine-readable-schema">10. Machine-Readable Schema</h2>
+<p>The JSON Schema profile for v0.1 examples and payload artifacts is:</p>
+<pre><code>https://vacationrentalprotocol.com/schemas/attestations-v0.1.schema.json</code></pre>
+<p>Repository copy: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/schemas/attestations-v0.1.schema.json"><code>schemas/attestations-v0.1.schema.json</code></a>.</p>
+<p>The schema is an interoperability aid. It does not create a central validator, registry, issuer service, certification service, marketplace, OTA, booking intermediary, or trust authority.</p>
+<h2 id="11-examples">11. Examples</h2>
+<p>Example files are in <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/attestations"><code>examples/attestations</code></a>:</p>
+<ul><li><code>did-web-document.v0.1.json</code></li><li><code>jws-header.ed25519.v0.1.json</code></li><li><code>host-domain-credential.payload.v0.1.json</code></li><li><code>payment-path-credential.payload.v0.1.json</code></li><li><code>policy-snapshot-credential.payload.v0.1.json</code></li><li><code>verified-stay-credential.payload.v0.1.json</code></li><li><code>regulatory-registration-credential.payload.v0.1.json</code></li><li><code>status-list.v0.1.json</code></li><li><code>attestation-bundle.v0.1.json</code></li></ul>
+<p>The payload examples are unsigned JWS payload examples. Production credentials are compact JWS envelopes over those payloads.</p>
+<p>The <code>did-web-document.v0.1.json</code> and <code>attestation-bundle.v0.1.json</code> files in <code>examples/attestations/</code> are <strong>illustrative only</strong>: their public key <code>x</code> value and their <code>compactJws</code> values are non-cryptographic placeholders (<code>&lt;…&gt;</code>) that show the document shape. They MUST NOT be used to validate the attestation layer.</p>
+<p>A <strong>real, verifiable</strong> Ed25519 / compact-JWS vector — an issuer <code>did:web</code> document with a genuine verification key and a signed attestation bundle whose <code>compactJws</code> values verify against it — is in <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance/attestations"><code>examples/conformance/attestations/</code></a>. That vector is checked on every run by <code>npm test</code> (see step 8 verification above); it uses a documented throwaway test key for the reserved <code>example-host.invalid</code> domain and MUST NOT be used by any production node.</p>
+<h2 id="12-license">12. License</h2>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (<a href="https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1">ADR 0007</a> D7).</p>
+      </article>
+    </main>
+  </body>
+</html>

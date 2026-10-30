@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VRP Interop and Trust Positioning | Vacation Rental Protocol</title>
+    <meta name="description" content="VRP is the host-domain offer verification layer for vacation rentals." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="VRP Interop and Trust Positioning" />
+    <meta property="og:description" content="VRP is the host-domain offer verification layer for vacation rentals." />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/interop-and-trust-positioning" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="VRP Interop and Trust Positioning" />
+    <meta name="twitter:description" content="VRP is the host-domain offer verification layer for vacation rentals." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/interop-and-trust-positioning" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/interop-and-trust-positioning.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/interop-and-trust-positioning#techarticle",
+  "headline": "VRP Interop and Trust Positioning",
+  "description": "VRP is the host-domain offer verification layer for vacation rentals.",
+  "url": "https://vacationrentalprotocol.com/docs/interop-and-trust-positioning",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/interop-and-trust-positioning.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/interop-and-trust-positioning.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/interop-and-trust-positioning.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/interop-and-trust-positioning.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="vrp-interop-and-trust-positioning">VRP Interop and Trust Positioning</h1>
+<p><strong>Status:</strong> Public draft <strong>Date:</strong> 2026-05-31</p>
+<h2 id="summary">Summary</h2>
+<p>VRP is the host-domain offer verification layer for vacation rentals.</p>
+<p>Core VRP proves that a concrete offer is real. Portable Attestations prove selected trust history without making HemmaBo, or any other operator, the authority over truth.</p>
+<p>VRP is intentionally not a complete booking, payment, guest identity, legal verification, or discovery-index protocol. It is designed to compose with those layers while keeping the host-owned domain first-class.</p>
+<h2 id="no-central-issuer">No Central Issuer</h2>
+<p>VRP's trust model is no-gatekeeper by design.</p>
+<p>VRP does not require:</p>
+<ul><li>HemmaBo as issuer, verifier, registry, scorer, OTA, marketplace, booking intermediary, or trust authority.</li><li>A VRP-operated trusted issuer registry.</li><li>A VRP-operated host accreditation program.</li><li>A VRP-operated certification company.</li><li>A central discovery index before an offer or attestation can verify.</li></ul>
+<p>Verification starts from the host-owned domain:</p>
+<ol><li>Fetch the host-domain VRP discovery document.</li><li>Resolve the host-domain keys or DID document.</li><li>Verify the signed offer or attestation.</li><li>Apply protocol rules for freshness, exact price, availability, privacy, and status.</li><li>Apply the verifier's own trust policy.</li></ol>
+<p>A verifier may still use a trust policy. That policy can include local legal requirements, insurer requirements, municipal registries, payment providers, property managers, identity verification providers, or allowlists chosen by the verifier. Those choices are not HemmaBo approval and not VRP-wide certification.</p>
+<h2 id="self-attestation-boundary">Self-Attestation Boundary</h2>
+<p>Self-issued host-domain credentials are appropriate for facts controlled by the host domain, including:</p>
+<ul><li>host-domain control</li><li>VRP node metadata</li><li>discovery URLs</li><li>signing key identifiers</li><li>payment path routing facts</li><li>direct booking domains</li><li>policy snapshot hashes</li><li>privacy-minimized verified stay references</li></ul>
+<p>Self-issued host-domain credentials are not enough for claims that require independent evidence, including:</p>
+<ul><li>guest identity verification</li><li>guest payment guarantees</li><li>right-to-let</li><li>local short-term-rental license status</li><li>property ownership</li><li>insurance coverage</li><li>legal compliance</li></ul>
+<p>Future VRP versions may define optional third-party credential profiles for those claims. The issuer trust decision should remain verifier-chosen, not centralized in HemmaBo or the VRP standards site.</p>
+<h2 id="relationship-to-adjacent-standards">Relationship to Adjacent Standards</h2>
+<p>VRP should compose with the agent-commerce stack instead of replacing it.</p>
+<table><thead><tr><th>Layer</th><th>VRP position</th></tr></thead><tbody><tr><td>UCP</td><td>Complementary. UCP can handle checkout, order lifecycle, and merchant-of-record commerce flows, including lodging flows as the UCP lodging profile matures. VRP proves the host-domain offer and can hand off through a signed direct booking URL or future optional UCP manifest reference.</td></tr><tr><td>AP2</td><td>Complementary. AP2 can handle cryptographic payment mandates and payment authorization. VRP v0.1 does not define payment mandates or raw payment processing.</td></tr><tr><td>MCP</td><td>Complementary. MCP can expose retrieval or verification behavior as tools in a future profile. VRP v0.1 defines documents and verification rules, not runtime tools.</td></tr><tr><td>A2A</td><td>Complementary. A2A can carry future guest-agent and host-agent negotiation. VRP v0.1 does not define an A2A binding.</td></tr><tr><td>A2A Agent Card</td><td>A node may publish an A2A Agent Card at <code>https://{host-domain}/.well-known/agent-card.json</code>. Its <code>provider</code> is the host. It may carry a data-only extension with <code>uri</code> <code>https://vacationrentalprotocol.com/spec/v0.1</code> and <code>required: false</code>, whose <code>params</code> repeat the VRP v0.1 §2 discovery fields of the same host domain. Its skills name only tools the host domain serves, and it lists no A2A interface the host domain does not serve. The card describes the node; it is not a registry entry and does not replace verification of the signed offer against <code>jwks_url</code>.</td></tr><tr><td>CM AI Docking Port</td><td>An independent, read-only entry point for AI agents into CM Free nodes (AGPL-3.0). Its Request and Response Envelopes map field by field onto the StayIntent query and response, and its signed-offer tool, when exposed, onto the Node Tool Binding; see <a href="https://vacationrentalprotocol.com/docs/interop/cm-ai-docking-port">the mapping</a>. VRP is unchanged by it.</td></tr><tr><td>W3C VC 2.0</td><td>Used by VRP Portable Attestations.</td></tr><tr><td>VC JOSE/COSE</td><td>Canonical v0.1 security format for VRP Portable Attestations as compact JWS with <code>typ: &quot;vc+jwt&quot;</code> and <code>alg: &quot;EdDSA&quot;</code>.</td></tr><tr><td>W3C Data Integrity</td><td>Possible future interoperability mapping. VRP v0.1 does not use embedded <code>proof</code> objects.</td></tr></tbody></table>
+<h2 id="what-vrp-should-not-copy">What VRP Should Not Copy</h2>
+<p>VRP should not add a mandatory central trusted issuer registry merely to look more complete.</p>
+<p>VRP should not publish a HemmaBo trust score.</p>
+<p>VRP should not call host-domain self-attestation &quot;right-to-let verification&quot; or &quot;legal compliance verification.&quot;</p>
+<p>VRP should not publish guest reviews, guest risk, guest outcome, guest scores, or guest history in v0.1.</p>
+<p>VRP should not define runtime MCP tools until the document layer is stable and there is at least one interoperable verifier profile.</p>
+<h2 id="roadmap-gaps">Roadmap Gaps</h2>
+<p>The verified gaps are real and should be named directly:</p>
+<ul><li>Guest identity verification is out of scope for v0.1.</li><li>Right-to-let and local license verification are out of scope for v0.1.</li><li>Payment mandates are out of scope for v0.1.</li><li>Full autonomous booking confirmation is out of scope for v0.1.</li><li>Centralized search discovery is out of scope for v0.1.</li></ul>
+<p>The recommended path is not to make HemmaBo the missing authority. The recommended path is to add optional profiles that let independent issuers, payment providers, search indexes, and host tools interoperate while VRP keeps the host-domain offer proof gatekeeper-free.</p>
+      </article>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VRP Booking Proof Chain — Specification v0.1 | Vacation Rental Protocol</title>
+    <meta name="description" content="This document names and normatively defines the Booking Proof Chain: the single derivation family that binds a booking's offer, payment, receipt, and…" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="VRP Booking Proof Chain — Specification v0.1" />
+    <meta property="og:description" content="This document names and normatively defines the Booking Proof Chain: the single derivation family that binds a booking's offer, payment, receipt, and…" />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/spec/proof-chain-v0.1" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="VRP Booking Proof Chain — Specification v0.1" />
+    <meta name="twitter:description" content="This document names and normatively defines the Booking Proof Chain: the single derivation family that binds a booking's offer, payment, receipt, and…" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/spec/proof-chain-v0.1" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/spec/proof-chain-v0.1.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/spec/proof-chain-v0.1#techarticle",
+  "headline": "VRP Booking Proof Chain — Specification v0.1",
+  "description": "This document names and normatively defines the Booking Proof Chain: the single derivation family that binds a booking's offer, payment, receipt, and…",
+  "url": "https://vacationrentalprotocol.com/spec/proof-chain-v0.1",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/spec/proof-chain-v0.1.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/proof-chain-v0.1.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Specification · <a href="https://vacationrentalprotocol.com/spec/proof-chain-v0.1.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/proof-chain-v0.1.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="vrp-booking-proof-chain-specification-v01">VRP Booking Proof Chain — Specification v0.1</h1>
+<p><strong>Status:</strong> Public draft</p>
+<p><strong>Published:</strong> 2026-07-23</p>
+<p><strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
+<p><strong>Builds on:</strong> <a href="https://vacationrentalprotocol.com/spec/v0.1">Core VRP v0.1</a> (signed verified stay offers), <a href="https://vacationrentalprotocol.com/spec/receipt-v1">Receipt Envelope v1</a> (issuance wrapper §14, verbatim delivery §15, verifier walk-through §16), <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">Transparency Log v0.1</a> (leaf hashing rule §4.1).</p>
+<h2 id="1-scope">1. Scope</h2>
+<p>This document <strong>names and normatively defines the Booking Proof Chain</strong>: the single derivation family that binds a booking's offer, payment, receipt, and confirmation into one recomputable chain. Every link is the same primitive —</p>
+<blockquote><strong>SHA-256 over the exact bytes of a node-signed compact-JWS artifact.</strong></blockquote>
+<p>The chain gives a booking confirmation the property this specification calls <strong>identifier-is-proof</strong>: the string a guest or agent holds as their confirmation is not a label somebody assigned — it is a value anybody can recompute from the signed artifact and check against public state, with no trusted party, no central registry, and no judge.</p>
+<p>This specification defines no new runtime endpoints and no new string dialect (see §6). It names, fixes, and makes citable a derivation that conforming implementations already produce.</p>
+<h2 id="2-references">2. References</h2>
+<ul><li><a href="https://vacationrentalprotocol.com/spec/receipt-v1">VRP Receipt Envelope v1</a> — the receipt artifact and its delivery rules.</li><li><a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">VRP Transparency Log v0.1</a> — append-only anchoring of artifact hashes.</li><li><a href="https://eips.ethereum.org/EIPS/eip-3009">EIP-3009</a> (informative) — <code>transferWithAuthorization</code> nonces, used by the x402 payment-binding profile in §4.</li><li>RFC 7515 (JWS), RFC 6234 (SHA-256).</li></ul>
+<h2 id="3-the-chain-normative">3. The chain (normative)</h2>
+<p>The Booking Proof Chain consists of three links. All hashes are SHA-256 over the <strong>exact bytes of the compact-JWS string as issued</strong> — never over re-serialized or re-canonicalized JSON (Receipt Envelope v1 §7 rule applies chain-wide).</p>
+<h3 id="31-link-1-offer-hash-offerhash">3.1 Link 1 — Offer hash (<code>offer_hash</code>)</h3>
+<pre><code>offer_hash = SHA-256(offer compact-JWS bytes)</code></pre>
+<p>The verified stay offer is a node-signed compact JWS (Core VRP v0.1). Its hash is the chain's root: it commits to the exact promised property, dates, party size, and price.</p>
+<h3 id="32-link-2-payment-binding-rail-profiles">3.2 Link 2 — Payment binding (rail profiles)</h3>
+<p>A payment is <strong>chain-bound</strong> when the settlement carries <code>offer_hash</code> in a slot the rail preserves. Rail profiles:</p>
+<ul><li><strong>x402 / EIP-3009 profile:</strong> the 32-byte <code>nonce</code> of <code>transferWithAuthorization</code> equals <code>offer_hash</code>. Because consumed nonces are public on-chain state (<code>authorizationState(authorizer, nonce)</code> and the indexed <code>AuthorizationUsed</code> event), anyone who recomputes <code>offer_hash</code> from the offer JWS can confirm, permissionlessly, that exactly that offer was paid and by which address. *(Informative note: EIP-3009 verifiers treat the nonce as opaque; the binding is recomputable by any party told this rule, and enforced by uniqueness — a given offer can be paid this way at most once per payer.)*</li><li><strong>Custodial rails (card / account-to-account):</strong> the rail itself carries no artifact binding. A conforming node MUST retain the association between the settlement identifier and <code>offer_hash</code> in its booking records, and SHOULD carry <code>offer_hash</code> (full or truncated per §5) in any merchant-controlled reference or metadata slot the rail preserves.</li></ul>
+<p>*(Interoperability note, informative: Mastercard/Google &quot;Verifiable Intent&quot; independently binds payment mandates via <code>transaction_id = B64U(SHA-256(checkout_jwt))</code> — hash-of-a-merchant-signed-artifact is the converging cross-industry pattern. The digest value is identical; only the text encoding differs — see §5.)*</p>
+<h3 id="33-link-3-receipt-artifact-hash-the-confirmation-reference">3.3 Link 3 — Receipt artifact hash: the confirmation reference</h3>
+<pre><code>artifact_hash = &quot;sha256:&quot; + lowercase-hex( SHA-256(receipt wrapper-JWS bytes) )</code></pre>
+<p>The receipt (Receipt Envelope v1 §14) is the node-signed record of the promise a confirmed booking settles. Its artifact hash is simultaneously:</p>
+<ol><li>the <strong>transparency-log leaf</strong> (Transparency Log v0.1 §4.1),</li><li>the <strong>inclusion-proof lookup key</strong> (<code>…/proof?hash=&lt;artifact_hash&gt;</code>), and</li><li>the <strong>booking confirmation reference</strong> — the chain's public face.</li></ol>
+<p>A booking confirmation under this specification <strong>is</strong> Link 3: a value recomputable by any holder of the receipt JWS, resolvable against the public log, and impossible to fabricate for a booking that does not exist.</p>
+<h2 id="4-identifier-is-proof-normative">4. Identifier-is-proof (normative)</h2>
+<p>Derived proof strings are only consumed in practice when verification is a side effect of ordinary use. Conforming implementations therefore:</p>
+<ul><li>MUST use <code>artifact_hash</code> as the functional lookup key for the receipt's inclusion proof on the issuing node's log surfaces;</li><li>MUST deliver the full receipt wrapper-JWS to the booking's holder byte-verbatim (Receipt Envelope v1 §15) — <strong>a bare hash proves nothing without the retained artifact it commits to</strong>;</li><li>MUST NOT present a booking as chain-confirmed on the strength of a hash-shaped string alone: verification is (a) recompute the hash from the retained JWS, (b) verify the JWS against the node's published keys, (c) check log inclusion;</li><li>SHOULD carry the confirmation reference wherever the booking is represented to agents (status responses, machine-readable confirmation surfaces), so that the string a consumer encounters is always the recomputable one.</li></ul>
+<h2 id="5-encodings-and-truncation-normative">5. Encodings and truncation (normative)</h2>
+<ul><li>Canonical display form: <code>sha256:</code> + lowercase hex (64 hex chars).</li><li>The same digest MAY be carried base64url-encoded where a carrier requires it. Verifiers MUST compare <strong>digest bytes</strong>, never string forms across encodings.</li><li>Carriers with length limits (payment references, human-facing codes) MAY carry a <strong>truncated</strong> digest plus an error-detection code appropriate to the carrier. A truncated value is a *locator*, not a proof: verification is always recompute-then-compare against the full digest.</li></ul>
+<h2 id="6-non-goals-normative">6. Non-goals (normative)</h2>
+<ul><li><strong>No new confirmation dialect.</strong> This specification deliberately defines no wallet-address-shaped, branded, or otherwise novel confirmation format. No consumer parses such a format today, and address-shaped strings invite misdirected funds. The chain's strings are plain SHA-256 digests riding in existing carriers (reservation-number fields, payment references, URLs) unchanged.</li><li><strong>No settlement semantics.</strong> Payment rails and their guarantees are out of scope (Core VRP v0.1 §5.2 reservation stands); §3.2 defines only how a settlement, once made, is bound to the chain.</li><li><strong>No central verifier.</strong> Anyone may verify; nobody must be asked.</li></ul>
+<h2 id="7-supersession-normative">7. Supersession (normative)</h2>
+<p>Lodging bookings mutate: reschedules, renegotiated totals, cancellations. The chain handles mutation by <strong>superseding receipts</strong>, never by editing:</p>
+<ul><li>A receipt issued because a prior receipt's promise changed SHOULD include <code>supersedes: &quot;&lt;artifact_hash of the prior receipt&gt;&quot;</code> at the envelope's top level.</li><li>Both receipts remain anchored in the log. The superseded receipt remains valid <strong>evidence of the promise that held before the change</strong>; the superseding receipt states the promise that holds now.</li><li>The <strong>current</strong> confirmation reference for a booking is the artifact hash of its latest unsuperseded receipt. Verifiers resolving a chain of <code>supersedes</code> links MUST treat a cycle or a fork (two unsuperseded receipts claiming the same predecessor) as a verification failure.</li><li>A cancellation is a superseding receipt whose subject records the cancelled state; it does not remove history.</li></ul>
+<p>*(Receipts issued before this specification carry no <code>supersedes</code> field and are unaffected.)*</p>
+<h2 id="8-verifier-walk-through-informative">8. Verifier walk-through (informative)</h2>
+<p>An agent holding a confirmation reference and receipt JWS for a booking:</p>
+<ol><li>Recompute <code>artifact_hash</code> from the exact receipt-JWS bytes; compare with the reference held.</li><li>Verify the wrapper JWS and inner attestations against the node's published keys (<code>/.well-known/jwks.json</code>, resolvable via the node's <code>did:web</code> document).</li><li>Fetch the inclusion proof for <code>artifact_hash</code> from the log; verify against a signed tree head.</li><li>If the receipt carries <code>supersedes</code>, walk to the referenced hash to reconstruct the booking's history; confirm no fork.</li><li>Where the payment used the x402 profile: recompute <code>offer_hash</code> from the offer JWS and check <code>authorizationState(payer, offer_hash)</code> on-chain.</li></ol>
+<p>At no step is any party asked to vouch. Every step is recomputation against published, signed, or on-chain state.</p>
+<h2 id="9-conformance">9. Conformance</h2>
+<p>A node conforms to Booking Proof Chain v0.1 if:</p>
+<ol><li>its offers and receipts are node-signed compact JWS artifacts whose hashes follow §3;</li><li>receipt artifact hashes are log-anchored and serve as inclusion-proof lookup keys (§4);</li><li>receipt delivery is byte-verbatim to the holder (§4);</li><li>superseding receipts, where issued, follow §7;</li><li>it introduces no alternative confirmation dialect presented as chain-verified (§6).</li></ol>
+<h2 id="10-neutrality">10. Neutrality</h2>
+<p>The spec is vendor-neutral. HemmaBo is a reference implementer, not an approval authority. Any node, on any stack, can produce and any party can verify a Booking Proof Chain without permission from anyone.</p>
+<h2 id="11-license">11. License</h2>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>.</p>
+      </article>
+    </main>
+  </body>
+</html>

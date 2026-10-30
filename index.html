@@ -6,8 +6,16 @@
     <title>Vacation Rental Protocol (VRP)</title>
     <meta
       name="description"
-      content="Open protocol for host-domain signed vacation rental offers and portable attestations."
+      content="Vacation Rental Protocol (VRP): the open standard behind every VRP vacation rental. Stay offers signed by the host's own domain, verifiable over HTTPS."
     />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:description" content="Vacation Rental Protocol (VRP): the open standard behind every VRP vacation rental. Stay offers signed by the host's own domain, verifiable over HTTPS." />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Vacation Rental Protocol (VRP)" />
+    <meta name="twitter:description" content="Vacation Rental Protocol (VRP): the open standard behind every VRP vacation rental. Stay offers signed by the host's own domain, verifiable over HTTPS." />
     <meta name="robots" content="index,follow" />
     <meta name="msvalidate.01" content="62716EECB696EBA22C09A8CB9B6B65D9" />
     <meta name="google-site-verification" content="qOYAGZ1oArEq_6_AiOwywnQK9J9zzNDlLDgA1HXA7W0" />
@@ -23,7 +31,7 @@
             "@id": "https://vacationrentalprotocol.com/#website",
             "url": "https://vacationrentalprotocol.com/",
             "name": "Vacation Rental Protocol (VRP)",
-            "description": "Open protocol for host-domain signed vacation rental offers and portable attestations.",
+            "description": "Vacation Rental Protocol (VRP): the open standard behind every VRP vacation rental. Stay offers signed by the host's own domain, verifiable over HTTPS.",
             "inLanguage": "en"
           },
           {
@@ -40,14 +48,14 @@
               "@type": "DefinedTermSet",
               "@id": "https://vacationrentalprotocol.com/#vrp-spec",
               "name": "Vacation Rental Protocol specification",
-              "url": "https://vacationrentalprotocol.com/spec/v0.1.md"
+              "url": "https://vacationrentalprotocol.com/spec/v0.1"
             }
           },
           {
             "@type": "TechArticle",
             "@id": "https://vacationrentalprotocol.com/#techarticle",
             "headline": "Vacation Rental Protocol (VRP)",
-            "description": "Open protocol for host-domain signed vacation rental offers and portable attestations.",
+            "description": "Vacation Rental Protocol (VRP): the open standard behind every VRP vacation rental. Stay offers signed by the host's own domain, verifiable over HTTPS.",
             "about": { "@id": "https://vacationrentalprotocol.com/#vrp" },
             "isPartOf": { "@id": "https://vacationrentalprotocol.com/#website" },
             "url": "https://vacationrentalprotocol.com/",
@@ -69,17 +77,17 @@
           <a href="/docs/source-pack">Source pack</a>
           <a href="/film">The film</a>
           <a href="/demo">Watch the agent</a>
-          <a href="/spec/v0.1.md">Core spec</a>
+          <a href="/spec/v0.1">Core spec</a>
           <a href="/reference-implementation">Live proof</a>
           <a href="/verify">Verify offer</a>
           <a href="/implement">Implement</a>
-          <a href="/spec/attestations-v0.1.md">Attestations</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
           <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
           <a href="/spec/transparency-log-v0.1">Transparency log</a>
           <a href="/spec/receipt-v1">Receipt</a>
-          <a href="/spec/well-known-uri-v0.1.md">Well-Known URI</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
           <a href="/declarations">Declarations</a>
-          <a href="/docs/interop-and-trust-positioning.md">Interop</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
           <a href="/contexts/v1">Context</a>
           <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
         </div>
@@ -89,7 +97,7 @@
     <main>
       <section class="intro">
         <div class="intro-copy">
-          <p class="eyebrow">Public draft v0.1 &middot; updated 2026-09-22</p>
+          <p class="eyebrow">Public draft v0.1 &middot; updated 2026-10-30</p>
           <h1>Vacation Rental Protocol</h1>
           <p class="lead">
             An open protocol for host-domain signed vacation rental offers.
@@ -102,6 +110,11 @@
           <p>
             No central issuer. No trusted issuer registry. No accreditation
             gatekeeper. Verifiers choose their own trust policy.
+          </p>
+          <p>
+            A holiday home that does this is a
+            <a href="/vrp-vacation-rental"><strong>VRP vacation rental</strong></a>:
+            its own platform, on its own domain, verifiable by any guest or agent.
           </p>
           <p style="margin-top: 18px">
             <a
@@ -196,11 +209,11 @@
             <span>Attestations JSON Schema</span>
             <code>/schemas/attestations-v0.1.schema.json</code>
           </a>
-          <a href="/spec/attestations-v0.1.md">
+          <a href="/spec/attestations-v0.1">
             <span>Portable Attestations v0.1</span>
             <code>/spec/attestations-v0.1.md</code>
           </a>
-          <a href="/docs/interop-and-trust-positioning.md">
+          <a href="/docs/interop-and-trust-positioning">
             <span>Interop and trust positioning</span>
             <code>/docs/interop-and-trust-positioning.md</code>
           </a>
@@ -250,7 +263,7 @@
           future optional credential profiles, not HemmaBo certification.
         </p>
         <p>
-          <a href="/docs/interop-and-trust-positioning.md">
+          <a href="/docs/interop-and-trust-positioning">
             Read the interop and trust positioning note
           </a>
           .
@@ -282,7 +295,7 @@
           · Proof node:
           <a href="https://villaakerlyckan.se">villaakerlyckan.se</a>
           · Reference implementation:
-          <a href="https://hemmabo.com">HemmaBo</a>
+          <a href="https://www.hemmabo.com/">HemmaBo</a>
         </p>
         <div class="resource-list">
           <a href="https://villaakerlyckan.se/.well-known/vacation-rental.json">
@@ -293,7 +306,7 @@
             <span>Signed verified stay offer</span>
             <code>/api/verified-stay-offer</code>
           </a>
-          <a href="/docs/first-mover-evidence-memo.md">
+          <a href="/docs/first-mover-evidence-memo">
             <span>First-mover evidence memo</span>
             <code>/docs/first-mover-evidence-memo.md</code>
           </a>
@@ -308,6 +321,11 @@
           HemmaBo is a reference implementation and standards contributor, not
           a central issuer, registry, scorer, OTA, marketplace, booking
           intermediary, or trust authority.
+        </p>
+        <p>
+          Vacation Rental Protocol is a participant in the
+          <a href="https://www.w3.org/community/agent-conformance/participants">W3C Agent Conformance and Benchmarking Community Group</a>
+          (Rouiada Abbas).
         </p>
       </section>
       <section class="resources">

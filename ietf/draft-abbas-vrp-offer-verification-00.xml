@@ -372,14 +372,17 @@ https://{host-domain}/.well-known/jwks.json
           <li><tt>direct_booking_url</tt> <bcp14>MUST</bcp14> be an
           absolute <tt>https</tt> URL.</li>
           <li>Its host <bcp14>MUST</bcp14> be the offer's
-          <tt>canonical_domain</tt>, or a subdomain of that registrable
-          domain.  It <bcp14>MUST NOT</bcp14> point at a third-party
-          domain, an OTA, a link shortener, a redirector, or any
-          operator-owned domain other than the host's.  A verifier that
-          cannot confirm the URL host is on the offer's
-          <tt>canonical_domain</tt> <bcp14>MUST</bcp14> treat the direct
-          booking URL as unknown (<xref target="three-state"/>) and
-          <bcp14>MUST NOT</bcp14> route booking to it.</li>
+          <tt>canonical_domain</tt>, or <tt>www.</tt> followed by it, and
+          no other name, with no userinfo and no port other than the
+          <tt>https</tt> default.  It <bcp14>MUST NOT</bcp14> point at any
+          other host: another name under the node's domain, another
+          node's domain, a name under a platform, catalog, marketplace or
+          operator domain, an OTA, a link shortener or a redirector.  A
+          verifier that cannot confirm that the URL host is the offer's
+          <tt>canonical_domain</tt> or <tt>www.</tt> followed by it
+          <bcp14>MUST</bcp14> treat the direct booking URL as unknown
+          (<xref target="three-state"/>) and <bcp14>MUST NOT</bcp14>
+          route booking to it.</li>
           <li>The URL <bcp14>SHOULD</bcp14> encode the quoted stay so the
           booking page opens pre-filled for the same stay.  The
           <bcp14>RECOMMENDED</bcp14> query parameters are

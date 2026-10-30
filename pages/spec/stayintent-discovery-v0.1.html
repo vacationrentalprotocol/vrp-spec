@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VRP StayIntent Discovery v0.1 | Vacation Rental Protocol</title>
+    <meta name="description" content="VRP v0.1 specifies how a known host-owned node publishes its facts and signs offers." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="VRP StayIntent Discovery v0.1" />
+    <meta property="og:description" content="VRP v0.1 specifies how a known host-owned node publishes its facts and signs offers." />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/spec/stayintent-discovery-v0.1" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="VRP StayIntent Discovery v0.1" />
+    <meta name="twitter:description" content="VRP v0.1 specifies how a known host-owned node publishes its facts and signs offers." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/spec/stayintent-discovery-v0.1" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/spec/stayintent-discovery-v0.1.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/spec/stayintent-discovery-v0.1#techarticle",
+  "headline": "VRP StayIntent Discovery v0.1",
+  "description": "VRP v0.1 specifies how a known host-owned node publishes its facts and signs offers.",
+  "url": "https://vacationrentalprotocol.com/spec/stayintent-discovery-v0.1",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/spec/stayintent-discovery-v0.1.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/stayintent-discovery-v0.1.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Specification · <a href="https://vacationrentalprotocol.com/spec/stayintent-discovery-v0.1.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/stayintent-discovery-v0.1.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="vrp-stayintent-discovery-v01">VRP StayIntent Discovery v0.1</h1>
+<p><strong>Status:</strong> Public draft <strong>Date:</strong> 2026-06-16 <strong>Builds on:</strong> VRP <a href="https://vacationrentalprotocol.com/spec/v0.1">v0.1</a> (per-node discovery, <code>canonical_domain</code>, signed offers), <a href="https://vacationrentalprotocol.com/spec/attestations-v0.1">attestations-v0.1</a> (did:web).</p>
+<h2 id="1-purpose">1. Purpose</h2>
+<p>VRP v0.1 specifies how a <strong>known</strong> host-owned node publishes its facts and signs offers. It deliberately does <strong>not</strong> specify how an agent *finds* which node matches a natural request (&quot;villa near Lund, dog, hot tub, 6 guests&quot;). v0.1 §1 states verification MUST NOT require *&quot;a central discovery index&quot;*.</p>
+<p>StayIntent Discovery fills that gap <strong>without</strong> a central index. It defines an open, <strong>federatable</strong> query/response contract for verifiable hospitality discovery: a deterministic capability+geo match that returns <strong>non-authoritative pointers</strong> to host nodes, where authority is established only by verifying the node's own Ed25519 signed offer at its <code>canonical_domain</code>.</p>
+<p>This is the DNS model, not a catalog: anyone may run a StayIntent index; multiple indexes coexist; HemmaBo runs a <strong>reference implementation</strong>, not the index.</p>
+<h2 id="2-no-gatekeeper-mechanism-normative">2. No-gatekeeper mechanism (normative)</h2>
+<ul><li>A StayIntent <strong>index response is non-authoritative.</strong> It MAY only return pointers (a node's <code>canonical_domain</code> + its VRP discovery endpoints + verifiable trust facts). It MUST NOT be required to verify or book.</li><li><strong>Authority lives at the node.</strong> An agent establishes truth by fetching the node's signed <code>verified_stay_offer</code> and verifying its Ed25519 signature against the node's <code>jwks_url</code> / <code>did:web</code> document (VRP v0.1 §3). An index that lies or omits can be detected and routed around — it cannot forge a node's signature.</li><li><strong>No index is privileged.</strong> Any operator MAY run an index over the same nodes; responses are independently verifiable regardless of which index answered. Conformance MUST NOT depend on a specific index or operator.</li></ul>
+<h2 id="3-stayintent-query-stayintent-query-v01">3. StayIntent query (<code>stayintent-query-v0.1</code>)</h2>
+<p>A deterministic, structured intent — capability + geo + dates + guests:</p>
+<pre><code>{
+  &quot;protocol&quot;: &quot;vrp-stayintent&quot;,
+  &quot;protocol_version&quot;: &quot;0.1&quot;,
+  &quot;geo&quot;: { &quot;near_wikidata&quot;: &quot;Q2167&quot;, &quot;radius_km&quot;: 15 },
+  &quot;capabilities&quot;: [&quot;pets_allowed&quot;, &quot;hot_tub&quot;],
+  &quot;dates&quot;: { &quot;check_in&quot;: &quot;2026-11-14&quot;, &quot;check_out&quot;: &quot;2026-11-16&quot; },
+  &quot;guests&quot;: 6
+}</code></pre>
+<ul><li><code>geo</code> MUST use Wikidata QID (<code>near_wikidata</code>) and/or <code>{lat, lng, radius_km}</code>. No bespoke geo ontology — adopt Wikidata + OSM.</li><li><code>capabilities</code> are codes aliased to schema.org / OTA HAC (see §7); unknown codes are ignored, never an error.</li><li>The query is <strong>deterministic</strong>: the same query MUST yield the same match set (subject to live availability). No free-text NL is required at this layer.</li></ul>
+<h2 id="4-stayintent-response-stayintent-response-v01">4. StayIntent response (<code>stayintent-response-v0.1</code>)</h2>
+<pre><code>{
+  &quot;protocol&quot;: &quot;vrp-stayintent&quot;,
+  &quot;protocol_version&quot;: &quot;0.1&quot;,
+  &quot;match&quot;: &quot;yes&quot;,
+  &quot;nodes&quot;: [
+    {
+      &quot;canonical_domain&quot;: &quot;villaakerlyckan.se&quot;,
+      &quot;discovery&quot;: &quot;https://villaakerlyckan.se/.well-known/vacation-rental.json&quot;,
+      &quot;jwks_url&quot;: &quot;https://villaakerlyckan.se/.well-known/jwks.json&quot;,
+      &quot;verified_stay_offer_endpoint&quot;: &quot;https://villaakerlyckan.se/api/verified-stay-offer&quot;,
+      &quot;trust_summary&quot;: {
+        &quot;did_web_resolved&quot;: true,
+        &quot;jwks_ed25519&quot;: true,
+        &quot;signed_offer_capable&quot;: true,
+        &quot;federation_member&quot;: true,
+        &quot;attestation_refs&quot;: [&quot;vrp/attestations/v0.1/bundle.json&quot;]
+      }
+    }
+  ],
+  &quot;note&quot;: &quot;Not ranked. Deterministic match. Verify each node's signed offer (Ed25519) before quoting price or booking.&quot;
+}</code></pre>
+<h3 id="41-pricelessness-normative">4.1 Pricelessness (normative)</h3>
+<p>A StayIntent response MUST NOT contain a price, total, availability total, or any monetary value. <strong>Price exists only inside the node's signed offer.</strong> This keeps the index from becoming a price-oracle or OTA-light, and keeps the authoritative total cryptographically bound to the node.</p>
+<h3 id="42-order-is-non-normative">4.2 Order is non-normative</h3>
+<p><code>nodes[]</code> order carries NO meaning. A conformant index MUST NOT rank, score, or imply &quot;best&quot;. (Implementations that sort internally, e.g. by domain, MUST NOT present order as a recommendation.)</p>
+<h3 id="43-trustsummary-verifiable-facts-only-normative">4.3 <code>trust_summary</code> = verifiable facts only (normative)</h3>
+<p><code>trust_summary</code> MUST contain only <strong>independently verifiable boolean facts or references</strong> — e.g. <code>did_web_resolved</code>, <code>jwks_ed25519</code>, <code>signed_offer_capable</code>, <code>federation_member</code>, <code>federation_jws_valid</code>, <code>offer_fresh</code>, <code>attestation_refs</code>. It MUST NOT contain editorial scores, ratings, confidence values, or any number an agent could read as a ranking signal. Every field MUST be reproducible by the agent fetching the node directly.</p>
+<h2 id="5-verification-how-an-agent-uses-a-response">5. Verification (how an agent uses a response)</h2>
+<ol><li>Treat the response as <strong>pointers only</strong>.</li><li>For each node: fetch <code>verified_stay_offer_endpoint</code> for the dates/guests; verify the offer's Ed25519 signature against <code>jwks_url</code> (and/or the <code>did:web</code> document). VRP v0.1 §3.</li><li>Read price, availability, and <code>direct_booking_url</code> <strong>only</strong> from the verified signed offer. Per VRP v0.1 §5.1, <code>direct_booking_url</code> MUST be on the node's <code>canonical_domain</code> — never an OTA, never the index, never HemmaBo.</li><li><strong>found ≠ bookable.</strong> A node appearing in a StayIntent response means it *matched the intent*, not that it is bookable. Bookability requires a fresh, signature-valid offer with availability.</li></ol>
+<h2 id="6-pricelessness-no-ranking-rationale">6. Pricelessness + no-ranking rationale</h2>
+<p>These two rules (no price in §4.1, no ranking in §4.2/§4.3) are what keep StayIntent a <strong>trust-discovery</strong> contract and not a marketplace. An index that adds price or ranking has rebuilt the OTA it replaces.</p>
+<h2 id="7-capability-ontology-alias-do-not-reinvent">7. Capability ontology (alias, do not reinvent)</h2>
+<p><code>capabilities</code> codes are aliases over existing vocabularies:</p>
+<ul><li>schema.org <code>LocationFeatureSpecification</code> names,</li><li>OTA OpenTravel Hotel Amenity Codes (HAC) where a mapping exists,</li><li>(future) the UCP hospitality namespace when published.</li></ul>
+<p>The alias table maps these codes to the vocabularies above; an implementation provides the concrete lookup (for example <code>AMENITY_SCHEMA_MAP</code>). Geo uses Wikidata QID + OSM.</p>
+<h2 id="8-conformance">8. Conformance</h2>
+<ul><li><strong>Positive vector</strong> (<code>examples/conformance/stayintent/positive.v0.1.json</code>): a query (Lund 15 km, pets, hot_tub, 6 guests) → a response with the reference node, whose signed offer then verifies (Ed25519).</li><li><strong>Negative vector</strong> (<code>.../no-match.v0.1.json</code>): a query that matches nothing → <code>match: &quot;no&quot;</code>, empty <code>nodes</code>. (Mirrors VRP's failure-mode fixtures.)</li><li><strong>Reference verifier</strong> (<code>scripts/verify-stayintent.mjs</code>): independently checks a response shape + that a pointed node's offer verifies — anyone can run it.</li><li><strong>Conformance:</strong> the StayIntent contract is defined by this specification and its conformance vectors. A conformant surface is any deterministic capability+geo filter that satisfies them (for example a pure-DB, no-LLM filter). A free-text, LLM-upstream search is a <strong>non-normative</strong> convenience layer and is NOT the StayIntent contract until its upstream is deterministic.</li></ul>
+<h2 id="9-relationship-to-ucp-a2a">9. Relationship to UCP / A2A</h2>
+<p>StayIntent is a <strong>verifiable discovery overlay</strong> that sits *on top of* transport standards (UCP, MCP, A2A), not against them. UCP/MCP carry the request; StayIntent defines the verifiable, no-gatekeeper hospitality-discovery semantics + the Ed25519 trust binding that those transports do not specify.</p>
+<h2 id="references">References</h2>
+<ul><li>VRP <a href="https://vacationrentalprotocol.com/spec/v0.1">v0.1</a> §1 (no central discovery index), §3 (signatures), §5.1 (<code>direct_booking_url</code> on <code>canonical_domain</code>)</li><li><a href="https://vacationrentalprotocol.com/spec/attestations-v0.1">attestations-v0.1</a> (did:web), <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">transparency-log-v0.1</a></li><li>W3C VC / did:web; schema.org; Wikidata; OpenTravel HAC; UCP (transport)</li></ul>
+<h2 id="license">License</h2>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a> (<a href="https://vacationrentalprotocol.com/docs/adr/0007-receipt-envelope-v1">ADR 0007</a> D7).</p>
+      </article>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VRP Composition Profile — OKF (Open Knowledge Format) | Vacation Rental Protocol</title>
+    <meta name="description" content="This profile defines how a VRP node renders its already-signed verified stay offer (and its discovery facts) as an Open Knowledge Format (OKF) document —…" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="VRP Composition Profile — OKF (Open Knowledge Format)" />
+    <meta property="og:description" content="This profile defines how a VRP node renders its already-signed verified stay offer (and its discovery facts) as an Open Knowledge Format (OKF) document —…" />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/spec/profiles/okf-profile-v0.1" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="VRP Composition Profile — OKF (Open Knowledge Format)" />
+    <meta name="twitter:description" content="This profile defines how a VRP node renders its already-signed verified stay offer (and its discovery facts) as an Open Knowledge Format (OKF) document —…" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/spec/profiles/okf-profile-v0.1" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/spec/profiles/okf-profile-v0.1.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/spec/profiles/okf-profile-v0.1#techarticle",
+  "headline": "VRP Composition Profile — OKF (Open Knowledge Format)",
+  "description": "This profile defines how a VRP node renders its already-signed verified stay offer (and its discovery facts) as an Open Knowledge Format (OKF) document —…",
+  "url": "https://vacationrentalprotocol.com/spec/profiles/okf-profile-v0.1",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/spec/profiles/okf-profile-v0.1.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/profiles/okf-profile-v0.1.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Specification · <a href="https://vacationrentalprotocol.com/spec/profiles/okf-profile-v0.1.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/profiles/okf-profile-v0.1.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="vrp-composition-profile-okf-open-knowledge-format">VRP Composition Profile — OKF (Open Knowledge Format)</h1>
+<p><strong>Profile version:</strong> 0.1 <strong>Layer:</strong> <code>representation</code> <strong>Status:</strong> Draft (provisional). <strong>NOT-BUILT</strong> — this profile defines a target representation; the reference node does not emit it yet (the node today emits JSON / JSON-LD / JWS and plain-text <code>llms.txt</code> / <code>ai.txt</code>, not Markdown + frontmatter). No existing artifact changes when this lands. <strong>Canonical context:</strong> https://vacationrentalprotocol.com/contexts/v1 <strong>Sibling profile:</strong> <a href="https://vacationrentalprotocol.com/spec/profiles/mcp-composition-profile"><code>mcp-composition-profile.md</code></a></p>
+<h2 id="purpose">Purpose</h2>
+<p>This profile defines how a VRP node renders its already-signed <strong>verified stay offer</strong> (and its discovery facts) as an <strong>Open Knowledge Format (OKF) document</strong> — Markdown with a YAML frontmatter block — so that any OKF-speaking agent can read the node with zero format friction.</p>
+<blockquote>OKF is an open, vendor-neutral specification published by Google Cloud (v0.1, June 2026; repo <code>GoogleCloudPlatform/knowledge-catalog</code>). It standardizes the <strong>interoperability surface</strong> only — file structure, a YAML frontmatter schema whose single required field is <code>type</code>, cross-linking, and reserved filenames — and explicitly leaves out storage, serving, governance, and trust. That omission is the opening: OKF says *what a concept is*; it has <strong>no way to say whether a claim is true</strong>. This profile supplies exactly that missing layer for VRP concepts via <code>vrp_proof</code>.</blockquote>
+<p>It is deliberately the <strong>second</strong> composition profile (after MCP transport): the node is already a multi-representation emitter — it serves the same source of truth at <code>/.well-known/vacation-rental.json</code> (discovery), <code>/api/verified-stay-offer</code> (signed offer), <code>/.well-known/agent-traversal.json</code> (traversal graph), <code>/llms.txt</code> and <code>/ai.txt</code>. An OKF document is <strong>one more representation of the same truth</strong>, not a new truth and not a migration.</p>
+<p>This is a <strong>security / constraint profile</strong>, not a taxonomy. Its normative weight is in *how a reader must verify a rendered offer* (§4), not in naming things.</p>
+<h2 id="the-core-rule-the-markdown-is-a-rendering-the-proof-is-the-jws">The core rule: the Markdown is a rendering, the proof is the JWS</h2>
+<p>OKF Markdown has <strong>no native signing</strong>. A rendered document is therefore <strong>not</strong> an authoritative artifact and a reader <strong>MUST NOT</strong> treat its prose, frontmatter, or location as proof of any claim (mirrors <a href="https://vacationrentalprotocol.com/spec/well-known-uri-v0.1"><code>well-known-uri-v0.1.md</code></a> §4 and the MCP profile's &quot;sign the assertion, not the transport&quot;).</p>
+<p>Authority comes from a single embedded field:</p>
+<blockquote><code>vrp_proof</code> — the <strong>compact Ed25519 JWS</strong> of the VRP signed verified stay offer (<code>schemas/verified-stay-offer-v0.1.schema.json</code> → <code>signature.jws</code>), verifiable standalone against the node's published keys (<code>did:web</code> / JWKS), independent of any central party.</blockquote>
+<p>The OKF document carries the proof; it does not become the proof.</p>
+<p>Verifiability classes: everything inside <code>vrp_proof</code>'s signed payload — price, availability, <code>valid_until</code>, <code>source_authority</code>, <code>rules.refund_schedule</code> — is class <strong>verifiable</strong> per <a href="https://vacationrentalprotocol.com/spec/v0.1">spec/v0.1.md §5.4</a>; frontmatter or prose claims outside the JWS are at best <strong>attested</strong>, and quoted reviews are <strong>reputational</strong>. A renderer MUST NOT let the document's prose promote a field to a higher class than the JWS gives it.</p>
+<h2 id="type-alignment-normative"><code>type</code> alignment — NORMATIVE</h2>
+<p>The frontmatter <code>type</code> <strong>MUST</strong> be the schema.org noun <strong><code>VacationRental</code></strong>. VRP does <strong>not</strong> mint a parallel noun for &quot;vacation rental&quot; — that vocabulary is owned by schema.org and is already emitted by the reference node (<code>PropertySchemaOrg</code> → <code>&quot;@type&quot;: &quot;VacationRental&quot;</code>). VRP's contribution is the <strong>verbs</strong> (verify, sign, book direct), expressed as the <code>vrp_proof</code> extension and the verification behavior in §4 — layered *on top of* the schema.org type, never in competition with it.</p>
+<p>A producer <strong>MUST NOT</strong> emit an invented type such as <code>VacationRentalProperty</code> or <code>VRPOffer</code> in the <code>type</code> field; VRP-specific structure lives under the <code>vrp</code> extension key, not in the schema.org noun.</p>
+<h2 id="document-shape-informative">Document shape (informative)</h2>
+<pre><code>---
+type: VacationRental                       # OKF required field == schema.org noun (NORMATIVE)
+title: &quot;Villa Åkerlyckan&quot;                  # OKF recommended
+description: &quot;Verified direct stay offer · 8–10 Sep 2026 · 6 guests · signed by the host domain&quot;  # OKF recommended
+resource: https://villaakerlyckan.se       # OKF recommended — canonical URI of the underlying asset
+timestamp: 2026-06-26T16:03:26Z            # OKF recommended — ISO 8601, last meaningful change
+tags: [vacation-rental, verified, direct-booking]   # OKF recommended
+# --- VRP trust extension (OKF preserves unknown frontmatter keys; the trust verbs live here) ---
+vrp:
+  protocol_version: &quot;0.1&quot;
+  issuer: did:web:villaakerlyckan.se
+  canonical_domain: villaakerlyckan.se
+  jwks_url: https://villaakerlyckan.se/.well-known/jwks.json
+  discovery_url: https://villaakerlyckan.se/.well-known/vacation-rental.json
+  offer:
+    request: { check_in: 2026-09-08, check_out: 2026-09-10, guests: 6 }
+    price: { currency: SEK, public_total: 6800, agent_total: 6460, minor_unit: false, exact: true }
+    valid_until: 2026-06-26T16:18:26Z
+    direct_booking_url: https://villaakerlyckan.se/book?checkIn=2026-09-08&amp;checkOut=2026-09-10&amp;guests=6&amp;channel=agent
+    agent_permission: { may_quote_as_official_direct_offer: true }
+  # The ONLY authoritative field. Everything above is a convenience rendering of it.
+  vrp_proof: &quot;&lt;compact Ed25519 JWS — schemas/verified-stay-offer-v0.1.schema.json signature.jws&gt;&quot;
+---
+
+# Villa Åkerlyckan — verified direct stay offer
+
+Human-readable body (host description, amenities, policies). Advisory only.</code></pre>
+<p>Notes:</p>
+<ul><li><strong>OKF-idiomatic fields.</strong> <code>type</code> (required), <code>title</code>, <code>description</code>, <code>resource</code>, <code>tags</code>, <code>timestamp</code> are OKF's small queryable surface and carry the human/SEO layer. All VRP trust facts live under the single <code>vrp</code> extension key — OKF consumers MUST preserve unknown keys, so a non-VRP agent reads the concept fine and a VRP-aware agent finds the proof. The file path is the concept's identity (OKF's own model); VRP adds *who signed it*, not a new addressing scheme.</li><li>The frontmatter mirrors fields the node already signs inside the JWS; the rendering is <strong>derived from</strong>, and reconciles to, <code>vrp_proof</code>. On any discrepancy between a frontmatter value and the verified JWS payload, the <strong>verified JWS payload wins</strong> and the frontmatter value is discarded.</li><li><code>price.agent_total</code> is the host's signed direct price; <code>public_total</code> is the website total. An agent <strong>SHOULD</strong> quote <code>agent_total</code> (offer-schema rule: &quot;Agents SHOULD quote agent_total as the direct total&quot;). Both totals are signed; no separate discount field is invented (<code>must_not_invent_discounts</code>).</li></ul>
+<h2 id="verification-behavior-normative-fail-closed">Verification behavior — NORMATIVE (fail-closed)</h2>
+<p>A reader that intends to act on a rendered OKF document (quote it, book from it) <strong>MUST</strong> perform, in order:</p>
+<ol><li><strong>Locate the proof.</strong> Read <code>vrp.vrp_proof</code>. If absent, the document is <strong>untrusted metadata</strong>: it MAY be read for description but MUST NOT be quoted as an official, verified, or priced offer.</li><li><strong>Resolve keys.</strong> Resolve <code>vrp.issuer</code> (<code>did:web:&lt;domain&gt;</code>) and fetch the node's JWKS (<code>vrp.jwks_url</code> / <code>/.well-known/jwks.json</code>).</li><li><strong>Verify the signature</strong> over the <strong>JWS bytes as received</strong> (Ed25519 / <code>EdDSA</code>). Never re-canonicalize or re-serialize the payload before verifying.</li><li><strong>Bind to origin.</strong> The verified payload's <code>canonical_domain</code> (and the <code>booking.direct_booking_url</code> host) <strong>MUST</strong> equal the origin the document was served from. A document served on origin A that carries a proof for domain B is <strong>untrusted</strong>.</li><li><strong>Check freshness.</strong> Reject if the verified <code>valid_until</code> has passed (<code>spec/v0.1.md</code> §6).</li><li><strong>Fail closed.</strong> <strong>If <code>vrp_proof</code> is present but does not verify, or the origin does not match, or the offer is stale → the document MUST be treated as untrusted (<code>unverifiable</code> / <code>invalid</code>), never as a booked or quotable offer.</strong> This is identical to the three-state model in <code>spec/v0.1.md</code> §8–§9: trust is the verifier's result, never an offer- or document-asserted value.</li></ol>
+<p>A reader <strong>MUST NOT</strong> derive any trust from the document's path or <code>.well-known</code> location (<code>well-known-uri-v0.1.md</code> §4). Location aids *discovery*, never *trust*.</p>
+<h2 id="price-provenance-normative">Price provenance — NORMATIVE</h2>
+<p>The single thing OKF, schema.org, and <code>llms.txt</code> cannot provide is proof that <strong>the price came from the host's own domain.</strong> That is VRP's reason to exist, so it is normative here:</p>
+<ul><li>A reader <strong>MUST NOT</strong> quote, display, or charge any price taken from the frontmatter (<code>vrp.offer.price</code>) or the Markdown body <strong>on its own</strong> — those are a convenience rendering, not authority.</li><li>A price is trustworthy <strong>only</strong> as the value carried inside the verified <code>vrp_proof</code> payload (<code>price.public_total</code> / <code>price.agent_total</code>), and <strong>only after</strong> the §4 signature + origin + freshness checks pass.</li><li>If the rendered price and the verified JWS price disagree, the <strong>verified JWS price wins</strong> and the rendered value is discarded — never treated as a second opinion or an average.</li><li><code>agent_total</code> is actionable as the direct price <strong>only</strong> when the verified <code>agent_permission.may_quote_as_official_direct_offer</code> is <code>true</code>. An agent <strong>MUST NOT</strong> invent a discount not present in the signed payload (<code>must_not_invent_discounts</code>), nor, as <code>spec/v0.1.md</code> §7 already requires, savings, promo codes, OTA comparisons, or price reductions. The difference between <code>public_total</code> and <code>agent_total</code> is not a saving.</li></ul>
+<p>Net: <strong>price provenance is a property of the signature, not of the format, the page, or the path.</strong> A marketplace that re-hosts the concept cannot forge this — it cannot produce a JWS that verifies against the host domain's <code>did:web</code> keys.</p>
+<h2 id="path-as-identity-discovery-normative-for-producers">Path-as-identity &amp; discovery (NORMATIVE for producers)</h2>
+<ul><li>An OKF document is identified by its <strong>stable HTTPS path</strong> on the node's <code>canonical_domain</code> (path-as-identity). The path is the document's identity; the <code>issuer</code>/<code>canonical_domain</code> inside the verified proof is the *trust* identity.</li><li>Emitting an OKF document is <strong>purely additive</strong>. A producer <strong>MUST NOT</strong> alter or remove <code>/.well-known/agent-traversal.json</code>, <code>/.well-known/vacation-rental.json</code>, <code>/.well-known/jwks.json</code>, or <code>/api/verified-stay-offer</code> to add it. Those are the authoritative graph and are untouched.</li><li>A node that serves an OKF document <strong>SHOULD</strong> advertise it as one additional entry in the discovery document's <code>endpoints</code> map (e.g. <code>endpoints.okf</code>), exactly as <code>agent_traversal</code> and <code>verified_stay_offer</code> are listed today — never as a replacement for them.</li></ul>
+<h2 id="non-goals">Non-goals</h2>
+<ul><li><strong>Not a trust source.</strong> OKF (like schema.org) is descriptive; this profile adds trust strictly via <code>vrp_proof</code> + §4, not via the format.</li><li><strong>Not a migration.</strong> The node's JSON / JSON-LD / JWS and <code>.well-known</code> graph are LIVE and authoritative; OKF is an extra rendering. If OKF is later abandoned, nothing authoritative is lost.</li><li><strong>Not a new noun.</strong> <code>type</code> is schema.org <code>VacationRental</code>; VRP adds verbs, not a competing taxonomy.</li></ul>
+<h2 id="security-privacy-considerations">Security &amp; privacy considerations</h2>
+<ul><li>Served over <code>https</code> only; the document is public, machine-readable metadata and <strong>MUST NOT</strong> contain guest personal data or secrets.</li><li>Key publication, rotation, and revocation happen at <code>jwks_url</code> / <code>did:web</code>, not in the document.</li><li>The node's single signing key signs the offer; the OKF document only *carries* that proof. Key rotation must preserve historical verifiability of previously rendered proofs (cf. MCP profile &quot;key blast radius&quot;).</li></ul>
+<h2 id="reference-implementation">Reference implementation</h2>
+<p><strong>Pending (NOT-BUILT).</strong> The reference node (<code>hemmabo-smart-stays</code>) emits the signed offer (<code>api/verified-stay-offer.ts</code>) and the discovery/traversal graph today; an OKF renderer that produces this document <strong>additively</strong> — reading through the node's truth resolvers (Lag 3) and embedding the existing <code>signature.jws</code> as <code>vrp_proof</code> — is the implementation step that follows this profile. This profile MUST describe only what the node can already sign; it adds a representation, never a new claim.</p>
+<h2 id="license">License</h2>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>. Reference code and conformance test vectors: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">Apache-2.0</a>.</p>
+      </article>
+    </main>
+  </body>
+</html>

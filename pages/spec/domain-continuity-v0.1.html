@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VRP Domain Continuity — Specification v0.1 | Vacation Rental Protocol</title>
+    <meta name="description" content="VRP roots node identity in the host's own domain: did:web, JWKS at a well-known path. Core v0.1 §3.1 covers key events (rotation, revocation)." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="VRP Domain Continuity — Specification v0.1" />
+    <meta property="og:description" content="VRP roots node identity in the host's own domain: did:web, JWKS at a well-known path. Core v0.1 §3.1 covers key events (rotation, revocation)." />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/spec/domain-continuity-v0.1" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="VRP Domain Continuity — Specification v0.1" />
+    <meta name="twitter:description" content="VRP roots node identity in the host's own domain: did:web, JWKS at a well-known path. Core v0.1 §3.1 covers key events (rotation, revocation)." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/spec/domain-continuity-v0.1" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/spec/domain-continuity-v0.1.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/spec/domain-continuity-v0.1#techarticle",
+  "headline": "VRP Domain Continuity — Specification v0.1",
+  "description": "VRP roots node identity in the host's own domain: did:web, JWKS at a well-known path. Core v0.1 §3.1 covers key events (rotation, revocation).",
+  "url": "https://vacationrentalprotocol.com/spec/domain-continuity-v0.1",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/spec/domain-continuity-v0.1.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/domain-continuity-v0.1.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Specification · <a href="https://vacationrentalprotocol.com/spec/domain-continuity-v0.1.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/spec/domain-continuity-v0.1.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="vrp-domain-continuity-specification-v01">VRP Domain Continuity — Specification v0.1</h1>
+<p><strong>Status:</strong> Public draft — <strong>proposal for discussion</strong> (tracks <a href="https://github.com/vacationrentalprotocol/vrp-spec/issues/59">issue #59</a>). Forward spec in the <a href="https://vacationrentalprotocol.com/spec/receipt-v1">Receipt v1 §10</a> sense: nothing here changes what a v0.1 or receipt-v1 verifier MUST do today, and legacy nodes that publish none of the signals below keep exactly today's behavior.</p>
+<p><strong>Published:</strong> 2026-08-01</p>
+<p><strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
+<p><strong>Builds on:</strong> <a href="https://vacationrentalprotocol.com/spec/v0.1">Core VRP v0.1</a> (§3 JWKS, §3.1 key rotation and revocation, §9 three-state verification), <a href="https://vacationrentalprotocol.com/spec/receipt-v1">Receipt Envelope v1</a> (§10 key lifecycle K1–K6, D3 transparency-log field), <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">Transparency Log v0.1</a>.</p>
+<h2 id="1-scope-and-threat-model">1. Scope and threat model</h2>
+<p>VRP roots node identity in the host's own domain: <code>did:web</code>, JWKS at a well-known path. Core v0.1 §3.1 covers <strong>key</strong> events (rotation, revocation). It is silent on <strong>domain</strong> events:</p>
+<ul><li><strong>Expiry / non-renewal.</strong> An expired domain is not just a dead link. The next registrant inherits the <code>did:web</code> identifier and can publish their own JWKS at the same well-known path — the identifier stays valid while the identity behind it silently changes hands.</li><li><strong>Voluntary transfer or sale</strong> of the domain to a new operator.</li><li><strong>Registrar-level compromise</strong> (hijack). This document detects epoch breaks; it does not prevent registrar attacks.</li></ul>
+<p>Consequence for history: once the original JWKS is gone, historical signed offers lose <strong>live</strong> verifiability. Detection via the transparency log survives — the log is tamper-evident, not immutable, and that distinction is load-bearing here.</p>
+<h2 id="2-continuity-statement-registration-epoch">2. Continuity statement (registration epoch)</h2>
+<p>A node SHOULD publish a <strong>continuity statement</strong> alongside its discovery document:</p>
+<table><thead><tr><th>Field</th><th>Requirement</th><th>Description</th></tr></thead><tbody><tr><td><code>domain_registered</code></td><td>SHOULD</td><td>Registration (creation) date of the domain as attested by RDAP/registrar data</td></tr><tr><td><code>epoch_started</code></td><td>MUST</td><td>Date this <strong>key lineage</strong> began operating the domain</td></tr><tr><td><code>genesis_kid</code></td><td>MUST</td><td><code>kid</code> of the first key in this lineage (retired keys stay resolvable per K2/K3)</td></tr><tr><td><code>statement_jws</code></td><td>MUST</td><td>Compact JWS over the fields above, signed by a key in the current JWKS</td></tr></tbody></table>
+<p>The property that makes this useful: a <strong>new registrant cannot truthfully extend the previous epoch</strong>, because they cannot sign with the prior lineage's keys. An epoch break is therefore detectable by construction — no central authority, no registry, no permission.</p>
+<h2 id="3-verifier-guidance-forward-spec">3. Verifier guidance (forward spec)</h2>
+<ul><li><strong>V1 — registration post-dates the artifact.</strong> If the domain's current registration date (RDAP) is later than the timestamp of the artifact being verified, a verifier SHOULD treat live-JWKS verification of that artifact as non-authoritative and fall back to transparency-log inclusion (D3, K4). In v0.1 §9 terms the honest outcome is the middle state — unverifiable live, log-consistent — never a silent pass.</li><li><strong>V2 — epoch mismatch.</strong> If the artifact predates <code>epoch_started</code> of the current continuity statement, same downgrade as V1.</li><li><strong>V3 — no signals published.</strong> Verifier behavior is exactly today's. This document adds no new failure modes for legacy nodes.</li></ul>
+<h2 id="4-host-guidance">4. Host guidance</h2>
+<p>Treat the domain as key material:</p>
+<ul><li>Multi-year registration and auto-renew; monitor expiry independently of the registrar's own reminders.</li><li>Registrar transfer lock.</li><li>Anchor receipts in the transparency log (K4) so the history of what the node signed outlives the domain itself.</li><li>On a planned transfer that is meant to *preserve* identity (same operator, new registrar), keep the JWKS and continuity statement intact across the move; the epoch does not break because the lineage keeps signing.</li></ul>
+<h2 id="5-what-this-does-not-do">5. What this does not do</h2>
+<ul><li>No central continuity authority and no domain revocation list — consistent with receipt-v1 neutrality (D8).</li><li>No protection against a registrar-level attacker who also steals the node's signing keys; this is detection of identity discontinuity, not prevention of infrastructure compromise.</li><li>No claim of immutability anywhere: the transparency log is tamper-evident, and public copy about this mechanism MUST keep that word.</li></ul>
+<h2 id="6-open-questions-for-discussion-in-59">6. Open questions (for discussion in #59)</h2>
+<ol><li>Should the continuity statement live inside the discovery document or as its own well-known artifact?</li><li>What SHOULD a verifier assume when RDAP data is unavailable or the registrar does not expose a creation date?</li><li>Minimum guidance for hosts on renewal/expiry as an identity-safety concern — how prescriptive should the spec be, given large-scale link-rot and domain-death data?</li></ol>
+<h2 id="7-neutrality">7. Neutrality</h2>
+<p>The spec is vendor-neutral. HemmaBo is a reference implementer, not an approval authority. Any node, on any stack, can publish a continuity statement and any party can evaluate one without permission from anyone.</p>
+<h2 id="8-license">8. License</h2>
+<p>Specification text: dedicated to the public domain under <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a>.</p>
+      </article>
+    </main>
+  </body>
+</html>

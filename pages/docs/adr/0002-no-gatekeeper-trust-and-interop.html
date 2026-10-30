@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ADR 0002: No-Gatekeeper Trust and Interop Positioning | Vacation Rental Protocol</title>
+    <meta name="description" content="VRP is entering an agent-commerce landscape that includes UCP, AP2, A2A, MCP, W3C Verifiable Credentials, DID methods, and short-term-rental-specific…" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="ADR 0002: No-Gatekeeper Trust and Interop Positioning" />
+    <meta property="og:description" content="VRP is entering an agent-commerce landscape that includes UCP, AP2, A2A, MCP, W3C Verifiable Credentials, DID methods, and short-term-rental-specific…" />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/adr/0002-no-gatekeeper-trust-and-interop" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="ADR 0002: No-Gatekeeper Trust and Interop Positioning" />
+    <meta name="twitter:description" content="VRP is entering an agent-commerce landscape that includes UCP, AP2, A2A, MCP, W3C Verifiable Credentials, DID methods, and short-term-rental-specific…" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/adr/0002-no-gatekeeper-trust-and-interop" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/adr/0002-no-gatekeeper-trust-and-interop.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/adr/0002-no-gatekeeper-trust-and-interop#techarticle",
+  "headline": "ADR 0002: No-Gatekeeper Trust and Interop Positioning",
+  "description": "VRP is entering an agent-commerce landscape that includes UCP, AP2, A2A, MCP, W3C Verifiable Credentials, DID methods, and short-term-rental-specific…",
+  "url": "https://vacationrentalprotocol.com/docs/adr/0002-no-gatekeeper-trust-and-interop",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/adr/0002-no-gatekeeper-trust-and-interop.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0002-no-gatekeeper-trust-and-interop.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/adr/0002-no-gatekeeper-trust-and-interop.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0002-no-gatekeeper-trust-and-interop.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="adr-0002-no-gatekeeper-trust-and-interop-positioning">ADR 0002: No-Gatekeeper Trust and Interop Positioning</h1>
+<p><strong>Status:</strong> Accepted <strong>Date:</strong> 2026-05-31 (proposed) · 2026-07-22 (accepted)</p>
+<h2 id="context">Context</h2>
+<p>VRP is entering an agent-commerce landscape that includes UCP, AP2, A2A, MCP, W3C Verifiable Credentials, DID methods, and short-term-rental-specific protocol work.</p>
+<p>Some trust models for agentic lodging use trusted issuer registries, accreditation programs, or certification companies to decide which credentials count as verified. Those models can support strong independent claims, such as guest identity verification or right-to-let verification, but they introduce a gatekeeper between an independent host and agent trust.</p>
+<p>VRP's core purpose is narrower: prove that a concrete vacation rental offer is real because it was signed by the host-owned domain, and let privacy-minimized attestations travel with the host node without making HemmaBo or the VRP standards site the authority over truth.</p>
+<h2 id="decision">Decision</h2>
+<p>VRP will keep a no-gatekeeper trust model.</p>
+<p>VRP specifications MUST NOT require:</p>
+<ul><li>HemmaBo as issuer, verifier, registry, scorer, booking intermediary, marketplace, OTA, or trust authority.</li><li>A VRP-operated trusted issuer registry.</li><li>A VRP-operated host accreditation program.</li><li>A VRP-operated certification company.</li><li>A central discovery index as a prerequisite for offer or attestation verification.</li></ul>
+<p>VRP verification MUST remain possible from the host-owned domain, the published discovery artifacts, the host-controlled keys, the signed offer or credential, and the relevant public specifications.</p>
+<p>Relying parties MAY apply their own trust policies. A trust policy MAY include allowlists, deny lists, local legal requirements, insurers, payment providers, municipal registries, property managers, identity verification providers, or other third-party credential issuers. Those policies are outside VRP and MUST NOT be presented as HemmaBo approval or VRP-wide certification.</p>
+<p>VRP v0.1 will treat self-issued host-domain credentials as appropriate for host-domain, node, payment-path, and policy-snapshot facts controlled by the host domain. VRP v0.1 will not claim that a host can self-attest facts that need independent evidence, such as guest identity, right-to-let, property license, insurance coverage, or legal compliance.</p>
+<p>Future versions MAY define optional third-party credential profiles for right-to-let, license, insurance, payment guarantees, or guest-held selective disclosure. If they do, the issuer trust decision will remain verifier-chosen. VRP will not introduce a mandatory central issuer registry.</p>
+<p>VRP will position itself as complementary to adjacent agent-commerce standards:</p>
+<ul><li>UCP may handle checkout, order lifecycle, and merchant-of-record commerce flows, including lodging flows as the UCP lodging profile matures.</li><li>AP2 may handle payment mandates and cryptographic payment authorization.</li><li>MCP may expose VRP verification or retrieval behavior as tools in future profiles, using <code>snake_case</code> tool names.</li><li>A2A may carry host-agent and guest-agent negotiation in future bindings.</li></ul>
+<p>This ADR does not add runtime tools, payment flows, booking automation, guest identity verification, or right-to-let verification.</p>
+<p>VC JOSE/COSE compact JWS remains the canonical v0.1 credential security format for VRP Portable Attestations. Future versions MAY define an interoperability mapping for W3C Data Integrity proofs, but v0.1 does not require embedded <code>proof</code> objects.</p>
+<h2 id="consequences">Consequences</h2>
+<p>An independent host can be first-class in VRP as soon as the host controls a domain, publishes VRP artifacts, signs offers, and publishes valid portable attestations.</p>
+<p>VRP's strongest distinction is not that it tries to replace full booking, payment, guest-IDV, or legal-verification systems. Its distinction is that the core offer and host-domain attestation layer does not depend on a central issuer, registry, or accreditation gatekeeper.</p>
+<p>Claims that need independent evidence still need independent issuers. The difference is that VRP lets verifiers choose those issuers through their own policy instead of inheriting a single registry from HemmaBo or the VRP standards site.</p>
+<p>Discovery can be provided by search engines, crawlers, directories, host sites, agent indexes, or commercial products. Discovery providers do not become VRP trust authorities merely by indexing VRP nodes.</p>
+<p>This keeps v0.1 implementable by a single live node while leaving room for stronger future credentials without changing VRP into a centralized certification business.</p>
+      </article>
+    </main>
+  </body>
+</html>

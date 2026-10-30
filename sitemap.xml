@@ -2,107 +2,119 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://vacationrentalprotocol.com/</loc>
-    <lastmod>2026-06-14</lastmod>
+    <lastmod>2026-10-29</lastmod>
+  </url>
+  <url>
+    <loc>https://vacationrentalprotocol.com/vrp-vacation-rental</loc>
+    <lastmod>2026-10-29</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/docs/what-is-vrp</loc>
-    <lastmod>2026-06-19</lastmod>
+    <lastmod>2026-08-20</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/docs/source-pack</loc>
-    <lastmod>2026-07-24</lastmod>
+    <lastmod>2026-10-29</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/source-pack</loc>
-    <lastmod>2026-08-01</lastmod>
+    <lastmod>2026-10-30</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/reference-implementation</loc>
-    <lastmod>2026-06-14</lastmod>
+    <lastmod>2026-10-13</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/verify</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/declarations</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-10-29</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/implement</loc>
-    <lastmod>2026-06-27</lastmod>
+    <lastmod>2026-10-29</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/film</loc>
-    <lastmod>2026-06-27</lastmod>
+    <lastmod>2026-10-29</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/demo</loc>
-    <lastmod>2026-06-27</lastmod>
+    <lastmod>2026-10-29</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/docs/first-mover-evidence-memo</loc>
-    <lastmod>2026-06-14</lastmod>
+    <lastmod>2026-10-13</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/contexts/v1</loc>
-    <lastmod>2026-06-01</lastmod>
+    <lastmod>2026-10-06</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/terms</loc>
-    <lastmod>2026-06-01</lastmod>
+    <lastmod>2026-10-06</lastmod>
+  </url>
+  <url>
+    <loc>https://vacationrentalprotocol.com/rel/protocol</loc>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/spec/v0.1</loc>
-    <lastmod>2026-05-31</lastmod>
+    <lastmod>2026-10-29</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/spec/attestations-v0.1</loc>
-    <lastmod>2026-05-31</lastmod>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/spec/well-known-uri-v0.1</loc>
-    <lastmod>2026-06-19</lastmod>
+    <lastmod>2026-10-27</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/spec/stayintent-discovery-v0.1</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/spec/transparency-log-v0.1</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/spec/attestation-status-bitstring-v0.1</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/docs/interop-and-trust-positioning</loc>
-    <lastmod>2026-05-31</lastmod>
+    <lastmod>2026-10-24</lastmod>
+  </url>
+  <url>
+    <loc>https://vacationrentalprotocol.com/docs/interop/cm-ai-docking-port</loc>
+    <lastmod>2026-10-28</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/docs/agent-guide</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/docs/implement-vrp</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-08-22</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/docs/implement-attestations</loc>
-    <lastmod>2026-06-16</lastmod>
-  </url>
-  <url>
-    <loc>https://vacationrentalprotocol.com/docs/adr/0002-no-gatekeeper-trust-and-interop</loc>
     <lastmod>2026-05-31</lastmod>
   </url>
   <url>
+    <loc>https://vacationrentalprotocol.com/docs/adr/0002-no-gatekeeper-trust-and-interop</loc>
+    <lastmod>2026-07-22</lastmod>
+  </url>
+  <url>
     <loc>https://vacationrentalprotocol.com/schemas/attestations-v0.1.schema.json</loc>
-    <lastmod>2026-06-02</lastmod>
+    <lastmod>2026-07-24</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/schemas/discovery-v0.1.schema.json</loc>
-    <lastmod>2026-06-02</lastmod>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/schemas/jwks-v0.1.schema.json</loc>
@@ -110,7 +122,7 @@
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/schemas/verified-stay-offer-v0.1.schema.json</loc>
-    <lastmod>2026-06-02</lastmod>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-result-v0.1.schema.json</loc>
@@ -126,11 +138,11 @@
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/examples/discovery.v0.1.json</loc>
-    <lastmod>2026-05-31</lastmod>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/examples/jwks.v0.1.json</loc>
-    <lastmod>2026-05-31</lastmod>
+    <lastmod>2026-06-02</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/examples/verified-stay-offer-verification-result.safe-to-quote.v0.1.json</loc>
@@ -138,11 +150,19 @@
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/examples/verified-stay-offer.not-quoteable.v0.1.json</loc>
-    <lastmod>2026-05-31</lastmod>
+    <lastmod>2026-06-02</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/examples/conformance/three-state-verification.v0.1.json</loc>
     <lastmod>2026-06-02</lastmod>
+  </url>
+  <url>
+    <loc>https://vacationrentalprotocol.com/examples/conformance/host-domain/vectors.v0.1.json</loc>
+    <lastmod>2026-10-17</lastmod>
+  </url>
+  <url>
+    <loc>https://vacationrentalprotocol.com/examples/conformance/offer-rules/vectors.v0.1.json</loc>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/examples/conformance/stayintent/positive.v0.1.json</loc>
@@ -158,35 +178,39 @@
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/spec/receipt-v1</loc>
-    <lastmod>2026-06-24</lastmod>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/spec/proof-chain-v0.1</loc>
-    <lastmod>2026-07-23</lastmod>
+    <lastmod>2026-08-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/spec/node-seal-v0.1</loc>
-    <lastmod>2026-07-24</lastmod>
+    <lastmod>2026-08-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/spec/addon-attestation-layer-v0.1</loc>
-    <lastmod>2026-08-01</lastmod>
+    <lastmod>2026-08-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/spec/domain-continuity-v0.1</loc>
-    <lastmod>2026-08-01</lastmod>
+    <lastmod>2026-08-17</lastmod>
+  </url>
+  <url>
+    <loc>https://vacationrentalprotocol.com/spec/node-tool-binding-v0.1</loc>
+    <lastmod>2026-10-28</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/verify-receipt</loc>
-    <lastmod>2026-07-24</lastmod>
+    <lastmod>2026-10-20</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/schemas/vrp-receipt.v1.schema.json</loc>
-    <lastmod>2026-06-24</lastmod>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/docs/conformance-report</loc>
-    <lastmod>2026-09-02</lastmod>
+    <lastmod>2026-10-13</lastmod>
   </url>
   <url>
     <loc>https://vacationrentalprotocol.com/schemas/conformance-report-v0.1.schema.json</loc>

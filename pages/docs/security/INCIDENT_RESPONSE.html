@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Incident Response — Compromised Host Key or JWKS | Vacation Rental Protocol</title>
+    <meta name="description" content="What to do when a VRP node's private signing key leaks (or its JWKS is suspected to have served the wrong keys), while the host domain itself is still…" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="Incident Response — Compromised Host Key or JWKS" />
+    <meta property="og:description" content="What to do when a VRP node's private signing key leaks (or its JWKS is suspected to have served the wrong keys), while the host domain itself is still…" />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/security/INCIDENT_RESPONSE" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Incident Response — Compromised Host Key or JWKS" />
+    <meta name="twitter:description" content="What to do when a VRP node's private signing key leaks (or its JWKS is suspected to have served the wrong keys), while the host domain itself is still…" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/security/INCIDENT_RESPONSE" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/security/INCIDENT_RESPONSE.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/security/INCIDENT_RESPONSE#techarticle",
+  "headline": "Incident Response — Compromised Host Key or JWKS",
+  "description": "What to do when a VRP node's private signing key leaks (or its JWKS is suspected to have served the wrong keys), while the host domain itself is still…",
+  "url": "https://vacationrentalprotocol.com/docs/security/INCIDENT_RESPONSE",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/security/INCIDENT_RESPONSE.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/security/INCIDENT_RESPONSE.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/security/INCIDENT_RESPONSE.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/security/INCIDENT_RESPONSE.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="incident-response-compromised-host-key-or-jwks">Incident Response — Compromised Host Key or JWKS</h1>
+<p>What to do when a VRP node's <strong>private signing key leaks</strong> (or its JWKS is suspected to have served the wrong keys), while the host domain itself is still under the operator's control. This is the case VRP's key controls are designed for.</p>
+<p>Because VRP has <strong>no central gatekeeper</strong>, there is no incident authority to call: the operator who controls the host domain both detects and resolves the incident by editing what the domain serves. The steps below are host-domain-centred by design.</p>
+<blockquote>If the <strong>domain itself</strong> is compromised (DNS, TLS, or hosting takeover), key rotation cannot help — the attacker controls the source of truth. That is a domain-security incident, out of scope for the protocol; regain control of the domain first, then rotate keys.</blockquote>
+<h2 id="the-core-fact">The core fact</h2>
+<p>An attacker holding the leaked private key can mint <strong>fresh, well-formed offers</strong> with a future <code>valid_until</code>. Offer freshness does <strong>not</strong> contain them. The only thing that de-trusts them is <strong>removing the key from the JWKS</strong> — a key is valid exactly while it is present there (<a href="https://vacationrentalprotocol.com/spec/v0.1">spec §3.1</a>).</p>
+<p>Removing the key also invalidates the operator's *own* legitimate offers signed with it. That is intentional and unavoidable: a verifier cannot tell the attacker's signatures from the host's, because they share the same key.</p>
+<h2 id="steps-detection-rotation-revocation-signal-communication">Steps: detection → rotation → revocation signal → communication</h2>
+<h3 id="1-detection">1. Detection</h3>
+<p>Treat as a possible key compromise any of:</p>
+<ul><li>private-key material exposed (leaked secret, committed file, stolen backup, breach of the signing environment);</li><li>offers verifying under your <code>kid</code> that your node did not issue;</li><li>unexpected <code>key added</code> / <code>key removed</code> entries if you keep a <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">transparency log</a>;</li><li>a JWKS that served a key you did not publish.</li></ul>
+<p>When in doubt, treat it as a compromise and rotate — the cost of rotating is low.</p>
+<h3 id="2-rotation-revoke-the-bad-key-stand-up-a-new-one">2. Rotation (revoke the bad key, stand up a new one)</h3>
+<ol><li><strong>Generate</strong> a new Ed25519 key with a new <code>kid</code>.</li><li><strong>Remove the compromised key from the JWKS immediately</strong> and publish the new key. Unlike routine rotation, there is <strong>no overlap</strong> for the compromised key — it goes now, even though this breaks offers legitimately signed with it.</li><li><strong>Re-sign</strong> current legitimate stays with the new key so guests and agents can re-fetch valid offers.</li><li><strong>Keep the cache window tight.</strong> Serve <code>jwks.json</code> with <code>Cache-Control: max-age=300</code> or less — the reference node already does. This is the <strong>revocation latency</strong>: a conforming verifier fully de-trusts the removed key within the cache window (≤ 5 minutes) of it leaving the JWKS (<a href="https://vacationrentalprotocol.com/spec/v0.1">spec §3.1</a>). Publishing the updated <code>jwks.json</code> is a normal deploy of the host domain's static well-known files; see <a href="https://vacationrentalprotocol.com/docs/security/KEY_ROTATION">KEY_ROTATION.md</a>.</li></ol>
+<h3 id="3-revocation-signal">3. Revocation signal</h3>
+<p>The revocation signal in VRP is simply <strong>the key's absence from the JWKS</strong> — there is no separate revocation list or endpoint to update. Strengthen and preserve that signal:</p>
+<ul><li>Confirm the compromised <code>kid</code> no longer appears at <code>/.well-known/jwks.json</code> from a fresh fetch (not a cached copy).</li><li>If you keep a transparency log, record the <code>key removed</code> event (with <code>kid</code> and timestamp) so there is a tamper-evident record of when the key stopped being valid — useful for later disputes about whether a given offer was signed by a then-valid key.</li></ul>
+<h3 id="4-communication">4. Communication</h3>
+<ul><li><strong>Contact for this repository:</strong> report protocol-level weaknesses per <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/SECURITY.md">SECURITY.md</a>. A leak of one node's key is an operational incident for that host, not a protocol vulnerability — but if the incident reveals a *gap in the protocol* (a way a removed key could still verify), report that.</li><li><strong>Notify affected parties</strong> — guests with open bookings and any agents you know integrate with the node — that offers must be re-fetched, and that any offer bearing the old <code>kid</code> is no longer valid.</li><li><strong>Do not</strong> re-issue trust for the old key. Once removed, it stays removed; move forward on the new key only.</li></ul>
+<h2 id="what-vrp-can-and-cannot-promise">What VRP can and cannot promise</h2>
+<ul><li><strong>Can:</strong> bound how long a removed key is still accepted (the 5-minute cache cap) and make every offer signed with a removed key unverifiable to conforming verifiers.</li><li><strong>Cannot:</strong> force a *non-conforming* verifier to stop caching a revoked key, nor protect against compromise of the domain itself. Treat the cache bound as a conformance requirement, not a guarantee the protocol can enforce (<a href="https://vacationrentalprotocol.com/spec/v0.1">spec §3.1</a>).</li></ul>
+<h2 id="related">Related</h2>
+<ul><li><a href="https://vacationrentalprotocol.com/docs/security/KEY_ROTATION">Key rotation</a> — routine (non-compromise) rotation and the additive overlap the spec requires.</li><li><a href="https://vacationrentalprotocol.com/docs/security/THREAT_MODEL">Threat model</a> — the compromised-key scenario in context.</li><li><a href="https://vacationrentalprotocol.com/spec/v0.1">Spec §3.1 — Key Rotation and Revocation</a> — the normative rules.</li></ul>
+      </article>
+    </main>
+  </body>
+</html>

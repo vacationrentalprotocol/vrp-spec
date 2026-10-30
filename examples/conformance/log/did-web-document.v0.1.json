@@ -1,0 +1,23 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/did/v1"
+  ],
+  "id": "did:web:example-log.invalid",
+  "verificationMethod": [
+    {
+      "id": "did:web:example-log.invalid#log-ed25519-2026-10",
+      "type": "JsonWebKey2020",
+      "controller": "did:web:example-log.invalid",
+      "publicKeyJwk": {
+        "kty": "OKP",
+        "crv": "Ed25519",
+        "kid": "did:web:example-log.invalid#log-ed25519-2026-10",
+        "alg": "EdDSA",
+        "x": "QCsV_rg8-rG_7R3UgACWighs9H8xV0z5PX4w87OIjaY"
+      }
+    }
+  ],
+  "assertionMethod": [
+    "did:web:example-log.invalid#log-ed25519-2026-10"
+  ]
+}

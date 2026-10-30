@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CM AI Docking Port and VRP: a field-by-field mapping | Vacation Rental Protocol</title>
+    <meta name="description" content="In its own words: &quot;a standardized entry point for AI agents into the CM Ecosystem&quot; and &quot;a thin discovery and routing layer that lets any AI agent…" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="CM AI Docking Port and VRP: a field-by-field mapping" />
+    <meta property="og:description" content="In its own words: &quot;a standardized entry point for AI agents into the CM Ecosystem&quot; and &quot;a thin discovery and routing layer that lets any AI agent…" />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/interop/cm-ai-docking-port" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="CM AI Docking Port and VRP: a field-by-field mapping" />
+    <meta name="twitter:description" content="In its own words: &quot;a standardized entry point for AI agents into the CM Ecosystem&quot; and &quot;a thin discovery and routing layer that lets any AI agent…" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/interop/cm-ai-docking-port" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/interop/cm-ai-docking-port.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/interop/cm-ai-docking-port#techarticle",
+  "headline": "CM AI Docking Port and VRP: a field-by-field mapping",
+  "description": "In its own words: \"a standardized entry point for AI agents into the CM Ecosystem\" and \"a thin discovery and routing layer that lets any AI agent…",
+  "url": "https://vacationrentalprotocol.com/docs/interop/cm-ai-docking-port",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/interop/cm-ai-docking-port.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/interop/cm-ai-docking-port.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/interop/cm-ai-docking-port.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/interop/cm-ai-docking-port.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="cm-ai-docking-port-and-vrp-a-field-by-field-mapping">CM AI Docking Port and VRP: a field-by-field mapping</h1>
+<p><strong>Status:</strong> Informative interop note. It changes nothing in VRP: no requirement, no field, no verification rule. It maps one independent protocol's question and answer onto VRP's, so that an agent can ask a CM Free node and a VRP node the same question and read the same kind of answer. The protocol's own text decides what it means; where this note and that text differ, that text wins. <strong>Date:</strong> 2026-10-24 <strong>Maps:</strong> <a href="https://cmfree.duckdns.org/app/public/ai/">CM AI Docking Port, protocol version 0.1</a> (Viljem Dvojmoč, CM Free, AGPL-3.0, <a href="https://github.com/viljemd-hub/channel-manager/tree/main/public/ai">source</a>) onto <a href="https://vacationrentalprotocol.com/spec/stayintent-discovery-v0.1">VRP StayIntent Discovery v0.1</a>, <a href="https://vacationrentalprotocol.com/spec/v0.1">Core VRP v0.1</a> §2–§5 and the <a href="https://vacationrentalprotocol.com/spec/node-tool-binding-v0.1">Node Tool Binding v0.1</a> proposal. <strong>Read on:</strong> 2026-10-24, from the Docking Port's landing page and its manifest (<code>/.well-known/cm-ai-docking-port.json</code>, HTTP 200 on <code>cmfree.duckdns.org</code> and <code>ai-cmfree.duckdns.org</code>). The Docking Port's long-form spec is its author's internal development log and is not read here.</p>
+<h2 id="1-what-the-docking-port-is">1. What the Docking Port is</h2>
+<p>In its own words: &quot;a standardized entry point for AI agents into the CM Ecosystem&quot; and &quot;a thin discovery and routing layer that lets any AI agent, speaking plain HTTP and JSON, find out what a CM instance can answer and how to ask.&quot; Each CM installation is a node. An agent calls one endpoint, <strong>Reception</strong>, with a Request Envelope; the node answers from its own data, and only when its local result is not positive forwards the same request to a small set of nearby, trusted nodes (depth-limited, geography-gated, loop-safe) and returns one Response Envelope. &quot;The one rule that matters most: an AI agent talks only to Reception.&quot; Everything is read-only: &quot;nothing an agent does through Reception creates a booking, a block, or any other write.&quot; There is no central server and no registry of nodes.</p>
+<p>Four of those properties are the ones VRP's discovery layer requires of any index: a node answers for itself, a response that is incomplete says so, no central index, no write. The mapping below is therefore mostly renaming. The places where it is not renaming are listed in §6, with what a CM node that is also a VRP node does about each.</p>
+<h2 id="2-identity-and-discovery">2. Identity and discovery</h2>
+<table><thead><tr><th>Docking Port</th><th>VRP</th><th>Note</th></tr></thead><tbody><tr><td><code>/.well-known/cm-ai-docking-port.json</code></td><td><code>/.well-known/vacation-rental.json</code> (Core §2, <a href="https://vacationrentalprotocol.com/spec/well-known-uri-v0.1">Well-Known URI v0.1</a>)</td><td>Two documents, one domain. A CM node that is a VRP node serves both; each describes its own layer.</td></tr><tr><td><code>service.node_id</code> (<code>CM-AI-DEMO-058</code>)</td><td><code>canonical_domain</code> (<code>apartmamatevz.si</code>)</td><td>VRP identifies a node by the registrable domain that serves its documents and signs its offers (Core §2). The Docking Port's <code>node_id</code> is a label. §6.1 says how to carry both.</td></tr><tr><td><code>service.location</code> <code>{lat, lon, label}</code></td><td>none in the discovery document</td><td>VRP's discovery document carries no coordinates; geo enters only through the StayIntent query.</td></tr><tr><td><code>capabilities.local[]</code>, <code>capabilities.ecosystem[]</code></td><td>none in the discovery document; tool names per the Node Tool Binding (§5 below)</td><td>VRP lists no capabilities in discovery.</td></tr><tr><td><code>reception</code> <code>{method, endpoint, content_type}</code></td><td><code>verified_stay_offer_endpoint</code>, <code>jwks_url</code></td><td>Different things: Reception answers *who has room*; the offer endpoint returns *one node's signed offer* for one stay. See §4.</td></tr><tr><td><code>limits_default</code></td><td>none</td><td>Routing policy, not discovery.</td></tr><tr><td><code>version</code> <code>&quot;0.1&quot;</code></td><td><code>protocol_version</code> <code>&quot;0.1&quot;</code></td><td></td></tr></tbody></table>
+<h2 id="3-the-question-request-envelope-and-stayintent-query">3. The question: Request Envelope and StayIntent query</h2>
+<table><thead><tr><th>Docking Port (Request Envelope)</th><th>VRP StayIntent query (<code>stayintent-query-v0.1</code>)</th><th>Note</th></tr></thead><tbody><tr><td><code>protocol</code> <code>&quot;CM-AI-Docking-Port&quot;</code>, <code>version</code> <code>&quot;0.1&quot;</code></td><td><code>protocol</code> <code>&quot;vrp-stayintent&quot;</code>, <code>protocol_version</code> <code>&quot;0.1&quot;</code></td><td></td></tr><tr><td><code>target.location.lat</code>, <code>target.location.lon</code></td><td><code>geo.lat</code>, <code>geo.lng</code></td><td>Same datum, one key renamed (<code>lon</code> → <code>lng</code>).</td></tr><tr><td><code>target.location.label</code></td><td>none</td><td>StayIntent uses <code>geo.near_wikidata</code> (a Wikidata QID) where a named place is meant, never free text. A label may be kept for the human trail; it is not a query term.</td></tr><tr><td><code>target.radius_km</code></td><td><code>geo.radius_km</code></td><td>Same.</td></tr><tr><td><code>query.type</code> <code>&quot;availability&quot;</code></td><td>implied</td><td>A StayIntent query is always a stay request.</td></tr><tr><td><code>query.from</code>, <code>query.to</code></td><td><code>dates.check_in</code>, <code>dates.check_out</code></td><td>Same format, <code>YYYY-MM-DD</code>.</td></tr><tr><td><code>query.guests</code></td><td><code>guests</code></td><td>Same.</td></tr><tr><td><code>query.units</code></td><td>none</td><td>No VRP equivalent.</td></tr><tr><td>none</td><td><code>capabilities[]</code> (codes aliased to schema.org and OTA HAC, StayIntent §7)</td><td>A Reception node treats an absent list as empty. Unknown codes are ignored, never an error (StayIntent §3).</td></tr><tr><td><code>request_id</code>, <code>request_expiry</code>, <code>origin</code>, <code>limits</code>, <code>visited</code></td><td>none</td><td>Transport and routing: duplicate detection, expiry at the door, hop and radius ceilings, loop prevention. VRP leaves these to the transport. They do not change the match.</td></tr></tbody></table>
+<p>Both queries are deterministic: the same query yields the same match set, subject to live availability (StayIntent §3). Neither takes free text.</p>
+<h2 id="4-the-answer-response-envelope-and-stayintent-response">4. The answer: Response Envelope and StayIntent response</h2>
+<table><thead><tr><th>Docking Port (Response Envelope)</th><th>VRP StayIntent response (<code>stayintent-response-v0.1</code>)</th><th>Note</th></tr></thead><tbody><tr><td><code>ok</code></td><td>—</td><td>Transport outcome.</td></tr><tr><td><code>results[]</code> (non-empty) / <code>results[]</code> empty</td><td><code>match</code> <code>&quot;yes&quot;</code> / <code>&quot;no&quot;</code></td><td></td></tr><tr><td><code>results[].node_id</code></td><td><code>nodes[].canonical_domain</code></td><td>See §6.1: the entry carries the node's domain.</td></tr><tr><td>—</td><td><code>nodes[].discovery</code>, <code>nodes[].jwks_url</code>, <code>nodes[].verified_stay_offer_endpoint</code></td><td>The three pointers an agent needs to verify the node itself (StayIntent §5). See §6.1.</td></tr><tr><td><code>results[].node_location</code></td><td>—</td><td>Not in a StayIntent response; harmless beside it.</td></tr><tr><td><code>results[].depth</code>, <code>results[].source</code>, <code>results[].freshness</code></td><td>—</td><td>Provenance of the hop. Not in StayIntent; harmless.</td></tr><tr><td><code>results[].data</code> (&quot;raw output of that node's own availability API, unmodified&quot;)</td><td><strong>not allowed</strong> in a StayIntent response (§4.1: no price, no total, no availability total)</td><td>See §6.2.</td></tr><tr><td><code>checked[]</code> (nodes contacted that confirmed zero availability)</td><td>—</td><td>In StayIntent a node with no room is simply not a match. <code>checked[]</code> is the Docking Port's own transparency about who was asked; it is not a match list.</td></tr><tr><td><code>partial</code></td><td>— (StayIntent has no flag; an index that omits &quot;can be detected and routed around&quot;, §2)</td><td>The Docking Port's rule, &quot;a partial search is never presented as a complete one&quot;, is stricter than StayIntent and compatible with it.</td></tr><tr><td><code>search_meta.*</code>, <code>errors[]</code></td><td>—</td><td>Transport.</td></tr><tr><td>order of <code>results[]</code></td><td>order of <code>nodes[]</code> carries no meaning (§4.2)</td><td>The Docking Port states no ranking. A Reception node that forwards MUST NOT sort results into a recommendation if its response is read as a StayIntent response.</td></tr><tr><td>—</td><td><code>nodes[].trust_summary</code> (verifiable boolean facts only, §4.3)</td><td>Optional in practice; a node that adds it may only add facts an agent can reproduce by fetching the node.</td></tr><tr><td>—</td><td><code>note</code></td><td>Free text for the agent; optional.</td></tr></tbody></table>
+<h2 id="5-the-tool-name">5. The tool name</h2>
+<p>The Docking Port names two capabilities, <code>availability</code> (local) and <code>accommodation-discovery</code> (ecosystem). Neither returns a signed offer, so the <a href="https://vacationrentalprotocol.com/spec/node-tool-binding-v0.1">Node Tool Binding</a> does not name them, and a node may keep calling them what it likes (binding §1, out of scope: &quot;any tool other than the one bound here&quot;).</p>
+<p>The binding applies the moment a CM node exposes its <strong>signed verified stay offer</strong> as a tool on any surface (MCP, A2A, WebMCP):</p>
+<table><thead><tr><th>Binding rule</th><th>For a CM node</th></tr></thead><tbody><tr><td>Name (§3)</td><td>exactly <code>get_verified_stay_offer</code>, on every surface, no prefix or vendor string</td></tr><tr><td>Arguments (§4)</td><td><code>check_in</code>, <code>check_out</code>, <code>guests</code>; the same three the Docking Port's <code>query</code> already carries under <code>from</code>, <code>to</code>, <code>guests</code></td></tr><tr><td>Result (§5)</td><td>the node's signed envelope, unmodified, as <code>vrp_offer.php</code> returns it today; no verdict, no summary</td></tr><tr><td>Origin (§6)</td><td>served from a node URL (Core §2): the node's <code>canonical_domain</code> or <code>www.</code> followed by it, no other name</td></tr><tr><td>Who may use the name (§7)</td><td>only the node itself; a Reception that forwards another node's offer is an operator surface and MUST NOT advertise the name</td></tr></tbody></table>
+<h2 id="6-where-the-two-differ-and-what-a-cm-node-that-is-a-vrp-node-does">6. Where the two differ, and what a CM node that is a VRP node does</h2>
+<h3 id="61-identity-nodeid-is-a-label-canonicaldomain-is-the-node">6.1 Identity: <code>node_id</code> is a label, <code>canonical_domain</code> is the node</h3>
+<p>A VRP agent verifies a node by fetching that node's own documents from its own domain (Core §2–§3). A <code>node_id</code> such as <code>CM-AI-DEMO-058</code> gives an agent nothing to fetch. For a Reception response to be usable as StayIntent pointers, each <code>results[]</code> entry for a VRP node carries the node's domain and the three VRP pointers, read from that node's own discovery document and passed through unchanged:</p>
+<pre><code>{
+  &quot;node_id&quot;: &quot;apartmamatevz.si&quot;,
+  &quot;canonical_domain&quot;: &quot;apartmamatevz.si&quot;,
+  &quot;discovery&quot;: &quot;https://apartmamatevz.si/.well-known/vacation-rental.json&quot;,
+  &quot;jwks_url&quot;: &quot;https://apartmamatevz.si/.well-known/jwks.json&quot;,
+  &quot;verified_stay_offer_endpoint&quot;: &quot;https://apartmamatevz.si/app/public/api/vrp_offer.php&quot;,
+  &quot;depth&quot;: 1,
+  &quot;source&quot;: &quot;cm_node&quot;,
+  &quot;freshness&quot;: { &quot;generated_at&quot;: &quot;2026-10-24T09:00:00Z&quot; },
+  &quot;data&quot;: { &quot;...&quot;: &quot;the node's own availability output, as today&quot; }
+}</code></pre>
+<p>The same three fields belong in <code>service</code> of the node's own Docking Port manifest, so that an agent that found the node through the Docking Port can step to VRP without guessing. The node's VRP discovery document is the source of these values; the manifest repeats them, it does not define them.</p>
+<h3 id="62-availability-data-in-the-answer">6.2 Availability data in the answer</h3>
+<p>A StayIntent response MUST NOT carry a price, a total or an availability total (§4.1): &quot;price exists only inside the node's signed offer&quot;. <code>results[].data</code> is the node's availability output and stays the Docking Port's own. An agent reading a Reception response as StayIntent takes the pointers (§6.1) and ignores <code>data</code>; it then fetches the node's signed offer for <code>check_in</code>, <code>check_out</code>, <code>guests</code>, verifies the signature against the node's <code>jwks_url</code>, and reads price, availability and <code>direct_booking_url</code> from the verified offer and from nothing else (StayIntent §5, Core §5.1). Found is not bookable: a <code>results[]</code> entry means the node matched; a fresh, signature-valid offer with availability means it can be booked.</p>
+<h3 id="63-forwarding-is-an-index">6.3 Forwarding is an index</h3>
+<p>When a Reception node forwards to neighbours and aggregates, it is, in VRP terms, running a StayIntent index over those neighbours. StayIntent allows that for anyone (&quot;anyone may run a StayIntent index; multiple indexes coexist&quot;, §1, §2) on four conditions, all of which the Docking Port's own rules already meet or can meet without change:</p>
+<ol><li>the response is pointers only; authority lives at each node (§2);</li><li>no price, no availability total in the response (§4.1, see §6.2);</li><li>no ranking, no score, no &quot;best&quot; (§4.2, §4.3);</li><li>an incomplete answer does not pass as complete (<code>partial</code>, stricter than §2).</li></ol>
+<p>What an index may not become is a catalogue that holds the hosts: the Docking Port's &quot;no central server&quot;, fallback-only forwarding and unmodified pass-through keep it on the right side of that line. This note does not decide anything beyond the mapping; a node's forwarding policy is the node's.</p>
+<h3 id="64-geo">6.4 Geo</h3>
+<p><code>lat</code>/<code>lon</code> maps to <code>lat</code>/<code>lng</code>. A <code>label</code> is a human trail, not a query term; where a named place is meant, StayIntent names it by Wikidata QID (<code>near_wikidata</code>) so that two nodes agree on what &quot;Bled&quot; is.</p>
+<h3 id="65-two-hosts-today">6.5 Two hosts today</h3>
+<p>On 2026-10-24 the Docking Port runs on a demo host (<code>cmfree.duckdns.org</code>, node <code>CM-AI-DEMO-058</code>, which its own text marks as carrying no real data), while the author's VRP node is <code>apartmamatevz.si</code> (discovery, JWKS and signed offers verified 2026-10-20; see <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/IMPLEMENTATIONS.md">IMPLEMENTATIONS.md</a>). <code>apartmamatevz.si</code> serves no Docking Port manifest, and the demo host signs no offers. A Reception on the demo host that names <code>apartmamatevz.si</code> in a result is an operator surface for that node (binding §2, §7): the agent still verifies against <code>apartmamatevz.si</code>'s own JWKS and goes to that domain's <code>direct_booking_url</code>. When the Docking Port runs on the VRP node's own domain, the two documents sit on the same domain and §6.1 is a matter of three fields.</p>
+<h2 id="7-worked-example">7. Worked example</h2>
+<p>The question, as a Request Envelope to the demo Reception, and as the StayIntent query it is:</p>
+<pre><code>{
+  &quot;protocol&quot;: &quot;CM-AI-Docking-Port&quot;,
+  &quot;version&quot;: &quot;0.1&quot;,
+  &quot;request_id&quot;: &quot;req-2026-10-24-example&quot;,
+  &quot;request_expiry&quot;: &quot;2026-10-24T12:00:00Z&quot;,
+  &quot;origin&quot;: &quot;ai-agent&quot;,
+  &quot;target&quot;: { &quot;location&quot;: { &quot;lat&quot;: 46.3683, &quot;lon&quot;: 14.1146, &quot;label&quot;: &quot;Bled&quot; }, &quot;radius_km&quot;: 30 },
+  &quot;query&quot;: { &quot;type&quot;: &quot;availability&quot;, &quot;from&quot;: &quot;2027-07-03&quot;, &quot;to&quot;: &quot;2027-07-07&quot;, &quot;guests&quot;: 4, &quot;units&quot;: null },
+  &quot;limits&quot;: { &quot;max_depth&quot;: 2, &quot;max_distance_km&quot;: 40, &quot;max_results&quot;: 10 },
+  &quot;visited&quot;: []
+}</code></pre>
+<pre><code>{
+  &quot;protocol&quot;: &quot;vrp-stayintent&quot;,
+  &quot;protocol_version&quot;: &quot;0.1&quot;,
+  &quot;geo&quot;: { &quot;lat&quot;: 46.3683, &quot;lng&quot;: 14.1146, &quot;radius_km&quot;: 30 },
+  &quot;capabilities&quot;: [],
+  &quot;dates&quot;: { &quot;check_in&quot;: &quot;2027-07-03&quot;, &quot;check_out&quot;: &quot;2027-07-07&quot; },
+  &quot;guests&quot;: 4
+}</code></pre>
+<p>A <code>results[]</code> entry for the VRP node, carrying the §6.1 fields, read as a StayIntent pointer:</p>
+<pre><code>{
+  &quot;protocol&quot;: &quot;vrp-stayintent&quot;,
+  &quot;protocol_version&quot;: &quot;0.1&quot;,
+  &quot;match&quot;: &quot;yes&quot;,
+  &quot;nodes&quot;: [
+    {
+      &quot;canonical_domain&quot;: &quot;apartmamatevz.si&quot;,
+      &quot;discovery&quot;: &quot;https://apartmamatevz.si/.well-known/vacation-rental.json&quot;,
+      &quot;jwks_url&quot;: &quot;https://apartmamatevz.si/.well-known/jwks.json&quot;,
+      &quot;verified_stay_offer_endpoint&quot;: &quot;https://apartmamatevz.si/app/public/api/vrp_offer.php&quot;
+    }
+  ],
+  &quot;note&quot;: &quot;Not ranked. Deterministic match. Verify each node's signed offer (Ed25519) before quoting price or booking.&quot;
+}</code></pre>
+<p>The agent's next step is VRP's, unchanged: fetch the node's verified stay offer for <code>check_in=2027-07-03</code>, <code>check_out=2027-07-07</code>, <code>guests=4</code>; verify the signature against the JWKS named in the node's own discovery document; quote only a fresh, safe-to-quote offer; send the guest to the <code>direct_booking_url</code> inside it, on <code>apartmamatevz.si</code>.</p>
+<h2 id="8-what-this-note-does-not-do">8. What this note does not do</h2>
+<ul><li>It does not add a field, a requirement or a rule to VRP.</li><li>It does not make the Docking Port conformant to StayIntent. Conformance is shown against the vectors in this repository (StayIntent §8), by whoever runs them, with no approval from anyone (GOVERNANCE §6).</li><li>It does not rank, compare or recommend either protocol or any node.</li><li>It is not the Docking Port's specification. Its author's text is.</li></ul>
+<h2 id="references">References</h2>
+<ul><li><a href="https://vacationrentalprotocol.com/spec/stayintent-discovery-v0.1">VRP StayIntent Discovery v0.1</a></li><li><a href="https://vacationrentalprotocol.com/spec/v0.1">Core VRP v0.1</a>, <a href="https://vacationrentalprotocol.com/spec/well-known-uri-v0.1">Well-Known URI v0.1</a></li><li><a href="https://vacationrentalprotocol.com/spec/node-tool-binding-v0.1">Node Tool Binding v0.1</a> (proposal)</li><li><a href="https://vacationrentalprotocol.com/docs/adr/0002-no-gatekeeper-trust-and-interop">ADR 0002</a> (no gatekeeper)</li><li>CM AI Docking Port: <a href="https://cmfree.duckdns.org/app/public/ai/">landing page</a>, <a href="https://cmfree.duckdns.org/.well-known/cm-ai-docking-port.json">manifest</a>, <a href="https://github.com/viljemd-hub/channel-manager/tree/main/public/ai">source (AGPL-3.0)</a></li><li><a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/IMPLEMENTATIONS.md">IMPLEMENTATIONS.md</a></li></ul>
+<h2 id="license">License</h2>
+<p>This document is specification text: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">CC0 1.0</a> (public domain).</p>
+      </article>
+    </main>
+  </body>
+</html>

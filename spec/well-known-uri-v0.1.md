@@ -55,7 +55,8 @@ The resource is a self-describing JSON object, versioned by `$schema` and
 `schema_version`. Discovery-relevant fields include:
 
 - `protocol`, `protocol_version` — identifies the document as VRP and its version.
-- `canonical_domain`, `node_id` — the node's canonical host and stable identifier.
+- `canonical_domain`, `node_id` — the node's host-owned domain
+  ([v0.1](./v0.1.md) §2) and stable identifier.
 - `identity` / `did` — the node's `did:web` identity (see `/.well-known/did.json`).
 - `jwks_url` — public keys (JWKS) used to verify signed artifacts.
 - `verified_stay_offer_endpoint` — where a signed, verifiable stay offer is obtained.
@@ -119,4 +120,4 @@ https://github.com/protocol-registries/well-known-uris/issues/93 (closed).
 
 ## License
 
-Specification text: dedicated to the public domain under [CC0 1.0](../LICENSE). Reference code and conformance test vectors: [Apache-2.0](../LICENSE-CODE) (ADR 0010 D7).
+Specification text: dedicated to the public domain under [CC0 1.0](../LICENSE). Reference code and conformance test vectors: [Apache-2.0](../LICENSE-CODE) ([ADR 0007](../docs/adr/0007-receipt-envelope-v1.md) D7).

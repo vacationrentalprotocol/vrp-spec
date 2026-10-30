@@ -6,7 +6,7 @@
     <title>Implement VRP in 5 minutes — Vacation Rental Protocol</title>
     <meta
       name="description"
-      content="Become the second independent VRP node. Generate an Ed25519 key, sign a verified stay offer, and publish your JWKS — copy-paste, in your browser, no dependencies. Quickstart, reference code (Apache-2.0), and conformance vectors."
+      content="Become an independent VRP node: generate an Ed25519 key, sign a verified stay offer and publish your JWKS, in your browser, with conformance vectors."
     />
     <meta name="robots" content="index,follow" />
     <link rel="canonical" href="https://vacationrentalprotocol.com/implement" />
@@ -212,13 +212,13 @@
       <nav class="top-nav" aria-label="Main navigation">
         <a class="brand" href="/">VRP</a>
         <div class="nav-links">
-          <a href="/spec/v0.1.md">Core spec</a>
+          <a href="/spec/v0.1">Core spec</a>
           <a href="/implement">Implement</a>
           <a href="/verify">Verify offer</a>
           <a href="/reference-implementation">Reference impl</a>
           <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance">Conformance</a>
           <a href="/declarations">Declarations</a>
-          <a href="/docs/interop-and-trust-positioning.md">Interop</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
         </div>
       </nav>
     </header>
@@ -300,7 +300,7 @@
             Fail closed: when you cannot satisfy a request, return an explicit
             signed <code>available: false</code> — never an unsigned or partial
             answer. See the
-            <a href="/spec/v0.1.md">core spec (v0.1)</a> and the
+            <a href="/spec/v0.1">core spec (v0.1)</a> and the
             <a href="/docs/implement-vrp">implementation guide</a>.
           </p>
         </div>
@@ -311,7 +311,7 @@
           <h2>For coding agents (Claude Code, Cursor, Codex)</h2>
           <ol class="steps">
             <li>Publish three documents on the host's own domain: <code>/.well-known/jwks.json</code>, <code>/.well-known/vacation-rental.json</code>, and the offer endpoint it names, e.g. <code>/api/verified-stay-offer</code>.</li>
-            <li>Do not invent a schema — use <a href="/spec/v0.1.md">spec/v0.1.md</a> and <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/schemas">schemas/</a> verbatim.</li>
+            <li>Do not invent a schema — use <a href="/spec/v0.1">spec/v0.1.md</a> and <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/schemas">schemas/</a> verbatim.</li>
             <li>Do not proxy booking through a marketplace — <code>direct_booking_url</code> stays on the host's domain.</li>
             <li>Prove interop with the <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance">conformance vectors</a> (<code>npm test</code>).</li>
             <li>Questions: <a href="mailto:hello@vacationrentalprotocol.com">hello@vacationrentalprotocol.com</a></li>
@@ -666,7 +666,9 @@ export function signOffer(offer) {
       async function selfVerify(jws, jwks) {
         const [h, p, s] = jws.split(".");
         const header = JSON.parse(new TextDecoder().decode(b64urlToBytes(h)));
-        const jwk = (jwks.keys || []).find((k) => k.kid === header.kid) || jwks.keys[0];
+        // VRP §3.1: the key is the one whose kid the JWS header names, and no other.
+        const jwk = (jwks.keys || []).find((k) => typeof header.kid === "string" && header.kid && k.kid === header.kid);
+        if (!jwk) return false;
         const cryptoKey = await crypto.subtle.importKey("jwk", { kty: "OKP", crv: "Ed25519", x: jwk.x }, { name: "Ed25519" }, false, ["verify"]);
         const data = new TextEncoder().encode(h + "." + p);
         return crypto.subtle.verify({ name: "Ed25519" }, cryptoKey, b64urlToBytes(s), data);

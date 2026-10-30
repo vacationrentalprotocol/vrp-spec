@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ADR 0008: Key Lifecycle for Receipt Verifiability (K1–K6, Forward Specification) | Vacation Rental Protocol</title>
+    <meta name="description" content="A receipt is meant to remain verifiable long after it is issued — across routine key rotation — and a compromised key must not make forged receipts look…" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="ADR 0008: Key Lifecycle for Receipt Verifiability (K1–K6, Forward Specification)" />
+    <meta property="og:description" content="A receipt is meant to remain verifiable long after it is issued — across routine key rotation — and a compromised key must not make forged receipts look…" />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/adr/0008-key-lifecycle" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="ADR 0008: Key Lifecycle for Receipt Verifiability (K1–K6, Forward Specification)" />
+    <meta name="twitter:description" content="A receipt is meant to remain verifiable long after it is issued — across routine key rotation — and a compromised key must not make forged receipts look…" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/adr/0008-key-lifecycle" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/adr/0008-key-lifecycle.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/adr/0008-key-lifecycle#techarticle",
+  "headline": "ADR 0008: Key Lifecycle for Receipt Verifiability (K1–K6, Forward Specification)",
+  "description": "A receipt is meant to remain verifiable long after it is issued — across routine key rotation — and a compromised key must not make forged receipts look…",
+  "url": "https://vacationrentalprotocol.com/docs/adr/0008-key-lifecycle",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/adr/0008-key-lifecycle.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0008-key-lifecycle.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/adr/0008-key-lifecycle.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0008-key-lifecycle.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="adr-0008-key-lifecycle-for-receipt-verifiability-k1k6-forward-specification">ADR 0008: Key Lifecycle for Receipt Verifiability (K1–K6, Forward Specification)</h1>
+<p><strong>Status:</strong> Proposed — forward specification. K1–K6 have been listed in <a href="https://vacationrentalprotocol.com/spec/receipt-v1"><code>spec/receipt-v1.md</code></a> §10 since 2026-06-24; this record states the decisions as the standard's own. The v1 verifier is unchanged. <strong>Date:</strong> 2026-10-17</p>
+<p><strong>Related:</strong> ADR 0005 (the standard is the source of truth), ADR 0007 (receipt envelope; D3 transparency-log proof, D4 error registry), <a href="https://vacationrentalprotocol.com/spec/v0.1"><code>spec/v0.1.md</code></a> §2 (<code>key_custody</code>) and §3 (JWKS), <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1"><code>spec/transparency-log-v0.1.md</code></a>, <a href="https://vacationrentalprotocol.com/docs/security/KEY_ROTATION"><code>docs/security/KEY_ROTATION.md</code></a>.</p>
+<h2 id="context">Context</h2>
+<p>A receipt is meant to remain verifiable long after it is issued — across routine key rotation — and a compromised key must not make forged receipts look authentic. A node may sign several layers (<code>offer</code>, <code>transport</code>, <code>payment</code>) with one key, so one compromise reaches all of them. The v1 receipt verifier checks signature and freshness only: it matches the JWS <code>kid</code> against the JWKS fetched at verification time, with no notion of retired or revoked keys.</p>
+<p>The decisions for that lifecycle were recorded in the reference implementation's repository and cited here twice as &quot;ADR 0011&quot;. Following ADR 0005, this record states them in the standard's own terms.</p>
+<h2 id="decision">Decision</h2>
+<p>These rules are forward specification: a lifecycle-aware verifier implements them; the v1 verifier does not change.</p>
+<ul><li><strong>K1 — Every signature is key-identified.</strong> Each attestation signature carries a JWS <code>kid</code>, and a receipt records the verifying <code>kid</code> per attestation. A <code>kid</code> identifies one key; reusing it for another key would make historical receipts ambiguous.</li><li><strong>K2 — The JWKS keeps retired public keys.</strong> After a key stops signing, the host domain's JWKS keeps serving its public half for the receipt-retention horizon (the longest period a receipt must remain independently verifiable). Each key entry carries <code>vrp_key_status</code> (<code>active</code>, <code>retired</code> or <code>revoked</code>) and <code>vrp_not_before</code> / <code>vrp_not_after</code>, the window in which it was a legitimate signer. Historical verification resolves the <code>kid</code> against this retained set and does not treat &quot;no longer active&quot; as a failure for a signature made inside the window.</li><li><strong>K3 — Rotation is additive and overlapping.</strong> A new key is published as <code>active</code> and begins signing under a new <code>kid</code>; the previous key becomes <code>retired</code>. Both stay resolvable during an overlap window. Rotation alone never invalidates a receipt.</li><li><strong>K4 — Revocation is distinct from rotation and is time-anchored.</strong> <code>revoked</code> means the private key is believed compromised, and the revocation publishes <code>vrp_compromised_at</code>. A receipt proven to predate that instant can still be treated as authentic; one that cannot be proven to predate it fails closed and is invalid for that layer. The proof needs an independent time anchor — the transparency-log inclusion proof (ADR 0007 D3, <a href="https://vacationrentalprotocol.com/spec/transparency-log-v0.1">transparency-log-v0.1</a>) — never the times asserted inside the possibly forged signature. A receipt intended to survive a future revocation, for example one kept as dispute or insurance evidence, therefore MUST carry a <code>tlog</code> proof.</li><li><strong>K5 — Per-layer keys are permitted.</strong> A node MAY sign one layer (for example <code>payment</code>) with a different key or <code>kid</code> than another. Each attestation resolves its own key through its <code>source</code> and <code>kid</code>, so nothing in the envelope presumes one key per receipt.</li><li><strong>K6 — Lifecycle error codes.</strong> A lifecycle-aware verifier adds <code>key_retired_out_of_window</code>, <code>key_revoked</code> and <code>tlog_required</code> to the ADR 0007 D4 registry. The v1 codes are unchanged.</li></ul>
+<p>K1–K6 apply to a node's key whoever holds it. Where <code>key_custody</code> is <code>platform</code> (<a href="https://vacationrentalprotocol.com/spec/v0.1">v0.1</a> §2), the operator holding the key performs rotation and revocation, and the same metadata is published in the host domain's JWKS; a verifier applies the same rules either way.</p>
+<h2 id="consequences">Consequences</h2>
+<ul><li>A receipt can outlive routine rotation (K2, K3), and a leaked key cannot silently validate forgeries (K4) or, with separate keys, reach other layers (K5).</li><li>The transparency-log proof gains a concrete role: it is what makes a receipt survive revocation.</li><li>Until a lifecycle-aware verifier exists, public descriptions of VRP receipts do not claim long-term or post-revocation verifiability (<code>spec/receipt-v1.md</code> §10).</li><li>Nodes that keep receipts as evidence take on JWKS retention, lifecycle metadata and <code>tlog</code> anchoring.</li></ul>
+<p>Not carried over from the implementation's record: its delivery phases, its acceptance checklist, its internal code paths and its own retention commitments. This ADR adds no runtime behavior and no new tools.</p>
+      </article>
+    </main>
+  </body>
+</html>

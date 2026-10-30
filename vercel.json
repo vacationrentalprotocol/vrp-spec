@@ -4,6 +4,204 @@
   "trailingSlash": false,
   "headers": [
     {
+      "source": "/spec/v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/attestations-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/attestations-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/well-known-uri-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/well-known-uri-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/stayintent-discovery-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/stayintent-discovery-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/transparency-log-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/transparency-log-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/attestation-status-bitstring-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/attestation-status-bitstring-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/receipt-v1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/receipt-v1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/proof-chain-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/proof-chain-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/node-seal-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/node-seal-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/addon-attestation-layer-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/addon-attestation-layer-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/domain-continuity-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/domain-continuity-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/spec/node-tool-binding-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/node-tool-binding-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/what-is-vrp.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/what-is-vrp>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/source-pack.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/source-pack>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/first-mover-evidence-memo.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/first-mover-evidence-memo>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/interop-and-trust-positioning.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/interop-and-trust-positioning>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/interop/cm-ai-docking-port.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/interop/cm-ai-docking-port>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/agent-guide.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/agent-guide>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/implement-vrp.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/implement-vrp>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/implement-attestations.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/implement-attestations>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/adr/0002-no-gatekeeper-trust-and-interop.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/adr/0002-no-gatekeeper-trust-and-interop>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/docs/conformance-report.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/docs/conformance-report>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
       "source": "/contexts/v1",
       "headers": [
         {
@@ -43,11 +241,11 @@
       ]
     },
     {
-      "source": "/spec/(.*).md",
+      "source": "/spec/((?!.*\\.md$).*)",
       "headers": [
         {
           "key": "Content-Type",
-          "value": "text/markdown; charset=utf-8"
+          "value": "text/html; charset=utf-8"
         },
         {
           "key": "Cache-Control",
@@ -56,7 +254,20 @@
       ]
     },
     {
-      "source": "/spec/(.*)",
+      "source": "/docs/((?!source-pack$)(?!.*\\.md$).*)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/html; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    },
+    {
+      "source": "/spec/(.*).md",
       "headers": [
         {
           "key": "Content-Type",
@@ -82,7 +293,7 @@
       ]
     },
     {
-      "source": "/docs/(.*)",
+      "source": "/docs/source-pack",
       "headers": [
         {
           "key": "Content-Type",
@@ -173,6 +384,19 @@
       ]
     },
     {
+      "source": "/vrp-vacation-rental",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/html; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    },
+    {
       "source": "/declarations",
       "headers": [
         {
@@ -251,6 +475,19 @@
       ]
     },
     {
+      "source": "/rel/protocol",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/html; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    },
+    {
       "source": "/sitemap.xml",
       "headers": [
         {
@@ -291,7 +528,7 @@
     },
     {
       "source": "/docs/first-mover-evidence-memo",
-      "destination": "/docs/first-mover-evidence-memo.md"
+      "destination": "/pages/docs/first-mover-evidence-memo"
     },
     {
       "source": "/terms",
@@ -299,19 +536,19 @@
     },
     {
       "source": "/spec/v0.1",
-      "destination": "/spec/v0.1.md"
+      "destination": "/pages/spec/v0.1"
     },
     {
       "source": "/spec/attestations-v0.1",
-      "destination": "/spec/attestations-v0.1.md"
+      "destination": "/pages/spec/attestations-v0.1"
     },
     {
       "source": "/docs/interop-and-trust-positioning",
-      "destination": "/docs/interop-and-trust-positioning.md"
+      "destination": "/pages/docs/interop-and-trust-positioning"
     },
     {
       "source": "/docs/adr/0002-no-gatekeeper-trust-and-interop",
-      "destination": "/docs/adr/0002-no-gatekeeper-trust-and-interop.md"
+      "destination": "/pages/docs/adr/0002-no-gatekeeper-trust-and-interop"
     },
     {
       "source": "/schemas/attestations-v0.1",
@@ -343,11 +580,23 @@
     },
     {
       "source": "/spec/:slug",
-      "destination": "/spec/:slug.md"
+      "destination": "/pages/spec/:slug"
+    },
+    {
+      "source": "/docs/source-pack",
+      "destination": "/docs/source-pack.md"
     },
     {
       "source": "/docs/:slug",
-      "destination": "/docs/:slug.md"
+      "destination": "/pages/docs/:slug"
+    },
+    {
+      "source": "/spec/:dir/:slug",
+      "destination": "/pages/spec/:dir/:slug"
+    },
+    {
+      "source": "/docs/:dir/:slug",
+      "destination": "/pages/docs/:dir/:slug"
     }
   ]
 }

@@ -17,10 +17,9 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { ORIGIN, GH, slug, resolveTarget, LINK_RE, mdToHtml } from "./lib/markdown.mjs";
 
 const root = process.cwd();
-const ORIGIN = "https://vacationrentalprotocol.com";
-const GH = "https://github.com/vacationrentalprotocol/vrp-spec";
 const OUT = "docs/source-pack.md";
 
 // Ordered, curated manifest — the reader-facing standard. Machine artifacts
@@ -40,6 +39,7 @@ const MANIFEST = [
   { file: "spec/node-seal-v0.1.md", title: "Node Seal v0.1" },
   { file: "spec/addon-attestation-layer-v0.1.md", title: "Addon attestation layer v0.1" },
   { file: "spec/domain-continuity-v0.1.md", title: "Domain continuity v0.1" },
+  { file: "spec/node-tool-binding-v0.1.md", title: "Node tool binding v0.1" },
   { file: "docs/implement-vrp.md", title: "Implement VRP signed offers" },
   { file: "docs/implement-attestations.md", title: "Implement portable attestations" },
   { file: "docs/agent-guide.md", title: "Agent integration guide" },
@@ -63,44 +63,6 @@ const MACHINE_ARTIFACTS = [
   ["In-browser offer verifier", `${ORIGIN}/verify`],
 ];
 
-const slug = (p) => p.replace(/\.md$/, "");
-
-// Map a repo-relative path to a public URL: docs/ and spec/ → canonical clean
-// URL; anything else → GitHub blob (file) or tree (directory).
-function repoPathToUrl(repoPath) {
-  const clean = repoPath.replace(/^\.\//, "");
-  if (/^docs\/.+\.md$/.test(clean) || /^spec\/.+\.md$/.test(clean)) {
-    return `${ORIGIN}/${slug(clean)}`;
-  }
-  if (clean.endsWith("/")) return `${GH}/tree/main/${clean.replace(/\/$/, "")}`;
-  return `${GH}/blob/main/${clean}`;
-}
-
-// Resolve a link target found in `srcFile` to an absolute URL (or return it
-// unchanged if already absolute / an in-page anchor).
-function resolveTarget(target, srcFile) {
-  const raw = target.trim();
-  if (!raw || raw.startsWith("#")) return target;
-  if (/^[a-z][a-z0-9+.-]*:/i.test(raw)) return target; // http:, https:, mailto:, ...
-
-  const hashIndex = raw.search(/[#?]/);
-  const pathPart = hashIndex === -1 ? raw : raw.slice(0, hashIndex);
-  const suffix = hashIndex === -1 ? "" : raw.slice(hashIndex);
-  if (!pathPart) return target;
-
-  let repoPath;
-  if (pathPart.startsWith("/")) {
-    repoPath = pathPart.replace(/^\/+/, "");
-  } else {
-    repoPath = path.posix.normalize(path.posix.join(path.posix.dirname(srcFile), pathPart));
-  }
-  const url = repoPathToUrl(repoPath);
-  // Keep the fragment only for canonical doc/spec pages (same rendered page).
-  return url.startsWith(ORIGIN) ? url + suffix : url;
-}
-
-const LINK_RE = /(!?\[[^\]]*\])\(([^)\s]+)((?:\s+"[^"]*")?)\)/g;
-
 // Rewrite links + demote headings by two levels, skipping fenced code blocks.
 function transform(body, srcFile) {
   const lines = body.replace(/\r\n/g, "\n").split("\n");
@@ -120,154 +82,6 @@ function transform(body, srcFile) {
     .join("\n");
 }
 
-// ---------------------------------------------------------------------------
-// Minimal, dependency-free Markdown -> HTML renderer.
-//
-// The repository declares no npm dependencies (see AGENTS.md), so we cannot
-// pull in a Markdown library. This renderer intentionally covers only the
-// constructs the source pack actually uses — headings, paragraphs, ordered and
-// unordered lists (with nesting), tables, blockquotes, fenced code, thematic
-// breaks (--- and the ===== section rules), and inline code / bold / links /
-// autolinks. Anything unrecognized falls through to an escaped paragraph, so
-// no text is ever dropped. The point is a valid text/html page carrying the
-// full standard so website importers (e.g. Google NotebookLM, which rejects a
-// raw text/markdown URL) can ingest it. It is not a general Markdown engine.
-// ---------------------------------------------------------------------------
-
-function escHtml(s) {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
-function mdInline(s) {
-  let t = escHtml(s);
-  t = t.replace(/`([^`]+)`/g, (m, c) => `<code>${c}</code>`);
-  t = t.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-  // Autolinks <https://...> (angle brackets are now &lt; / &gt; after escaping)
-  t = t.replace(/&lt;(https?:\/\/[^\s&]+)&gt;/g, (m, u) => `<a href="${u}">${u}</a>`);
-  // [text](url)
-  t = t.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, txt, u) => `<a href="${u}">${txt}</a>`);
-  return t;
-}
-
-function splitTableRow(line) {
-  let s = line.trim();
-  if (s.startsWith("|")) s = s.slice(1);
-  if (s.endsWith("|")) s = s.slice(0, -1);
-  return s.split("|").map((c) => c.trim());
-}
-
-function listItemMatch(line) {
-  const u = line.match(/^(\s*)[-*]\s+(.*)$/);
-  if (u) return { indent: u[1].length, tag: "ul", text: u[2] };
-  const o = line.match(/^(\s*)\d+\.\s+(.*)$/);
-  if (o) return { indent: o[1].length, tag: "ol", text: o[2] };
-  return null;
-}
-
-function renderList(block) {
-  const first = listItemMatch(block[0]);
-  const base = first.indent;
-  const tag = first.tag;
-  const items = [];
-  let cur = null;
-  for (const l of block) {
-    const m = listItemMatch(l);
-    if (m && m.indent <= base) {
-      if (cur) items.push(cur);
-      cur = { text: m.text, children: [] };
-    } else if (m && m.indent > base) {
-      cur.children.push(l);
-    } else if (cur) {
-      cur.text += " " + l.trim(); // wrapped continuation line
-    }
-  }
-  if (cur) items.push(cur);
-  let html = `<${tag}>`;
-  for (const it of items) {
-    html += "<li>" + mdInline(it.text);
-    if (it.children.length) html += renderList(it.children);
-    html += "</li>";
-  }
-  return html + `</${tag}>`;
-}
-
-function mdToHtml(md) {
-  const lines = md.replace(/\r\n/g, "\n").split("\n");
-  const out = [];
-  let i = 0;
-  while (i < lines.length) {
-    const line = lines[i];
-
-    const fence = line.match(/^\s*(`{3,}|~{3,})/);
-    if (fence) {
-      const ch = fence[1][0];
-      const close = new RegExp("^\\s*" + ch + "{3,}\\s*$");
-      const code = [];
-      i++;
-      while (i < lines.length && !close.test(lines[i])) code.push(lines[i++]);
-      i++; // consume closing fence
-      out.push("<pre><code>" + escHtml(code.join("\n")) + "</code></pre>");
-      continue;
-    }
-
-    if (!line.trim()) { i++; continue; }
-
-    if (/^\s*(-{3,}|={3,})\s*$/.test(line)) { out.push("<hr>"); i++; continue; }
-
-    const h = line.match(/^(#{1,6})\s+(.*)$/);
-    if (h) { out.push(`<h${h[1].length}>${mdInline(h[2].trim())}</h${h[1].length}>`); i++; continue; }
-
-    if (/^\s*>\s?/.test(line)) {
-      const bq = [];
-      while (i < lines.length && /^\s*>\s?/.test(lines[i])) bq.push(lines[i++].replace(/^\s*>\s?/, ""));
-      out.push("<blockquote>" + mdInline(bq.join(" ")) + "</blockquote>");
-      continue;
-    }
-
-    if (/^\s*\|/.test(line) && i + 1 < lines.length && /^\s*\|?[\s:|-]+$/.test(lines[i + 1]) && lines[i + 1].includes("-")) {
-      const header = splitTableRow(line);
-      i += 2; // header + separator
-      const rows = [];
-      while (i < lines.length && /^\s*\|/.test(lines[i])) rows.push(splitTableRow(lines[i++]));
-      let t = "<table><thead><tr>" + header.map((c) => `<th>${mdInline(c)}</th>`).join("") + "</tr></thead><tbody>";
-      for (const r of rows) t += "<tr>" + r.map((c) => `<td>${mdInline(c)}</td>`).join("") + "</tr>";
-      out.push(t + "</tbody></table>");
-      continue;
-    }
-
-    if (listItemMatch(line)) {
-      const block = [];
-      while (i < lines.length) {
-        const l = lines[i];
-        if (!l.trim()) break;
-        if (listItemMatch(l) || /^\s+\S/.test(l)) { block.push(l); i++; }
-        else break;
-      }
-      out.push(renderList(block));
-      continue;
-    }
-
-    const para = [];
-    while (
-      i < lines.length && lines[i].trim() &&
-      !/^\s*(`{3,}|~{3,})/.test(lines[i]) &&
-      !/^(#{1,6})\s/.test(lines[i]) &&
-      !/^\s*(-{3,}|={3,})\s*$/.test(lines[i]) &&
-      !/^\s*\|/.test(lines[i]) &&
-      !/^\s*>/.test(lines[i]) &&
-      !listItemMatch(lines[i])
-    ) {
-      para.push(lines[i]); i++;
-    }
-    out.push("<p>" + mdInline(para.join(" ")) + "</p>");
-  }
-  return out.join("\n");
-}
-
 // Wrap the rendered body in a neutral, self-contained HTML document. VRP has
 // its own neutral identity — no HemmaBo branding here; the content itself
 // states HemmaBo is only the reference implementer, not the owner.
@@ -278,7 +92,7 @@ function htmlDoc(bodyHtml) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>VRP Source Pack — the full standard on one page</title>
-    <meta name="description" content="The full Vacation Rental Protocol (VRP) open standard on one HTML page — importable directly into AI notebooks such as Google NotebookLM, ChatGPT and Claude." />
+    <meta name="description" content="The full Vacation Rental Protocol (VRP) open standard on one HTML page, importable into AI notebooks such as Google NotebookLM, ChatGPT and Claude." />
     <meta name="robots" content="index,follow" />
     <link rel="canonical" href="${ORIGIN}/source-pack" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

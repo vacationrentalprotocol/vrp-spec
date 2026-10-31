@@ -269,21 +269,28 @@ function checkPublicRoutes() {
     ...htmlFiles().flatMap(extractInternalHrefs),
   ]);
 
+  // llms.txt lists every public route, for agents: the pages and the machine
+  // files (schemas, example JSON, the JSON-LD context, the Markdown source
+  // pack). sitemap.xml lists only the HTML pages among them, for search
+  // engines. So: every sitemap route is an HTML page listed in llms.txt, and
+  // every llms.txt route served as an HTML page is in the sitemap.
   const sitemapRoutes = new Set(sitemapUrls().map(routePathFromUrl));
   const llmsRoutes = new Set(extractCanonicalUrls("llms.txt").map(routePathFromUrl));
+  const isHtmlPage = (route) => resolveRoute(route)?.endsWith(".html") === true;
 
   for (const route of llmsRoutes) {
-    if (!sitemapRoutes.has(route)) fail(`llms.txt: canonical route missing from sitemap.xml: ${route}`);
+    if (isHtmlPage(route) && !sitemapRoutes.has(route)) fail(`llms.txt: HTML page missing from sitemap.xml: ${route}`);
   }
   for (const route of sitemapRoutes) {
     if (!llmsRoutes.has(route)) fail(`sitemap.xml: route missing from llms.txt: ${route}`);
+    if (!isHtmlPage(route)) fail(`sitemap.xml: route is not an HTML page (machine files belong in llms.txt only): ${route}`);
   }
 
   for (const source of linkHeaderRoutes()) {
     if (!fileExists(stripLeadingSlash(source))) fail(`vercel.json: Link header source is not a file: ${source}`);
     const canonical = linkHeaderFor(source).match(/^<([^>]+)>; rel="canonical"$/)?.[1];
     if (!canonical) fail(`vercel.json: Link header for ${source} is not <url>; rel="canonical"`);
-    else if (!sitemapRoutes.has(routePathFromUrl(canonical))) fail(`vercel.json: canonical ${canonical} for ${source} is not a sitemap route`);
+    else if (!llmsRoutes.has(routePathFromUrl(canonical))) fail(`vercel.json: canonical ${canonical} for ${source} is not a public route in llms.txt`);
   }
 
   for (const url of urls) {

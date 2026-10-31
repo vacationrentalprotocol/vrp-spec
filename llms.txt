@@ -134,7 +134,6 @@ Operational agent procedure (Agent Skills format): skills/vrp-verify-stay-offer/
 - Node JWKS: https://villaakerlyckan.se/.well-known/jwks.json
 - Signed offer endpoint: https://villaakerlyckan.se/api/verified-stay-offer
 - UCP checkout discovery: https://villaakerlyckan.se/.well-known/ucp
-- HemmaBo federation: https://www.hemmabo.com/.well-known/federation-members.json
 
 ## Implementations
 

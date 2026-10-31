@@ -1,5 +1,12 @@
 #!/usr/bin/env node
-// Writes sitemap.xml: one <url> per public route, <lastmod> taken from git.
+// Writes sitemap.xml: one <url> per public HTML page, <lastmod> taken from git.
+//
+// Only pages a person reads are listed. The machine files (JSON Schemas,
+// example and conformance JSON, the JSON-LD context, the Markdown source pack)
+// stay public and are listed in llms.txt for agents; in the sitemap they were
+// crawled and not indexed (Search Console, 2026-10-31), and IndexNow pinged
+// them on every deploy. check-public-routes.mjs keeps every sitemap route an
+// HTML page and every HTML route in llms.txt in the sitemap.
 //
 // <lastmod> is the committer date (git `%cs`, YYYY-MM-DD in the committer's
 // recorded zone — never `--date=local`) of the last commit that touched the
@@ -27,12 +34,11 @@ const ORIGIN = "https://vacationrentalprotocol.com";
 const OUT = "sitemap.xml";
 
 // Route -> the repo file that serves it (vercel.json rewrites + cleanUrls), in
-// the order sitemap.xml has listed them.
+// the order sitemap.xml has listed them. HTML pages only (see above).
 const ROUTES = [
   ["/", "index.html"],
   ["/vrp-vacation-rental", "vrp-vacation-rental.html"],
   ["/docs/what-is-vrp", "docs/what-is-vrp.md"],
-  ["/docs/source-pack", "docs/source-pack.md"],
   ["/source-pack", "pages/source-pack.html"],
   ["/reference-implementation", "reference-implementation.html"],
   ["/verify", "verify.html"],
@@ -41,7 +47,6 @@ const ROUTES = [
   ["/film", "film.html"],
   ["/demo", "demo.html"],
   ["/docs/first-mover-evidence-memo", "docs/first-mover-evidence-memo.md"],
-  ["/contexts/v1", "contexts/v1.jsonld"],
   ["/terms", "terms.html"],
   ["/rel/protocol", "rel/protocol.html"],
   ["/spec/v0.1", "spec/v0.1.md"],
@@ -56,29 +61,6 @@ const ROUTES = [
   ["/docs/implement-vrp", "docs/implement-vrp.md"],
   ["/docs/implement-attestations", "docs/implement-attestations.md"],
   ["/docs/adr/0002-no-gatekeeper-trust-and-interop", "docs/adr/0002-no-gatekeeper-trust-and-interop.md"],
-  ["/schemas/attestations-v0.1.schema.json", "schemas/attestations-v0.1.schema.json"],
-  ["/schemas/discovery-v0.1.schema.json", "schemas/discovery-v0.1.schema.json"],
-  ["/schemas/jwks-v0.1.schema.json", "schemas/jwks-v0.1.schema.json"],
-  ["/schemas/verified-stay-offer-v0.1.schema.json", "schemas/verified-stay-offer-v0.1.schema.json"],
-  [
-    "/schemas/verified-stay-offer-verification-result-v0.1.schema.json",
-    "schemas/verified-stay-offer-verification-result-v0.1.schema.json",
-  ],
-  ["/schemas/stayintent-query-v0.1.schema.json", "schemas/stayintent-query-v0.1.schema.json"],
-  ["/schemas/stayintent-response-v0.1.schema.json", "schemas/stayintent-response-v0.1.schema.json"],
-  ["/examples/discovery.v0.1.json", "examples/discovery.v0.1.json"],
-  ["/examples/jwks.v0.1.json", "examples/jwks.v0.1.json"],
-  [
-    "/examples/verified-stay-offer-verification-result.safe-to-quote.v0.1.json",
-    "examples/verified-stay-offer-verification-result.safe-to-quote.v0.1.json",
-  ],
-  ["/examples/verified-stay-offer.not-quoteable.v0.1.json", "examples/verified-stay-offer.not-quoteable.v0.1.json"],
-  ["/examples/conformance/three-state-verification.v0.1.json", "examples/conformance/three-state-verification.v0.1.json"],
-  ["/examples/conformance/host-domain/vectors.v0.1.json", "examples/conformance/host-domain/vectors.v0.1.json"],
-  ["/examples/conformance/offer-rules/vectors.v0.1.json", "examples/conformance/offer-rules/vectors.v0.1.json"],
-  ["/examples/conformance/stayintent/positive.v0.1.json", "examples/conformance/stayintent/positive.v0.1.json"],
-  ["/examples/conformance/stayintent/no-match.v0.1.json", "examples/conformance/stayintent/no-match.v0.1.json"],
-  ["/examples/attestations/attestation-bundle.v0.1.json", "examples/attestations/attestation-bundle.v0.1.json"],
   ["/spec/receipt-v1", "spec/receipt-v1.md"],
   ["/spec/proof-chain-v0.1", "spec/proof-chain-v0.1.md"],
   ["/spec/node-seal-v0.1", "spec/node-seal-v0.1.md"],
@@ -86,13 +68,7 @@ const ROUTES = [
   ["/spec/domain-continuity-v0.1", "spec/domain-continuity-v0.1.md"],
   ["/spec/node-tool-binding-v0.1", "spec/node-tool-binding-v0.1.md"],
   ["/verify-receipt", "verify-receipt.html"],
-  ["/schemas/vrp-receipt.v1.schema.json", "schemas/vrp-receipt.v1.schema.json"],
   ["/docs/conformance-report", "docs/conformance-report.md"],
-  ["/schemas/conformance-report-v0.1.schema.json", "schemas/conformance-report-v0.1.schema.json"],
-  [
-    "/examples/conformance/reports/offer.reference-verifier.v0.1.json",
-    "examples/conformance/reports/offer.reference-verifier.v0.1.json",
-  ],
 ];
 
 function git(...args) {

@@ -87,8 +87,8 @@ domain.
 
 VRP is an **open standard authored and maintained by Rouiada Abbas**
 (`vacationrentalprotocol.com`). It is deliberately **not owned by any single
-vendor**. HemmaBo is the first/reference implementation, not the owner of the
-standard. There is no central issuer and no gatekeeper.
+vendor**. HemmaBo is the reference implementation (to our knowledge the first),
+not the owner of the standard. There is no central issuer and no gatekeeper.
 
 #### How is it different from channel managers or listing platforms?
 

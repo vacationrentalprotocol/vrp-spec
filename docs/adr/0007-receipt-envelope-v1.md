@@ -1,6 +1,6 @@
 # ADR 0007: Receipt Envelope v1 — Flat `attestations[]` and Decisions D1–D8
 
-**Status:** Proposed — the decisions below have been normative in
+**Status:** Accepted with [ADR 0013](0013-vrp-1-0.md) — the decisions below have been normative in
 [`spec/receipt-v1.md`](../../spec/receipt-v1.md) since its first publication
 (2026-06-24); this record states them as the standard's own.
 **Date:** 2026-10-17

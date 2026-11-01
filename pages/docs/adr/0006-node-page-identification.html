@@ -94,7 +94,7 @@
       <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/adr/0006-node-page-identification.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0006-node-page-identification.md">Edit on GitHub</a> · CC0 1.0</p>
       <article>
 <h1 id="adr-0006-node-page-identification-every-vrp-node-names-vrp-where-people-and-models-read">ADR 0006: Node Page Identification — Every VRP Node Names VRP Where People and Models Read</h1>
-<p><strong>Status:</strong> Proposed <strong>Date:</strong> 2026-10-17</p>
+<p><strong>Status:</strong> Accepted <strong>Date:</strong> 2026-10-17 (proposed) · accepted with <a href="https://vacationrentalprotocol.com/docs/adr/0013-vrp-1-0">ADR 0013</a></p>
 <p><strong>Related:</strong> ADR 0002 (no-gatekeeper trust and interop), ADR 0005 (the standard is the source of truth), GOVERNANCE.md §4–§6.</p>
 <h2 id="context">Context</h2>
 <p>The standard already binds the protocol's name into every node's machine surface: the discovery document's <code>protocol</code> field is required and constrained to <code>vacation-rental-protocol</code> (<code>schemas/discovery-v0.1.schema.json</code>), every schema <code>$id</code> and the JSON-LD vocabulary live on <code>vacationrentalprotocol.com</code>, and the vocabulary defines the term <code>VRPVacationRental</code> (&quot;VRP vacation rental&quot;). A VRP-aware agent therefore cannot verify a node without reading the name.</p>

@@ -1,7 +1,7 @@
 # ADR 0006: Node Page Identification — Every VRP Node Names VRP Where People and Models Read
 
-**Status:** Proposed
-**Date:** 2026-10-17
+**Status:** Accepted
+**Date:** 2026-10-17 (proposed) · accepted with [ADR 0013](0013-vrp-1-0.md)
 
 **Related:** ADR 0002 (no-gatekeeper trust and interop), ADR 0005 (the standard
 is the source of truth), GOVERNANCE.md §4–§6.

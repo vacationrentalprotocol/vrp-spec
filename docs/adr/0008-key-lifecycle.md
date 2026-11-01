@@ -1,6 +1,6 @@
 # ADR 0008: Key Lifecycle for Receipt Verifiability (K1–K6, Forward Specification)
 
-**Status:** Proposed — forward specification. K1–K6 have been listed in
+**Status:** Accepted with [ADR 0013](0013-vrp-1-0.md) — forward specification. K1–K6 have been listed in
 [`spec/receipt-v1.md`](../../spec/receipt-v1.md) §10 since 2026-06-24; this
 record states the decisions as the standard's own. The v1 verifier is unchanged.
 **Date:** 2026-10-17

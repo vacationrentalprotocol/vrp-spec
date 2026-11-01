@@ -134,18 +134,14 @@ Operational agent procedure (Agent Skills format): skills/vrp-verify-stay-offer/
 - Node JWKS: https://villaakerlyckan.se/.well-known/jwks.json
 - Signed offer endpoint: https://villaakerlyckan.se/api/verified-stay-offer
 - UCP checkout discovery: https://villaakerlyckan.se/.well-known/ucp
-- HemmaBo federation: https://www.hemmabo.com/.well-known/federation-members.json
 
-## Independent Signing Node
+## Implementations
 
-The second signing node, operated independently of the reference
-implementation: self-hosted on CM Free (AGPL-3.0), key_custody: self. Its
-offers verify against its own domain's JWKS, like any node's.
-
-- Host discovery: https://apartmamatevz.si/.well-known/vacation-rental.json
-- Node JWKS: https://apartmamatevz.si/.well-known/jwks.json
-- Signed offer endpoint: https://apartmamatevz.si/app/public/api/vrp_offer.php
-- Known implementations (informative, not a registry): https://github.com/vacationrentalprotocol/vrp-spec/blob/main/IMPLEMENTATIONS.md
+A second signing node, operated independently of the reference
+implementation, signs its own offers with its own key on its own domain. Known
+implementations are listed with their evidence; the list is informative, not a
+registry, and a node needs no listing to be a VRP node:
+https://github.com/vacationrentalprotocol/vrp-spec/blob/main/IMPLEMENTATIONS.md
 
 VRP is complementary to UCP, AP2, MCP, A2A, and WebMCP. UCP may handle checkout
 and order lifecycle, including lodging flows as the UCP lodging profile matures;

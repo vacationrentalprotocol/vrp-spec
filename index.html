@@ -97,7 +97,7 @@
     <main>
       <section class="intro">
         <div class="intro-copy">
-          <p class="eyebrow">Public draft v0.1 &middot; updated 2026-10-31</p>
+          <p class="eyebrow">Public draft v0.1 &middot; updated 2026-11-01</p>
           <h1>Vacation Rental Protocol</h1>
           <p class="lead">
             An open protocol for host-domain signed vacation rental offers.
@@ -275,10 +275,10 @@
         <h2 style="margin-top: 6px">Implement VRP in 5 minutes — become the next node</h2>
         <p style="max-width: 64ch; margin: 10px auto 22px">
           One signing node is a file format; a second, independent node is a
-          standard. That second node is live:
-          <a href="https://apartmamatevz.si/.well-known/vacation-rental.json">apartmamatevz.si</a>,
-          self-hosted on CM Free, signs its own offers with its own key on its
-          own domain, and has no affiliation with the reference implementation.
+          standard. That second node is live: run independently of the
+          reference implementation, it signs its own offers with its own key on
+          its own domain (see the
+          <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/IMPLEMENTATIONS.md">implementations list</a>).
           There is no registry, no API key, and no gatekeeper — generate an
           Ed25519 key, sign a verified stay offer in your browser, and publish
           two static files from your own domain.

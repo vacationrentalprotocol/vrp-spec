@@ -1,7 +1,7 @@
 # ADR 0009: Host-Owned Domain and Offer Binding
 
-**Status:** Accepted
-**Date:** 2026-10-17 (proposed) · 2026-10-27 (accepted)
+**Status:** Proposed
+**Date:** 2026-10-17 (proposed)
 
 ## Context
 

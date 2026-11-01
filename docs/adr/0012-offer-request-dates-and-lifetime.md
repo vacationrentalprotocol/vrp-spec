@@ -1,7 +1,7 @@
 # ADR 0012: The Stay Asked For, Real Dates, Echoed Fields and Offer Lifetime
 
-**Status:** Proposed
-**Date:** 2026-10-17 (proposed)
+**Status:** Accepted
+**Date:** 2026-10-17 (proposed) · 2026-10-27 (accepted)
 
 ## Context
 

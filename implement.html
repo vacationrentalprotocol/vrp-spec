@@ -433,10 +433,19 @@
               <summary>Show the private signing key (for your server)</summary>
               <div class="danger" style="margin: 12px 16px; border-radius: 8px">
                 This is the secret that proves offers came from your domain.
-                Store it server-side only (env var / secrets manager). Never
-                commit it, never ship it to a browser, and never publish it in
-                your JWKS. Generated locally in this tab — it was never
-                transmitted.
+                Keep it out of the web root, in a path the web server never
+                serves: an environment variable, a secrets manager, or a file
+                readable only by the process that signs (owner-only
+                permissions, <code>0600</code>). If your software keeps it in a
+                data folder under the web root, deny that folder at the server
+                level; a <code>.htaccess</code> file alone is not enough,
+                because a hosting change can switch it off. Confirm it: request
+                the key's path over HTTPS; the answer must be 403 or 404, never
+                the key. If the key was ever served, or ever left the server,
+                rotate it (spec §3.1): publish a new key, sign with it, remove
+                the old one. Never commit it, never ship it to a browser, and
+                never publish it in your JWKS. Generated locally in this tab —
+                it was never transmitted.
               </div>
               <div class="outhead" style="border-top: 1px solid var(--line)">
                 <div><h3>Private key (JWK)</h3></div>

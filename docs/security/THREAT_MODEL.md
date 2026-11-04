@@ -85,7 +85,9 @@ registry, or accreditation authority to appeal to. Consequently:
 - *Mitigation:* only public keys are ever published (in the JWKS). Key custody is
   declared via `operator.key_custody` (`self` or `platform`) so an agent knows what
   a valid signature guarantees ([spec §2](../../spec/v0.1.md)). Protecting the
-  private key at rest is the operator's responsibility.
+  private key at rest is the operator's responsibility; where to keep it and
+  how to confirm it is not served are in
+  [KEY_ROTATION.md](./KEY_ROTATION.md) ("What an implementer must do").
 
 ### Denial of service — "make verification fail or flood the node"
 

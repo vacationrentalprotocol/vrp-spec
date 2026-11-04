@@ -19,7 +19,7 @@
         <uri>https://vacationrentalprotocol.com</uri>
       </address>
     </author>
-    <date year="2026" month="July" day="30"/>
+    <date year="2026" month="November" day="4"/>
     <keyword>vacation rental</keyword>
     <keyword>signed offers</keyword>
     <keyword>well-known URI</keyword>
@@ -100,8 +100,12 @@
         node is one origin describing one vacation-rental site; there is
         no multi-publisher or shared-host case.</dd>
         <dt>Host domain:</dt>
-        <dd>The registrable domain a node is served from, carried as
+        <dd>The host-owned domain a node is served from
+        (<xref target="host-owned-domain"/>), carried as
         <tt>canonical_domain</tt> in VRP documents.</dd>
+        <dt>Node URL:</dt>
+        <dd>An absolute <tt>https</tt> URL on the host domain or
+        <tt>www.</tt> followed by it (<xref target="node-url"/>).</dd>
         <dt>Discovery document:</dt>
         <dd>The JSON resource at the node's well-known URI
         (<xref target="discovery"/>).</dd>
@@ -146,14 +150,76 @@ https://{host-domain}/.well-known/vacation-rental.json
           <dd><bcp14>MUST</bcp14> be <tt>0.1</tt> for this version.</dd>
           <dt><tt>canonical_domain</tt>:</dt>
           <dd><bcp14>MUST</bcp14> match the host-owned domain being
-          verified.</dd>
+          verified, which is the domain this document is fetched from
+          (<xref target="host-owned-domain"/>).</dd>
           <dt><tt>jwks_url</tt>:</dt>
           <dd><bcp14>MUST</bcp14> point to the host-domain JWKS
-          (<xref target="jwks"/>).</dd>
+          (<xref target="jwks"/>), and <bcp14>MUST</bcp14> be a node URL
+          (<xref target="node-url"/>).</dd>
           <dt><tt>verified_stay_offer_endpoint</tt>:</dt>
           <dd><bcp14>MUST</bcp14> point to the host-domain verified stay
-          offer endpoint (<xref target="offer"/>).</dd>
+          offer endpoint (<xref target="offer"/>), and
+          <bcp14>MUST</bcp14> be a node URL (<xref target="node-url"/>).</dd>
         </dl>
+      </section>
+
+      <section anchor="host-owned-domain">
+        <name>Host-Owned Domain</name>
+        <t>A VRP node is a domain registered for the host, never a name
+        under another party's domain.  <tt>canonical_domain</tt>
+        <bcp14>MUST</bcp14> meet all of the following:</t>
+        <ol spacing="normal">
+          <li>It is lowercase ASCII, with internationalized labels in
+          A-label (<tt>xn--</tt>) form, and has no trailing dot.</li>
+          <li>It equals its own registrable domain as computed by the
+          Public Suffix List algorithm <xref target="PSL"/> using only
+          the rules in the list's ICANN section, each rule compared in
+          A-label form; where no ICANN rule matches, the algorithm's
+          default rule <tt>*</tt> applies.  The list's PRIVATE section
+          does not count: it lists domains under which a company hands
+          out names to its customers.</li>
+          <li>Its top-level domain is not a brand or closed top-level
+          domain, under which every name belongs to the top-level
+          domain's operator.  These are: every top-level domain whose
+          ICANN registry agreement includes Specification 13, marked
+          <tt>"specification13": true</tt> in ICANN's gTLD list
+          <xref target="ICANN-GTLDS"/>; and <tt>booking</tt> and
+          <tt>hotels</tt>, whose registry operator is Booking.com B.V.
+          This list changes only by a recorded decision of the
+          specification's maintainers.</li>
+        </ol>
+        <t>A name under a platform, catalog, marketplace, OTA, site
+        builder or operator domain is never a <tt>canonical_domain</tt>,
+        whoever operates that domain.  <tt>example.com</tt> and
+        <tt>example.co.uk</tt> are host-owned domains;
+        <tt>www.example.com</tt>, <tt>villa.platform.example</tt>,
+        <tt>villa.booking</tt> and <tt>villa.amazon</tt> are not.  A
+        verifier that holds no copy of the ICANN section of the Public
+        Suffix List, or of ICANN's gTLD list, <bcp14>MUST</bcp14> treat
+        the node as unknown (<xref target="three-state"/>).</t>
+      </section>
+
+      <section anchor="node-url">
+        <name>Node URL</name>
+        <t>A node URL is an absolute <tt>https</tt> URL whose host is
+        <tt>canonical_domain</tt> or <tt>www.</tt> followed by
+        <tt>canonical_domain</tt>, with no userinfo (no user name or
+        password) and no port other than the <tt>https</tt> default.
+        Hosts are compared after URL parsing, which lowercases them.</t>
+      </section>
+
+      <section anchor="fetching">
+        <name>Fetching</name>
+        <t>The domain a discovery document, a JWKS or an offer is fetched
+        from is the host of the URL the verifier requested.  A verifier
+        requests the discovery document at
+        <tt>https://{domain}/.well-known/vacation-rental.json</tt> for
+        the domain it is verifying, which the document's
+        <tt>canonical_domain</tt> then has to match.  A verifier
+        <bcp14>MAY</bcp14> follow a redirect only when its target is a
+        node URL of that domain; it <bcp14>MUST NOT</bcp14> follow any
+        other redirect, and <bcp14>MUST</bcp14> treat what it would have
+        fetched as unknown (<xref target="three-state"/>).</t>
       </section>
 
       <section anchor="discovery-recommended">
@@ -203,6 +269,42 @@ https://{host-domain}/.well-known/vacation-rental.json
         additionally serve the same document at the longer alias path
         <tt>/.well-known/vacation-rental-protocol.json</tt>.  Clients
         <bcp14>SHOULD</bcp14> use <tt>vacation-rental.json</tt>.</t>
+      </section>
+
+      <section anchor="node-page">
+        <name>Node Page Identification</name>
+        <t>A VRP node is found and verified through its discovery
+        document and its signed offers.  The pages a guest or an AI
+        model reads are not part of that chain.  The rules below make
+        the protocol visible there too.  In this version they are
+        <bcp14>SHOULD</bcp14>; (a) and (b) are intended to become
+        <bcp14>MUST</bcp14> in the next major version, the migration
+        path being these two tags.  For the page served at
+        <tt>https://{canonical_domain}/</tt>:</t>
+        <ol spacing="normal" type="(%c)">
+          <li>The document head <bcp14>SHOULD</bcp14> contain
+          <tt>&lt;link rel="protocol" href="https://vacationrentalprotocol.com/"&gt;</tt>.</li>
+          <li>The document body <bcp14>SHOULD</bcp14> contain a visible
+          hyperlink carrying <tt>rel="protocol"</tt> whose <tt>href</tt>
+          is on the origin <tt>https://vacationrentalprotocol.com</tt>
+          (the root, or <tt>/verify?host={canonical_domain}</tt>) and
+          whose link text contains the string <tt>VRP</tt>.</li>
+          <li>The response <bcp14>SHOULD</bcp14> carry the HTTP header
+          <tt>Link: &lt;https://vacationrentalprotocol.com/&gt;;
+          rel="https://vacationrentalprotocol.com/rel/protocol"</tt>.</li>
+          <li>schema.org JSON-LD on the page <bcp14>SHOULD</bcp14> mark
+          the lodging with <tt>"additionalType":
+          "https://vacationrentalprotocol.com/terms#VRPVacationRental"</tt>.</li>
+          <li>The page <bcp14>SHOULD</bcp14> describe the property as a
+          VRP vacation rental in its own language.</li>
+        </ol>
+        <t>The <tt>href</tt> in (a) and (b) <bcp14>MUST NOT</bcp14>
+        point to an implementation, an operator, or any origin other
+        than <tt>https://vacationrentalprotocol.com</tt>: the link names
+        the standard, never a vendor.  The HTML keyword
+        <tt>protocol</tt> and the extension relation type
+        <tt>https://vacationrentalprotocol.com/rel/protocol</tt> denote
+        the same relation.</t>
       </section>
     </section>
 
@@ -338,9 +440,43 @@ https://{host-domain}/.well-known/jwks.json
           <li><tt>booking</tt></li>
           <li><tt>agent_permission</tt></li>
         </ul>
-        <t><tt>generated_at</tt> and <tt>valid_until</tt> are
-        <xref target="RFC3339"/> date-time values restricted to UTC
-        ("Z").</t>
+        <t>The stay asked for.  <tt>request</tt> is the stay the offer
+        is for, as it was asked for at the offer endpoint
+        (<xref target="offer-request"/>): <tt>check_in</tt> and
+        <tt>check_out</tt> are dates in <tt>YYYY-MM-DD</tt> form, and
+        <tt>guests</tt> is an integer of at least 1.</t>
+        <ul spacing="normal">
+          <li><tt>check_in</tt> and <tt>check_out</tt> <bcp14>MUST</bcp14>
+          be dates that exist in the calendar (<xref target="RFC3339"/>
+          <tt>full-date</tt>), and <tt>check_out</tt> <bcp14>MUST</bcp14>
+          be later than <tt>check_in</tt>.</li>
+          <li>A node <bcp14>MUST NOT</bcp14> sign an offer for dates that
+          break these rules, or whose <tt>check_in</tt> is earlier than
+          the current date at the property.  It answers with an error
+          instead.</li>
+          <li><tt>check_in</tt>, <tt>check_out</tt>, <tt>guests</tt> and
+          <tt>language</tt> are the requester's words, echoed back; they
+          are not statements by the host.  <tt>check_in_weekday</tt>,
+          <tt>check_out_weekday</tt> and <tt>nights</tt>, when present,
+          are the node's own, computed from the two dates.  A node
+          <bcp14>MUST NOT</bcp14> copy into the signed payload any value
+          from the request other than those four.
+          <tt>request.language</tt>, when present, <bcp14>MUST</bcp14>
+          be a BCP 47 <xref target="RFC5646"/> language tag made of a
+          language subtag (two or three letters), optionally a script
+          subtag (four letters) and optionally a region subtag (two
+          letters or three digits), joined by hyphens; letter case does
+          not matter, as in BCP 47.  It <bcp14>SHOULD</bcp14> name a
+          language the node writes the offer in.</li>
+        </ul>
+        <t>Lifetime.  <tt>generated_at</tt> and <tt>valid_until</tt> are
+        UTC date-times (<xref target="RFC3339"/> <tt>date-time</tt>,
+        ending in <tt>Z</tt>).  A node <bcp14>MUST</bcp14> set
+        <tt>generated_at</tt> to the time it signs the offer.
+        <tt>valid_until</tt> <bcp14>MUST</bcp14> be later than
+        <tt>generated_at</tt> and <bcp14>MUST NOT</bcp14> be more than
+        900 seconds (15 minutes) after it.  The two values are compared
+        as written, fractions of a second included.</t>
         <t>The signed payload <bcp14>MAY</bcp14> also include
         host-verified direct-source facts, so that a verifier can verify
         (not just read) the node's commercial positioning:</t>
@@ -357,6 +493,16 @@ https://{host-domain}/.well-known/jwks.json
           booking, service, or cleaning fees (the displayed price is the
           total paid).  This describes the node's own fee structure and
           is never a comparison with any other channel.</dd>
+          <dt><tt>price.minor_unit</tt>:</dt>
+          <dd>The unit of every amount in <tt>price</tt>
+          (<tt>public_total</tt>, <tt>agent_total</tt>, <tt>total</tt>,
+          each <tt>breakdown[].nightly_rate</tt>, each
+          <tt>adjustments[].amount</tt>, the <tt>reconciliation</tt>
+          sums).  <tt>true</tt>: integers in the currency's minor unit
+          (cents): <tt>29100</tt> is 291.00 EUR.  <tt>false</tt>: whole
+          currency units: <tt>8930</tt> is 8 930 SEK.  The flag applies
+          to the whole <tt>price</tt> object; a consumer reads it before
+          it quotes, converts or displays an amount.</dd>
         </dl>
       </section>
 
@@ -513,19 +659,29 @@ https://{host-domain}/.well-known/jwks.json
       <section anchor="freshness">
         <name>Freshness</name>
         <t>Verifiers <bcp14>MUST</bcp14> treat an offer as non-quotable
-        if <tt>valid_until</tt> is missing, malformed, or expired.
-        Verifiers <bcp14>SHOULD</bcp14> fetch a fresh offer for the
+        if <tt>valid_until</tt> is missing, malformed, or expired.</t>
+        <t>Verifiers <bcp14>MUST</bcp14> also treat an offer as
+        non-quotable if <tt>generated_at</tt> is missing or malformed, if
+        <tt>generated_at</tt> is more than 60 seconds later than the
+        verifier's current time, or if <tt>valid_until</tt> is not later
+        than <tt>generated_at</tt> or is more than 900 seconds after it
+        (<xref target="offer-payload"/>).  The 60 seconds allow for
+        clocks that are not exactly in step; they do not lengthen the
+        lifetime.</t>
+        <t>Verifiers <bcp14>SHOULD</bcp14> fetch a fresh offer for the
         user's specific dates and guest count before presenting a final
         price or booking URL.</t>
       </section>
 
       <section anchor="safe-to-quote">
         <name>Safe-to-Quote Rules</name>
-        <t>A verifier may quote an offer as an official host-domain
-        verified offer only when all of the following are true:</t>
+        <t>A verifier <bcp14>MUST NOT</bcp14> quote an offer as an
+        official host-domain verified offer unless all of the following
+        are true:</t>
         <ul spacing="compact">
           <li>The discovery document is fetched from the host-owned
-          domain.</li>
+          domain (<xref target="host-owned-domain"/>), and its
+          <tt>canonical_domain</tt> is that domain.</li>
           <li>The discovery document declares
           <tt>protocol: "vacation-rental-protocol"</tt>.</li>
           <li>The discovery document declares
@@ -534,7 +690,28 @@ https://{host-domain}/.well-known/jwks.json
           JWS.</li>
           <li>The compact JWS verifies against the host-domain JWKS.</li>
           <li>The signed payload matches the returned offer.</li>
+          <li>The signed payload's <tt>canonical_domain</tt> is the
+          domain the discovery document was fetched from.</li>
           <li><tt>valid_until</tt> is present and fresh.</li>
+          <li><tt>generated_at</tt> and <tt>valid_until</tt> meet
+          <xref target="offer-payload"/> and <xref target="freshness"/>:
+          <tt>valid_until</tt> is later than <tt>generated_at</tt> and at
+          most 900 seconds after it, and <tt>generated_at</tt> is not
+          more than 60 seconds later than the verifier's current
+          time.</li>
+          <li><tt>request.check_in</tt> and <tt>request.check_out</tt>
+          are dates that exist, <tt>request.check_out</tt> is later than
+          <tt>request.check_in</tt>, and <tt>request.check_in</tt> is not
+          earlier than the day before the verifier's current date in
+          UTC.  The local date anywhere is at most one day behind the
+          UTC date, so a <tt>check_in</tt> earlier than that has passed
+          everywhere; the node itself applies the property's own date
+          (<xref target="offer-payload"/>).</li>
+          <li><tt>request.check_in</tt>, <tt>request.check_out</tt> and
+          <tt>request.guests</tt> are the dates and the guest count the
+          verifier asked for.</li>
+          <li><tt>request.language</tt>, when present, has the form
+          <xref target="offer-payload"/> gives.</li>
           <li><tt>availability.available</tt> is true.</li>
           <li><tt>price.exact</tt> is true.</li>
           <li>A direct booking URL is present.</li>
@@ -552,16 +729,21 @@ https://{host-domain}/.well-known/jwks.json
           the signed offer.</li>
           <li>Route booking action anywhere except the signed direct
           booking URL.</li>
+          <li>Present a value from <tt>request</tt> as something the
+          host stated (<xref target="offer-payload"/>).</li>
         </ul>
       </section>
 
       <section anchor="fail-closed">
         <name>Fail-Closed Behavior</name>
         <t>Verifiers and clients <bcp14>MUST</bcp14> fail closed.  If
-        signature verification, freshness, exact price, availability, the
-        direct booking URL, or citation permission cannot be verified,
-        the offer <bcp14>MUST NOT</bcp14> be quoted as official or
-        bookable.</t>
+        signature verification, the offer's binding to the fetched
+        domain and to the stay asked for
+        (<xref target="safe-to-quote"/>), freshness and lifetime
+        (<xref target="offer-payload"/>, <xref target="freshness"/>),
+        the dates, exact price, availability, the direct booking URL, or
+        citation permission cannot be verified, the offer
+        <bcp14>MUST NOT</bcp14> be quoted as official or bookable.</t>
       </section>
 
       <section anchor="three-state">
@@ -665,7 +847,70 @@ https://{host-domain}/.well-known/jwks.json
       rate-limited per domain by conforming verifiers so that a stream of
       offers bearing unknown key identifiers cannot be used to drive
       traffic against a node's JWKS endpoint.</t>
-      <t>Transport.  All VRP resources are served over HTTPS only.</t>
+      <t>What a valid signature proves.  A signature that verifies
+      against the host domain's JWKS proves that a key the domain
+      publishes signed exactly these terms: provenance and integrity of
+      the offer.  Who holds the private key can be declared per node in
+      <tt>operator.key_custody</tt>.  With <tt>self</tt>, the host holds
+      it.  With <tt>platform</tt>, an operator holds and uses it on the
+      host's behalf; the signature then proves that the domain's
+      published key signed, not that the host itself held the key.  A
+      verifier does not assume self-custody when <tt>key_custody</tt> is
+      absent.</t>
+      <t>Domain binding.  A valid signature proves which domain's key
+      signed, not which domain the offer is about.  If the node at one
+      domain signs an offer whose <tt>canonical_domain</tt> names
+      another domain, the signature verifies against the signing node's
+      JWKS; only the check that the offer names the domain it was
+      fetched from (<xref target="safe-to-quote"/>) stops a verifier from
+      presenting it as the other domain's offer.</t>
+      <t>The stay asked for.  A genuine offer for other dates or another
+      guest count verifies like any other offer from the node.  Only the
+      comparison with what the verifier asked for
+      (<xref target="safe-to-quote"/>) stops a verifier from quoting it
+      for the wrong stay.</t>
+      <t>Echoed request fields.  A node signs whatever it copies from
+      the request.  If it copied free text, anyone could get a
+      host-signed sentence of their own choosing by asking for it.
+      <xref target="offer-payload"/> therefore limits what is copied to
+      the stay and a language tag, and
+      <xref target="safe-to-quote"/> forbids presenting either as the
+      host's words.</t>
+      <t>Offer lifetime.  A leaked key mints fresh offers whatever the
+      lifetime, but an offer the node itself signed stays quotable after
+      a price or availability change for at most its lifetime.
+      <xref target="offer-payload"/> caps that at 900 seconds, and the
+      check on <tt>generated_at</tt> (<xref target="freshness"/>) keeps a
+      start time in the future from stretching it.</t>
+      <t>Concentration under platform custody.  An operator that holds
+      the signing keys of many nodes is one point of compromise for all
+      of them.  Rotation and revocation work per node: removing a
+      compromised key from one node's JWKS de-trusts it for that node,
+      within the cache bound.  A key that several nodes publish is
+      de-trusted only where it is removed.</t>
+      <t>Host-owned domains.  Only a domain registered for the host can
+      be a node (<xref target="host-owned-domain"/>).  A company that
+      hands out names under its own domain, as the Public Suffix List's
+      PRIVATE section records, cannot make those names VRP nodes, and
+      neither can the operator of a brand or closed top-level domain.
+      ICANN's gTLD list marks brand top-level domains (Specification 13)
+      but not every closed one; <xref target="host-owned-domain"/>
+      therefore names the closed top-level domains it stops beyond that
+      list, and a closed top-level domain that is neither marked nor
+      named is excluded by the rule's wording but not yet by a
+      program.</t>
+      <t>Fail-closed verification.  Whatever cannot be verified is
+      unknown, never affirmed or negated
+      (<xref target="fail-closed"/>, <xref target="three-state"/>), so a
+      timeout, a malformed response or a failed signature check cannot
+      be turned into a quote.</t>
+      <t>Transport.  The discovery document is served over
+      <tt>https</tt> only.  <tt>jwks_url</tt>,
+      <tt>verified_stay_offer_endpoint</tt> and
+      <tt>direct_booking_url</tt> are node URLs, so <tt>https</tt> on the
+      node's own domain (<xref target="node-url"/>), and a verifier
+      follows a redirect only to a node URL
+      (<xref target="fetching"/>).</t>
       <t>Tamper evidence.  A node <bcp14>MAY</bcp14> record
       signed-artifact hashes and key-rotation events in a public
       append-only transparency log (in the style of
@@ -688,9 +933,14 @@ https://{host-domain}/.well-known/jwks.json
       <t>The optional offer reference identifier in
       <tt>direct_booking_url</tt> (<xref target="booking-url"/>) lets a
       node correlate a booking-page visit with the signed offer it
-      issued.  It is not required for verification, and hosts
-      <bcp14>SHOULD</bcp14> limit retention of such correlation data to
-      what booking operations need.</t>
+      issued.  It is not required for verification.  This document sets
+      no limit on how long such correlation data is kept; that is the
+      host's decision.</t>
+      <t>The <tt>checkIn</tt>, <tt>checkOut</tt> and <tt>guests</tt>
+      query parameters that <xref target="booking-url"/> recommends put
+      the quoted dates and guest count into <tt>direct_booking_url</tt>,
+      so they reach browser history and server logs wherever the URL is
+      followed.</t>
     </section>
 
     <section anchor="iana">
@@ -798,6 +1048,16 @@ https://{host-domain}/.well-known/jwks.json
           <seriesInfo name="RFC" value="8259"/>
           <seriesInfo name="DOI" value="10.17487/RFC8259"/>
         </reference>
+        <reference anchor="RFC5646" target="https://www.rfc-editor.org/info/rfc5646">
+          <front>
+            <title>Tags for Identifying Languages</title>
+            <author initials="A." surname="Phillips" role="editor"/>
+            <author initials="M." surname="Davis" role="editor"/>
+            <date year="2009" month="September"/>
+          </front>
+          <seriesInfo name="BCP" value="47"/>
+          <seriesInfo name="RFC" value="5646"/>
+        </reference>
         <reference anchor="RFC3339" target="https://www.rfc-editor.org/info/rfc3339">
           <front>
             <title>Date and Time on the Internet: Timestamps</title>
@@ -844,6 +1104,20 @@ https://{host-domain}/.well-known/jwks.json
           <seriesInfo name="BCP" value="205"/>
           <seriesInfo name="RFC" value="7942"/>
           <seriesInfo name="DOI" value="10.17487/RFC7942"/>
+        </reference>
+        <reference anchor="PSL" target="https://publicsuffix.org/list/">
+          <front>
+            <title>Public Suffix List</title>
+            <author><organization>Mozilla Foundation</organization></author>
+            <date year="2026"/>
+          </front>
+        </reference>
+        <reference anchor="ICANN-GTLDS" target="https://www.icann.org/resources/registries/gtlds/v2/gtlds.json">
+          <front>
+            <title>gTLD Registry Agreements (machine-readable list)</title>
+            <author><organization>ICANN</organization></author>
+            <date year="2026"/>
+          </front>
         </reference>
         <reference anchor="DID-WEB" target="https://w3c-ccg.github.io/did-method-web/">
           <front>

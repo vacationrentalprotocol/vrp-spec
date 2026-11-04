@@ -519,7 +519,7 @@
           "const": "jws_compact"
         },
         "alg": {
-          "const": "EdDSA"
+          "enum": ["Ed25519", "EdDSA"]
         },
         "kid": {
           "type": "string",

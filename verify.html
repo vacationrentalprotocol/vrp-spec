@@ -389,8 +389,8 @@
         }
         const [h, p, s] = parts;
         const header = jsonFromB64url(h);
-        if (header.alg !== "EdDSA") {
-          throw new Error("Unexpected alg '" + header.alg + "'. VRP signs with EdDSA (Ed25519).");
+        if (header.alg !== "Ed25519" && header.alg !== "EdDSA") {
+          throw new Error("Unexpected alg '" + header.alg + "'. VRP signs over Ed25519; the header names it Ed25519 (RFC 9864) or EdDSA (RFC 8037), VRP §3.");
         }
         // §3.1: the key is the one whose kid the JWS header names, and no other.
         // A header without a kid, or a kid the JWKS does not hold, is unverifiable.

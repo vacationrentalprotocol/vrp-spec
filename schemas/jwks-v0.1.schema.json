@@ -34,7 +34,7 @@
             "const": "sig"
           },
           "alg": {
-            "const": "EdDSA"
+            "enum": ["Ed25519", "EdDSA"]
           },
           "key_ops": {
             "type": "array",

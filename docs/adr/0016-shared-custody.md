@@ -47,15 +47,15 @@ are the proof.
 
 **D1. npm.** The package `@vacationrentalprotocol/vrp-verify` has at least two
 owners who are independent of each other under ADR 0014 D2, both with
-two-factor authentication. The independent maintainer in MAINTAINERS.md is
-added as an owner. Publishing stays as it is: only the repository's workflow
+two-factor authentication. Viljem Dvojmoč (`@viljemd-hub`), the independent
+maintainer in MAINTAINERS.md, is added as an owner. Publishing stays as it is: only the repository's workflow
 publishes, through OIDC trusted publishing with provenance; no owner publishes
 by hand. The repository setting that disallows token publishing is turned on
 where npm offers it. No single organization keeps sole rights to the package.
 
 **D2. GitHub organization.** The organization `vacationrentalprotocol` has at
-least two owners who are independent of each other under ADR 0014 D2. The
-independent maintainer is added as an owner. The repositories
+least two owners who are independent of each other under ADR 0014 D2. Viljem
+Dvojmoč (`@viljemd-hub`) is added as an owner. The repositories
 `vrp-spec` and `vrp-verify` require two approving reviews and passing checks
 before merge, and dismiss stale approvals when the head changes, so that ADR
 0014 D3 and ADR 0015 D2 hold in the repository's own settings.
@@ -88,7 +88,8 @@ or, for a hand step outside the repository, in the next pull request.
   That is what GOVERNANCE.md §2 promises, made measurable.
 - The reference implementer keeps every role it has: lead maintainer,
   specification editor, security contact, the reference implementation and
-  nodes. It gives up sole custody, not a role.
+  nodes. It gives up sole custody, not a role. HemmaBo retains no sole right
+  to any handle covered by this record.
 - Shared custody is shared power. It is bounded by the same rules: publishing
   only through the workflow, two reviews before merge, and GOVERNANCE.md §3
   (the continuity role) and §8 (adding and removing maintainers).

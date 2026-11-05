@@ -124,7 +124,7 @@
 <p>A VRP host domain publishes an Ed25519 public key set:</p>
 <pre><code>https://{host-domain}/.well-known/jwks.json</code></pre>
 <p>Keys used for signing verified stay offers MUST use:</p>
-<ul><li><code>kty</code>: <code>OKP</code></li><li><code>crv</code>: <code>Ed25519</code></li><li><code>alg</code>: <code>EdDSA</code></li><li><code>kid</code>: stable key identifier</li><li><code>x</code>: base64url Ed25519 public key</li></ul>
+<ul><li><code>kty</code>: <code>OKP</code></li><li><code>crv</code>: <code>Ed25519</code></li><li><code>alg</code>: <code>Ed25519</code> or <code>EdDSA</code>. Both name the same operation, EdDSA over the Ed25519 parameter set: <code>Ed25519</code> is the fully specified name (<a href="https://www.rfc-editor.org/rfc/rfc9864">RFC 9864</a> §2.2) and <code>EdDSA</code> the polymorphic name (<a href="https://www.rfc-editor.org/rfc/rfc8037">RFC 8037</a>) that RFC 9864 §4.1.2 marks Deprecated in the IANA JOSE registry. A verifier MUST accept either; the key's <code>crv</code> decides the operation (<a href="https://vacationrentalprotocol.com/docs/adr/0017-signature-algorithm-names">ADR 0017</a>).</li><li><code>kid</code>: stable key identifier</li><li><code>x</code>: base64url Ed25519 public key</li></ul>
 <p>Such keys SHOULD also set:</p>
 <ul><li><code>use</code>: <code>sig</code></li><li><code>key_ops</code>: include <code>verify</code></li></ul>
 <p>The JWKS structure is pinned by <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/schemas/jwks-v0.1.schema.json"><code>schemas/jwks-v0.1.schema.json</code></a>.</p>
@@ -145,7 +145,7 @@
 <ul><li><code>check_in</code>: arrival date in <code>YYYY-MM-DD</code></li><li><code>check_out</code>: departure date in <code>YYYY-MM-DD</code></li><li><code>guests</code>: integer guest count</li></ul>
 <p>The endpoint returns a signed verified stay offer envelope. The signed payload contains the quoteable facts.</p>
 <h2 id="5-signed-offer">5. Signed Offer</h2>
-<p>The signature format is compact JWS using EdDSA over an Ed25519 key published in the host-domain JWKS.</p>
+<p>The signature format is compact JWS whose header <code>alg</code> is <code>Ed25519</code> or <code>EdDSA</code> (§3), over an Ed25519 key published in the host-domain JWKS. A verifier MUST accept either name and MUST treat a JWS with any other <code>alg</code> as unverifiable (§9). A node MAY sign with either name; <code>EdDSA</code> is the name every node used before <a href="https://vacationrentalprotocol.com/docs/adr/0017-signature-algorithm-names">ADR 0017</a> and stays valid.</p>
 <p>The signed payload MUST include:</p>
 <ul><li><code>kind</code>: <code>verified_stay_offer</code></li><li><code>protocol_version</code>: <code>0.1</code></li><li><code>canonical_domain</code></li><li><code>node_id</code></li><li><code>generated_at</code></li><li><code>valid_until</code></li><li><code>request</code></li><li><code>property</code></li><li><code>availability</code></li><li><code>price</code></li><li><code>booking</code></li><li><code>agent_permission</code></li></ul>
 <p><strong>The stay asked for.</strong> <code>request</code> is the stay the offer is for, as it was asked for at the offer endpoint (§4): <code>check_in</code> and <code>check_out</code> are dates in <code>YYYY-MM-DD</code> form, and <code>guests</code> is an integer of at least 1.</p>

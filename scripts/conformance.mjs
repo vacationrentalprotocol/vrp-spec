@@ -67,7 +67,9 @@ export function verifyCompactJws(compactJws, jwksDoc) {
   } catch {
     return { valid: false, reason: "malformed_header" };
   }
-  if (header.alg !== "EdDSA") return { valid: false, reason: "unexpected_alg" };
+  // §3, §5 (ADR 0017): `Ed25519` (RFC 9864) and `EdDSA` (RFC 8037) name the same
+  // operation; either is accepted, anything else is unverifiable.
+  if (header.alg !== "Ed25519" && header.alg !== "EdDSA") return { valid: false, reason: "unexpected_alg" };
 
   const jwk = (jwksDoc.keys || []).find((k) => k.kid === header.kid);
   if (!jwk) return { valid: false, reason: "kid_not_in_jwks" };

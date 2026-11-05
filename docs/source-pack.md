@@ -279,7 +279,13 @@ Keys used for signing verified stay offers MUST use:
 
 - `kty`: `OKP`
 - `crv`: `Ed25519`
-- `alg`: `EdDSA`
+- `alg`: `Ed25519` or `EdDSA`. Both name the same operation, EdDSA over the
+  Ed25519 parameter set: `Ed25519` is the fully specified name
+  ([RFC 9864](https://www.rfc-editor.org/rfc/rfc9864) §2.2) and `EdDSA` the
+  polymorphic name ([RFC 8037](https://www.rfc-editor.org/rfc/rfc8037)) that
+  RFC 9864 §4.1.2 marks Deprecated in the IANA JOSE registry. A verifier MUST
+  accept either; the key's `crv` decides the operation
+  ([ADR 0017](https://vacationrentalprotocol.com/docs/adr/0017-signature-algorithm-names)).
 - `kid`: stable key identifier
 - `x`: base64url Ed25519 public key
 
@@ -381,7 +387,12 @@ The endpoint returns a signed verified stay offer envelope. The signed payload c
 
 #### 5. Signed Offer
 
-The signature format is compact JWS using EdDSA over an Ed25519 key published in the host-domain JWKS.
+The signature format is compact JWS whose header `alg` is `Ed25519` or `EdDSA`
+(§3), over an Ed25519 key published in the host-domain JWKS. A verifier MUST
+accept either name and MUST treat a JWS with any other `alg` as unverifiable
+(§9). A node MAY sign with either name; `EdDSA` is the name every node used
+before [ADR 0017](https://vacationrentalprotocol.com/docs/adr/0017-signature-algorithm-names) and stays
+valid.
 
 The signed payload MUST include:
 

@@ -1,6 +1,6 @@
 # ADR 0012: The Stay Asked For, Real Dates, Echoed Fields and Offer Lifetime
 
-**Status:** Proposed
+**Status:** Proposed · becomes Accepted with [ADR 0013](0013-vrp-1-0.md) when that record is accepted
 **Date:** 2026-10-17 (proposed)
 
 ## Context

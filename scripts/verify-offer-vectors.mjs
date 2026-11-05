@@ -45,8 +45,13 @@ for (const file of vectorFiles) {
   const jws = v.input?.signature?.jws;
   const result = verifyCompactJws(jws, v.jwks);
 
-  const verified = result.valid === true;
-  const reason = result.reason ?? null;
+  // §2, §5 (ADR 0013): a signed offer declares protocol_version "1.0" or "0.1";
+  // any other value is unknown (§9), never verified.
+  const KNOWN_VERSIONS = ["1.0", "0.1"];
+  const declared = result.valid ? result.payload?.protocol_version : undefined;
+  const versionUnknown = result.valid && !KNOWN_VERSIONS.includes(declared);
+  const verified = result.valid === true && !versionUnknown;
+  const reason = versionUnknown ? "unsupported_version" : (result.reason ?? null);
   let fresh = null;
   if (verified) {
     const validUntil = Date.parse(result.payload?.valid_until ?? "");

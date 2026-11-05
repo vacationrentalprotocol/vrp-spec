@@ -38,6 +38,8 @@ Definition: https://vacationrentalprotocol.com/vrp-vacation-rental
 - Implement VRP in 5 minutes (in-browser Ed25519 signer + reference code + conformance vectors): https://vacationrentalprotocol.com/implement
 - First-mover evidence memo: https://vacationrentalprotocol.com/docs/first-mover-evidence-memo
 - Core VRP v0.1 specification: https://vacationrentalprotocol.com/spec/v0.1
+- Core VRP 1.0 candidate (under review; same wire format, protocol_version "1.0" or "0.1"): https://vacationrentalprotocol.com/spec/v1.0
+- Implementation report for 1.0 (one row per MUST, three nodes, five verifiers): https://vacationrentalprotocol.com/docs/implementation-report-1.0
 - Well-Known URI v0.1: https://vacationrentalprotocol.com/spec/well-known-uri-v0.1
 - Portable Attestations v0.1: https://vacationrentalprotocol.com/spec/attestations-v0.1
 - StayIntent open discovery v0.1 (no-gatekeeper, priceless, verifiable): https://vacationrentalprotocol.com/spec/stayintent-discovery-v0.1

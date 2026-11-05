@@ -389,8 +389,8 @@
         }
         const [h, p, s] = parts;
         const header = jsonFromB64url(h);
-        if (header.alg !== "EdDSA") {
-          throw new Error("Unexpected alg '" + header.alg + "'. VRP signs with EdDSA (Ed25519).");
+        if (header.alg !== "Ed25519" && header.alg !== "EdDSA") {
+          throw new Error("Unexpected alg '" + header.alg + "'. VRP signs over Ed25519; the header names it Ed25519 (RFC 9864) or EdDSA (RFC 8037), VRP §3.");
         }
         // §3.1: the key is the one whose kid the JWS header names, and no other.
         // A header without a kid, or a kid the JWKS does not hold, is unverifiable.
@@ -565,7 +565,7 @@
         const d = doc && typeof doc === "object" ? doc : {};
         const rows = [];
         const problems = [];
-        const proto = d.protocol === "vacation-rental-protocol" && d.protocol_version === "0.1";
+        const proto = d.protocol === "vacation-rental-protocol" && (d.protocol_version === "1.0" || d.protocol_version === "0.1");
         rows.push(checkRow(proto ? "pass" : "fail", proto ? "Declares VRP 0.1" : "Does NOT declare VRP 0.1",
           "protocol " + JSON.stringify(d.protocol) + ", protocol_version " + JSON.stringify(d.protocol_version) + " (VRP §2, §7)."));
         if (!proto) problems.push("the discovery document does not declare vacation-rental-protocol 0.1");
@@ -669,13 +669,13 @@
           if (own.state === "unknown") unknown.push("the host-owned domain could not be checked");
 
           const missing = REQUIRED_FIELDS.filter((k) => !(k in payload));
-          const shape = payload.kind === "verified_stay_offer" && payload.protocol_version === "0.1" && !missing.length;
+          const shape = payload.kind === "verified_stay_offer" && (payload.protocol_version === "1.0" || payload.protocol_version === "0.1") && !missing.length;
           rows.push(
             checkRow(
               shape ? "pass" : "warn",
               shape ? "Offer has the fields VRP §5 requires" : "Offer does NOT have the shape VRP §5 requires",
               shape
-                ? "kind, protocol_version 0.1 and the twelve required fields. This page does not run the full JSON Schema."
+                ? "kind, protocol_version 1.0 or 0.1 and the twelve required fields. This page does not run the full JSON Schema."
                 : (missing.length ? "Missing: " + missing.join(", ") + ". " : "") +
                     "kind " + JSON.stringify(payload.kind) + ", protocol_version " + JSON.stringify(payload.protocol_version) + " — unknown (VRP §9)."
             )

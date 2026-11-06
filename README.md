@@ -89,7 +89,11 @@ profiles where each verifier chooses which issuers to trust.
 
 [HemmaBo](https://www.hemmabo.com/) is a reference implementation, provider, and federation using VRP-compatible host-owned domains.
 
-**Live proof node:** [villaakerlyckan.se](https://villaakerlyckan.se)
+**Live nodes:** every known implementation, with its evidence, is in
+[IMPLEMENTATIONS.md](./IMPLEMENTATIONS.md) (rendered at
+<https://vacationrentalprotocol.com/implementations>). The reference
+implementer's proof node is [villaakerlyckan.se](https://villaakerlyckan.se);
+the first independent signing node is listed there too.
 
 ## For Coding Agents (Claude Code, Cursor, Codex)
 

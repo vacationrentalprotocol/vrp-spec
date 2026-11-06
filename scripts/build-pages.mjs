@@ -27,6 +27,10 @@ import { ORIGIN, GH, escHtml, mdToHtml, rewriteLinks, summarize } from "./lib/ma
 const root = process.cwd();
 const SOURCE_DIRS = ["spec", "docs"];
 const EXCLUDED = new Set(["docs/source-pack.md"]);
+// Root-level Markdown rendered at its own clean URL: the implementations list
+// is a page a cold agent can find (2026-11-06: /implementations was 404 and the
+// list lived only on GitHub).
+const ROOT_FILES = { "IMPLEMENTATIONS.md": "implementations" };
 const OUT_DIR = "pages";
 const SITE_NAME = "Vacation Rental Protocol (VRP)";
 
@@ -40,7 +44,7 @@ function walkMarkdown(dir, result = []) {
 }
 
 export function sourceFiles() {
-  return SOURCE_DIRS.flatMap((d) => walkMarkdown(d)).filter((f) => !EXCLUDED.has(f)).sort();
+  return [...SOURCE_DIRS.flatMap((d) => walkMarkdown(d)).filter((f) => !EXCLUDED.has(f)).sort(), ...Object.keys(ROOT_FILES)];
 }
 
 // The landing page's navigation, read from index.html so the two never drift.
@@ -52,10 +56,17 @@ function siteNav() {
 }
 
 function cleanUrlFor(file) {
+  if (ROOT_FILES[file]) return `${ORIGIN}/${ROOT_FILES[file]}`;
   return `${ORIGIN}/${file.replace(/\.md$/, "")}`;
 }
 
+// The Markdown twin a page links: the source file itself for a root-level page.
+function markdownUrlFor(file) {
+  return ROOT_FILES[file] ? `${ORIGIN}/${file}` : `${cleanUrlFor(file)}.md`;
+}
+
 function outputPathFor(file) {
+  if (ROOT_FILES[file]) return `${OUT_DIR}/${ROOT_FILES[file]}.html`;
   return `${OUT_DIR}/${file.replace(/\.md$/, ".html")}`;
 }
 
@@ -85,6 +96,7 @@ export function renderPage(file, md, nav) {
   // "name | Vacation Rental Protocol", unless the name already carries it.
   const fullTitle = /Vacation Rental Protocol/i.test(pageTitle) ? pageTitle : `${pageTitle} | Vacation Rental Protocol`;
   const url = cleanUrlFor(file);
+  const mdUrl = markdownUrlFor(file);
   const body = mdToHtml(rewriteLinks(md, file), { headingIds: true });
   const section = file.startsWith("spec/") ? "Specification" : "Documentation";
   return `<!doctype html>
@@ -104,7 +116,7 @@ export function renderPage(file, md, nav) {
     <meta name="twitter:description" content="${escHtml(description)}" />
     <meta name="robots" content="index,follow" />
     <link rel="canonical" href="${url}" />
-    <link rel="alternate" type="text/markdown" href="${url}.md" title="Markdown source" />
+    <link rel="alternate" type="text/markdown" href="${mdUrl}" title="Markdown source" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/styles.css" />
     <style>
@@ -132,7 +144,7 @@ ${jsonLd(url, pageTitle, description, file)}
 ${nav}
 
     <main class="doc">
-      <p class="doc-meta">${section} · <a href="${url}.md">Markdown source</a> · <a href="${GH}/blob/main/${file}">Edit on GitHub</a> · CC0 1.0</p>
+      <p class="doc-meta">${section} · <a href="${mdUrl}">Markdown source</a> · <a href="${GH}/blob/main/${file}">Edit on GitHub</a> · CC0 1.0</p>
       <article>
 ${body}
       </article>

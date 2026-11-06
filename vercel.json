@@ -499,6 +499,32 @@
           "value": "public, max-age=3600"
         }
       ]
+    },
+    {
+      "source": "/IMPLEMENTATIONS.md",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/markdown; charset=utf-8"
+        },
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/implementations>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
+      "source": "/implementations",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/html; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
     }
   ],
   "rewrites": [
@@ -597,6 +623,10 @@
     {
       "source": "/docs/:dir/:slug",
       "destination": "/pages/docs/:dir/:slug"
+    },
+    {
+      "source": "/implementations",
+      "destination": "/pages/implementations"
     }
   ]
 }

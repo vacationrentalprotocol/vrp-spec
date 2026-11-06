@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ADR 0014: Independent Approval of Substantive Changes | Vacation Rental Protocol</title>
+    <meta name="description" content="This record is itself a substantive change (GOVERNANCE.md §12)." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="ADR 0014: Independent Approval of Substantive Changes" />
+    <meta property="og:description" content="This record is itself a substantive change (GOVERNANCE.md §12)." />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/adr/0014-independent-approval" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="ADR 0014: Independent Approval of Substantive Changes" />
+    <meta name="twitter:description" content="This record is itself a substantive change (GOVERNANCE.md §12)." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/adr/0014-independent-approval" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/adr/0014-independent-approval.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/adr/0014-independent-approval#techarticle",
+  "headline": "ADR 0014: Independent Approval of Substantive Changes",
+  "description": "This record is itself a substantive change (GOVERNANCE.md §12).",
+  "url": "https://vacationrentalprotocol.com/docs/adr/0014-independent-approval",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/adr/0014-independent-approval.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0014-independent-approval.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/adr/0014-independent-approval.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0014-independent-approval.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="adr-0014-independent-approval-of-substantive-changes">ADR 0014: Independent Approval of Substantive Changes</h1>
+<p><strong>Status:</strong> Proposed <strong>Date:</strong> 2026-11-04 (proposed)</p>
+<p><strong>Related:</strong> <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/GOVERNANCE.md">GOVERNANCE.md</a> §4, §8, §12, <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/MAINTAINERS.md">MAINTAINERS.md</a>, <a href="https://vacationrentalprotocol.com/docs/adr/0002-no-gatekeeper-trust-and-interop">ADR 0002</a>, <a href="https://vacationrentalprotocol.com/docs/adr/0003-github-org-segregation">ADR 0003</a>, <a href="https://vacationrentalprotocol.com/docs/adr/0015-review-period">ADR 0015</a>, <a href="https://vacationrentalprotocol.com/docs/adr/0016-shared-custody">ADR 0016</a>.</p>
+<p>This record is itself a substantive change (GOVERNANCE.md §12). It is in force only after at least seven days of review with no maintainer objecting and approval from two maintainers on its current head, and after it is merged (§4). Until then GOVERNANCE.md as it reads on <code>main</code> governs, and nothing in this record applies.</p>
+<h2 id="context">Context</h2>
+<p>GOVERNANCE.md §4 requires, once two maintainers are active, &quot;approval from two maintainers&quot; for a substantive change (read at <code>5db83f4</code>, lines 81–86). It does not say which two. MAINTAINERS.md discloses that the lead maintainer and the project-continuity maintainer &quot;are not independent of each other&quot; (lines 30–32), and that the third maintainer, an independent implementer, was added on 2026-10-23. Under the text as written, a substantive change can therefore be approved by two maintainers who are not independent of each other, and merged by one of them.</p>
+<p>The rule applies to every substantive change, including one that would weaken Core v0.1 §2 (a node is a domain registered for the host, never a name under another party's domain). The rule as written does not protect that section, or any other, against a change approved inside one organization.</p>
+<p>This is the pattern the larger standards bodies avoid. RFC 6410 §2.2 (read 2026-11-04): a document advances &quot;in an IETF-wide Last Call of at least four weeks&quot; confirmed by the IESG, not by its authors, and only when &quot;there are at least two independent interoperating implementations&quot;. The W3C Process Document (18 August 2025, §6.3.2, read 2026-11-04) asks, before a specification advances, &quot;are there implementations created by people other than the authors of the specification?&quot;. In both, someone other than the author has to say yes.</p>
+<p>The practice has been better than the text: pull request #178 (ADR 0013) was approved by the independent maintainer on 2026-11-01 11:26:27 UTC and by the continuity maintainer on 2026-11-02 06:00:50 UTC (read from the pull request's timeline). This record writes that practice into the rule, so that it holds whoever is at the table.</p>
+<h2 id="decision">Decision</h2>
+<p><strong>D1. One independent approval.</strong> Of the two approvals GOVERNANCE.md §4 requires for a substantive change, at least one MUST come from a maintainer who is independent of the change's author. The author's own approval never counts toward the two.</p>
+<p><strong>D2. Independence.</strong> Two maintainers are independent of each other when neither is employed by, contracted to, an owner of, or a family member of the other or of the other's organization. MAINTAINERS.md records, for each maintainer, the organizations and maintainers they are not independent of, as it does today in its &quot;Disclosure&quot; section. A maintainer who is unsure declares the relationship; a declared relationship counts as non-independence.</p>
+<p><strong>D3. Merge.</strong> The maintainer who merges a substantive change MUST be one of its approvers or the lead maintainer, and MUST NOT merge before the review period of §4 has run from the last &quot;ready for review&quot; and both approvals are on the current head. A change that is converted to draft, or whose head changes, starts its review period again.</p>
+<p><strong>D4. When no independent maintainer is available.</strong> If no maintainer independent of the author is active (GOVERNANCE.md §8), a substantive change waits. It is not approved by two non-independent maintainers in the meantime. Restoring an independent maintainer follows §8.</p>
+<p><strong>D5. GOVERNANCE.md text.</strong> On acceptance, §4's bullet &quot;Two approvals once two maintainers are active&quot; gains the sentence: &quot;At least one of the two approvals comes from a maintainer independent of the change's author, as ADR 0014 defines independence; the author's own approval does not count.&quot; §12 is unchanged.</p>
+<h2 id="consequences">Consequences</h2>
+<ul><li>No substantive change, including a change to Core v0.1 §2, can be approved inside one organization. This holds for the reference implementer as for any other operator (ADR 0002): the rule names no company and favours none.</li><li>The lead maintainer keeps the merge and the editorial role; what changes is who must have said yes first.</li><li>The project depends on having at least one independent maintainer active. That is the state since 2026-10-23 (MAINTAINERS.md). GOVERNANCE.md §8 is the path to more.</li><li>Editorial and non-breaking changes are unchanged: one maintainer approves.</li><li>This record, ADR 0015 and ADR 0016 are approved under the rule they describe: the independent maintainer's approval is one of the two for each of them.</li></ul>
+      </article>
+    </main>
+  </body>
+</html>

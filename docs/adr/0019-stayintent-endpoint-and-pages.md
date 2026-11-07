@@ -40,13 +40,16 @@ The StayIntent schemas are not read by any Core verifier.
 
 ## Decision
 
-**D1. `endpoints.stayintent` (§10).** A node MAY name a StayIntent index in its
-discovery document under `endpoints.stayintent`: an absolute `https` URL without
-userinfo, on any domain. It names *an* index that answers for the node, not
-*the* index; any number of indexes may cover the same node, a client may use
-any, and the named index's answer has no more authority than another's. A node
-MUST NOT name an index that does not answer for it, which is testable. The
-Core discovery schema does not change.
+**D1. `endpoints.stayintent` (§10).** A node MAY name the StayIntent indexes
+that answer for it in its discovery document under `endpoints.stayintent`: an
+array of one to ten absolute `https` URLs without userinfo, on any domain, each
+once, as a set whose order carries no meaning. A list, not a single URL: a
+single URL would hand the one index a node can name a head start on that node,
+against §2. It names indexes that answer for the node, never *the* index; any
+number of indexes may cover the same node, a client may use any, named or not,
+and a named index's answer has no more authority than another's. A node MUST
+NOT name an index that does not answer for it, which is testable. A client
+ignores an invalid member in full. The Core discovery schema does not change.
 
 **D2. Open to any client (§10).** An index named in a discovery document MUST
 answer without authentication or registration; it MAY rate-limit. A public
@@ -61,11 +64,14 @@ identity beyond what rate limiting needs. No other method in this version.
 
 **D4. Pages (§3.1, §4.4).** A response MAY carry `next_cursor` (opaque, 1 to
 1024 characters); the client repeats the identical query with `cursor` set to
-it. A chain (a first page and every page its cursors reach) holds every match
-as of its first page, each node at most once, in ascending code-point order of
-`canonical_domain`. No empty page carries a cursor; the last page may be empty.
-`match` describes the chain. A response MAY carry `match_count`, the number of
-nodes in the chain, the same on every page that carries it.
+it. Across a chain (a first page and every page its cursors reach) the nodes
+are in ascending code-point order of `canonical_domain`, each at most once, and
+paging itself never omits or repeats a node: every node that matches
+throughout the reading appears exactly once, while a node that begins or stops
+matching meanwhile may be present or absent. No snapshot is required of the
+index. No empty page carries a cursor; the last page may be empty. `match`
+describes the chain. A response MAY carry `match_count`, the number of matches
+as counted at the first page, the same on every page that carries it.
 
 **D5. The client's duty (§4.4).** A client MUST NOT present what it has read as
 all the matches while the last page carried `next_cursor`. A client that reads
@@ -75,24 +81,30 @@ one page has read the alphabetically first matches, not the best, and says so.
 chooses is the index's choice. Ascending `canonical_domain` is the one order a
 client can recompute, no index can sell, and §4.2 already names as the internal
 order implementations use. It carries no meaning, within a page or across a
-chain, exactly as before.
+chain, exactly as before. It is also what makes paging stateless: a cursor
+that carries the last domain of a page lets the index answer the next page
+from its current data with no state between requests, and the completeness
+rule of D4 holds without a snapshot. A rule that required the first page's
+view to be frozen across requests would have been correct in neutrality and
+expensive to implement; this one is both.
 
 **D7. Schemas and vectors.** `stayintent-query-v0.1.schema.json` gains the
 optional `cursor`; `stayintent-response-v0.1.schema.json` gains the optional
 `next_cursor` and `match_count`. Both schemas keep `additionalProperties: false`,
 so a response that carries anything else is still invalid.
 `examples/conformance/stayintent/pages.v0.1.json` (18 chains, 4 of them
-controls, and 7 endpoint values) is checked offline by
+controls, and 11 `endpoints.stayintent` lists) is checked offline by
 `scripts/verify-stayintent-pages.mjs` in `npm test`.
 `scripts/validate-artifacts.mjs` now checks every StayIntent vector against the
 StayIntent schemas, which it did not before, and applies an
 `additionalProperties` schema to the members it governs (the response schema's
 `trust_summary` had one that was never enforced).
 
-**D8. At risk.** Three parts may change or go on implementation evidence
+**D8. At risk.** Four parts may change or go on implementation evidence
 without this record being withdrawn: ascending domain as the chain order (the
-requirement that the order is one anyone can recompute stays), `match_count`,
-and the no-authentication rule of D2. Any other change to the normative text is
+requirements that the order is one anyone can recompute and that paging never
+omits or repeats stay), `match_count`, the no-authentication rule of D2, and
+the cap of ten entries in D1. Any other change to the normative text is
 a new proposal under GOVERNANCE.md §4 (and restarts the period under ADR 0015
 D2–D3, once accepted).
 
@@ -105,9 +117,14 @@ D2–D3, once accepted).
 - **Require the index on the node's own domain.** Rejected: an index covers
   many nodes, and the software that runs a node often runs the index. A
   per-node index on the node's domain is allowed, not required.
-- **A list of indexes instead of one URL.** Open (see below). One URL is the
-  minimum that makes a node reachable through an index; the text already says
-  any number of indexes may cover a node.
+- **One URL instead of a list.** Rejected: the one index a node could name
+  would get a head start on that node, and "no index is privileged" (§2) would
+  hold in the text and fail in the field. A list costs nothing now; a change
+  from string to array after acceptance would break clients.
+- **A frozen view across the pages of a chain.** Rejected: correct in
+  neutrality, but it forces every index to keep per-client state or snapshots.
+  With a fixed order, a cursor that carries the last domain gives the same
+  guarantee against paging itself omitting or repeating a node, with no state.
 - **`GET` with the query in the URL.** Not in this version: the query is nested
   JSON, and one method is enough to interoperate. A later version may add it.
 - **Offset paging (`page=3`).** Rejected: offsets shift when matches change
@@ -146,8 +163,7 @@ D2–D3, once accepted).
 
 ## Open questions for review
 
-1. Whether a node may name more than one index (an array), or one is enough
-   when any index may cover any node.
+1. The cap of ten entries in `endpoints.stayintent` (at risk, D8).
 2. Whether `match_count` earns its place (at risk, D8).
 3. Whether a `GET` binding is wanted for cacheability.
 4. The no-authentication rule (D2, at risk): whether rate limiting alone is

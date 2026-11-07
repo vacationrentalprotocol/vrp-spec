@@ -1134,15 +1134,22 @@ twenty, unless the choice is nobody's.
   same query with `cursor` set to it (§3.1). Absent, the page is the last.
 - A **chain** is a first page and every page reached by following its cursors.
   Across a chain the nodes MUST be in ascending order of `canonical_domain` by
-  code points, each node at most once, and the chain MUST contain every node
-  that matched the query when its first page was made (live availability may
-  change between pages). *At risk (ADR 0019 D8):* ascending domain as the rule;
-  the requirement that the rule is one anyone can recompute stays.
+  code points, each node at most once. Paging itself MUST NOT omit or repeat a
+  node: every node that matches the query throughout the reading of the chain
+  appears in it exactly once. A node that begins or stops matching while the
+  chain is read (live availability) MAY be present or absent. *At risk (ADR
+  0019 D8):* ascending domain as the rule; the requirements that the rule is
+  one anyone can recompute, and that paging never omits or repeats, stay.
+- No snapshot is needed (informative). Because the order is fixed, a cursor can
+  carry the last `canonical_domain` of the page it ends, and the next page is
+  the first matches whose domain sorts after it; the index keeps no state
+  between requests. The cursor stays opaque to the client, and an index that
+  prefers to keep a snapshot MAY.
 - The index chooses the page size. It MUST NOT return an empty page that
   carries `next_cursor`; the last page MAY be empty.
-- A response MAY carry `match_count`: the number of nodes in the whole chain
-  when its first page was made, a non-negative integer, the same on every page
-  that carries it. It counts matches and says nothing about any node. *At risk
+- A response MAY carry `match_count`: the number of matches as the index
+  counted them when it made the first page, a non-negative integer, the same
+  on every page that carries it. It counts matches and says nothing about any node. *At risk
   (ADR 0019 D8).*
 - `match` describes the chain, not the page: `"yes"` on every page of a chain
   with at least one node, `"no"` only on a chain with none.
@@ -1198,7 +1205,7 @@ Wikidata QID + OSM.
   `match_count`, chains a client must reject (a node repeated across pages,
   pages out of order, an empty page with a cursor, a chain that does not end, a
   count that does not add up, a ranking signal, a monetary value), and
-  `endpoints.stayintent` values a client accepts and rejects (§10).
+  `endpoints.stayintent` lists a client accepts and rejects (§10).
   `scripts/verify-stayintent-pages.mjs` checks it offline in `npm test`.
 - **Conformance:** the StayIntent contract is defined by this specification and
   its conformance vectors. A conformant surface is any deterministic
@@ -1216,32 +1223,43 @@ Ed25519 trust binding that those transports do not specify.
 #### 10. Finding an index: `endpoints.stayintent` (normative)
 
 A client that knows one node can find a StayIntent index without a catalog: a
-node MAY name one in its discovery document (Core v0.1 §2), under `endpoints`:
+node MAY name the indexes it knows answer for it, in its discovery document
+(Core v0.1 §2), under `endpoints`:
 
 ```json
 "endpoints": {
-  "stayintent": "https://index.example.net/stayintent"
+  "stayintent": [
+    "https://example.com/.well-known/vrp/stayintent",
+    "https://index.example.net/stayintent"
+  ]
 }
 ```
 
-- The value is an absolute `https` URL with no userinfo. It MAY be on another
-  domain than the node's: an index covers many nodes, and the software that
-  runs a node often runs the index. A node without the member is a node like
-  any other, and a client that does not know the member ignores it (Well-Known
-  URI v0.1 §3). The Core discovery schema does not change: `endpoints` is an
-  open object.
-- The URL names **an** index that answers for this node among others, not
-  **the** index. Any number of indexes MAY cover the same node (§2), a client
-  MAY use any of them, and the response of the index a node names has no more
-  authority than any other's: pointers only, verified at each node (§5).
+- The value is an array of one to ten entries, each an absolute `https` URL
+  with no userinfo, each once. An entry MAY be on another domain than the
+  node's: an index covers many nodes, and the software that runs a node often
+  runs an index. A node without the member is a node like any other, and a
+  client that does not know the member ignores it (Well-Known URI v0.1 §3).
+  The Core discovery schema does not change: `endpoints` is an open object.
+  *At risk (ADR 0019 D8):* the cap of ten.
+- The array is a set: its order carries no meaning, and a client MUST NOT
+  prefer an index by its position. It names indexes that answer for this node,
+  never **the** index. Any number of indexes MAY cover the same node (§2), a
+  client MAY use any of them, named here or not, and the response of a named
+  index has no more authority than any other's: pointers only, verified at
+  each node (§5). A list of one is allowed: a node that knows only the index
+  its own software runs names that one, and other indexes may still cover it.
 - An index named in a discovery document MUST answer the query of §10.1
   without authentication or registration; it MAY rate-limit. A public pointer
   to a gated index would make the gate the catalog. *At risk (ADR 0019 D8).*
 - A node MUST NOT name an index that does not answer for it. That is testable:
   the node appears in the index's chain for a query the node matches.
-- A client treats the URL as untrusted input. It MUST NOT connect to an address
-  that is not globally reachable (loopback, private, link-local and the like),
-  and it bounds its own fetches and time.
+- A client treats every entry as untrusted input. It MUST NOT connect to an
+  address that is not globally reachable (loopback, private, link-local and
+  the like), and it bounds its own fetches and time.
+- A client ignores the whole member, as it would an unknown field, when it is
+  not an array, is empty, has more than ten entries, repeats an entry, or has
+  an entry that is not such a URL. The conformance vectors name these cases.
 
 ##### 10.1 HTTP binding
 

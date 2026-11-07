@@ -1,7 +1,7 @@
 {
   "name": "vrp-stayintent-pages-v0.1",
   "protocol_version": "0.1",
-  "description": "Pages (spec/stayintent-discovery-v0.1.md §4.4) and the endpoint a node names in its discovery document (§10). chains[].pages are the pages of one chain in reading order; expected.reason is null for a chain a client accepts, else the name of the first rule it breaks (§4.4; not_response, ranking_signal, monetary_value, trust_summary_not_fact, cursor_invalid, match_count_invalid, cursor_missing, empty_page_with_cursor, chain_open, duplicate_node, not_ascending, match_flag_wrong, match_count_mismatch). endpoints[].value are values of endpoints.stayintent; reasons not_string, url_invalid, url_not_https, url_userinfo. Whether an address is globally reachable (§10) is a runtime check, not a vector. Example domains only; no implementation or real node is named.",
+  "description": "Pages (spec/stayintent-discovery-v0.1.md §4.4) and the endpoint a node names in its discovery document (§10). chains[].pages are the pages of one chain in reading order; expected.reason is null for a chain a client accepts, else the name of the first rule it breaks (§4.4; not_response, ranking_signal, monetary_value, trust_summary_not_fact, cursor_invalid, match_count_invalid, cursor_missing, empty_page_with_cursor, chain_open, duplicate_node, not_ascending, match_flag_wrong, match_count_mismatch). endpoints[].value are values of endpoints.stayintent (an array of one to ten https URLs, a set); reasons not_array, empty, too_many_entries, not_string, url_invalid, url_not_https, url_userinfo, duplicate_entry. Whether an address is globally reachable (§10) is a runtime check, not a vector. Example domains only; no implementation or real node is named.",
   "query": {
     "protocol": "vrp-stayintent",
     "protocol_version": "0.1",
@@ -994,55 +994,118 @@
   "endpoints": [
     {
       "name": "control",
-      "value": "https://index.example.net/stayintent",
+      "value": [
+        "https://index.example.net/stayintent"
+      ],
+      "note": "A list of one is allowed.",
       "expected": {
         "reason": null
       }
     },
     {
-      "name": "off_node",
-      "value": "https://index.example.org/v1/stayintent",
+      "name": "control_two",
+      "value": [
+        "https://example.com/.well-known/vrp/stayintent",
+        "https://index.example.net/stayintent"
+      ],
+      "note": "The node's own domain and another; order carries no meaning.",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "name": "control_off_node",
+      "value": [
+        "https://index.example.org/v1/stayintent"
+      ],
       "note": "Another domain than the node's is allowed: an index covers many nodes (§10).",
       "expected": {
         "reason": null
       }
     },
     {
-      "name": "on_node",
-      "value": "https://example.com/.well-known/vrp/stayintent",
-      "note": "On the node's own domain is allowed too.",
+      "name": "not_array_string",
+      "value": "https://index.example.net/stayintent",
+      "note": "A single URL is not the member's shape.",
       "expected": {
-        "reason": null
+        "reason": "not_array"
       }
     },
     {
-      "name": "http",
-      "value": "http://index.example.net/stayintent",
+      "name": "empty",
+      "value": [],
       "expected": {
-        "reason": "url_not_https"
+        "reason": "empty"
       }
     },
     {
-      "name": "userinfo",
-      "value": "https://user:secret@index.example.net/stayintent",
+      "name": "too_many_entries",
+      "value": [
+        "https://index-01.example.net/stayintent",
+        "https://index-02.example.net/stayintent",
+        "https://index-03.example.net/stayintent",
+        "https://index-04.example.net/stayintent",
+        "https://index-05.example.net/stayintent",
+        "https://index-06.example.net/stayintent",
+        "https://index-07.example.net/stayintent",
+        "https://index-08.example.net/stayintent",
+        "https://index-09.example.net/stayintent",
+        "https://index-10.example.net/stayintent",
+        "https://index-11.example.net/stayintent"
+      ],
+      "note": "Eleven entries; the cap is ten.",
       "expected": {
-        "reason": "url_userinfo"
+        "reason": "too_many_entries"
       }
     },
     {
-      "name": "not_string",
-      "value": {
-        "url": "https://index.example.net/stayintent"
-      },
+      "name": "entry_not_string",
+      "value": [
+        "https://index.example.net/stayintent",
+        {
+          "url": "https://example.com/.well-known/vrp/stayintent"
+        }
+      ],
       "expected": {
         "reason": "not_string"
       }
     },
     {
-      "name": "not_a_url",
-      "value": "index.example.net/stayintent",
+      "name": "entry_http",
+      "value": [
+        "https://index.example.net/stayintent",
+        "http://index.example.net/stayintent"
+      ],
+      "expected": {
+        "reason": "url_not_https"
+      }
+    },
+    {
+      "name": "entry_userinfo",
+      "value": [
+        "https://user:secret@index.example.net/stayintent"
+      ],
+      "expected": {
+        "reason": "url_userinfo"
+      }
+    },
+    {
+      "name": "entry_not_a_url",
+      "value": [
+        "index.example.net/stayintent"
+      ],
       "expected": {
         "reason": "url_invalid"
+      }
+    },
+    {
+      "name": "duplicate_entry",
+      "value": [
+        "https://index.example.net/stayintent",
+        "https://index.example.net/stayintent"
+      ],
+      "expected": {
+        "reason": "duplicate_entry"
       }
     }
   ]

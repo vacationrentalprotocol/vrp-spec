@@ -9,8 +9,9 @@
 //               where given, is the number of nodes in the chain; and every page
 //               is priceless and rank-free (§4.1–§4.3). Each negative chain
 //               breaks one rule and carries the name of its case.
-//   endpoints — values of `endpoints.stayintent` a client accepts (an absolute
-//               https URL without userinfo, on any domain) and rejects (§10).
+//   endpoints — values of `endpoints.stayintent` a client accepts (a set of one
+//               to ten absolute https URLs without userinfo, on any domain) and
+//               rejects (§10).
 //
 // Run directly or via `npm test`:  node scripts/verify-stayintent-pages.mjs
 
@@ -87,8 +88,10 @@ export function checkChain(pages) {
   return null;
 }
 
-/** §10: the value of `endpoints.stayintent`. Returns a reason or null. */
-export function checkStayintentEndpoint(value) {
+export const ENDPOINTS_MAX = 10;
+
+/** §10: one entry of `endpoints.stayintent`. Returns a reason or null. */
+export function checkStayintentEndpointEntry(value) {
   if (typeof value !== "string") return "not_string";
   let url;
   try {
@@ -98,6 +101,19 @@ export function checkStayintentEndpoint(value) {
   }
   if (url.protocol !== "https:") return "url_not_https";
   if (url.username !== "" || url.password !== "") return "url_userinfo";
+  return null;
+}
+
+/** §10: the whole `endpoints.stayintent` member, a set of one to ten entries. Returns a reason or null. */
+export function checkStayintentEndpoints(value) {
+  if (!Array.isArray(value)) return "not_array";
+  if (value.length === 0) return "empty";
+  if (value.length > ENDPOINTS_MAX) return "too_many_entries";
+  for (const entry of value) {
+    const r = checkStayintentEndpointEntry(entry);
+    if (r) return r;
+  }
+  if (new Set(value).size !== value.length) return "duplicate_entry";
   return null;
 }
 
@@ -115,8 +131,8 @@ if (isMain) {
     check(`chain ${c.name}`, got === c.expected.reason, `got ${got}`);
   }
   for (const e of doc.endpoints) {
-    const got = checkStayintentEndpoint(e.value);
-    check(`endpoint ${e.name}`, got === e.expected.reason, `got ${got}`);
+    const got = checkStayintentEndpoints(e.value);
+    check(`endpoints ${e.name}`, got === e.expected.reason, `got ${got}`);
   }
   const total = doc.chains.length + doc.endpoints.length;
   if (failures.length > 0) {

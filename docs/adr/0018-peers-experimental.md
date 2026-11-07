@@ -117,7 +117,7 @@ period under ADR 0015 D2–D3, once accepted).
   strengthen, and it would add key handling to every publisher.
 - **A registry of nodes or of lists.** Out of bounds: GOVERNANCE.md §4 and
   ADR 0002 forbid a central registry, and the W3C TAG's
-  [Web Platform Design Principles](https://www.w3.org/TR/design-principles/#priority-of-constituencies)
+  [Web Platform Design Principles](https://www.w3.org/TR/design-principles/#registries)
   §11.3 reserve a registry for extensions that "a wider set of participants"
   define, which `peers` has none of.
 - **Node discovery inside the StayIntent response.** Rejected: matching a stay

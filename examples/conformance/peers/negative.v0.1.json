@@ -1,0 +1,618 @@
+{
+  "name": "vrp-peers-negative-v0.1",
+  "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+  "description": "peers members a client must ignore in full, with the name of the case (spec/peers-v0.1.md §4 item 1: expected.ignored), and entries it must skip while using the rest (§4 item 2: expected.skipped, with Core §2's reason or self). own_domain is the canonical_domain of the node that publishes the member. schema_valid says whether the member is valid against schemas/peers-v0.1.schema.json; order, the Public Suffix List, closed top-level domains and self are runtime rules the schema cannot express. The controls are valid members.",
+  "sources": {
+    "psl": "Core §2 and examples/conformance/host-domain/vectors.v0.1.json: the ICANN section of the Public Suffix List; these vectors carry only the rules they depend on.",
+    "icann_gtlds": "Core §2: amazon is marked specification13 true in ICANN's gTLD list; booking and hotels are the closed top-level domains Core §2 names."
+  },
+  "psl_icann_rules": [
+    "com",
+    "net",
+    "org",
+    "uk",
+    "co.uk"
+  ],
+  "icann_specification13_tlds": [
+    "amazon"
+  ],
+  "closed_tlds": [
+    "booking",
+    "hotels"
+  ],
+  "cases": [
+    {
+      "name": "control",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "example.co.uk",
+          "example.net",
+          "example.org"
+        ],
+        "updated_at": "2026-11-07T15:00:00Z"
+      },
+      "schema_valid": true,
+      "expected": {
+        "ignored": null,
+        "entries": [
+          "example.co.uk",
+          "example.net",
+          "example.org"
+        ],
+        "skipped": []
+      },
+      "note": "A valid member: three domains in ascending order."
+    },
+    {
+      "name": "control_empty",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": []
+      },
+      "schema_valid": true,
+      "expected": {
+        "ignored": null,
+        "entries": [],
+        "skipped": []
+      },
+      "note": "An empty list is valid and leads nowhere, like no list."
+    },
+    {
+      "name": "control_a_label",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "xn--exmple-cua.net"
+        ]
+      },
+      "schema_valid": true,
+      "expected": {
+        "ignored": null,
+        "entries": [
+          "xn--exmple-cua.net"
+        ],
+        "skipped": []
+      },
+      "note": "An internationalized name in A-label form."
+    },
+    {
+      "name": "not_object_array",
+      "own_domain": "example.com",
+      "peers": [
+        "example.net"
+      ],
+      "schema_valid": false,
+      "expected": {
+        "ignored": "not_object"
+      }
+    },
+    {
+      "name": "not_object_string",
+      "own_domain": "example.com",
+      "peers": "example.net",
+      "schema_valid": false,
+      "expected": {
+        "ignored": "not_object"
+      }
+    },
+    {
+      "name": "unknown_spec_version",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.2",
+        "nodes": [
+          "example.net"
+        ]
+      },
+      "schema_valid": false,
+      "expected": {
+        "ignored": "unknown_spec"
+      },
+      "note": "A version this client does not implement."
+    },
+    {
+      "name": "unknown_spec_missing",
+      "own_domain": "example.com",
+      "peers": {
+        "nodes": [
+          "example.net"
+        ]
+      },
+      "schema_valid": false,
+      "expected": {
+        "ignored": "unknown_spec"
+      }
+    },
+    {
+      "name": "unexpected_member_scores",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "example.net",
+          "example.org"
+        ],
+        "scores": {
+          "example.net": 5,
+          "example.org": 3
+        }
+      },
+      "schema_valid": false,
+      "expected": {
+        "ignored": "unexpected_member"
+      },
+      "note": "Nothing about a listed node belongs in peers (§3)."
+    },
+    {
+      "name": "unexpected_member_featured",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "example.net",
+          "example.org"
+        ],
+        "featured": "example.org"
+      },
+      "schema_valid": false,
+      "expected": {
+        "ignored": "unexpected_member"
+      }
+    },
+    {
+      "name": "updated_at_not_utc",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "example.net"
+        ],
+        "updated_at": "2026-11-07T16:00:00+01:00"
+      },
+      "schema_valid": false,
+      "expected": {
+        "ignored": "updated_at_invalid"
+      }
+    },
+    {
+      "name": "nodes_missing",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1"
+      },
+      "schema_valid": false,
+      "expected": {
+        "ignored": "nodes_invalid"
+      }
+    },
+    {
+      "name": "nodes_object",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": {
+          "example.net": true
+        }
+      },
+      "schema_valid": false,
+      "expected": {
+        "ignored": "nodes_invalid"
+      }
+    },
+    {
+      "name": "too_many_entries",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "node-001.invalid",
+          "node-002.invalid",
+          "node-003.invalid",
+          "node-004.invalid",
+          "node-005.invalid",
+          "node-006.invalid",
+          "node-007.invalid",
+          "node-008.invalid",
+          "node-009.invalid",
+          "node-010.invalid",
+          "node-011.invalid",
+          "node-012.invalid",
+          "node-013.invalid",
+          "node-014.invalid",
+          "node-015.invalid",
+          "node-016.invalid",
+          "node-017.invalid",
+          "node-018.invalid",
+          "node-019.invalid",
+          "node-020.invalid",
+          "node-021.invalid",
+          "node-022.invalid",
+          "node-023.invalid",
+          "node-024.invalid",
+          "node-025.invalid",
+          "node-026.invalid",
+          "node-027.invalid",
+          "node-028.invalid",
+          "node-029.invalid",
+          "node-030.invalid",
+          "node-031.invalid",
+          "node-032.invalid",
+          "node-033.invalid",
+          "node-034.invalid",
+          "node-035.invalid",
+          "node-036.invalid",
+          "node-037.invalid",
+          "node-038.invalid",
+          "node-039.invalid",
+          "node-040.invalid",
+          "node-041.invalid",
+          "node-042.invalid",
+          "node-043.invalid",
+          "node-044.invalid",
+          "node-045.invalid",
+          "node-046.invalid",
+          "node-047.invalid",
+          "node-048.invalid",
+          "node-049.invalid",
+          "node-050.invalid",
+          "node-051.invalid",
+          "node-052.invalid",
+          "node-053.invalid",
+          "node-054.invalid",
+          "node-055.invalid",
+          "node-056.invalid",
+          "node-057.invalid",
+          "node-058.invalid",
+          "node-059.invalid",
+          "node-060.invalid",
+          "node-061.invalid",
+          "node-062.invalid",
+          "node-063.invalid",
+          "node-064.invalid",
+          "node-065.invalid",
+          "node-066.invalid",
+          "node-067.invalid",
+          "node-068.invalid",
+          "node-069.invalid",
+          "node-070.invalid",
+          "node-071.invalid",
+          "node-072.invalid",
+          "node-073.invalid",
+          "node-074.invalid",
+          "node-075.invalid",
+          "node-076.invalid",
+          "node-077.invalid",
+          "node-078.invalid",
+          "node-079.invalid",
+          "node-080.invalid",
+          "node-081.invalid",
+          "node-082.invalid",
+          "node-083.invalid",
+          "node-084.invalid",
+          "node-085.invalid",
+          "node-086.invalid",
+          "node-087.invalid",
+          "node-088.invalid",
+          "node-089.invalid",
+          "node-090.invalid",
+          "node-091.invalid",
+          "node-092.invalid",
+          "node-093.invalid",
+          "node-094.invalid",
+          "node-095.invalid",
+          "node-096.invalid",
+          "node-097.invalid",
+          "node-098.invalid",
+          "node-099.invalid",
+          "node-100.invalid",
+          "node-101.invalid"
+        ]
+      },
+      "schema_valid": false,
+      "expected": {
+        "ignored": "too_many_entries"
+      },
+      "note": "101 entries; the cap is 100 (§3.3)."
+    },
+    {
+      "name": "entry_object",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          {
+            "domain": "example.net",
+            "rank": 1
+          }
+        ]
+      },
+      "schema_valid": false,
+      "expected": {
+        "ignored": "entry_not_domain"
+      }
+    },
+    {
+      "name": "entry_url",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "https://example.net/"
+        ]
+      },
+      "schema_valid": false,
+      "expected": {
+        "ignored": "entry_not_domain"
+      },
+      "note": "A domain, never a URL: the client builds the URL itself (§5)."
+    },
+    {
+      "name": "entry_port",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "example.net:443"
+        ]
+      },
+      "schema_valid": false,
+      "expected": {
+        "ignored": "entry_not_domain"
+      }
+    },
+    {
+      "name": "entry_uppercase",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "Example.net"
+        ]
+      },
+      "schema_valid": false,
+      "expected": {
+        "ignored": "entry_not_domain"
+      }
+    },
+    {
+      "name": "entry_trailing_dot",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "example.net."
+        ]
+      },
+      "schema_valid": false,
+      "expected": {
+        "ignored": "entry_not_domain"
+      }
+    },
+    {
+      "name": "entry_u_label",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "exämple.net"
+        ]
+      },
+      "schema_valid": false,
+      "expected": {
+        "ignored": "entry_not_domain"
+      },
+      "note": "Internationalized labels are written in A-label form (xn--exmple-cua.net)."
+    },
+    {
+      "name": "entry_single_label",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "localhost"
+        ]
+      },
+      "schema_valid": false,
+      "expected": {
+        "ignored": "entry_not_domain"
+      }
+    },
+    {
+      "name": "entry_trailing_newline",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "example.net\n"
+        ]
+      },
+      "schema_valid": false,
+      "expected": {
+        "ignored": "entry_not_domain"
+      },
+      "note": "The schema pattern ends in $(?!\\n) for engines whose $ also matches before a final line break (ADR 0012 D3)."
+    },
+    {
+      "name": "duplicate_entry",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "example.net",
+          "example.net"
+        ]
+      },
+      "schema_valid": false,
+      "expected": {
+        "ignored": "duplicate_entry"
+      }
+    },
+    {
+      "name": "not_sorted",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "example.org",
+          "example.net"
+        ]
+      },
+      "schema_valid": true,
+      "expected": {
+        "ignored": "not_sorted"
+      },
+      "note": "Valid against the schema, whose grammar cannot express order; a runtime rule (§3.2)."
+    },
+    {
+      "name": "self",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "example.com",
+          "example.net"
+        ]
+      },
+      "schema_valid": true,
+      "expected": {
+        "ignored": null,
+        "entries": [
+          "example.net"
+        ],
+        "skipped": [
+          {
+            "domain": "example.com",
+            "reason": "self"
+          }
+        ]
+      },
+      "note": "The listing node's own domain is skipped (§3.1 item 3)."
+    },
+    {
+      "name": "subdomain",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "example.net",
+          "www.example.org"
+        ]
+      },
+      "schema_valid": true,
+      "expected": {
+        "ignored": null,
+        "entries": [
+          "example.net"
+        ],
+        "skipped": [
+          {
+            "domain": "www.example.org",
+            "reason": "not_host_owned"
+          }
+        ]
+      },
+      "note": "Core §2: a name under another domain is not a canonical_domain."
+    },
+    {
+      "name": "public_suffix",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "co.uk",
+          "example.net"
+        ]
+      },
+      "schema_valid": true,
+      "expected": {
+        "ignored": null,
+        "entries": [
+          "example.net"
+        ],
+        "skipped": [
+          {
+            "domain": "co.uk",
+            "reason": "public_suffix"
+          }
+        ]
+      }
+    },
+    {
+      "name": "platform_name",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "example.net",
+          "villa.myshopify.com"
+        ]
+      },
+      "schema_valid": true,
+      "expected": {
+        "ignored": null,
+        "entries": [
+          "example.net"
+        ],
+        "skipped": [
+          {
+            "domain": "villa.myshopify.com",
+            "reason": "not_host_owned"
+          }
+        ]
+      },
+      "note": "A name a platform hands out under its own domain; the Public Suffix List's PRIVATE section does not count (Core §2)."
+    },
+    {
+      "name": "closed_tld",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "example.net",
+          "villa.booking"
+        ]
+      },
+      "schema_valid": true,
+      "expected": {
+        "ignored": null,
+        "entries": [
+          "example.net"
+        ],
+        "skipped": [
+          {
+            "domain": "villa.booking",
+            "reason": "closed_tld"
+          }
+        ]
+      }
+    },
+    {
+      "name": "brand_tld",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "example.net",
+          "villa.amazon"
+        ]
+      },
+      "schema_valid": true,
+      "expected": {
+        "ignored": null,
+        "entries": [
+          "example.net"
+        ],
+        "skipped": [
+          {
+            "domain": "villa.amazon",
+            "reason": "closed_tld"
+          }
+        ]
+      }
+    }
+  ]
+}

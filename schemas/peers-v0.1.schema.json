@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vacationrentalprotocol.com/schemas/peers-v0.1.schema.json",
+  "title": "VRP Peers v0.1 (experimental)",
+  "description": "The optional `peers` member of a VRP discovery document (spec/peers-v0.1.md): the domains of other VRP nodes this node knows, and nothing else. Not part of Core conformance; the Core discovery schema is unchanged. An entry is no trust relation, endorsement or ranking: each listed domain proves itself at its own domain. Rules this grammar cannot express are runtime rules in spec/peers-v0.1.md §3–§4: ascending order, the Public Suffix List and closed top-level domains, and that an entry is not the listing node's own canonical_domain.",
+  "type": "object",
+  "required": ["spec", "nodes"],
+  "additionalProperties": false,
+  "properties": {
+    "spec": {
+      "const": "https://vacationrentalprotocol.com/spec/peers-v0.1"
+    },
+    "nodes": {
+      "type": "array",
+      "maxItems": 100,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "description": "A domain written as Core §2 item 1 writes canonical_domain: lowercase ASCII, A-labels, at least two labels, no trailing dot, no scheme, path, port or userinfo. The trailing (?!\\n) keeps engines whose $ also matches before a final line break from accepting one (ADR 0012 D3).",
+        "pattern": "^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$(?!\\n)"
+      }
+    },
+    "updated_at": {
+      "type": "string",
+      "description": "RFC 3339 date-time in UTC: when the publisher last changed nodes. States nothing about any listed node.",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\\.[0-9]+)?Z$(?!\\n)"
+    }
+  }
+}

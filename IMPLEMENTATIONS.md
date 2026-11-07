@@ -8,7 +8,7 @@ implementations and explains how to add yours.
 
 | Implementation | Type | License | Notes |
 | --- | --- | --- | --- |
-| [hemmabo-mcp-server](https://github.com/HemmaBo-se/hemmabo-mcp-server) | Reference implementation (MCP server, verifier) | Apache-2.0 | Maintained by HemmaBo, the commercial reference implementer (disclosed in [MAINTAINERS.md](MAINTAINERS.md)). Reachable as [an app in ChatGPT](https://chatgpt.com/plugins/plugin_asdk_app_69fccc58e3088191a22cffe6fd5ad075) and at `https://www.hemmabo.com/mcp` |
+| [hemmabo-mcp-server](https://github.com/HemmaBo-se/hemmabo-mcp-server) | Reference implementation (MCP server, verifier) | Apache-2.0 | Maintained by HemmaBo, the commercial reference implementer (disclosed in [MAINTAINERS.md](MAINTAINERS.md)). Reachable at `https://www.hemmabo.com/mcp` |
 | [villaakerlyckan.se](https://villaakerlyckan.se/.well-known/vacation-rental.json) | Live production node | — | Serves signed offers and a JWKS on its own domain |
 | [vrp-independent-verifier](https://github.com/Swarnabha753/vrp-independent-verifier) | Independent verifier | MIT | Standalone implementation with no dependency on the JavaScript implementation in this repository |
 | [apartmamatevz.si](https://apartmamatevz.si/.well-known/vacation-rental.json) | Independent signing node (CM PRO, migrated from CM Free 2026-10-29) | [AGPL-3.0](https://github.com/viljemd-hub/channel-manager/blob/main/public/api/vrp_offer.php) | Self-hosted. key_custody: self. Discovery, JWKS and signed offers verified 2026-10-20. |

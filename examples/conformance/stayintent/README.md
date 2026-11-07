@@ -16,6 +16,7 @@ until its upstream is deterministic.
 | --- | --- |
 | [`positive.v0.1.json`](./positive.v0.1.json) | A query that matches: the response shape, and that a pointed node's offer verifies. |
 | [`no-match.v0.1.json`](./no-match.v0.1.json) | A query that matches nothing → `match: "no"`, empty `nodes`. |
+| [`pages.v0.1.json`](./pages.v0.1.json) | Pages (§4.4) and the endpoint in discovery (§10): one chain of three pages over five nodes in ascending domain order with `match_count`; chains a client must reject, each with the name of its case; `endpoints.stayintent` values accepted and rejected. Checked offline by [`scripts/verify-stayintent-pages.mjs`](../../../scripts/verify-stayintent-pages.mjs) in `npm test`. Example domains only. |
 
 The reference verifier is
 [`scripts/verify-stayintent.mjs`](../../../scripts/verify-stayintent.mjs); anyone

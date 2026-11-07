@@ -145,6 +145,12 @@ function validate(schema, value, state, at = "$") {
           add(`unexpected additional property ${key}`);
         }
       }
+    } else if (schema.additionalProperties && typeof schema.additionalProperties === "object") {
+      for (const key of Object.keys(value)) {
+        if (!Object.prototype.hasOwnProperty.call(definedProperties, key)) {
+          errors.push(...validate(schema.additionalProperties, value[key], state, `${at}.${key}`));
+        }
+      }
     }
   }
 
@@ -572,6 +578,42 @@ if (discoverySchema && discoveryExample) {
   const withoutJwks = structuredClone(discoveryExample);
   delete withoutJwks.jwks_url;
   assertSchemaInvalid(discoverySchema, withoutJwks, "negative: discovery must require jwks_url");
+}
+
+// StayIntent (spec/stayintent-discovery-v0.1.md; ADR 0019): the query and the
+// response of every StayIntent vector against the StayIntent schemas, which no
+// Core verifier reads. Before ADR 0019 these vectors were not schema-checked.
+const siQuerySchema = readJson("schemas/stayintent-query-v0.1.schema.json");
+const siResponseSchema = readJson("schemas/stayintent-response-v0.1.schema.json");
+const siPages = readJson("examples/conformance/stayintent/pages.v0.1.json");
+if (siQuerySchema && siResponseSchema && siPages) {
+  for (const name of ["positive", "no-match"]) {
+    const v = readJson(`examples/conformance/stayintent/${name}.v0.1.json`);
+    if (!v) continue;
+    assertSchemaValid(siQuerySchema, v.query, `stayintent ${name}: query`);
+    assertSchemaValid(siResponseSchema, v.expected_response, `stayintent ${name}: response`);
+  }
+  assertSchemaValid(siQuerySchema, siPages.query, "stayintent pages: query");
+  assertSchemaValid(siQuerySchema, { ...siPages.query, cursor: "c1" }, "stayintent pages: query with cursor");
+  for (const chain of siPages.chains) {
+    if (chain.expected.reason !== null && chain.expected.reason !== "match_count_mismatch") continue;
+    chain.pages.forEach((page, i) => assertSchemaValid(siResponseSchema, page, `stayintent pages: chain ${chain.name} page ${i + 1}`));
+  }
+  const control = siPages.chains.find((c) => c.name === "control").pages[0];
+  const numericCursor = structuredClone(control);
+  numericCursor.next_cursor = 1;
+  assertSchemaInvalid(siResponseSchema, numericCursor, "negative: stayintent next_cursor must be a string");
+  const negativeCount = structuredClone(control);
+  negativeCount.match_count = -1;
+  assertSchemaInvalid(siResponseSchema, negativeCount, "negative: stayintent match_count must not be negative");
+  const scored = structuredClone(control);
+  scored.nodes[0].trust_summary = { score: 0.9 };
+  assertSchemaInvalid(siResponseSchema, scored, "negative: stayintent trust_summary must reject a numeric score");
+  const extraTop = structuredClone(control);
+  extraTop.ranking = ["example.com"];
+  assertSchemaInvalid(siResponseSchema, extraTop, "negative: stayintent response must reject an unknown top-level member");
+  const emptyCursor = { ...siPages.query, cursor: "" };
+  assertSchemaInvalid(siQuerySchema, emptyCursor, "negative: stayintent cursor must not be empty");
 }
 
 const offerSchema = readJson("schemas/verified-stay-offer-v0.1.schema.json");

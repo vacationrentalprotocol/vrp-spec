@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ADR 0019: StayIntent: the Endpoint in a Node's Discovery Document, an HTTP Binding, and Pages | Vacation Rental Protocol</title>
+    <meta name="description" content="StayIntent Discovery v0.1 defines what an agent asks an index (§3) and what the index answers (§4): deterministic matching, pointers only, no price, no…" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="ADR 0019: StayIntent: the Endpoint in a Node's Discovery Document, an HTTP Binding, and Pages" />
+    <meta property="og:description" content="StayIntent Discovery v0.1 defines what an agent asks an index (§3) and what the index answers (§4): deterministic matching, pointers only, no price, no…" />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/adr/0019-stayintent-endpoint-and-pages" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="ADR 0019: StayIntent: the Endpoint in a Node's Discovery Document, an HTTP Binding, and Pages" />
+    <meta name="twitter:description" content="StayIntent Discovery v0.1 defines what an agent asks an index (§3) and what the index answers (§4): deterministic matching, pointers only, no price, no…" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/adr/0019-stayintent-endpoint-and-pages" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/adr/0019-stayintent-endpoint-and-pages.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/adr/0019-stayintent-endpoint-and-pages#techarticle",
+  "headline": "ADR 0019: StayIntent: the Endpoint in a Node's Discovery Document, an HTTP Binding, and Pages",
+  "description": "StayIntent Discovery v0.1 defines what an agent asks an index (§3) and what the index answers (§4): deterministic matching, pointers only, no price, no…",
+  "url": "https://vacationrentalprotocol.com/docs/adr/0019-stayintent-endpoint-and-pages",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/adr/0019-stayintent-endpoint-and-pages.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0019-stayintent-endpoint-and-pages.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/implementations">Implementations</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/adr/0019-stayintent-endpoint-and-pages.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0019-stayintent-endpoint-and-pages.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="adr-0019-stayintent-the-endpoint-in-a-nodes-discovery-document-an-http-binding-and-pages">ADR 0019: StayIntent: the Endpoint in a Node's Discovery Document, an HTTP Binding, and Pages</h1>
+<p><strong>Status:</strong> Proposed <strong>Date:</strong> 2026-11-07 (proposed)</p>
+<p><strong>Related:</strong> <a href="https://vacationrentalprotocol.com/spec/stayintent-discovery-v0.1">spec/stayintent-discovery-v0.1.md</a> §3.1, §4.4, §10, <a href="https://vacationrentalprotocol.com/docs/adr/0002-no-gatekeeper-trust-and-interop">ADR 0002</a>, <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/GOVERNANCE.md">GOVERNANCE.md</a> §2, §4, §5. Independent of ADR 0018 (<code>peers</code>, pull request #190): neither record needs the other.</p>
+<h2 id="context">Context</h2>
+<p>StayIntent Discovery v0.1 defines what an agent asks an index (§3) and what the index answers (§4): deterministic matching, pointers only, no price, no ranking, &quot;No index is privileged&quot; (§2). It does not define three things an agent needs to use it:</p>
+<ol><li><strong>Where an index is.</strong> Nothing in the document, in Core v0.1 or in a node's discovery document says where a StayIntent query can be sent. An agent that knows a node cannot find an index that covers it; it has to know the index in advance, which is the catalog the document set out to avoid.</li><li><strong>How to send the query.</strong> The document defines the JSON of the query and the response and no transport: no method, no media type, no error answers.</li><li><strong>A result that does not fit in one answer.</strong> The document sets no cap on <code>nodes[]</code> and says nothing about pages. An index with five hundred matches either answers with all of them or chooses which to answer with, and a choice of twenty out of five hundred is a ranking whatever the index calls it. The rule that order carries no meaning (§4.2) does not help a client that only ever sees the first twenty.</li></ol>
+<p>Measured 2026-11-07, GET <code>/.well-known/vacation-rental.json</code>: <code>villaakerlyckan.se</code> (16:03:54 UTC) and <code>lakeviewhome.se</code> (16:08:59 UTC) serve an <code>endpoints</code> object with eighteen members and none named <code>stayintent</code>; <code>apartmamatevz.si</code> (16:08:57 UTC) serves no <code>endpoints</code> member. No known node names an index.</p>
+<p>Two rules already in force carry the change without touching Core: Well-Known URI v0.1 §3 (&quot;Clients <strong>MUST</strong> ignore unknown fields&quot;), and the Core discovery schema, whose <code>endpoints</code> is an open object (<code>schemas/discovery-v0.1.schema.json</code>). The StayIntent schemas are not read by any Core verifier.</p>
+<h2 id="decision">Decision</h2>
+<p><strong>D1. <code>endpoints.stayintent</code> (§10).</strong> A node MAY name a StayIntent index in its discovery document under <code>endpoints.stayintent</code>: an absolute <code>https</code> URL without userinfo, on any domain. It names *an* index that answers for the node, not *the* index; any number of indexes may cover the same node, a client may use any, and the named index's answer has no more authority than another's. A node MUST NOT name an index that does not answer for it, which is testable. The Core discovery schema does not change.</p>
+<p><strong>D2. Open to any client (§10).</strong> An index named in a discovery document MUST answer without authentication or registration; it MAY rate-limit. A public pointer to a gated index would make the gate the catalog.</p>
+<p><strong>D3. HTTP binding (§10.1).</strong> <code>POST</code> with <code>Content-Type: application/json</code>, the query as the body; <code>200</code> with the response as the body; <code>400</code> for a body that is not a query or a cursor the index does not recognise; <code>429</code> or <code>503</code> with <code>Retry-After</code>, which the client MUST honour. The query carries no personal data; an index MUST NOT require any, and MUST NOT keep queries against an identity beyond what rate limiting needs. No other method in this version.</p>
+<p><strong>D4. Pages (§3.1, §4.4).</strong> A response MAY carry <code>next_cursor</code> (opaque, 1 to 1024 characters); the client repeats the identical query with <code>cursor</code> set to it. A chain (a first page and every page its cursors reach) holds every match as of its first page, each node at most once, in ascending code-point order of <code>canonical_domain</code>. No empty page carries a cursor; the last page may be empty. <code>match</code> describes the chain. A response MAY carry <code>match_count</code>, the number of nodes in the chain, the same on every page that carries it.</p>
+<p><strong>D5. The client's duty (§4.4).</strong> A client MUST NOT present what it has read as all the matches while the last page carried <code>next_cursor</code>. A client that reads one page has read the alphabetically first matches, not the best, and says so.</p>
+<p><strong>D6. Why ascending domain.</strong> Paging needs an order, and any order an index chooses is the index's choice. Ascending <code>canonical_domain</code> is the one order a client can recompute, no index can sell, and §4.2 already names as the internal order implementations use. It carries no meaning, within a page or across a chain, exactly as before.</p>
+<p><strong>D7. Schemas and vectors.</strong> <code>stayintent-query-v0.1.schema.json</code> gains the optional <code>cursor</code>; <code>stayintent-response-v0.1.schema.json</code> gains the optional <code>next_cursor</code> and <code>match_count</code>. Both schemas keep <code>additionalProperties: false</code>, so a response that carries anything else is still invalid. <code>examples/conformance/stayintent/pages.v0.1.json</code> (18 chains, 4 of them controls, and 7 endpoint values) is checked offline by <code>scripts/verify-stayintent-pages.mjs</code> in <code>npm test</code>. <code>scripts/validate-artifacts.mjs</code> now checks every StayIntent vector against the StayIntent schemas, which it did not before, and applies an <code>additionalProperties</code> schema to the members it governs (the response schema's <code>trust_summary</code> had one that was never enforced).</p>
+<p><strong>D8. At risk.</strong> Three parts may change or go on implementation evidence without this record being withdrawn: ascending domain as the chain order (the requirement that the order is one anyone can recompute stays), <code>match_count</code>, and the no-authentication rule of D2. Any other change to the normative text is a new proposal under GOVERNANCE.md §4 (and restarts the period under ADR 0015 D2–D3, once accepted).</p>
+<h2 id="alternatives-considered">Alternatives considered</h2>
+<ul><li><strong>Put the endpoint in Core §2.</strong> Rejected: Core is the 1.0 candidate's scope (ADR 0013 D1, #187), and the endpoint belongs to the document that defines the query. <code>endpoints</code> is already open; no Core text or schema needs to change.</li><li><strong>Require the index on the node's own domain.</strong> Rejected: an index covers many nodes, and the software that runs a node often runs the index. A per-node index on the node's domain is allowed, not required.</li><li><strong>A list of indexes instead of one URL.</strong> Open (see below). One URL is the minimum that makes a node reachable through an index; the text already says any number of indexes may cover a node.</li><li><strong><code>GET</code> with the query in the URL.</strong> Not in this version: the query is nested JSON, and one method is enough to interoperate. A later version may add it.</li><li><strong>Offset paging (<code>page=3</code>).</strong> Rejected: offsets shift when matches change between requests, and &quot;page 1&quot; invites the reading that it is the best page. A cursor with a fixed, recomputable order does neither.</li><li><strong>Let the index choose the order of pages.</strong> Rejected: that is the ranking the document forbids, moved one level up.</li><li><strong>No paging; require every match in one response.</strong> Rejected: an index with thousands of matches would answer with thousands of nodes or silently cap them; the cap is the problem this record removes.</li></ul>
+<h2 id="consequences">Consequences</h2>
+<ul><li><strong>Version class.</strong> Additive within the StayIntent draft: a query without <code>cursor</code> and a response without <code>next_cursor</code> mean what they meant before, and an index that does not page is unchanged (a single page is a chain of one). Known nodes affected: none (none names an index, measured above). Core v0.1, the Well-Known URI document and every schema a Core verifier reads are unchanged; nothing a verifier accepts changes.</li><li><strong>Not part of 1.0.</strong> StayIntent stays a 0.x draft outside the proposed 1.0 scope (ADR 0013 D1); this record neither waits for nor delays that one.</li><li><strong>Substantive</strong> under GOVERNANCE.md §4: normative text and two schemas. At least seven days of review with no maintainer objecting and two approvals, as §4 requires since 2026-10-23 (<a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/MAINTAINERS.md">MAINTAINERS.md</a>). If ADR 0014 and ADR 0015 (#182) are accepted first, one approval comes from a maintainer independent of the author and the period is 28 days.</li><li><strong>Neutrality</strong> (GOVERNANCE.md §2, ADR 0002): no index is required or privileged, the index a node names has no more standing than another, the order of pages is nobody's choice, and the rules bind every index alike, the reference implementation's included. The normative text names no implementation.</li><li><strong>Implementations follow in their own repositories,</strong> after acceptance: a node that names its index, an index that pages, a client that reads chains. An index that lets a client read every match without an account, and a node that names it, are what §10's test needs.</li></ul>
+<h2 id="open-questions-for-review">Open questions for review</h2>
+<ol><li>Whether a node may name more than one index (an array), or one is enough when any index may cover any node.</li><li>Whether <code>match_count</code> earns its place (at risk, D8).</li><li>Whether a <code>GET</code> binding is wanted for cacheability.</li><li>The no-authentication rule (D2, at risk): whether rate limiting alone is enough protection for an index operator.</li><li>Whether a page-size hint from the client is useful, or the index's choice suffices.</li></ol>
+      </article>
+    </main>
+  </body>
+</html>

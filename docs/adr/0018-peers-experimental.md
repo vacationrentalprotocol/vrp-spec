@@ -60,7 +60,11 @@ place to sell or to read as a recommendation.
 rating, and is not reciprocal. A client reaches a listed domain by building
 `https://{domain}/.well-known/vacation-rental.json` itself and checking the
 document under Core §2 for that domain; until then the domain is not a node.
-Quoting anything still requires Core §3–§9.
+Quoting anything still requires Core §3–§9. Absence from a list, and the number
+of lists a domain appears on, are no statement about the domain either: a
+client reads neither as a signal (§4 item 4, §6 item 7). Without that rule a
+client could rank nodes by how often they are named, and the lists would have
+rebuilt the middle they were written to remove.
 
 **D5. Bounded walks.** A client that follows peers bounds depth, fetches and
 time (RECOMMENDED 3, 100, 10 seconds per fetch), fetches each domain once,
@@ -76,7 +80,7 @@ lists, is still a node.
 must then prove themselves (D4). A signature would not change what a client may
 conclude, and would add key handling.
 
-**D8. Conformance.** `examples/conformance/peers/negative.v0.1.json` (29 cases:
+**D8. Conformance.** `examples/conformance/peers/negative.v0.1.json` (30 cases:
 members a client ignores in full and entries it skips, each with its name, and
 three valid controls) and `positive.v0.1.json` (a five-domain network, six
 walks, each run twice with the entries in reverse order to show the result does
@@ -86,9 +90,42 @@ peers schema and every document in the network against the unchanged Core
 discovery schema; its schema checker gains `maxItems` and `uniqueItems`.
 
 **D9. Leaving Experimental.** The document becomes a public draft by a later
-ADR, when two independent implementations publish `peers` and a walk that
-starts at a node of one reaches a node of the other and back, with no code or
-data of either in the other's path.
+ADR, when two independent implementations publish `peers`, a walk that starts
+at a node of one reaches a node of the other and back, with no code or data of
+either in the other's path, and at least one client written by neither
+publisher performs that walk and reports the same set from both starts. Two
+publishers alone show that the member can be written; a client of a third
+party shows that it can be read.
+
+**D10. At risk.** Three parts of the text are marked at risk: ascending order
+as a requirement (§3.2), the cap of 100 (§3.3) and the recommended defaults for
+a walk (§6 item 1). A part marked at risk MAY be changed or removed in response
+to review without this record being withdrawn; any other change to the
+normative text is a new proposal under GOVERNANCE.md §4 (and restarts the
+period under ADR 0015 D2–D3, once accepted).
+
+## Alternatives considered
+
+- **No `peers`; each software publishes its own seed list.** Rejected as the
+  only mechanism: every way from one node to the next stays a list someone
+  keeps, and a client that starts from the most complete list has made its
+  keeper the middle. Seed lists remain one of the ways a walk may start (§7).
+- **URIs instead of domains.** Rejected: Core §2 identifies a node by its
+  registrable domain and fixes the discovery URL (RFC 8615), so a URI adds
+  nothing but a way for a list to send a client somewhere else (§3.1, §5).
+- **A signed list.** Deferred (D7): the list proves nothing a signature would
+  strengthen, and it would add key handling to every publisher.
+- **A registry of nodes or of lists.** Out of bounds: GOVERNANCE.md §4 and
+  ADR 0002 forbid a central registry, and the W3C TAG's
+  [Web Platform Design Principles](https://www.w3.org/TR/design-principles/#priority-of-constituencies)
+  §11.3 reserve a registry for extensions that "a wider set of participants"
+  define, which `peers` has none of.
+- **Node discovery inside the StayIntent response.** Rejected: matching a stay
+  and knowing which nodes exist are different questions; an index needs the
+  second before it can answer the first, and mixing them ties node discovery
+  to one index's answers.
+- **A relay or index without `peers`.** Not an alternative but a later layer:
+  an index still has to learn which nodes exist, and `peers` is one way it may.
 
 ## Consequences
 
@@ -102,14 +139,18 @@ data of either in the other's path.
   waits for nor delays that one.
 - **Substantive** under GOVERNANCE.md §4: it adds normative text and a schema.
   This record, at least seven days of review with no maintainer objecting, and
-  two approvals, since two maintainers are active. If ADR 0014 and ADR 0015
+  two approvals, as GOVERNANCE.md §4 requires since 2026-10-23
+  ([MAINTAINERS.md](../../MAINTAINERS.md)). If ADR 0014 and ADR 0015
   (pull request #182) are accepted first, one approval comes from a maintainer
   independent of the author, and the period for specification text, schemas
   and vectors is 28 days.
 - **Neutrality** (GOVERNANCE.md §2, ADR 0002): no list is required, no list is
   privileged, every listed node proves itself on its own domain, and the rules
   bind every publisher and client alike, the reference implementation
-  included. The document names no implementation.
+  included. The normative text names no implementation; the informative §12
+  points to this repository's interop note on an independent implementation,
+  as [docs/interop-and-trust-positioning.md](../interop-and-trust-positioning.md)
+  already does.
 - **Implementations follow in their own repositories,** after acceptance. This
   repository holds the text, the schema and the vectors; a live walk across
   independent nodes is the evidence D9 asks for.
@@ -117,9 +158,10 @@ data of either in the other's path.
 ## Open questions for review
 
 1. The default depth: 3 here; the CM AI Docking Port's `limits_default` uses
-   `max_depth` 2 ([interop note](../interop/cm-ai-docking-port.md)).
-2. The cap of 100 entries per node.
+   `max_depth` 2 ([interop note](../interop/cm-ai-docking-port.md)). At risk
+   (D10).
+2. The cap of 100 entries per node. At risk (D10).
 3. Whether ascending order (D3) should stay a requirement or become a
-   recommendation.
+   recommendation. At risk (D10).
 4. Whether `updated_at` earns its place, or HTTP caching suffices.
 5. Whether a later version signs the list (D7).

@@ -468,6 +468,31 @@
       "note": "Valid against the schema, whose grammar cannot express order; a runtime rule (§3.2)."
     },
     {
+      "name": "too_long",
+      "own_domain": "example.com",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd.com",
+          "example.net"
+        ]
+      },
+      "schema_valid": true,
+      "note": "A name longer than 253 characters with every label within 63: valid against the schema's pattern, which has no total length; Core §2's host-owned rule rejects it as malformed_domain, so it is skipped and the other entry used.",
+      "expected": {
+        "ignored": null,
+        "entries": [
+          "example.net"
+        ],
+        "skipped": [
+          {
+            "domain": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd.com",
+            "reason": "malformed_domain"
+          }
+        ]
+      }
+    },
+    {
       "name": "self",
       "own_domain": "example.com",
       "peers": {

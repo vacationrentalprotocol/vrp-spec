@@ -102,7 +102,9 @@ as a requirement (§3.2), the cap of 100 (§3.3) and the recommended defaults fo
 a walk (§6 item 1). A part marked at risk MAY be changed or removed in response
 to review without this record being withdrawn; any other change to the
 normative text is a new proposal under GOVERNANCE.md §4 (and restarts the
-period under ADR 0015 D2–D3, once accepted).
+period under ADR 0015 D2–D3, once accepted). Evidence gathered in review is
+recorded under "Open questions for review" below; the first such entry, on
+depth, is why the walk defaults are not compared with a relay's.
 
 ## Alternatives considered
 
@@ -159,7 +161,24 @@ period under ADR 0015 D2–D3, once accepted).
 
 1. The default depth: 3 here; the CM AI Docking Port's `limits_default` uses
    `max_depth` 2 ([interop note](../interop/cm-ai-docking-port.md)). At risk
-   (D10).
+   (D10). **Answered in review** (Viljem Dvojmoč, independent implementer,
+   pull request #190, 2026-11-07 20:51 and 21:00 UTC): the two numbers bound
+   different things and are not comparable. A `peers` walk is client-driven
+   and sequential: the client fetches one discovery document at a time, every
+   node answers only for itself, nobody forwards on anyone's behalf, and the
+   cost lands on the client (§6). The Docking Port's Reception is server-driven
+   forwarding: one request can make a node call `max_fanout` neighbours in
+   parallel, each of which can do the same, so cost grows as fanout to the
+   power of depth and lands on the operators who forward; that is why its
+   design (decided 2026-09-29, in its own words: "the real question isn't 'how
+   deep' but 'how many nodes does a node talk to in parallel on one hop'") caps
+   depth hard and makes fanout the lever. A node that would never accept depth
+   3 on its own Reception is therefore safe as an entry in a depth-3 walk: the
+   3 means three sequential fetches by the client. `peers` defines no
+   forwarding (§12), and the client-side counterparts of fanout are the fetch
+   budget and the one-request-at-a-time rule (§6 items 1 and 5). The defaults
+   stay as they are; the question is closed, the at-risk mark remains for
+   implementation evidence on the numbers themselves.
 2. The cap of 100 entries per node. At risk (D10).
 3. Whether ascending order (D3) should stay a requirement or become a
    recommendation. At risk (D10).

@@ -1,6 +1,6 @@
 # Implementation report for VRP 1.0 (Core + Well-Known URI)
 
-**Status:** Draft, measured 2026-11-05; the verifier rows for V1 and V2 re-read 2026-11-08 after the verifier correction (hemmabo-mcp-server 7.0.13, vrp-verify 0.3.0; the notes say what changed). One row per normative MUST in
+**Status:** Draft, measured 2026-11-05; the verifier rows for V1 and V2 re-read 2026-11-08 after the verifier correction (hemmabo-mcp-server 7.0.13, vrp-verify 0.3.0; the notes say what changed). The correction is described in two published advisories: [GHSA-4phj-whvc-8frh](https://github.com/HemmaBo-se/hemmabo-mcp-server/security/advisories/GHSA-4phj-whvc-8frh) (hemmabo-mcp-server 7.0.12 → 7.0.13, published 2026-11-08 21:01 UTC) and [GHSA-6q7g-4q6r-w7g7](https://github.com/vacationrentalprotocol/vrp-verify/security/advisories/GHSA-6q7g-4q6r-w7g7) (`@vacationrentalprotocol/vrp-verify` 0.2.0 → 0.3.0, published 2026-11-08 21:05 UTC); only those versions are confirmed affected, earlier ones were not assessed. One row per normative MUST in
 [spec/v0.1.md](../spec/v0.1.md) (55 lines carrying MUST at `e815600`) and
 [spec/well-known-uri-v0.1.md](../spec/well-known-uri-v0.1.md) (3). It is the
 evidence base for the 1.0 decision record (ADR 0013, revised): a rule with fewer

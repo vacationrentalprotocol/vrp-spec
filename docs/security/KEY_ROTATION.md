@@ -83,6 +83,17 @@ and MUST NOT be quoted — the agent should fetch a fresh offer
 - **Retain the old key through the overlap.** Keep it until the last offer it signed
   has passed `valid_until`, so no still-fresh offer is stranded.
 - **Never reuse a `kid`.** Give every key a distinct, stable identifier.
+- **Keep the private key where the web server never serves it.** Out of the
+  web root: an environment variable, a secrets manager, or a file readable
+  only by the process that signs (owner-only permissions, `0600`). If your
+  software keeps it in a data folder under the web root, deny that folder at
+  the server level; a `.htaccess` file alone is not enough, because a hosting
+  change can switch it off. Confirm it: request the key's path over HTTPS;
+  the answer must be 403 or 404, never the key. If the key was ever served, or
+  ever left the server, treat it as compromised and rotate it at once (see
+  [INCIDENT_RESPONSE.md](./INCIDENT_RESPONSE.md)). This is operator guidance,
+  not a protocol rule: [spec §14](../../spec/v0.1.md) leaves hosting security
+  to the operator.
 - **Optionally log the event.** A node MAY record `key added` / `key removed` (with
   `kid` and timestamp) in its
   [transparency log](../../spec/transparency-log-v0.1.md) for a tamper-evident

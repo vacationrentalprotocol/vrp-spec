@@ -4,8 +4,8 @@
 
 Network Working Group                                           R. Abbas
 Internet-Draft                                  Vacation Rental Protocol
-Intended status: Informational                              30 July 2026
-Expires: 31 January 2027
+Intended status: Informational                           4 November 2026
+Expires: 8 May 2027
 
 
      The Vacation Rental Protocol (VRP): Host-Domain Discovery and
@@ -44,7 +44,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 31 January 2027.
+   This Internet-Draft will expire on 8 May 2027.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Abbas                    Expires 31 January 2027                [Page 1]
+Abbas                      Expires 8 May 2027                   [Page 1]
 
-Internet-Draft           VRP Offer Verification                July 2026
+Internet-Draft           VRP Offer Verification            November 2026
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -74,45 +74,48 @@ Table of Contents
    2.  Conventions and Terminology . . . . . . . . . . . . . . . . .   3
    3.  Discovery Document  . . . . . . . . . . . . . . . . . . . . .   4
      3.1.  Required Fields . . . . . . . . . . . . . . . . . . . . .   4
-     3.2.  Recommended Fields  . . . . . . . . . . . . . . . . . . .   5
-     3.3.  Trust Model of the Discovery Document . . . . . . . . . .   5
-     3.4.  Transition Alias  . . . . . . . . . . . . . . . . . . . .   5
-   4.  Signing Keys (JWKS) . . . . . . . . . . . . . . . . . . . . .   5
-     4.1.  Rotation  . . . . . . . . . . . . . . . . . . . . . . . .   6
-     4.2.  Refresh on Miss . . . . . . . . . . . . . . . . . . . . .   6
-     4.3.  Revocation and Cache Bound  . . . . . . . . . . . . . . .   6
-   5.  Verified Stay Offer . . . . . . . . . . . . . . . . . . . . .   7
-     5.1.  Offer Request . . . . . . . . . . . . . . . . . . . . . .   7
-     5.2.  Signed Payload  . . . . . . . . . . . . . . . . . . . . .   8
-     5.3.  Direct Booking URL  . . . . . . . . . . . . . . . . . . .   8
-     5.4.  Computable Refund Schedule (Optional) . . . . . . . . . .  10
-     5.5.  Reserved: Agent-Native Payment Rails  . . . . . . . . . .  11
-   6.  Verification  . . . . . . . . . . . . . . . . . . . . . . . .  11
-     6.1.  Freshness . . . . . . . . . . . . . . . . . . . . . . . .  11
-     6.2.  Safe-to-Quote Rules . . . . . . . . . . . . . . . . . . .  11
-     6.3.  Fail-Closed Behavior  . . . . . . . . . . . . . . . . . .  12
-     6.4.  Three-State Verification  . . . . . . . . . . . . . . . .  12
-     6.5.  Verifiability Classes . . . . . . . . . . . . . . . . . .  12
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  13
-   8.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .  14
-   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  14
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  15
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .  15
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  16
-   Appendix A.  Example Discovery Document . . . . . . . . . . . . .  16
-   Appendix B.  Example JWKS . . . . . . . . . . . . . . . . . . . .  17
-   Appendix C.  Implementation Status  . . . . . . . . . . . . . . .  17
-   Acknowledgements  . . . . . . . . . . . . . . . . . . . . . . . .  18
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  18
+     3.2.  Host-Owned Domain . . . . . . . . . . . . . . . . . . . .   5
+     3.3.  Node URL  . . . . . . . . . . . . . . . . . . . . . . . .   5
+     3.4.  Fetching  . . . . . . . . . . . . . . . . . . . . . . . .   6
+     3.5.  Recommended Fields  . . . . . . . . . . . . . . . . . . .   6
+     3.6.  Trust Model of the Discovery Document . . . . . . . . . .   6
+     3.7.  Transition Alias  . . . . . . . . . . . . . . . . . . . .   7
+     3.8.  Node Page Identification  . . . . . . . . . . . . . . . .   7
+   4.  Signing Keys (JWKS) . . . . . . . . . . . . . . . . . . . . .   7
+     4.1.  Rotation  . . . . . . . . . . . . . . . . . . . . . . . .   8
+     4.2.  Refresh on Miss . . . . . . . . . . . . . . . . . . . . .   8
+     4.3.  Revocation and Cache Bound  . . . . . . . . . . . . . . .   8
+   5.  Verified Stay Offer . . . . . . . . . . . . . . . . . . . . .   9
+     5.1.  Offer Request . . . . . . . . . . . . . . . . . . . . . .   9
+     5.2.  Signed Payload  . . . . . . . . . . . . . . . . . . . . .  10
+     5.3.  Direct Booking URL  . . . . . . . . . . . . . . . . . . .  11
+     5.4.  Computable Refund Schedule (Optional) . . . . . . . . . .  13
+     5.5.  Reserved: Agent-Native Payment Rails  . . . . . . . . . .  14
+   6.  Verification  . . . . . . . . . . . . . . . . . . . . . . . .  14
+     6.1.  Freshness . . . . . . . . . . . . . . . . . . . . . . . .  14
+     6.2.  Safe-to-Quote Rules . . . . . . . . . . . . . . . . . . .  14
+     6.3.  Fail-Closed Behavior  . . . . . . . . . . . . . . . . . .  15
+     6.4.  Three-State Verification  . . . . . . . . . . . . . . . .  15
+     6.5.  Verifiability Classes . . . . . . . . . . . . . . . . . .  16
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  17
+   8.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .  19
+   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  19
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  20
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  20
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  21
+   Appendix A.  Example Discovery Document . . . . . . . . . . . . .  21
+   Appendix B.  Example JWKS . . . . . . . . . . . . . . . . . . . .  22
+   Appendix C.  Implementation Status  . . . . . . . . . . . . . . .  22
 
 
 
-
-
-Abbas                    Expires 31 January 2027                [Page 2]
+Abbas                      Expires 8 May 2027                   [Page 2]
 
-Internet-Draft           VRP Offer Verification                July 2026
+Internet-Draft           VRP Offer Verification            November 2026
 
+
+   Acknowledgements  . . . . . . . . . . . . . . . . . . . . . . . .  23
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  23
 
 1.  Introduction
 
@@ -159,19 +162,22 @@ Internet-Draft           VRP Offer Verification                July 2026
    capitals, as shown here.
 
    Node:  A host-owned HTTPS origin that publishes VRP resources.  Each
+
+
+
+Abbas                      Expires 8 May 2027                   [Page 3]
+
+Internet-Draft           VRP Offer Verification            November 2026
+
+
       node is one origin describing one vacation-rental site; there is
       no multi-publisher or shared-host case.
 
+   Host domain:  The host-owned domain a node is served from
+      (Section 3.2), carried as canonical_domain in VRP documents.
 
-
-
-Abbas                    Expires 31 January 2027                [Page 3]
-
-Internet-Draft           VRP Offer Verification                July 2026
-
-
-   Host domain:  The registrable domain a node is served from, carried
-      as canonical_domain in VRP documents.
+   Node URL:  An absolute https URL on the host domain or www. followed
+      by it (Section 3.3).
 
    Discovery document:  The JSON resource at the node's well-known URI
       (Section 3).
@@ -210,23 +216,84 @@ Internet-Draft           VRP Offer Verification                July 2026
 
    protocol_version:  MUST be 0.1 for this version.
 
-   canonical_domain:  MUST match the host-owned domain being verified.
+   canonical_domain:  MUST match the host-owned domain being verified,
+      which is the domain this document is fetched from (Section 3.2).
 
-   jwks_url:  MUST point to the host-domain JWKS (Section 4).
+
+
+Abbas                      Expires 8 May 2027                   [Page 4]
+
+Internet-Draft           VRP Offer Verification            November 2026
+
+
+   jwks_url:  MUST point to the host-domain JWKS (Section 4), and MUST
+      be a node URL (Section 3.3).
 
    verified_stay_offer_endpoint:  MUST point to the host-domain verified
-      stay offer endpoint (Section 5).
+      stay offer endpoint (Section 5), and MUST be a node URL
+      (Section 3.3).
+
+3.2.  Host-Owned Domain
+
+   A VRP node is a domain registered for the host, never a name under
+   another party's domain.  canonical_domain MUST meet all of the
+   following:
+
+   1.  It is lowercase ASCII, with internationalized labels in A-label
+       (xn--) form, and has no trailing dot.
+
+   2.  It equals its own registrable domain as computed by the Public
+       Suffix List algorithm [PSL] using only the rules in the list's
+       ICANN section, each rule compared in A-label form; where no ICANN
+       rule matches, the algorithm's default rule * applies.  The list's
+       PRIVATE section does not count: it lists domains under which a
+       company hands out names to its customers.
+
+   3.  Its top-level domain is not a brand or closed top-level domain,
+       under which every name belongs to the top-level domain's
+       operator.  These are: every top-level domain whose ICANN registry
+       agreement includes Specification 13, marked "specification13":
+       true in ICANN's gTLD list [ICANN-GTLDS]; and booking and hotels,
+       whose registry operator is Booking.com B.V.  This list changes
+       only by a recorded decision of the specification's maintainers.
+
+   A name under a platform, catalog, marketplace, OTA, site builder or
+   operator domain is never a canonical_domain, whoever operates that
+   domain.  example.com and example.co.uk are host-owned domains;
+   www.example.com, villa.platform.example, villa.booking and
+   villa.amazon are not.  A verifier that holds no copy of the ICANN
+   section of the Public Suffix List, or of ICANN's gTLD list, MUST
+   treat the node as unknown (Section 6.4).
+
+3.3.  Node URL
+
+   A node URL is an absolute https URL whose host is canonical_domain or
+   www. followed by canonical_domain, with no userinfo (no user name or
+   password) and no port other than the https default.  Hosts are
+   compared after URL parsing, which lowercases them.
 
 
 
 
 
-Abbas                    Expires 31 January 2027                [Page 4]
+
+Abbas                      Expires 8 May 2027                   [Page 5]
 
-Internet-Draft           VRP Offer Verification                July 2026
+Internet-Draft           VRP Offer Verification            November 2026
 
 
-3.2.  Recommended Fields
+3.4.  Fetching
+
+   The domain a discovery document, a JWKS or an offer is fetched from
+   is the host of the URL the verifier requested.  A verifier requests
+   the discovery document at https://{domain}/.well-known/vacation-
+   rental.json for the domain it is verifying, which the document's
+   canonical_domain then has to match.  A verifier MAY follow a redirect
+   only when its target is a node URL of that domain; it MUST NOT follow
+   any other redirect, and MUST treat what it would have fetched as
+   unknown (Section 6.4).
+
+3.5.  Recommended Fields
 
    A node SHOULD also publish:
 
@@ -251,7 +318,7 @@ Internet-Draft           VRP Offer Verification                July 2026
 
    Clients MUST ignore unknown fields.
 
-3.3.  Trust Model of the Discovery Document
+3.6.  Trust Model of the Discovery Document
 
    Trust is not derived from the well-known location; presence at the
    well-known URI confers no authority.  Authoritative offers are signed
@@ -260,11 +327,58 @@ Internet-Draft           VRP Offer Verification                July 2026
    verify signatures and MUST NOT treat the discovery document itself as
    proof of any claim: the document is advisory metadata only.
 
-3.4.  Transition Alias
+
+
+
+
+
+
+Abbas                      Expires 8 May 2027                   [Page 6]
+
+Internet-Draft           VRP Offer Verification            November 2026
+
+
+3.7.  Transition Alias
 
    For transition compatibility a node MAY additionally serve the same
    document at the longer alias path /.well-known/vacation-rental-
    protocol.json.  Clients SHOULD use vacation-rental.json.
+
+3.8.  Node Page Identification
+
+   A VRP node is found and verified through its discovery document and
+   its signed offers.  The pages a guest or an AI model reads are not
+   part of that chain.  The rules below make the protocol visible there
+   too.  In this version they are SHOULD; (a) and (b) are intended to
+   become MUST in the next major version, the migration path being these
+   two tags.  For the page served at https://{canonical_domain}/:
+
+   (a)  The document head SHOULD contain <link rel="protocol"
+        href="https://vacationrentalprotocol.com/">.
+
+   (b)  The document body SHOULD contain a visible hyperlink carrying
+        rel="protocol" whose href is on the origin
+        https://vacationrentalprotocol.com (the root, or
+        /verify?host={canonical_domain}) and whose link text contains
+        the string VRP.
+
+   (c)  The response SHOULD carry the HTTP header Link:
+        <https://vacationrentalprotocol.com/>;
+        rel="https://vacationrentalprotocol.com/rel/protocol".
+
+   (d)  schema.org JSON-LD on the page SHOULD mark the lodging with
+        "additionalType": "https://vacationrentalprotocol.com/
+        terms#VRPVacationRental".
+
+   (e)  The page SHOULD describe the property as a VRP vacation rental
+        in its own language.
+
+   The href in (a) and (b) MUST NOT point to an implementation, an
+   operator, or any origin other than
+   https://vacationrentalprotocol.com: the link names the standard,
+   never a vendor.  The HTML keyword protocol and the extension relation
+   type https://vacationrentalprotocol.com/rel/protocol denote the same
+   relation.
 
 4.  Signing Keys (JWKS)
 
@@ -272,15 +386,15 @@ Internet-Draft           VRP Offer Verification                July 2026
 
    https://{host-domain}/.well-known/jwks.json
 
-   Keys used for signing verified stay offers MUST use [RFC8037]:
 
 
 
-
-Abbas                    Expires 31 January 2027                [Page 5]
+Abbas                      Expires 8 May 2027                   [Page 7]
 
-Internet-Draft           VRP Offer Verification                July 2026
+Internet-Draft           VRP Offer Verification            November 2026
 
+
+   Keys used for signing verified stay offers MUST use [RFC8037]:
 
    *  kty: OKP
 
@@ -331,11 +445,9 @@ Internet-Draft           VRP Offer Verification                July 2026
 
 
 
-
-
-Abbas                    Expires 31 January 2027                [Page 6]
+Abbas                      Expires 8 May 2027                   [Page 8]
 
-Internet-Draft           VRP Offer Verification                July 2026
+Internet-Draft           VRP Offer Verification            November 2026
 
 
    *  Routine rotation avoids breakage through timing: retain the
@@ -389,9 +501,9 @@ Internet-Draft           VRP Offer Verification                July 2026
 
 
 
-Abbas                    Expires 31 January 2027                [Page 7]
+Abbas                      Expires 8 May 2027                   [Page 9]
 
-Internet-Draft           VRP Offer Verification                July 2026
+Internet-Draft           VRP Offer Verification            November 2026
 
 
 5.2.  Signed Payload
@@ -413,8 +525,42 @@ Internet-Draft           VRP Offer Verification                July 2026
    *  booking
    *  agent_permission
 
-   generated_at and valid_until are [RFC3339] date-time values
-   restricted to UTC ("Z").
+   The stay asked for.  request is the stay the offer is for, as it was
+   asked for at the offer endpoint (Section 5.1): check_in and check_out
+   are dates in YYYY-MM-DD form, and guests is an integer of at least 1.
+
+   *  check_in and check_out MUST be dates that exist in the calendar
+      ([RFC3339] full-date), and check_out MUST be later than check_in.
+
+   *  A node MUST NOT sign an offer for dates that break these rules, or
+      whose check_in is earlier than the current date at the property.
+      It answers with an error instead.
+
+   *  check_in, check_out, guests and language are the requester's
+      words, echoed back; they are not statements by the host.
+      check_in_weekday, check_out_weekday and nights, when present, are
+      the node's own, computed from the two dates.  A node MUST NOT copy
+      into the signed payload any value from the request other than
+      those four.  request.language, when present, MUST be a BCP 47
+      [RFC5646] language tag made of a language subtag (two or three
+      letters), optionally a script subtag (four letters) and optionally
+      a region subtag (two letters or three digits), joined by hyphens;
+      letter case does not matter, as in BCP 47.  It SHOULD name a
+      language the node writes the offer in.
+
+   Lifetime.  generated_at and valid_until are UTC date-times ([RFC3339]
+   date-time, ending in Z).  A node MUST set generated_at to the time it
+   signs the offer.  valid_until MUST be later than generated_at and
+   MUST NOT be more than 900 seconds (15 minutes) after it.  The two
+   values are compared as written, fractions of a second included.
+
+
+
+
+Abbas                      Expires 8 May 2027                  [Page 10]
+
+Internet-Draft           VRP Offer Verification            November 2026
+
 
    The signed payload MAY also include host-verified direct-source
    facts, so that a verifier can verify (not just read) the node's
@@ -431,6 +577,14 @@ Internet-Draft           VRP Offer Verification                July 2026
       total paid).  This describes the node's own fee structure and is
       never a comparison with any other channel.
 
+   price.minor_unit:  The unit of every amount in price (public_total,
+      agent_total, total, each breakdown[].nightly_rate, each
+      adjustments[].amount, the reconciliation sums).  true: integers in
+      the currency's minor unit (cents): 29100 is 291.00 EUR.  false:
+      whole currency units: 8930 is 8 930 SEK.  The flag applies to the
+      whole price object; a consumer reads it before it quotes, converts
+      or displays an amount.
+
 5.3.  Direct Booking URL
 
    The signed payload's booking object carries the direct booking URL
@@ -441,14 +595,6 @@ Internet-Draft           VRP Offer Verification                July 2026
    Structure:
 
    *  direct_booking_url MUST be an absolute https URL.
-
-
-
-
-Abbas                    Expires 31 January 2027                [Page 8]
-
-Internet-Draft           VRP Offer Verification                July 2026
-
 
    *  Its host MUST be the offer's canonical_domain, or www. followed by
       it, and no other name, with no userinfo and no port other than the
@@ -464,6 +610,14 @@ Internet-Draft           VRP Offer Verification                July 2026
       pre-filled for the same stay.  The RECOMMENDED query parameters
       are checkIn (YYYY-MM-DD, matching request.check_in), checkOut
       (YYYY-MM-DD, matching request.check_out), and guests (integer,
+
+
+
+Abbas                      Expires 8 May 2027                  [Page 11]
+
+Internet-Draft           VRP Offer Verification            November 2026
+
+
       matching request.guests).  Note that the URL query parameters use
       these exact names; they intentionally differ in style from the
       offer-request parameter names and implementations MUST NOT
@@ -496,16 +650,6 @@ Internet-Draft           VRP Offer Verification                July 2026
       user to direct_booking_url subject to the safe-to-quote rules
       (Section 6.2).
 
-
-
-
-
-
-Abbas                    Expires 31 January 2027                [Page 9]
-
-Internet-Draft           VRP Offer Verification                July 2026
-
-
    *  Once valid_until has passed, the offer is stale.  The verifier
       MUST treat the direct booking URL as unknown and MUST NOT present
       its associated price as current or claim the stay is bookable on
@@ -519,6 +663,16 @@ Internet-Draft           VRP Offer Verification                July 2026
       return an unavailable or non-quotable offer.  Following an expired
       direct_booking_url is therefore an unverified action: the host,
       not the protocol, decides what the URL does after expiry.
+
+
+
+
+
+
+Abbas                      Expires 8 May 2027                  [Page 12]
+
+Internet-Draft           VRP Offer Verification            November 2026
+
 
    *  A host node SHOULD ensure that following direct_booking_url after
       expiry fails closed for the guest - for example by re-quoting on
@@ -555,13 +709,6 @@ Internet-Draft           VRP Offer Verification                July 2026
    unknown, and a verifier MUST NOT invent, infer, or default a refund
    promise.
 
-
-
-Abbas                    Expires 31 January 2027               [Page 10]
-
-Internet-Draft           VRP Offer Verification                July 2026
-
-
    Because the schedule is signed inside the offer, it is verifiable,
    not merely attested: the guest's agent can prove after the fact
    exactly which refund terms were in force at quote time, regardless of
@@ -569,6 +716,19 @@ Internet-Draft           VRP Offer Verification                July 2026
    rows verbatim to guests - as hours/percent terms, never re-labelled
    into named tiers ("flexible", "moderate", and similar), which this
    field replaces.
+
+
+
+
+
+
+
+
+
+Abbas                      Expires 8 May 2027                  [Page 13]
+
+Internet-Draft           VRP Offer Verification            November 2026
+
 
 5.5.  Reserved: Agent-Native Payment Rails
 
@@ -590,34 +750,59 @@ Internet-Draft           VRP Offer Verification                July 2026
 6.1.  Freshness
 
    Verifiers MUST treat an offer as non-quotable if valid_until is
-   missing, malformed, or expired.  Verifiers SHOULD fetch a fresh offer
-   for the user's specific dates and guest count before presenting a
-   final price or booking URL.
+   missing, malformed, or expired.
+
+   Verifiers MUST also treat an offer as non-quotable if generated_at is
+   missing or malformed, if generated_at is more than 60 seconds later
+   than the verifier's current time, or if valid_until is not later than
+   generated_at or is more than 900 seconds after it (Section 5.2).  The
+   60 seconds allow for clocks that are not exactly in step; they do not
+   lengthen the lifetime.
+
+   Verifiers SHOULD fetch a fresh offer for the user's specific dates
+   and guest count before presenting a final price or booking URL.
 
 6.2.  Safe-to-Quote Rules
 
-   A verifier may quote an offer as an official host-domain verified
-   offer only when all of the following are true:
+   A verifier MUST NOT quote an offer as an official host-domain
+   verified offer unless all of the following are true:
 
-   *  The discovery document is fetched from the host-owned domain.
+   *  The discovery document is fetched from the host-owned domain
+      (Section 3.2), and its canonical_domain is that domain.
    *  The discovery document declares protocol: "vacation-rental-
       protocol".
    *  The discovery document declares protocol_version: "0.1".
    *  The JWKS contains an Ed25519 verification key matching the JWS.
    *  The compact JWS verifies against the host-domain JWKS.
    *  The signed payload matches the returned offer.
+   *  The signed payload's canonical_domain is the domain the discovery
+      document was fetched from.
    *  valid_until is present and fresh.
+
+
+
+Abbas                      Expires 8 May 2027                  [Page 14]
+
+Internet-Draft           VRP Offer Verification            November 2026
+
+
+   *  generated_at and valid_until meet Section 5.2 and Section 6.1:
+      valid_until is later than generated_at and at most 900 seconds
+      after it, and generated_at is not more than 60 seconds later than
+      the verifier's current time.
+   *  request.check_in and request.check_out are dates that exist,
+      request.check_out is later than request.check_in, and
+      request.check_in is not earlier than the day before the verifier's
+      current date in UTC.  The local date anywhere is at most one day
+      behind the UTC date, so a check_in earlier than that has passed
+      everywhere; the node itself applies the property's own date
+      (Section 5.2).
+   *  request.check_in, request.check_out and request.guests are the
+      dates and the guest count the verifier asked for.
+   *  request.language, when present, has the form Section 5.2 gives.
    *  availability.available is true.
    *  price.exact is true.
    *  A direct booking URL is present.
-
-
-
-Abbas                    Expires 31 January 2027               [Page 11]
-
-Internet-Draft           VRP Offer Verification                July 2026
-
-
    *  agent_permission.may_quote_as_official_direct_offer is true.
 
    Verifiers MUST NOT:
@@ -630,13 +815,17 @@ Internet-Draft           VRP Offer Verification                July 2026
       offer.
    *  Route booking action anywhere except the signed direct booking
       URL.
+   *  Present a value from request as something the host stated
+      (Section 5.2).
 
 6.3.  Fail-Closed Behavior
 
    Verifiers and clients MUST fail closed.  If signature verification,
-   freshness, exact price, availability, the direct booking URL, or
-   citation permission cannot be verified, the offer MUST NOT be quoted
-   as official or bookable.
+   the offer's binding to the fetched domain and to the stay asked for
+   (Section 6.2), freshness and lifetime (Section 5.2, Section 6.1), the
+   dates, exact price, availability, the direct booking URL, or citation
+   permission cannot be verified, the offer MUST NOT be quoted as
+   official or bookable.
 
 6.4.  Three-State Verification
 
@@ -645,6 +834,13 @@ Internet-Draft           VRP Offer Verification                July 2026
 
    Affirmed:  Present, signed where required, fresh, schema-valid, and
       explicitly true or present.  May be cited.
+
+
+
+Abbas                      Expires 8 May 2027                  [Page 15]
+
+Internet-Draft           VRP Offer Verification            November 2026
+
 
    Negated:  Present, signed where required, fresh, schema-valid, and
       explicitly false.  May be cited as false.
@@ -665,14 +861,6 @@ Internet-Draft           VRP Offer Verification                July 2026
 
    VRP data falls into exactly three classes, and a surface MUST NOT
    present a lower class as a higher one:
-
-
-
-
-Abbas                    Expires 31 January 2027               [Page 12]
-
-Internet-Draft           VRP Offer Verification                July 2026
-
 
    Verifiable:  Fields signed inside the offer's compact JWS: price
       (including exact and no_add_on_fees), availability, valid_until,
@@ -702,6 +890,14 @@ Internet-Draft           VRP Offer Verification                July 2026
    wording: language like "verified", "guaranteed", or "signed" attached
    to an unsigned value is a class violation, not a promotion.
 
+
+
+
+Abbas                      Expires 8 May 2027                  [Page 16]
+
+Internet-Draft           VRP Offer Verification            November 2026
+
+
 7.  Security Considerations
 
    Root of trust.  The root of trust is control of the host domain: the
@@ -718,17 +914,6 @@ Internet-Draft           VRP Offer Verification                July 2026
    removal of a compromised key also invalidates the operator's own
    offers signed with it; this is intentional, since signatures from the
    operator and the attacker are indistinguishable under the same key.
-
-
-
-
-
-
-
-Abbas                    Expires 31 January 2027               [Page 13]
-
-Internet-Draft           VRP Offer Verification                July 2026
-
 
    Enforcement honesty.  VRP cannot force a verifier to cache for a
    bounded time.  The cache bound is a requirement on conforming
@@ -747,7 +932,88 @@ Internet-Draft           VRP Offer Verification                July 2026
    unknown key identifiers cannot be used to drive traffic against a
    node's JWKS endpoint.
 
-   Transport.  All VRP resources are served over HTTPS only.
+   What a valid signature proves.  A signature that verifies against the
+   host domain's JWKS proves that a key the domain publishes signed
+   exactly these terms: provenance and integrity of the offer.  Who
+   holds the private key can be declared per node in
+   operator.key_custody.  With self, the host holds it.  With platform,
+   an operator holds and uses it on the host's behalf; the signature
+   then proves that the domain's published key signed, not that the host
+   itself held the key.  A verifier does not assume self-custody when
+   key_custody is absent.
+
+
+
+
+
+
+
+
+Abbas                      Expires 8 May 2027                  [Page 17]
+
+Internet-Draft           VRP Offer Verification            November 2026
+
+
+   Domain binding.  A valid signature proves which domain's key signed,
+   not which domain the offer is about.  If the node at one domain signs
+   an offer whose canonical_domain names another domain, the signature
+   verifies against the signing node's JWKS; only the check that the
+   offer names the domain it was fetched from (Section 6.2) stops a
+   verifier from presenting it as the other domain's offer.
+
+   The stay asked for.  A genuine offer for other dates or another guest
+   count verifies like any other offer from the node.  Only the
+   comparison with what the verifier asked for (Section 6.2) stops a
+   verifier from quoting it for the wrong stay.
+
+   Echoed request fields.  A node signs whatever it copies from the
+   request.  If it copied free text, anyone could get a host-signed
+   sentence of their own choosing by asking for it.  Section 5.2
+   therefore limits what is copied to the stay and a language tag, and
+   Section 6.2 forbids presenting either as the host's words.
+
+   Offer lifetime.  A leaked key mints fresh offers whatever the
+   lifetime, but an offer the node itself signed stays quotable after a
+   price or availability change for at most its lifetime.  Section 5.2
+   caps that at 900 seconds, and the check on generated_at (Section 6.1)
+   keeps a start time in the future from stretching it.
+
+   Concentration under platform custody.  An operator that holds the
+   signing keys of many nodes is one point of compromise for all of
+   them.  Rotation and revocation work per node: removing a compromised
+   key from one node's JWKS de-trusts it for that node, within the cache
+   bound.  A key that several nodes publish is de-trusted only where it
+   is removed.
+
+   Host-owned domains.  Only a domain registered for the host can be a
+   node (Section 3.2).  A company that hands out names under its own
+   domain, as the Public Suffix List's PRIVATE section records, cannot
+   make those names VRP nodes, and neither can the operator of a brand
+   or closed top-level domain.  ICANN's gTLD list marks brand top-level
+   domains (Specification 13) but not every closed one; Section 3.2
+   therefore names the closed top-level domains it stops beyond that
+   list, and a closed top-level domain that is neither marked nor named
+   is excluded by the rule's wording but not yet by a program.
+
+   Fail-closed verification.  Whatever cannot be verified is unknown,
+   never affirmed or negated (Section 6.3, Section 6.4), so a timeout, a
+   malformed response or a failed signature check cannot be turned into
+   a quote.
+
+
+
+
+
+
+Abbas                      Expires 8 May 2027                  [Page 18]
+
+Internet-Draft           VRP Offer Verification            November 2026
+
+
+   Transport.  The discovery document is served over https only.
+   jwks_url, verified_stay_offer_endpoint and direct_booking_url are
+   node URLs, so https on the node's own domain (Section 3.3), and a
+   verifier follows a redirect only to a node URL (Section 3.4).
 
    Tamper evidence.  A node MAY record signed-artifact hashes and key-
    rotation events in a public append-only transparency log (in the
@@ -768,9 +1034,14 @@ Internet-Draft           VRP Offer Verification                July 2026
 
    The optional offer reference identifier in direct_booking_url
    (Section 5.3) lets a node correlate a booking-page visit with the
-   signed offer it issued.  It is not required for verification, and
-   hosts SHOULD limit retention of such correlation data to what booking
-   operations need.
+   signed offer it issued.  It is not required for verification.  This
+   document sets no limit on how long such correlation data is kept;
+   that is the host's decision.
+
+   The checkIn, checkOut and guests query parameters that Section 5.3
+   recommends put the quoted dates and guest count into
+   direct_booking_url, so they reach browser history and server logs
+   wherever the URL is followed.
 
 9.  IANA Considerations
 
@@ -778,13 +1049,6 @@ Internet-Draft           VRP Offer Verification                July 2026
    URIs" registry [RFC8615]:
 
    URI suffix:  vacation-rental.json
-
-
-
-Abbas                    Expires 31 January 2027               [Page 14]
-
-Internet-Draft           VRP Offer Verification                July 2026
-
 
    Change controller:  Vacation Rental Protocol (VRP) - Rouiada Abbas;
       hello@vacationrentalprotocol.com
@@ -794,9 +1058,17 @@ Internet-Draft           VRP Offer Verification                July 2026
    Status:  provisional
 
    Related information:  Existing deployments additionally serve the
+
+
+
+Abbas                      Expires 8 May 2027                  [Page 19]
+
+Internet-Draft           VRP Offer Verification            November 2026
+
+
       same resource at the transition alias suffix vacation-rental-
       protocol.json; clients SHOULD use vacation-rental.json
-      (Section 3.4).  An open registration request for this suffix
+      (Section 3.7).  An open registration request for this suffix
       predates this document; see https://github.com/protocol-
       registries/well-known-uris/issues/93.
 
@@ -818,6 +1090,10 @@ Internet-Draft           VRP Offer Verification                July 2026
               Timestamps", RFC 3339, DOI 10.17487/RFC3339, July 2002,
               <https://www.rfc-editor.org/info/rfc3339>.
 
+   [RFC5646]  Phillips, A., Ed. and M. Davis, Ed., "Tags for Identifying
+              Languages", BCP 47, RFC 5646, September 2009,
+              <https://www.rfc-editor.org/info/rfc5646>.
+
    [RFC7515]  Jones, M., Bradley, J., and N. Sakimura, "JSON Web
               Signature (JWS)", RFC 7515, DOI 10.17487/RFC7515, May
               2015, <https://www.rfc-editor.org/info/rfc7515>.
@@ -837,9 +1113,13 @@ Internet-Draft           VRP Offer Verification                July 2026
 
 
 
-Abbas                    Expires 31 January 2027               [Page 15]
+
+
+
+
+Abbas                      Expires 8 May 2027                  [Page 20]
 
-Internet-Draft           VRP Offer Verification                July 2026
+Internet-Draft           VRP Offer Verification            November 2026
 
 
    [RFC8259]  Bray, T., Ed., "The JavaScript Object Notation (JSON) Data
@@ -856,6 +1136,15 @@ Internet-Draft           VRP Offer Verification                July 2026
    [DID-WEB]  W3C Credentials Community Group, "did:web Method
               Specification", 2023,
               <https://w3c-ccg.github.io/did-method-web/>.
+
+   [ICANN-GTLDS]
+              ICANN, "gTLD Registry Agreements (machine-readable list)",
+              2026,
+              <https://www.icann.org/resources/registries/gtlds/v2/
+              gtlds.json>.
+
+   [PSL]      Mozilla Foundation, "Public Suffix List", 2026,
+              <https://publicsuffix.org/list/>.
 
    [RFC6962]  Laurie, B., Langley, A., and E. Kasper, "Certificate
               Transparency", RFC 6962, DOI 10.17487/RFC6962, June 2013,
@@ -884,18 +1173,9 @@ Appendix A.  Example Discovery Document
 
 
 
-
-
-
-
-
-
-
-
-
-Abbas                    Expires 31 January 2027               [Page 16]
+Abbas                      Expires 8 May 2027                  [Page 21]
 
-Internet-Draft           VRP Offer Verification                July 2026
+Internet-Draft           VRP Offer Verification            November 2026
 
 
    {
@@ -949,9 +1229,9 @@ Appendix C.  Implementation Status
 
 
 
-Abbas                    Expires 31 January 2027               [Page 17]
+Abbas                      Expires 8 May 2027                  [Page 22]
 
-Internet-Draft           VRP Offer Verification                July 2026
+Internet-Draft           VRP Offer Verification            November 2026
 
 
    One implementation is live at the time of writing: a reference
@@ -1005,4 +1285,4 @@ Author's Address
 
 
 
-Abbas                    Expires 31 January 2027               [Page 18]
+Abbas                      Expires 8 May 2027                  [Page 23]

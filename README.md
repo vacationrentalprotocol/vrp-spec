@@ -8,7 +8,7 @@ The `vacation-rental.json` well-known URI suffix is registered in the [IANA Well
 
 VRP lets AI agents verify that a stay offer came from the host-owned domain, includes fresh availability, exact pricing, and a direct booking URL before quoting.
 
-Core VRP proves the offer is real. Portable attestations prove selected trust history without making HemmaBo, or any other operator, the authority over truth.
+Core VRP verifies the offer’s origin and integrity. Portable attestations prove selected trust history without making HemmaBo, or any other operator, the authority over truth.
 
 ## Spec
 
@@ -89,7 +89,11 @@ profiles where each verifier chooses which issuers to trust.
 
 [HemmaBo](https://www.hemmabo.com/) is a reference implementation, provider, and federation using VRP-compatible host-owned domains.
 
-**Live proof node:** [villaakerlyckan.se](https://villaakerlyckan.se)
+**Live nodes:** every known implementation, with its evidence, is in
+[IMPLEMENTATIONS.md](./IMPLEMENTATIONS.md) (rendered at
+<https://vacationrentalprotocol.com/implementations>). The reference
+implementer's proof node is [villaakerlyckan.se](https://villaakerlyckan.se);
+the first independent signing node is listed there too.
 
 ## For Coding Agents (Claude Code, Cursor, Codex)
 

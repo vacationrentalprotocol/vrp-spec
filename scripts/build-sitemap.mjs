@@ -44,6 +44,7 @@ const ROUTES = [
   ["/verify", "verify.html"],
   ["/declarations", "declarations.html"],
   ["/implement", "implement.html"],
+  ["/implementations", "IMPLEMENTATIONS.md"],
   ["/film", "film.html"],
   ["/demo", "demo.html"],
   ["/docs/first-mover-evidence-memo", "docs/first-mover-evidence-memo.md"],

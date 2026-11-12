@@ -14,6 +14,14 @@ verifiability classes), and the formal IANA registration template for the
 - **Validated 2026-07-30:** xml2rfc 3.34.0 renders clean; idnits 2.17.1 =
   0 errors, 0 flaws (the single remaining warning is the standard
   pre-submission "couldn't figure out when first submitted" artifact).
+- **Rewritten 2026-11-04 from `spec/v0.1.md` as it reads on `main`** (ADR
+  0009 host-owned domain, node URL and fetching; ADR 0006 node page
+  identification as SHOULD; ADR 0012 the stay asked for, dates, echoed
+  fields and lifetime; `price.minor_unit`; the sixteen Safe-to-Quote
+  conditions; Security and Privacy Considerations). Every MUST in Core §2,
+  §5, §6 and §7 has a counterpart; the draft adds none. xml2rfc 3.35.0
+  renders clean; idnits was not run in that session. The `<date>` is
+  2026-11-04 and is set to the submission day when the author submits.
 
 ## Submission (manual, by the author)
 
@@ -28,8 +36,10 @@ verifiability classes), and the formal IANA registration template for the
   "IETF standard" or "IETF-approved". Press-safe phrasing: *"an IETF
   Internet-Draft has been submitted — work in progress."* Same precision
   rule as tamper-evident vs immutable.
-- Drafts **expire after six months**. A `-00` submitted 2026-07-30 expires
-  2027-01-31; submit `-01` before then (bump `docName` + `seriesInfo`
+- Drafts **expire after six months** from the `<date>` in the XML. `-00`
+  has not been submitted (datatracker 404 on 2026-11-04); it keeps the
+  `-00` name until it is. Submit `-01` before a submitted `-00` expires
+  (bump `docName` + `seriesInfo`
   value and the `date` element, then re-render and re-validate).
 - Empirical findings (three-state failure data, iCal taxonomy, gap
   analysis) intentionally stay **out** of the I-D — spec text only. They

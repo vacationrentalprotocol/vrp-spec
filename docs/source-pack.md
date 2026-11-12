@@ -3687,6 +3687,11 @@ A host or provider can implement VRP without becoming a marketplace. The host-ow
 2. Publish `/.well-known/jwks.json` with an Ed25519 public key.
 3. Expose a verified stay offer endpoint.
 4. Sign verified stay offer payloads with the matching host-domain private key.
+   Keep that key out of the web root, in a path the web server never serves
+   (an environment variable, a secrets manager, or a file readable only by
+   the signing process). Confirm it by requesting the key's path over HTTPS:
+   the answer must be 403 or 404. See
+   [docs/security/KEY_ROTATION.md](https://vacationrentalprotocol.com/docs/security/KEY_ROTATION).
 5. Include availability, exact price, currency, `valid_until`, direct booking URL, and agent citation permission.
 6. Return explicit signed false values when a request is unavailable.
 7. Fail closed when any verification requirement cannot be satisfied.

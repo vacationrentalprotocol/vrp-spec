@@ -85,6 +85,8 @@ unchanged.
 - The project depends on having at least one independent maintainer active.
   That is the state since 2026-10-23 (MAINTAINERS.md). GOVERNANCE.md §8 is the
   path to more.
-- Editorial and non-breaking changes are unchanged: one maintainer approves.
+- Editorial and non-breaking changes are unchanged (GOVERNANCE.md §4): one
+  maintainer approves and merges, and that maintainer may be the change's
+  author.
 - This record, ADR 0015 and ADR 0016 are approved under the rule they describe:
   the independent maintainer's approval is one of the two for each of them.

@@ -55,10 +55,20 @@ where npm offers it. No single organization keeps sole rights to the package.
 
 **D2. GitHub organization.** The organization `vacationrentalprotocol` has at
 least two owners who are independent of each other under ADR 0014 D2. Viljem
-Dvojmoč (`@viljemd-hub`) is added as an owner. The repositories
-`vrp-spec` and `vrp-verify` require two approving reviews and passing checks
-before merge, and dismiss stale approvals when the head changes, so that ADR
-0014 D3 and ADR 0015 D2 hold in the repository's own settings.
+Dvojmoč (`@viljemd-hub`) is added as an owner. In the repositories
+`vrp-spec` and `vrp-verify`, a substantive change merges only with approval
+from two maintainers on its current head, at least one of them independent of
+the change's author (ADR 0014 D1), and after its review period (ADR 0015). An
+editorial or non-breaking change (GOVERNANCE.md §4) needs one maintainer, who
+may be its author. Every change needs passing checks before merge, and an
+approval given on an earlier head does not count. A technical control in the
+two repositories is to enforce this, so that ADR 0014 D3 and ADR 0015 D2 hold
+in the repository itself.
+
+Until that control is in place, the maintainer who merges checks the
+approvals, the approvers' independence and the review period by hand before
+every merge. MAINTAINERS.md "Custody" (D5) records what the two repositories
+enforce by themselves, as measured, and when it was last measured.
 
 **D3. Domain.** `vacationrentalprotocol.com` carries a registrar transfer lock
 and auto-renewal, and a second named contact who is independent of the
@@ -77,7 +87,9 @@ gains the sentence: "The verifier the organization publishes,
 sets out; other implementations are not."
 
 **D5. Record.** MAINTAINERS.md gains a section "Custody" that lists, for each
-handle in D1–D3, who holds it and when it was last measured. A change to the
+handle in D1–D3, who holds it and when it was last measured, and, for D2,
+whether the approvals, independence and review period are enforced by a
+technical control or checked by hand. A change to the
 custody of a handle is recorded there in the same pull request that makes it,
 or, for a hand step outside the repository, in the next pull request.
 
@@ -91,7 +103,8 @@ or, for a hand step outside the repository, in the next pull request.
   nodes. It gives up sole custody, not a role. HemmaBo retains no sole right
   to any handle covered by this record.
 - Shared custody is shared power. It is bounded by the same rules: publishing
-  only through the workflow, two reviews before merge, and GOVERNANCE.md §3
+  only through the workflow, two approvals before a substantive change
+  merges (D2), and GOVERNANCE.md §3
   (the continuity role) and §8 (adding and removing maintainers).
 - D1–D3 are hand steps by the account holders. Each is measured after it is
   taken (`npm owner ls`, the organization's people page, the registrar's

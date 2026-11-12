@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Implementations | Vacation Rental Protocol</title>
+    <meta name="description" content="VRP is an open, CC0-licensed specification. Anyone may implement it — there is no registration, no approval step, and no gatekeeper." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="Implementations" />
+    <meta property="og:description" content="VRP is an open, CC0-licensed specification. Anyone may implement it — there is no registration, no approval step, and no gatekeeper." />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/implementations" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Implementations" />
+    <meta name="twitter:description" content="VRP is an open, CC0-licensed specification. Anyone may implement it — there is no registration, no approval step, and no gatekeeper." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/implementations" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/IMPLEMENTATIONS.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/implementations#techarticle",
+  "headline": "Implementations",
+  "description": "VRP is an open, CC0-licensed specification. Anyone may implement it — there is no registration, no approval step, and no gatekeeper.",
+  "url": "https://vacationrentalprotocol.com/implementations",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/IMPLEMENTATIONS.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/IMPLEMENTATIONS.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/spec/v1.0">1.0 candidate</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/implementations">Implementations</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/IMPLEMENTATIONS.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/IMPLEMENTATIONS.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="implementations">Implementations</h1>
+<p>VRP is an open, CC0-licensed specification. Anyone may implement it — there is no registration, no approval step, and no gatekeeper. This page lists known implementations and explains how to add yours.</p>
+<h2 id="known-implementations">Known implementations</h2>
+<table><thead><tr><th>Implementation</th><th>Type</th><th>License</th><th>Notes</th></tr></thead><tbody><tr><td><a href="https://github.com/HemmaBo-se/hemmabo-mcp-server">hemmabo-mcp-server</a></td><td>Reference implementation (MCP server, verifier)</td><td>Apache-2.0</td><td>Maintained by HemmaBo, the commercial reference implementer (disclosed in <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/MAINTAINERS.md">MAINTAINERS.md</a>)</td></tr><tr><td><a href="https://villaakerlyckan.se/.well-known/vacation-rental.json">villaakerlyckan.se</a></td><td>Live production node</td><td>—</td><td>Serves signed offers and a JWKS on its own domain</td></tr><tr><td><a href="https://github.com/Swarnabha753/vrp-independent-verifier">vrp-independent-verifier</a></td><td>Independent verifier</td><td>MIT</td><td>Standalone implementation with no dependency on the JavaScript implementation in this repository</td></tr><tr><td><a href="https://apartmamatevz.si/.well-known/vacation-rental.json">apartmamatevz.si</a></td><td>Independent signing node (CM PRO, migrated from CM Free 2026-10-29)</td><td><a href="https://github.com/viljemd-hub/channel-manager/blob/main/public/api/vrp_offer.php">AGPL-3.0</a></td><td>Self-hosted. key_custody: self. Discovery, JWKS and signed offers verified 2026-10-20.</td></tr></tbody></table>
+<p>An independent implementation — a verifier or a node not operated by the reference implementer — is exactly what this page exists to welcome.</p>
+<p>What each node and verifier does, rule by rule, measured live: <a href="https://vacationrentalprotocol.com/docs/implementation-report-1.0">docs/implementation-report-1.0.md</a>.</p>
+<h2 id="implement-a-verifier">Implement a verifier</h2>
+<p>A minimal conforming verifier needs only Ed25519 signature verification and JSON parsing, both available in the standard library of most modern runtimes.</p>
+<ol><li>Read the wire format and verification rules in <a href="https://vacationrentalprotocol.com/spec/v0.1">spec/v0.1.md</a> (§5 Signed Offer, §6 Freshness, §7 Safe-to-Quote, §8 Fail-Closed).</li><li>Run your implementation against the self-describing conformance vectors: verification and freshness, <code>{ name, description, clock, jwks, input, expected }</code> envelopes, same self-describing shape Each vector embeds its own key set, evaluation clock, and expected outcome — no network access and no reading of this repository's JavaScript required.<ul><li><a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance/offer">examples/conformance/offer/</a> — signed-offer</li><li><a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance/receipt">examples/conformance/receipt/</a> — receipt</li></ul></li><li>Every vector must produce the vector's <code>expected</code> outcome.</li></ol>
+<h2 id="implement-a-node">Implement a node</h2>
+<p>A node publishes a discovery document, a JWKS, and a signed-offer endpoint on its own domain. Start with <a href="https://vacationrentalprotocol.com/docs/implement-vrp">docs/implement-vrp.md</a>.</p>
+<h2 id="get-listed">Get listed</h2>
+<p>Your implementation lives in your own repository, under your own name and license — this repository takes only the row that points to it. Open a pull request adding a row to the table above, or open an issue with a link to your implementation. The only requirement for a verifier is that it passes the committed conformance vectors; for a node, that its discovery document, JWKS, and signed offers verify. Decision process per <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/GOVERNANCE.md">GOVERNANCE.md</a>.</p>
+      </article>
+    </main>
+  </body>
+</html>

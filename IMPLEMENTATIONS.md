@@ -16,6 +16,9 @@ implementations and explains how to add yours.
 An independent implementation — a verifier or a node not operated by the
 reference implementer — is exactly what this page exists to welcome.
 
+What each node and verifier does, rule by rule, measured live:
+[docs/implementation-report-1.0.md](docs/implementation-report-1.0.md).
+
 ## Implement a verifier
 
 A minimal conforming verifier needs only Ed25519 signature verification and

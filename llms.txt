@@ -143,7 +143,8 @@ A second signing node, operated independently of the reference
 implementation, signs its own offers with its own key on its own domain. Known
 implementations are listed with their evidence; the list is informative, not a
 registry, and a node needs no listing to be a VRP node:
-https://github.com/vacationrentalprotocol/vrp-spec/blob/main/IMPLEMENTATIONS.md
+https://vacationrentalprotocol.com/implementations
+(source: https://github.com/vacationrentalprotocol/vrp-spec/blob/main/IMPLEMENTATIONS.md)
 
 VRP is complementary to UCP, AP2, MCP, A2A, and WebMCP. UCP may handle checkout
 and order lifecycle, including lodging flows as the UCP lodging profile matures;

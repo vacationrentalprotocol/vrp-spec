@@ -405,6 +405,12 @@
         if (key.kty !== "OKP" || key.crv !== "Ed25519") {
           throw new Error("The host's key is not Ed25519/OKP.");
         }
+        // §3: a VRP signing key names its own alg, Ed25519 or EdDSA, compared
+        // as written. A key labelled with another algorithm, or with none, is
+        // not a VRP signing key and is never tried, even when its kid matches.
+        if (key.alg !== "Ed25519" && key.alg !== "EdDSA") {
+          throw new Error("The host's key with kid '" + header.kid + "' is labelled alg " + JSON.stringify(key.alg) + ". A VRP signing key names its alg Ed25519 (RFC 9864) or EdDSA (RFC 8037), VRP §3, so the offer is unverifiable.");
+        }
         let cryptoKey;
         try {
           cryptoKey = await crypto.subtle.importKey(

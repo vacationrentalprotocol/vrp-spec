@@ -34,7 +34,9 @@ wrong-case name refused) and the offer's `protocol_version` (`"1.0"` accepted,
 verifies against the embedded key set and the signed payload declares a known
 version. CI checks that the reference verifier agrees with every committed
 file (`npm test`, `verify-offer-vectors`), and that an accepting vector exists
-for each of the four combinations of version string and algorithm name.
+for each of the four combinations of version string and algorithm name. The
+site's verify page carries its own copy of the rules and is run against the
+same files (`verify-web-verifier`).
 
 The discovery document's `protocol_version` is a separate declaration and has
 its own vectors in [`discovery-version/`](./discovery-version/): fifteen

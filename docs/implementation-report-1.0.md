@@ -29,7 +29,7 @@ role; `?` not checked. Every claim below is one of those four.
 | V1 | `hemmabo-mcp-server` reference verifier, 7.1.0 | verifier | no | §2:39, §7:514, §7:516 and the new 1.0 requirements: `lib/vrp.ts` at `7199356` (7.1.0, read and run 2026-11-13). Every other row: `lib/vrp.ts` and `lib/vrp-offer-rules.ts` at `32cb82f` (7.0.13, 2026-11-08; the 2026-11-05 reading was `ed4cc25`, 7.0.12); those line numbers are 7.0.13's and were not re-read at 7.1.0 |
 | V2 | `@vacationrentalprotocol/vrp-verify` 0.3.0 | verifier library (no network) | no (written by the reference implementer's editors) | `src/*.js` at `db7b905` (2026-11-08; the 2026-11-05 reading was 0.2.0 at `bd4f92e`) |
 | V3 | this repository's scripts (`conformance.mjs`, `verify-offer-rules.mjs`, `verify-host-domain.mjs`, `verify-node-page.mjs`) | test suite | no (the standard's own) | `e815600`; the new 1.0 requirements at the commit that carries this text (`scripts/conformance.mjs`, `verify-offer-vectors.mjs`, `verify-version-vectors.mjs`) |
-| V4 | `verify.html` on vacationrentalprotocol.com | verifier (browser) | no (the standard's own) | `e815600` |
+| V4 | `verify.html` on vacationrentalprotocol.com | verifier (browser) | no (the standard's own) | `e815600`; the new 1.0 requirements at the commit that carries this text (`verify.html`, run by `scripts/verify-web-verifier.mjs`) |
 | V5 | `vrp-independent-verifier` (Swarnabha Nandi, MIT) | verifier | **yes** | `src/verifier.mjs` at `bc959ba` (last commit 2026-08-22) |
 
 Node side: two software products (HemmaBo, CM PRO) → two independent
@@ -173,7 +173,7 @@ where it differs from the vector's.
 | V1 `hemmabo-mcp-server` 7.1.0 | HemmaBo | `7199356` | `verifyCompactJws` in `lib/vrp.ts`, the function its tools call for the signature (the complete tool flow fetches the node and cannot take a vector); and its own test `src/vrp-discovery-document.contract.test.ts`, 19 of 19 pass, 10:34:45 UTC |
 | V2 `@vacationrentalprotocol/vrp-verify` 0.3.0 | the standard's own | `db7b905` | `verifyOffer`; published as a conformance report (below) |
 | V3 this repository's `scripts/conformance.mjs` | the standard's own | the commit the conformance report names | `verifyOfferVector`; `npm test`; published as a conformance report |
-| V4 `verify.html` | the standard's own | the same commit | read, not run: a browser page that fetches a live node and cannot take a vector |
+| V4 `verify.html` | the standard's own | the commit that carries this text, not the commit the conformance reports name: `scripts/verify-web-verifier.mjs` does not exist before it | the page's own script, evaluated as served: its `verifyJws` over every offer vector and over the valid vector's key under other labels, and its `checkDiscovery` over the discovery documents (`npm run verify-web-verifier`). What the page decides when it renders (the offer's version, lifetime, dates) is read, not run |
 | V5 `vrp-independent-verifier` 1.0.0 | Swarnabha Nandi | `bc959ba` (read from a checkout of that commit) | `verifyOffer(vector)`; published as a conformance report |
 
 | Vector | Expected | V3 | V2 | V5 | V1 (signature function) |
@@ -202,7 +202,7 @@ and refuses any other value, or none.**
 | V1 | not implemented: `"1.0"` is refused | `lib/vrp.ts:16` (`VRP_PROTOCOL_VERSION = "0.1"`) and `:262–270` at `7199356`: an absent version is refused, and every value but `"0.1"` is refused as «Unsupported VRP version». Its own test «still refuses a protocol_version other than 0.1» passes |
 | V2 | does not read the discovery document | `src/quote.js:38–41` at `db7b905`: the discovery document, and that it declares `protocol_version`, is the caller's responsibility |
 | V3 | implemented | `checkDiscoveryVersion` in `scripts/conformance.mjs`; `npm run verify-version-vectors`: 15 discovery documents and 8 pairs pass |
-| V4 | implemented, read only | `verify.html`: `d.protocol_version === "1.0" \|\| d.protocol_version === "0.1"` |
+| V4 | implemented | `verify.html`: `d.protocol_version === "1.0" \|\| d.protocol_version === "0.1"`; `npm run verify-web-verifier`: 15 discovery documents pass |
 | V5 | does not read the discovery document | `src/verifier.mjs` at `bc959ba` takes a vector and nothing else |
 
 Organizations with a shipped implementation: none. **Evidence outstanding.**
@@ -222,7 +222,7 @@ name.
 | V1 | the new name is not implemented: vectors 06, 10 and 11 are refused; 07, 13 and 14 are refused | `lib/vrp.ts:17` (`VRP_JWS_ALG = "EdDSA"`) and `:333` at `7199356`, which compares the JWS header; run above |
 | V2 | the new name is not implemented: vectors 06, 10 and 11 are refused; 07, 13 and 14 are refused | `src/jws.js:50` at `db7b905`, which compares the JWS header; run above |
 | V3 | the seven vectors come out as expected | `SIGNATURE_ALGS` and `verifyCompactJws` in `scripts/conformance.mjs`, which compares the JWS header; run above |
-| V4 | read only | `verify.html`: `header.alg !== "Ed25519" && header.alg !== "EdDSA"` |
+| V4 | implemented | `verify.html`: `header.alg !== "Ed25519" && header.alg !== "EdDSA"`, and the same two names on the key; `npm run verify-web-verifier`: the fifteen offer vectors and twelve key labels pass |
 | V5 | the new name is not implemented: vectors 06, 10, 11 and 12 are refused; 07, 13 and 14 are refused, with the reason `wrong_key` | run above |
 
 Organizations with a shipped implementation of the new name: none. **Evidence
@@ -309,7 +309,8 @@ is kept unchanged: it binds to the five-vector corpus at its own commit.
   computed by no one.
 - **Not checked:** CM PRO key rotation (§3.1:165); whether V5 is still
   maintained; V1's rows other than §2:39, §7:514 and §7:516 at 7.1.0 (they
-  stand as read at 7.0.13); `verify.html` (V4) by an automatic run.
+  stand as read at 7.0.13); what `verify.html` (V4) decides when it renders
+  (the offer's version, lifetime, dates), which no automatic run covers.
 
 ## Reproduce
 
@@ -324,8 +325,8 @@ in hemmabo-mcp-server at `32cb82f` (`src/vrp-offer-rules.unit.test.ts`,
 `db7b905` (`test/offer-rules.test.mjs`).
 
 Requirements 1.0 adds or changes: in this repository, `npm test` (it runs
-`verify-offer-vectors`, `verify-version-vectors` and `validate`, which reads
-the four 1.0 schemas). The conformance reports:
+`verify-offer-vectors`, `verify-version-vectors`, `verify-web-verifier` and
+`validate`, which reads the four 1.0 schemas). The conformance reports:
 
 ```bash
 node scripts/conformance-report.mjs --engine reference --revision <commit> --run-at <UTC> --out <file>

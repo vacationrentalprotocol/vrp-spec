@@ -116,8 +116,13 @@ or, for a hand step outside the repository, in the next pull request.
   an account is lost.
 - The reference implementer keeps every role it has: lead maintainer,
   specification editor, security contact, the reference implementation and
-  nodes. It gives up sole custody, not a role. HemmaBo retains no sole right
-  to any handle covered by this record.
+  nodes. It gives up sole ownership of the npm package and of the GitHub
+  organization (D1, D2), not a role: HemmaBo retains no sole right to those
+  two. The domain and the hosting project are not shared in that way. The
+  domain stays with its registrant, with a transfer lock, auto-renewal and a
+  second named contact on record (D3). The hosting project either moves to a
+  team named for the standard with two owners, or stays where it is with the
+  reason recorded in MAINTAINERS.md (D3).
 - Shared custody is shared power. It is bounded by the same rules: publishing
   only through the workflow, two approvals before a substantive change
   merges (D2), and GOVERNANCE.md §3

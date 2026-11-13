@@ -405,6 +405,13 @@
         if (key.kty !== "OKP" || key.crv !== "Ed25519") {
           throw new Error("The host's key is not Ed25519/OKP.");
         }
+        // §3 and the JWKS schema: a VRP signing key names its own alg, EdDSA,
+        // compared as written. A key labelled with another algorithm, or with
+        // none, is not a VRP signing key and is never tried, even when its kid
+        // matches.
+        if (key.alg !== "EdDSA") {
+          throw new Error("The host's key with kid '" + header.kid + "' is labelled alg " + JSON.stringify(key.alg) + ". A VRP signing key names its alg EdDSA (VRP §3), so the offer is unverifiable.");
+        }
         let cryptoKey;
         try {
           cryptoKey = await crypto.subtle.importKey(

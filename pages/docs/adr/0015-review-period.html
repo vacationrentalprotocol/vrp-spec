@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ADR 0015: Review Period for Substantive Changes | Vacation Rental Protocol</title>
+    <meta name="description" content="This record is itself a substantive change (GOVERNANCE.md §12)." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="ADR 0015: Review Period for Substantive Changes" />
+    <meta property="og:description" content="This record is itself a substantive change (GOVERNANCE.md §12)." />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/adr/0015-review-period" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="ADR 0015: Review Period for Substantive Changes" />
+    <meta name="twitter:description" content="This record is itself a substantive change (GOVERNANCE.md §12)." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/adr/0015-review-period" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/adr/0015-review-period.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/adr/0015-review-period#techarticle",
+  "headline": "ADR 0015: Review Period for Substantive Changes",
+  "description": "This record is itself a substantive change (GOVERNANCE.md §12).",
+  "url": "https://vacationrentalprotocol.com/docs/adr/0015-review-period",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/adr/0015-review-period.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0015-review-period.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/implementations">Implementations</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/adr/0015-review-period.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0015-review-period.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="adr-0015-review-period-for-substantive-changes">ADR 0015: Review Period for Substantive Changes</h1>
+<p><strong>Status:</strong> Proposed <strong>Date:</strong> 2026-11-04 (proposed)</p>
+<p><strong>Related:</strong> <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/GOVERNANCE.md">GOVERNANCE.md</a> §4, §5, §12, <a href="https://vacationrentalprotocol.com/docs/adr/0014-independent-approval">ADR 0014</a>, <a href="https://vacationrentalprotocol.com/docs/adr/0016-shared-custody">ADR 0016</a>.</p>
+<p>This record is itself a substantive change (GOVERNANCE.md §12). It is in force only after at least seven days of review with no maintainer objecting and approval from two maintainers that counts on its current head (ADR 0014 D3), and after it is merged. The 28-day period below is a proposal until then; the period in force today is seven days (§4).</p>
+<h2 id="context">Context</h2>
+<p>GOVERNANCE.md §4 sets &quot;a review period of at least seven days&quot; for every substantive change (read at <code>5db83f4</code>, line 77). The same period applies to a clarification of one schema field and to the record that would declare 1.0.</p>
+<p>The standards bodies VRP measures itself against use longer periods for text that others implement. The W3C Process Document (18 August 2025, §6.3.7, read 2026-11-04) requires &quot;the Candidate Recommendation review period, which must be at least 28 days after publication, and should be longer for complex documents&quot;, and lets a group &quot;identify features in the document as at risk&quot; that &quot;may be removed before advancement to Recommendation&quot;. RFC 6410 §2.2 (read 2026-11-04) sets &quot;an IETF-wide Last Call of at least four weeks&quot; for advancement to Internet Standard. Seven days is enough for the maintainers to read a change; it is not enough for an implementer who reads the repository once a month.</p>
+<p>Pull request #178 (ADR 0013, the 1.0 record) was marked ready for review on 2026-11-01 10:25:43 UTC and converted back to draft on 2026-11-02 14:44:23 UTC (read from its timeline). Nothing in the rule would have stopped it from being merged on 2026-11-08 with both approvals from inside one organization (ADR 0014) and before any outside implementer had seen it.</p>
+<h2 id="decision">Decision</h2>
+<p><strong>D1. Two periods.</strong> The review period of GOVERNANCE.md §4 is:</p>
+<ul><li><strong>28 days</strong> for a substantive change to the specification text, a schema, the JSON-LD context or terms, or the conformance vectors (the artifacts §1 names), and for a change to GOVERNANCE.md itself (§12);</li><li><strong>7 days</strong>, as today, for every other substantive change: an ADR that records a decision without changing those artifacts, a security correction under §5 &quot;Before 1.0&quot;, and a change to the verifier the organization publishes (ADR 0016).</li></ul>
+<p><strong>D2. Start and restart.</strong> The period runs from the moment the change is marked ready for review. It starts again when the change is converted to draft and back, or when its head changes other than by merging <code>main</code> into it.</p>
+<p><strong>D3. At risk.</strong> A substantive change to the specification MAY mark a part of the text &quot;at risk&quot;. A part marked at risk MAY be removed before merge without restarting the period; any other change restarts it (D2).</p>
+<p>D2 and D3 are rules about the review period only. Whether an approval given on an earlier head still counts is decided by ADR 0014 D3; neither a merge of <code>main</code> nor the removal of a part at risk makes it count by itself.</p>
+<p><strong>D4. Security corrections.</strong> A correction that closes a security gap under §5 &quot;Before 1.0&quot; keeps the 7-day period and, where the gap is being exploited, MAY be merged earlier by two approvals under ADR 0014 with the reason recorded in its ADR. The seven days then run after merge, and an objection in that time reverts the change.</p>
+<p><strong>D5. GOVERNANCE.md text.</strong> On acceptance, §4's bullet &quot;Substantive changes&quot; replaces &quot;a review period of at least seven days&quot; with &quot;the review period ADR 0015 sets: 28 days for the specification, schemas, context, vectors and this document, seven days for every other substantive change&quot;.</p>
+<h2 id="consequences">Consequences</h2>
+<ul><li>The record that declares 1.0 (ADR 0013, draft) is a change to the specification text and its schemas, so it is reviewed for 28 days once this record is in force, counted from its next &quot;ready for review&quot;.</li><li>An implementer who reads the repository monthly sees every change to the wire format before it is merged.</li><li>A security correction is not slowed: D4 keeps seven days and allows an earlier merge when a gap is being exploited.</li><li>The maintainers' own records (an ADR that changes no artifact) keep seven days, so the project's bookkeeping does not wait a month.</li><li>Neutrality: the periods apply to every author equally, the reference implementer included (ADR 0002).</li></ul>
+      </article>
+    </main>
+  </body>
+</html>

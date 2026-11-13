@@ -1,5 +1,5 @@
 // Self-describing signed-offer conformance vectors.
-// Runs the reference verifier (scripts/conformance.mjs verifyCompactJws)
+// Runs the reference verifier (scripts/conformance.mjs verifyOfferVector)
 // against every committed vector in examples/conformance/offer/ and checks
 // that its outcome matches each vector's inline `expected` block.
 //
@@ -7,9 +7,15 @@
 //   input     — a complete signed_verified_stay_offer envelope (spec §5)
 //   clock     — the injected evaluation instant (no wall-clock dependency)
 //   expected  — { verified, reason, fresh }
-//       verified: does the JWS verify against the embedded jwks
+//       verified: the JWS verifies against the embedded jwks AND the signed
+//                 payload declares a known protocol_version (1.0 §5, §9)
 //       reason:   null, or the reference rejection reason
 //       fresh:    offer.valid_until > clock; null when not verified
+//
+// The corpus covers the four combinations of version string and algorithm
+// name (0.1/EdDSA, 0.1/Ed25519, 1.0/EdDSA, 1.0/Ed25519); the check below fails
+// if one of them loses its accepting vector, so v0.1 compatibility cannot
+// disappear from the corpus unnoticed.
 //
 // These vectors mirror the executable base checks in
 // scripts/verify-conformance-vectors.mjs as implementation-neutral data, so an
@@ -20,7 +26,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { verifyCompactJws } from "./conformance.mjs";
+import { verifyOfferVector } from "./conformance.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const vectorsDir = join(repoRoot, "examples/conformance/offer");
@@ -35,6 +41,9 @@ const vectorFiles = readdirSync(vectorsDir)
 
 check("offer vector set is non-empty", vectorFiles.length >= 5);
 
+// version string / algorithm name of every vector the verifier accepted
+const accepted = new Set();
+
 for (const file of vectorFiles) {
   const v = JSON.parse(readFileSync(join(vectorsDir, file), "utf8"));
 
@@ -42,21 +51,8 @@ for (const file of vectorFiles) {
     check(`${file}: has ${field}`, v[field] !== undefined);
   }
 
-  const jws = v.input?.signature?.jws;
-  const result = verifyCompactJws(jws, v.jwks);
-
-  // §2, §5 (ADR 0013): a signed offer declares protocol_version "1.0" or "0.1";
-  // any other value is unknown (§9), never verified.
-  const KNOWN_VERSIONS = ["1.0", "0.1"];
-  const declared = result.valid ? result.payload?.protocol_version : undefined;
-  const versionUnknown = result.valid && !KNOWN_VERSIONS.includes(declared);
-  const verified = result.valid === true && !versionUnknown;
-  const reason = versionUnknown ? "unsupported_version" : (result.reason ?? null);
-  let fresh = null;
-  if (verified) {
-    const validUntil = Date.parse(result.payload?.valid_until ?? "");
-    fresh = Number.isFinite(validUntil) && validUntil > Date.parse(v.clock);
-  }
+  const { verified, reason, fresh, header, payload } = verifyOfferVector(v);
+  if (verified) accepted.add(`${payload.protocol_version}/${header.alg}`);
 
   check(`${file}: verified matches expected (${v.name})`, verified === v.expected.verified);
   check(`${file}: reason matches expected (${v.name})`, reason === v.expected.reason);
@@ -69,6 +65,10 @@ for (const file of vectorFiles) {
     console.error(`        expected: ${JSON.stringify(v.expected)}`);
     console.error(`        actual:   ${JSON.stringify({ verified, reason, fresh })}`);
   }
+}
+
+for (const combo of ["0.1/EdDSA", "0.1/Ed25519", "1.0/EdDSA", "1.0/Ed25519"]) {
+  check(`an accepting vector exists for ${combo}`, accepted.has(combo));
 }
 
 if (failures.length > 0) {

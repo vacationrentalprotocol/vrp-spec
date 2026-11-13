@@ -525,10 +525,170 @@ for (const [schemaPath, examplePath] of coreExampleSchemas) {
   if (coreSchema && example !== undefined) assertSchemaValid(coreSchema, example, examplePath);
 }
 
+// ---------------------------------------------------------------------------
+// 1.0 candidate schemas (ADR 0013 D2, ADR 0017). The four Core schemas exist in
+// a 1.0 edition; nothing above reads them, so everything they promise is
+// checked here: what they accept, what they refuse, that every v0.1 document
+// still validates, and that the two editions differ in nothing else.
+// ---------------------------------------------------------------------------
+const CORE_EDITIONS = [
+  ["discovery", "examples/discovery.v0.1.json"],
+  ["jwks", "examples/jwks.v0.1.json"],
+  ["verified-stay-offer", "examples/conformance/verified-stay-offer.signed.v0.1.json"],
+  [
+    "verified-stay-offer-verification-result",
+    "examples/verified-stay-offer-verification-result.safe-to-quote.v0.1.json",
+  ],
+];
+const edition = (name, version) => readJson(`schemas/${name}-v${version}.schema.json`);
+
+// The two editions of a schema, with the members that may differ taken out:
+// $id, title, every description, and the value set of protocol_version and alg.
+function withoutEditionDifferences(node, key = "") {
+  if (Array.isArray(node)) return node.map((item) => withoutEditionDifferences(item));
+  if (!node || typeof node !== "object") return node;
+  if ((key === "protocol_version" || key === "alg") && (node.const !== undefined || node.enum !== undefined)) {
+    const { const: _const, enum: _enum, ...rest } = node;
+    return withoutEditionDifferences({ ...rest, valueSet: `<${key}>` });
+  }
+  const out = {};
+  for (const [k, v] of Object.entries(node)) {
+    if (k === "$id" || k === "title" || k === "description") continue;
+    out[k] = withoutEditionDifferences(v, k);
+  }
+  return out;
+}
+
+for (const [name, examplePath] of CORE_EDITIONS) {
+  const v01 = edition(name, "0.1");
+  const v10 = edition(name, "1.0");
+  const example = readJson(examplePath);
+  if (!v01 || !v10 || example === undefined) continue;
+
+  if (v10.$id !== `https://vacationrentalprotocol.com/schemas/${name}-v1.0.schema.json`) {
+    failures.push(`schemas/${name}-v1.0.schema.json: $id must name the 1.0 edition`);
+  }
+  if (!/ 1\.0$/.test(v10.title || "")) {
+    failures.push(`schemas/${name}-v1.0.schema.json: title must end in "1.0", got ${JSON.stringify(v10.title)}`);
+  }
+  if (!deepEqual(withoutEditionDifferences(v01), withoutEditionDifferences(v10))) {
+    failures.push(
+      `schemas/${name}-v1.0.schema.json: differs from the v0.1 edition in more than $id, title, descriptions, protocol_version and alg (ADR 0013 D2)`,
+    );
+  }
+  // v0.1 compatibility: a v0.1 document is a 1.0 document.
+  assertSchemaValid(v10, example, `${examplePath} against the 1.0 edition (v0.1 compatibility)`);
+  assertSchemaValid(v01, example, `${examplePath} against the v0.1 edition`);
+}
+
+{
+  const d01 = edition("discovery", "0.1");
+  const d10 = edition("discovery", "1.0");
+  const discovery = readJson("examples/discovery.v0.1.json");
+  if (d01 && d10 && discovery) {
+    const withVersion = (value) => ({ ...discovery, protocol_version: value });
+    assertSchemaValid(d10, withVersion("1.0"), 'discovery 1.0: protocol_version "1.0"');
+    assertSchemaInvalid(d01, withVersion("1.0"), 'negative: discovery v0.1 edition is unchanged and refuses "1.0"');
+    for (const value of ["0.2", "2.0", "1.0.0", "1", " 1.0", 1, 0.1, null, ["1.0", "0.1"]]) {
+      assertSchemaInvalid(d10, withVersion(value), `negative: discovery 1.0 must refuse protocol_version ${JSON.stringify(value)}`);
+    }
+    const { protocol_version: _omitted, ...withoutVersion } = discovery;
+    assertSchemaInvalid(d10, withoutVersion, "negative: discovery 1.0 must require protocol_version");
+  }
+
+  const j01 = edition("jwks", "0.1");
+  const j10 = edition("jwks", "1.0");
+  const jwksDoc = readJson("examples/jwks.v0.1.json");
+  if (j01 && j10 && jwksDoc) {
+    const withAlg = (alg) => ({ ...jwksDoc, keys: [{ ...jwksDoc.keys[0], alg }] });
+    assertSchemaValid(j10, withAlg("Ed25519"), "jwks 1.0: key alg Ed25519");
+    assertSchemaValid(j10, withAlg("EdDSA"), "jwks 1.0: key alg EdDSA");
+    assertSchemaInvalid(j01, withAlg("Ed25519"), "negative: jwks v0.1 edition is unchanged and refuses alg Ed25519");
+    for (const alg of ["ES256", "RS256", "none", "ed25519", "eddsa"]) {
+      assertSchemaInvalid(j10, withAlg(alg), `negative: jwks 1.0 must refuse key alg ${alg}`);
+    }
+  }
+
+  const o01 = edition("verified-stay-offer", "0.1");
+  const o10 = edition("verified-stay-offer", "1.0");
+  const signed = readJson("examples/conformance/verified-stay-offer.signed.v0.1.json");
+  if (o01 && o10 && signed) {
+    // The envelope and the offer inside it each declare a version.
+    const withVersions = (envelopeVersion, offerVersion) => ({
+      ...signed,
+      protocol_version: envelopeVersion,
+      offer: { ...signed.offer, protocol_version: offerVersion },
+    });
+    const withAlg = (alg) => ({ ...signed, signature: { ...signed.signature, alg } });
+    for (const [e, o] of [["1.0", "1.0"], ["1.0", "0.1"], ["0.1", "1.0"], ["0.1", "0.1"]]) {
+      assertSchemaValid(o10, withVersions(e, o), `offer 1.0: envelope ${e}, offer ${o}`);
+    }
+    assertSchemaInvalid(o01, withVersions("1.0", "1.0"), 'negative: offer v0.1 edition is unchanged and refuses "1.0"');
+    assertSchemaInvalid(o10, withVersions("1.0", "0.2"), 'negative: offer 1.0 must refuse an offer declaring "0.2" inside a "1.0" envelope');
+    assertSchemaInvalid(o10, withVersions("0.2", "1.0"), 'negative: offer 1.0 must refuse an envelope declaring "0.2"');
+    assertSchemaValid(o10, withAlg("Ed25519"), "offer 1.0: signature.alg Ed25519");
+    assertSchemaInvalid(o01, withAlg("Ed25519"), "negative: offer v0.1 edition is unchanged and refuses alg Ed25519");
+    for (const alg of ["ES256", "RS256", "none", "ed25519"]) {
+      assertSchemaInvalid(o10, withAlg(alg), `negative: offer 1.0 must refuse signature.alg ${alg}`);
+    }
+  }
+
+  const r01 = edition("verified-stay-offer-verification-result", "0.1");
+  const r10 = edition("verified-stay-offer-verification-result", "1.0");
+  const verification = readJson("examples/verified-stay-offer-verification-result.safe-to-quote.v0.1.json");
+  if (r01 && r10 && verification) {
+    assertSchemaValid(r10, { ...verification, protocol_version: "1.0" }, 'verification result 1.0: protocol_version "1.0"');
+    assertSchemaInvalid(r01, { ...verification, protocol_version: "1.0" }, 'negative: verification result v0.1 edition is unchanged and refuses "1.0"');
+    assertSchemaInvalid(r10, { ...verification, protocol_version: "0.2" }, 'negative: verification result 1.0 must refuse "0.2"');
+    const withAlg = (alg) => ({ ...verification, signature: { ...verification.signature, alg } });
+    assertSchemaValid(r10, withAlg("Ed25519"), "verification result 1.0: signature.alg Ed25519");
+    assertSchemaInvalid(r10, withAlg("RS256"), "negative: verification result 1.0 must refuse signature.alg RS256");
+  }
+
+  // Every signed-offer vector against the 1.0 offer schema: the envelope is
+  // schema-invalid exactly when the vector is refused for its algorithm name
+  // or its version (§9: schema mismatch means unknown). Vectors 01–05, the
+  // v0.1 corpus, also validate against the v0.1 edition.
+  const SCHEMA_REASONS = new Set(["unexpected_alg", "unsupported_version", "missing_protocol_version"]);
+  const offerVectors = walk(path.join(root, "examples", "conformance", "offer"))
+    .filter((file) => file.endsWith(".json"))
+    .sort();
+  if (offerVectors.length < 15) failures.push(`examples/conformance/offer: expected at least 15 vectors, found ${offerVectors.length}`);
+  for (const rel of offerVectors) {
+    const vector = readJson(rel);
+    if (!vector || !o10 || !o01) continue;
+    if (SCHEMA_REASONS.has(vector.expected?.reason)) {
+      assertSchemaInvalid(o10, vector.input, `negative: ${rel} (${vector.expected.reason}) must not validate against the 1.0 offer schema`);
+    } else {
+      assertSchemaValid(o10, vector.input, `${rel} against the 1.0 offer schema`);
+    }
+    if (/\/0[1-5]-/.test(rel)) assertSchemaValid(o01, vector.input, `${rel} against the v0.1 offer schema`);
+    if (j10) assertSchemaValid(j10, vector.jwks, `${rel}: jwks against the 1.0 jwks schema`);
+  }
+
+  // Discovery-version vectors: each document's schema validity is as declared.
+  const versionVectors = readJson("examples/conformance/discovery-version/vectors.v1.0.json");
+  if (versionVectors && d10) {
+    for (const c of versionVectors.discovery || []) {
+      const label = `discovery-version ${c.name} against the 1.0 discovery schema`;
+      if (c.expected.schema_valid) assertSchemaValid(d10, c.document, label);
+      else assertSchemaInvalid(d10, c.document, `negative: ${label}`);
+    }
+    if (j10) assertSchemaValid(j10, versionVectors.jwks, "discovery-version jwks against the 1.0 jwks schema");
+  }
+}
+
 const reportSchema = readJson("schemas/conformance-report-v0.1.schema.json");
-const reportExample = readJson("examples/conformance/reports/offer.reference-verifier.v0.1.json");
-if (reportSchema && reportExample) {
-  assertSchemaValid(reportSchema, reportExample, "examples/conformance/reports/offer.reference-verifier.v0.1.json");
+const reportFiles = walk(path.join(root, "examples", "conformance", "reports"))
+  .filter((file) => file.endsWith(".json"))
+  .sort();
+if (!reportFiles.includes("examples/conformance/reports/offer.reference-verifier.v0.1.json")) {
+  failures.push("examples/conformance/reports: the v0.1 reference report must stay published");
+}
+for (const reportPath of reportFiles) {
+  const reportExample = readJson(reportPath);
+  if (!reportSchema || !reportExample) continue;
+  assertSchemaValid(reportSchema, reportExample, reportPath);
 
   // Score-free invariants the schema grammar cannot express (docs/conformance-report.md).
   const outcomes = reportExample.results.map((r) => r.outcome);
@@ -555,9 +715,11 @@ if (reportSchema && reportExample) {
     if (!r.vector.startsWith(corpusPrefix)) failures.push(`conformance report: result ${r.vector} is outside the single corpus ${reportExample.corpus.path}`);
   }
 
-  const withScore = structuredClone(reportExample);
-  withScore.aggregate.score = 100;
-  assertSchemaInvalid(reportSchema, withScore, "negative: conformance report aggregate must reject a score field");
+  if (a) {
+    const withScore = structuredClone(reportExample);
+    withScore.aggregate.score = 100;
+    assertSchemaInvalid(reportSchema, withScore, "negative: conformance report aggregate must reject a score field");
+  }
   const noControls = structuredClone(reportExample);
   noControls.must_fail_controls = [];
   assertSchemaInvalid(reportSchema, noControls, "negative: conformance report must declare at least one must-fail control");

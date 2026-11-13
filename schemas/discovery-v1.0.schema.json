@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://vacationrentalprotocol.com/schemas/discovery-v1.0.schema.json",
-  "title": "VRP Discovery Document v0.1",
+  "title": "VRP Discovery Document 1.0",
   "description": "Minimum machine-readable discovery contract for a host-owned VRP node. This schema is an interoperability aid, not a registry or trust authority.",
   "type": "object",
   "required": [

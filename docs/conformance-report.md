@@ -28,8 +28,9 @@ An **aggregate** is optional and consists of counts only: the full denominator, 
 
 - JSON Schema: `https://vacationrentalprotocol.com/schemas/conformance-report-v0.1.schema.json`
 - Filled example, reference verifier against the signed-offer corpus: `https://vacationrentalprotocol.com/examples/conformance/reports/offer.reference-verifier.v0.1.json`
+- Runs for the 1.0 candidate over the same corpus as it stands with the candidate (fifteen vectors), one report per engine: `offer.reference-verifier.v1.0-candidate.json`, `offer.vrp-verify.v1.0-candidate.json` and `offer.vrp-independent-verifier.v1.0-candidate.json` in the same directory. They are produced by `scripts/conformance-report.mjs` and read in the [implementation report](implementation-report-1.0.md).
 
-The example covers exactly one corpus, `examples/conformance/offer/` (five self-describing signed-offer vectors). Its declared must-fail control is `03-tampered-signature`. Other VRP corpora (`receipt/`, `stayintent/`, the three-state fixtures, the attestation bundle) are reported separately, one report each.
+The filled example covers exactly one corpus, `examples/conformance/offer/`, as it stood at the commit the report names: five self-describing signed-offer vectors, `01`–`05`. Its corpus digest reproduces at that commit and is not meant to match the directory today, which holds fifteen vectors since the 1.0 candidate; that is why the candidate has its own reports and this one is kept as it is. Its declared must-fail control is `03-tampered-signature`; the candidate runs declare three (`03`, `09-protocol-version-unknown`, `13-alg-none`). Other VRP corpora (`receipt/`, `stayintent/`, the three-state fixtures, the attestation bundle) are reported separately, one report each.
 
 ## Corpus digest
 

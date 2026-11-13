@@ -18,6 +18,7 @@ import {
 import { buildHostDomainVectors } from "./host-domain-vectors.mjs";
 import { buildOfferRulesVectors } from "./offer-rules-vectors.mjs";
 import { buildTlogVectors } from "./tlog-vectors.mjs";
+import { buildDiscoveryVersionVectors, buildOfferVersionAlgVectors } from "./version-alg-vectors.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -52,3 +53,14 @@ for (const v of tlog.consistency) writeJson(`examples/conformance/log/consistenc
 // binding to the fetched domain, booking-URL host.
 writeJson("examples/conformance/host-domain/vectors.v0.1.json", buildHostDomainVectors());
 writeJson("examples/conformance/offer-rules/vectors.v0.1.json", buildOfferRulesVectors());
+
+// 1.0 candidate (spec/v1.0.md §2, §3, §5, §7; ADR 0013, ADR 0017): the version
+// string and the algorithm name. Offer vectors 01–05 are the v0.1 corpus and
+// are not regenerated here.
+for (const { file, vector } of buildOfferVersionAlgVectors()) {
+  writeJson(`examples/conformance/offer/${file}.json`, vector);
+}
+writeJson(
+  "examples/conformance/discovery-version/vectors.v1.0.json",
+  buildDiscoveryVersionVectors(loadPayload("examples/discovery.v0.1.json")),
+);

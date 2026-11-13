@@ -566,9 +566,9 @@
         const rows = [];
         const problems = [];
         const proto = d.protocol === "vacation-rental-protocol" && (d.protocol_version === "1.0" || d.protocol_version === "0.1");
-        rows.push(checkRow(proto ? "pass" : "fail", proto ? "Declares VRP 0.1" : "Does NOT declare VRP 0.1",
+        rows.push(checkRow(proto ? "pass" : "fail", proto ? "Declares VRP " + d.protocol_version : "Does NOT declare VRP 1.0 or 0.1",
           "protocol " + JSON.stringify(d.protocol) + ", protocol_version " + JSON.stringify(d.protocol_version) + " (VRP §2, §7)."));
-        if (!proto) problems.push("the discovery document does not declare vacation-rental-protocol 0.1");
+        if (!proto) problems.push("the discovery document does not declare vacation-rental-protocol 1.0 or 0.1");
         const cdOk = d.canonical_domain === domain;
         rows.push(checkRow(cdOk ? "pass" : "fail", cdOk ? "Discovery canonical_domain is " + domain : "Discovery names another domain",
           "canonical_domain " + JSON.stringify(d.canonical_domain) + ", fetched from " + domain + " (VRP §2, §7)."));

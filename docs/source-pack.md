@@ -881,7 +881,7 @@ Specification text: dedicated to the public domain under [CC0 1.0](https://githu
 
 ### Vacation Rental Protocol - Specification 1.0
 
-**Status:** Candidate, under review. Proposed by [ADR 0013](https://vacationrentalprotocol.com/docs/adr/0013-vrp-1-0); this text becomes VRP 1.0 when that record is accepted. [v0.1](https://vacationrentalprotocol.com/spec/v0.1) is unchanged and stays published. Parts marked *at risk* may be removed before acceptance without restarting the review (ADR 0015 D3).  
+**Status:** Candidate, under review. Proposed by [ADR 0013](https://vacationrentalprotocol.com/docs/adr/0013-vrp-1-0); this text becomes VRP 1.0 when that record is accepted. [v0.1](https://vacationrentalprotocol.com/spec/v0.1) is unchanged and stays published. Two parts are marked *at risk*, §3.1 rotation and §5.3; they may be removed before acceptance without restarting the review period (ADR 0015 D3), and approvals are then given again (ADR 0014 D3).  
 **Published:** 2026-11-05 (candidate); v0.1 published 2026-05-20  
 **Canonical URL:** https://vacationrentalprotocol.com  
 **Repository:** https://github.com/vacationrentalprotocol/vrp-spec
@@ -1478,8 +1478,9 @@ https://vacationrentalprotocol.com/schemas/verified-stay-offer-v1.0.schema.json
 https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-result-v1.0.schema.json
 ```
 
-They differ from the v0.1 schemas in two places only: `protocol_version` is
-`"1.0"` or `"0.1"`, and `alg` is `Ed25519` or `EdDSA`. The v0.1 schemas stay
+They differ from the v0.1 schemas in two value sets only: `protocol_version` is
+`"1.0"` or `"0.1"`, and `alg` is `Ed25519` or `EdDSA` (and in their `$id`, their
+title and the descriptions that name this text). The v0.1 schemas stay
 published unchanged.
 
 Repository copies are in [`schemas/`](https://github.com/vacationrentalprotocol/vrp-spec/tree/main/schemas). The schemas are

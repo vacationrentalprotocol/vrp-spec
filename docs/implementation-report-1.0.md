@@ -1,12 +1,18 @@
 # Implementation report for VRP 1.0 (Core + Well-Known URI)
 
-**Status:** Draft, measured 2026-11-05; the verifier rows for V1 and V2 re-read 2026-11-08 after the verifier correction (hemmabo-mcp-server 7.0.13, vrp-verify 0.3.0; the notes say what changed); V1's §2:39 and §7:512 set to partial on 2026-11-09 after the independent reviewer reproduced two discovery-document gaps (see the notes). The correction is described in two published advisories: [GHSA-4phj-whvc-8frh](https://github.com/HemmaBo-se/hemmabo-mcp-server/security/advisories/GHSA-4phj-whvc-8frh) (hemmabo-mcp-server 7.0.12 → 7.0.13, published 2026-11-08 21:01 UTC) and [GHSA-6q7g-4q6r-w7g7](https://github.com/vacationrentalprotocol/vrp-verify/security/advisories/GHSA-6q7g-4q6r-w7g7) (`@vacationrentalprotocol/vrp-verify` 0.2.0 → 0.3.0, published 2026-11-08 21:05 UTC); only those versions are confirmed affected, earlier ones were not assessed. One row per normative MUST in
+**Status:** Draft, measured 2026-11-05; the verifier rows for V1 and V2 re-read 2026-11-08 after the verifier correction (hemmabo-mcp-server 7.0.13, vrp-verify 0.3.0; the notes say what changed); V1's §2:39 and §7:512 set to partial on 2026-11-09 after the independent reviewer reproduced two discovery-document gaps (see the notes). The correction is described in two published advisories: [GHSA-4phj-whvc-8frh](https://github.com/HemmaBo-se/hemmabo-mcp-server/security/advisories/GHSA-4phj-whvc-8frh) (hemmabo-mcp-server 7.0.12 → 7.0.13, published 2026-11-08 21:01 UTC) and [GHSA-6q7g-4q6r-w7g7](https://github.com/vacationrentalprotocol/vrp-verify/security/advisories/GHSA-6q7g-4q6r-w7g7) (`@vacationrentalprotocol/vrp-verify` 0.2.0 → 0.3.0, published 2026-11-08 21:05 UTC); only those versions are confirmed affected, earlier ones were not assessed. On 2026-11-13: V1 re-read and run at 7.1.0 (`7199356`), where the two discovery-document gaps are closed since 7.0.14 (`2f29ba7`); the three nodes measured again; and a new section, «Requirements 1.0 adds or changes», with a run of every verifier over the fifteen offer vectors of the candidate. One row per normative MUST in
 [spec/v0.1.md](../spec/v0.1.md) (55 lines carrying MUST at `e815600`) and
-[spec/well-known-uri-v0.1.md](../spec/well-known-uri-v0.1.md) (3). It is the
-evidence base for the 1.0 decision record (ADR 0013, revised): a rule with fewer
-than two independent implementations on its side (node side or verifier side)
-is marked **at risk** there, as W3C Process §6.3.2 and §6.3.7 do. This report
-is data; it decides nothing.
+[spec/well-known-uri-v0.1.md](../spec/well-known-uri-v0.1.md) (3), and one
+entry per requirement that [spec/v1.0.md](../spec/v1.0.md) adds or changes. It
+is the evidence base for the 1.0 decision record (ADR 0013, revised).
+
+**Two different things, two different words.** ADR 0013 D5 marks exactly two
+parts **at risk**: §3.1 rotation and §5.3 `rules.refund_schedule`. At risk
+means the maintainers may remove the part before acceptance. A rule with fewer
+than two independent implementations is not at risk for that reason: this
+report says how many organizations implement it, and where no shipped
+implementation exists it says **evidence outstanding**. Several products of
+one organization count once. This report is data; it decides nothing.
 
 **How to read it.** `✔` the implementation does what the rule says, with the
 evidence in the notes (a live measurement with UTC, or a file and line at a
@@ -20,9 +26,9 @@ role; `?` not checked. Every claim below is one of those four.
 | A | `villaakerlyckan.se` (HemmaBo, `key_custody: platform`) | node | no | live 2026-11-05T14:46:42–14:46:57Z; `hemmabo-smart-stays` `879ff1e` |
 | B | `lakeviewhome.se` (HemmaBo, `key_custody: platform`) | node | no (same software as A) | live 2026-11-05T14:47:48–14:48:03Z |
 | C | `apartmamatevz.si` (CM PRO, `key_custody: self`) | node | **yes** | live 2026-11-05T14:48:04–14:48:15Z; `viljemd-hub/channel-manager` `public/api/vrp_offer.php` read 2026-11-05T14:46:59Z |
-| V1 | `hemmabo-mcp-server` reference verifier, 7.0.13 | verifier | no | `lib/vrp.ts` and `lib/vrp-offer-rules.ts` at `32cb82f` (2026-11-08; the 2026-11-05 reading was `ed4cc25`, 7.0.12) |
+| V1 | `hemmabo-mcp-server` reference verifier, 7.1.0 | verifier | no | §2:39, §7:514, §7:516 and the new 1.0 requirements: `lib/vrp.ts` at `7199356` (7.1.0, read and run 2026-11-13). Every other row: `lib/vrp.ts` and `lib/vrp-offer-rules.ts` at `32cb82f` (7.0.13, 2026-11-08; the 2026-11-05 reading was `ed4cc25`, 7.0.12); those line numbers are 7.0.13's and were not re-read at 7.1.0 |
 | V2 | `@vacationrentalprotocol/vrp-verify` 0.3.0 | verifier library (no network) | no (written by the reference implementer's editors) | `src/*.js` at `db7b905` (2026-11-08; the 2026-11-05 reading was 0.2.0 at `bd4f92e`) |
-| V3 | this repository's scripts (`conformance.mjs`, `verify-offer-rules.mjs`, `verify-host-domain.mjs`, `verify-node-page.mjs`) | test suite | no (the standard's own) | `e815600` |
+| V3 | this repository's scripts (`conformance.mjs`, `verify-offer-rules.mjs`, `verify-host-domain.mjs`, `verify-node-page.mjs`) | test suite | no (the standard's own) | `e815600`; the new 1.0 requirements at the commit that carries this text (`scripts/conformance.mjs`, `verify-offer-vectors.mjs`, `verify-version-vectors.mjs`) |
 | V4 | `verify.html` on vacationrentalprotocol.com | verifier (browser) | no (the standard's own) | `e815600` |
 | V5 | `vrp-independent-verifier` (Swarnabha Nandi, MIT) | verifier | **yes** | `src/verifier.mjs` at `bc959ba` (last commit 2026-08-22) |
 
@@ -88,7 +94,7 @@ authors).
 | Core line | Rule (short) | V1 | V2 | V3 | V4 | V5 | Independent (V1 + V5) | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | §1:14 | verification MUST NOT require HemmaBo, a registry or an index | ✔ | ✔ | ✔ | ✔ | ✔ | yes | V1 fetches only the node's domain; V2/V3/V5 run offline |
-| §2:39 | discovery `canonical_domain` MUST match the fetched domain | **partial** `lib/vrp.ts:262–267`: a present `canonical_domain` must equal the fetched domain, but an absent one falls back to `domain` and then to the fetched domain itself, so a document without the field passes | – (caller) | ✔ `verify-host-domain.mjs:109` (an absent field fails) | ✔ `verify.html:572` | ✗ | **no** | V1 gap reproduced by the independent reviewer on 2026-11-09 (Node 22, signed test offers): `safe_to_quote_as_official_direct_offer: true` without `canonical_domain`. Correction handled separately, with a regression test |
+| §2:39 | discovery `canonical_domain` MUST match the fetched domain | ✔ `lib/vrp.ts:279–289` at `7199356` (since 7.0.14, `2f29ba7`): the document itself must declare `canonical_domain`, a string equal to the fetched domain as written; neither the pre-0.1 member `domain` nor the fetched domain stands in | – (caller) | ✔ `verify-host-domain.mjs:109` (an absent field fails) | ✔ `verify.html:572` | ✗ | **no** | V1 was **partial** until 7.0.13: an absent `canonical_domain` passed (reproduced by the independent reviewer on 2026-11-09). Closed in 7.0.14; V1's own test `src/vrp-discovery-document.contract.test.ts` run at `7199356` on 2026-11-13 10:34:45 UTC: 19 of 19 pass |
 | §2:46/70 | host-owned check; no lists → `unknown` | ✔ `:240–249` | ✔ `quote.js:77` (`hostDomainFailures`) | ✔ | ✔ `verify.html:465–474` | ✗ | **no** | |
 | §2:82 | MUST NOT follow a redirect off node URLs | ✔ `:193–224` (`fetchJson`, `redirect: "manual"`, `:215`) | – (caller) | ✔ `checkRedirects` (vectors) | ✔ `verify.html:508–513` (no redirect followed) | ✗ | **no** | |
 | §2.1:121 | checker for (a)/(b) href | – | – | ✔ `verify-node-page.mjs:52` | – | – | n.a. | a page checker, not a verifier rule |
@@ -108,7 +114,7 @@ authors).
 | §6:500 | non-quoteable if `valid_until` missing/malformed/expired | ✔ `lib/vrp-offer-rules.ts:121–136` (UTC form with `Z`), `lib/vrp.ts:1047–1051` | ✔ `VALID_UNTIL_UNUSABLE`, `offer.js:143–144` | ✔ `:76,84` | ✔ | ✔ (missing → not fresh) | yes | |
 | §6:502 | non-quoteable if `generated_at` missing or > 60 s ahead | ✔ `lib/vrp-offer-rules.ts:121–136`, refused in `lib/vrp.ts:1047–1051` (7.0.13) | ✔ `src/offer-rules.js:104–119`, `src/offer.js:143–144` (0.3.0) | ✔ `:82` | ✔ (`:553–561`) | ✗ | **no** | V1 and V2 apply it since 2026-11-08 (releases v7.0.13 and v0.3.0); until then neither read `generated_at`. V5 does not; V1 and V2 are one organization |
 | §5:269–289, §7:512 | lifetime ≤ 900 s, dates exist and are not past, language form, request match | ✔ `lib/vrp-offer-rules.ts:121–172` (the stay asked for = the tool's arguments, `lib/vrp.ts:1047–1051`) | ✔ `src/offer-rules.js:104–156`, `src/quote.js:138–143` (the stay asked for = `context.request`; without it `asked_stay_unknown`) | ✔ `verify-offer-rules.mjs` | ✔ | ✗ | **no** | the offer-rules vectors (44) pass in V1 (`src/vrp-offer-rules.unit.test.ts`, and through the tool handler in `src/vrp-offer-rules.contract.test.ts`), V2 (`test/offer-rules.test.mjs`: parity, and through `verifyOffer` and `quoteChecks`), V3 and V4; since 2026-11-08 |
-| §7:512 | MUST NOT quote unless all sixteen conditions hold | **partial** (7.0.13): it fetches the discovery document, the JWKS and the offer itself and applies the other conditions, but two pass when the field is absent: §7:514 (`canonical_domain` is the fetched domain) and §7:516 (`protocol_version: "0.1"` declared). `lib/vrp.ts:257–265` accepts the pre-0.1 field `version` in place of `protocol_version` and takes the fetched domain in place of a missing `canonical_domain` | ✔ for the library's part (key, JWS, payload match, §5/§6 lifetime, §5/§7 dates and the stay asked for from `context.request`, availability, exact price, booking URL, permission, §2/§7 domain from `context.domain`); fetching, the discovery document (`protocol`, `protocol_version`, `canonical_domain` of the fetched host) and transport remain the caller's, as its README says | ✔ (across scripts) | ✔ | ✗ (signature, key, payload match, `valid_until` only) | **no** | V1: both gaps reproduced by the independent reviewer on 2026-11-09 (`safe_to_quote_as_official_direct_offer: true` with `version: "0.1"` and no `protocol_version`, and without `canonical_domain`); correction handled separately, with a regression test for each case. V2 alone never decides all sixteen: three conditions need the network it does not have |
+| §7:512 | MUST NOT quote unless all sixteen conditions hold | ✔ for §7:514 and §7:516 at `7199356` (since 7.0.14): `lib/vrp.ts:262–270` requires `protocol_version` in the document and compares it as written, `:279–289` does the same for `canonical_domain`. The other conditions as read at `32cb82f` (7.0.13); not re-read at 7.1.0 | ✔ for the library's part (key, JWS, payload match, §5/§6 lifetime, §5/§7 dates and the stay asked for from `context.request`, availability, exact price, booking URL, permission, §2/§7 domain from `context.domain`); fetching, the discovery document (`protocol`, `protocol_version`, `canonical_domain` of the fetched host) and transport remain the caller's, as its README says | ✔ (across scripts) | ✔ | ✗ (signature, key, payload match, `valid_until` only) | **no** | V1 was **partial** until 7.0.13: both gaps were reproduced by the independent reviewer on 2026-11-09 (`safe_to_quote_as_official_direct_offer: true` with `version: "0.1"` and no `protocol_version`, and without `canonical_domain`). Closed in 7.0.14 (`2f29ba7`), with a regression test for each case (19 of 19 pass at `7199356`, 2026-11-13). V2 alone never decides all sixteen: three conditions need the network it does not have |
 | §7:545 | MUST NOT invent discounts, say bookable unless available, quote non-exact, route elsewhere | ✔ `:31–41`, `:813–835`; `price.exact === true` explicitly, `:384–394` (7.0.13; 7.0.12 derived exactness from an amount) | ✔ `quote.js:175–187` | ✔ | ✔ | ✗ | **no** | |
 | §8:555 | MUST fail closed | ✔ (throws; a §5–§7 violation is `OfferRuleViolation`, `lib/vrp.ts:125–133`, answered with `signature_valid: true`, `safe_to_quote: false`) | ✔ (`unverifiable`/`invalid`) | ✔ | ✔ | ✔ (`verified:false`) | yes | |
 | §9:559/563 | MUST distinguish affirmed / negated / unknown; MUST NOT cite unknown | ✔ | ✔ `Status.UNVERIFIABLE` ≠ `INVALID` | ✔ | ✔ (`pass`/`fail`/`unknown`) | ✗ (binary) | **no** | |
@@ -118,19 +124,165 @@ authors).
 Lines not carrying a rule: §1.1:20 (BCP 14 boilerplate), §2.1:102 (a statement
 about the next MAJOR), §3.1:226 (restates :202). §2:92 is MAY.
 
+## Requirements 1.0 adds or changes
+
+[spec/v1.0.md](../spec/v1.0.md) carries 61 lines with MUST where
+[spec/v0.1.md](../spec/v0.1.md) carries 55. The requirements below are the ones
+that are new or changed; every other rule is a v0.1 rule and has its row above.
+Each is reported separately: the implementation, its organization, the exact
+commit or the UTC instant of a live measurement, and the result of a run.
+Measured 2026-11-13.
+
+**Organizations.** Four, and several products of one count once:
+
+| Organization | Implementations |
+| --- | --- |
+| HemmaBo, the reference implementer | A, B (nodes), V1 (verifier) |
+| The standard's own maintainers, who are the reference implementer's editors | V2, V3, V4. Together with HemmaBo they are one organization for the purpose of independence |
+| CM PRO (Viljem Dvojmoč) | C (node) |
+| Swarnabha Nandi | V5 (verifier) |
+
+### Node requirements
+
+Live, `GET` only, one request per second per host: the start page, the
+discovery document, the JWKS and one signed offer
+(`check_in=2027-03-10&check_out=2027-03-13&guests=2`).
+
+| Requirement | A `villaakerlyckan.se` (HemmaBo) | B `lakeviewhome.se` (HemmaBo) | C `apartmamatevz.si` (CM PRO) | Organizations with `✔` |
+| --- | --- | --- | --- | --- |
+| Measured (UTC) | 10:26:10–10:26:17 | 10:26:20–10:26:26 | 10:26:29–10:26:34 | |
+| §2: `protocol_version` MUST be `1.0` or `0.1` | ✔ declares `"0.1"` | ✔ declares `"0.1"` | ✔ declares `"0.1"` | two |
+| §2.1 (a): the head MUST contain `<link rel="protocol" href="https://vacationrentalprotocol.com/">` | ✔ present | ✔ present | ✔ present | two |
+| §2.1 (b): the body MUST contain a visible `rel="protocol"` link to `/verify?host=…` whose text contains `VRP` | ✔ «VRP-verifierad» | ✔ «VRP verified» | ✔ «Verified VRP vacation rental» | two |
+
+What no node does, and 1.0 does not require: no node declares `"1.0"` (the
+discovery document, the offer envelope and the signed payload all say `"0.1"`
+on all three), and no node signs with the name `Ed25519` (JWS header
+`alg: EdDSA` and JWKS key `alg: EdDSA` on all three). Both are MAY in 1.0;
+ADR 0013 D9 puts nodes after verifiers.
+
+### Verifier requirements
+
+Run: every verifier over the fifteen signed-offer vectors in
+`examples/conformance/offer/`, each with the vector's own JWKS and clock.
+«accept» and «refuse» are the decision; the engine's own reason is quoted
+where it differs from the vector's.
+
+| Implementation | Organization | Commit | How it was run |
+| --- | --- | --- | --- |
+| V1 `hemmabo-mcp-server` 7.1.0 | HemmaBo | `7199356` | `verifyCompactJws` in `lib/vrp.ts`, the function its tools call for the signature (the complete tool flow fetches the node and cannot take a vector); and its own test `src/vrp-discovery-document.contract.test.ts`, 19 of 19 pass, 10:34:45 UTC |
+| V2 `@vacationrentalprotocol/vrp-verify` 0.3.0 | the standard's own | `db7b905` | `verifyOffer`; published as a conformance report (below) |
+| V3 this repository's `scripts/conformance.mjs` | the standard's own | the commit the conformance report names | `verifyOfferVector`; `npm test`; published as a conformance report |
+| V4 `verify.html` | the standard's own | the same commit | read, not run: a browser page that fetches a live node and cannot take a vector |
+| V5 `vrp-independent-verifier` 1.0.0 | Swarnabha Nandi | `bc959ba` (read from a checkout of that commit) | `verifyOffer(vector)`; published as a conformance report |
+
+| Vector | Expected | V3 | V2 | V5 | V1 (signature function) |
+| --- | --- | --- | --- | --- | --- |
+| 01 `0.1`, `EdDSA`, fresh | accept | accept | accept | accept | signature verifies |
+| 02 `0.1`, `EdDSA`, expired | accept, not fresh | accept, not fresh | accept, not fresh | accept, not fresh | signature verifies |
+| 03 tampered signature | refuse | refuse | refuse | refuse | refuse |
+| 04 unknown `kid` | refuse | refuse | refuse | refuse | refuse |
+| 05 wrong key | refuse | refuse | refuse | refuse | refuse |
+| 06 `1.0`, header `Ed25519` | accept | accept | **refuse** (`unexpected_alg`) | **refuse** (`wrong_key`) | **refuse** («Unsupported JWS alg: Ed25519») |
+| 07 header `ES256` | refuse `unexpected_alg` | refuse | refuse | refuse, as `wrong_key` | refuse |
+| 08 `1.0`, `EdDSA` | accept | accept | accept (version not read) | accept (version not read) | signature verifies (version not read) |
+| 09 version `0.2` | refuse `unsupported_version` | refuse | **accept** | **accept** | **signature verifies; the version is not read** |
+| 10 `0.1`, header `Ed25519` | accept | accept | **refuse** (`unexpected_alg`) | **refuse** (`wrong_key`) | **refuse** |
+| 11 header `Ed25519`, key `alg` `Ed25519` | accept | accept | **refuse** (`unexpected_alg`) | **refuse** (`wrong_key`) | **refuse** |
+| 12 header `EdDSA`, key `alg` `Ed25519` | accept | accept | accept | **refuse** (`wrong_key`) | signature verifies |
+| 13 header `none`, no signature | refuse `unexpected_alg` | refuse | refuse | refuse, as `wrong_key` | refuse |
+| 14 header `ed25519` (lower case) | refuse `unexpected_alg` | refuse | refuse | refuse, as `wrong_key` | refuse |
+| 15 no version in the signed payload | refuse `missing_protocol_version` | refuse | **accept** | **accept** | **signature verifies; the version is not read** |
+
+**§2, §7: a verifier accepts a discovery document declaring `"1.0"` or `"0.1"`
+and refuses any other value, or none.**
+
+| Implementation | Result | Evidence |
+| --- | --- | --- |
+| V1 | not implemented: `"1.0"` is refused | `lib/vrp.ts:16` (`VRP_PROTOCOL_VERSION = "0.1"`) and `:262–270` at `7199356`: an absent version is refused, and every value but `"0.1"` is refused as «Unsupported VRP version». Its own test «still refuses a protocol_version other than 0.1» passes |
+| V2 | does not read the discovery document | `src/quote.js:38–41` at `db7b905`: the discovery document, and that it declares `protocol_version`, is the caller's responsibility |
+| V3 | implemented | `checkDiscoveryVersion` in `scripts/conformance.mjs`; `npm run verify-version-vectors`: 15 discovery documents and 8 pairs pass |
+| V4 | implemented, read only | `verify.html`: `d.protocol_version === "1.0" \|\| d.protocol_version === "0.1"` |
+| V5 | does not read the discovery document | `src/verifier.mjs` at `bc959ba` takes a vector and nothing else |
+
+Organizations with a shipped implementation: none. **Evidence outstanding.**
+
+**§3, §5: a verifier accepts `Ed25519` and `EdDSA` in the JWS header and on
+the key, and refuses any other `alg`.** Vectors 06, 10, 11, 12 (accept) and 07,
+13, 14 (refuse).
+
+| Implementation | Result | Evidence |
+| --- | --- | --- |
+| V1 | not implemented: `Ed25519` in the header is refused; other names are refused as required | `lib/vrp.ts:17` (`VRP_JWS_ALG = "EdDSA"`) and `:333` at `7199356`; run above |
+| V2 | not implemented: `Ed25519` in the header is refused; other names are refused as required | `src/jws.js:50` at `db7b905`; run above |
+| V3 | implemented | `SIGNATURE_ALGS` and `verifyCompactJws` in `scripts/conformance.mjs`; all seven vectors as expected |
+| V4 | implemented, read only | `verify.html`: `header.alg !== "Ed25519" && header.alg !== "EdDSA"` |
+| V5 | not implemented: `Ed25519` is refused in the header and on the key; other names are refused, with the reason `wrong_key` | `src/verifier.mjs:23–24` at `bc959ba`; run above |
+
+Organizations with a shipped implementation of the new name: none. **Evidence
+outstanding.** The refusal of other names is a v0.1 behaviour and has two
+organizations (V1/V2 and V5), V5 with a different reason code.
+
+**§5, §9: a verifier refuses an offer whose signed payload declares an unknown
+version, or none.** Vectors 08 (accept), 09 and 15 (refuse).
+
+| Implementation | Result | Evidence |
+| --- | --- | --- |
+| V1 | not implemented: the signed payload's version is not read | `protocol_version` occurs in `lib/` at `7199356` only for the discovery document (`lib/vrp.ts:262`) and in the tool's own output (`:1047`); run above |
+| V2 | not implemented: the version is not read | run above: 09 and 15 are accepted as `verified` |
+| V3 | implemented | `checkOfferVersion` in `scripts/conformance.mjs`; vectors 08, 09, 15 and the eight pairs as expected |
+| V4 | implemented, read only | `verify.html`: an offer whose `protocol_version` is neither value is «unknown (VRP §9)» and is not presented as safe to quote |
+| V5 | not implemented: the version is not read | run above: 09 and 15 are accepted |
+
+Organizations with a shipped implementation: none. **Evidence outstanding.**
+That V1, V2 and V5 accept vector 08 is not evidence of support for `"1.0"`:
+each accepts `"0.2"` in the same way.
+
+**Conformance reports of these runs** (one run, one engine, one corpus;
+[format](conformance-report.md)), each bound to the corpus digest and the
+engine's commit:
+
+- V3: [`offer.reference-verifier.v1.0-candidate.json`](../examples/conformance/reports/offer.reference-verifier.v1.0-candidate.json)
+- V2: [`offer.vrp-verify.v1.0-candidate.json`](../examples/conformance/reports/offer.vrp-verify.v1.0-candidate.json)
+- V5: [`offer.vrp-independent-verifier.v1.0-candidate.json`](../examples/conformance/reports/offer.vrp-independent-verifier.v1.0-candidate.json)
+
+The v0.1 report,
+[`offer.reference-verifier.v0.1.json`](../examples/conformance/reports/offer.reference-verifier.v0.1.json),
+is kept unchanged: it binds to the five-vector corpus at its own commit.
+
 ## Summary for the 1.0 record
 
 - **Node side:** every MUST has two independent products with `✔`, except
   §3.1:165 (rotation never exercised; C not read) and §5.3:448 (one product
-  publishes a schedule). Both **at risk**.
+  publishes a schedule). Both are marked **at risk** in ADR 0013 D5, and they
+  are the only two parts so marked. The node requirements 1.0 adds or changes
+  (§2 version, §2.1 (a) and (b)) are met by all three nodes, two
+  organizations.
 - **Verifier side:** the reference verifier (V1) and the independent verifier
   (V5) together cover: §1, §3.1 `kid`, §5.1 reference id and unknown parameters,
   §5.1 stale, §6 `valid_until`, §8, Well-Known §3. Every other verifier rule has
-  one independent organization only (V1), because V5 implements the signature,
-  the key, the payload match and `valid_until` and nothing else. Those rules are
-  **at risk on the verifier side** until a second organization implements them.
-  The gap is one implementation away: V5 adding §2 (host-owned domain, fetched
-  domain), §5.1 (booking URL), §6 (`generated_at`), §7 and §9.
+  one organization only (V1), because V5 implements the signature, the key,
+  the payload match and `valid_until` and nothing else. ADR 0013 does not mark
+  those rules at risk: they stay in 1.0, with one organization behind them
+  until a second implements them. The gap is one implementation away: V5
+  adding §2 (host-owned domain, fetched domain), §5.1 (booking URL), §6
+  (`generated_at`), §7 and §9.
+- **Verifier requirements 1.0 adds: evidence outstanding.** No shipped
+  verifier implements any of the three (a discovery document declaring `"1.0"`;
+  the name `Ed25519`; an unknown or absent version in the signed offer). Only
+  the standard's own script (V3) and page (V4) do. What ADR 0013 D6 asks for
+  before acceptance, and what is missing on 2026-11-13:
+  1. V2 (`vrp-verify`): code at a named commit that passes all fifteen offer
+     vectors. Today 06, 09, 10, 11 and 15 fail.
+  2. V1 (`hemmabo-mcp-server`): code at a named commit that accepts a
+     discovery document declaring `"1.0"`, accepts `Ed25519`, and refuses an
+     unknown or absent version in the signed offer. Today it refuses `"1.0"`
+     and `Ed25519` and does not read the offer's version.
+  3. V1 and V2 are one organization. A second organization for these three
+     requirements would be V5, or another verifier, passing the same vectors.
+     Today V5 fails 06, 09, 10, 11, 12 and 15 and reports `wrong_key` where
+     the vectors say `unexpected_alg` (07, 13, 14). Whether acceptance waits
+     for it is the review's decision (ADR 0013 D6).
 - **Rules the shipped verifiers apply since 2026-11-08:** §6:502 and the §5/§7
   lifetime, date, language and request-match rules are enforced by V1 (7.0.13)
   and V2 (0.3.0) as well as by V3 and V4; until that date neither shipped
@@ -138,14 +290,14 @@ about the next MAJOR), §3.1:226 (restates :202). §2:92 is MAY.
   independence column on those rows is unchanged (**no**): V1 and V2 are one
   organization, and V5 does not apply them. V2's §7:512 is met for the
   library's part only; the discovery document and the transport stay with its
-  caller. V1's §7:512 is partial: §7:514 and §7:516 pass when
-  `canonical_domain` or `protocol_version` is absent from the discovery document
-  (`lib/vrp.ts:257–265` falls back to the pre-0.1 `version` field and to the
-  fetched domain), found and reproduced by the independent reviewer on
-  2026-11-09; the correction is handled separately, with a regression test for
-  each case. §5.3:432 (rounding) is computed by no one.
+  caller. V1's §7:514 and §7:516 were partial until 7.0.13 (an absent
+  `canonical_domain` or `protocol_version` passed; found and reproduced by the
+  independent reviewer on 2026-11-09) and are closed since 7.0.14 (`2f29ba7`),
+  read and run at 7.1.0 (`7199356`) on 2026-11-13. §5.3:432 (rounding) is
+  computed by no one.
 - **Not checked:** CM PRO key rotation (§3.1:165); whether V5 is still
-  maintained.
+  maintained; V1's rows other than §2:39, §7:514 and §7:516 at 7.1.0 (they
+  stand as read at 7.0.13); `verify.html` (V4) by an automatic run.
 
 ## Reproduce
 
@@ -158,3 +310,24 @@ at the commits given; `npm run verify-offer-rules`, `verify-host-domain`,
 in hemmabo-mcp-server at `32cb82f` (`src/vrp-offer-rules.unit.test.ts`,
 `src/vrp-offer-rules.contract.test.ts`); V2: `node --test` in vrp-verify at
 `db7b905` (`test/offer-rules.test.mjs`).
+
+Requirements 1.0 adds or changes: in this repository, `npm test` (it runs
+`verify-offer-vectors`, `verify-version-vectors` and `validate`, which reads
+the four 1.0 schemas). The conformance reports:
+
+```bash
+node scripts/conformance-report.mjs --engine reference --revision <commit> --run-at <UTC> --out <file>
+```
+
+```bash
+node scripts/conformance-report.mjs --engine scripts/report-adapters/vrp-verify.mjs --engine-dir <vrp-verify at db7b905> --revision <commit> --run-at <UTC> --out <file>
+```
+
+```bash
+node scripts/conformance-report.mjs --engine scripts/report-adapters/vrp-independent-verifier.mjs --engine-dir <vrp-independent-verifier at bc959ba> --revision <commit> --run-at <UTC> --out <file>
+```
+
+V1: in hemmabo-mcp-server at `7199356`, `npx tsx --test
+src/vrp-discovery-document.contract.test.ts`, and `verifyCompactJws` from
+`lib/vrp.ts` called with each vector's `input.signature.jws` and `jwks`.
+Nodes: the four `GET` requests named under «Node requirements».

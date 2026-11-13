@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://vacationrentalprotocol.com/schemas/verified-stay-offer-verification-result-v1.0.schema.json",
-  "title": "VRP Verified Stay Offer Verification Result v0.1",
+  "title": "VRP Verified Stay Offer Verification Result 1.0",
   "description": "Structural schema for an agent or verifier result after checking a signed verified stay offer. This is not the signed offer itself.",
   "type": "object",
   "additionalProperties": false,

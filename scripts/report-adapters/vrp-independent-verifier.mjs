@@ -6,6 +6,10 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 
 export const MAPPING = "none: verifyOffer(vector) returns { verified, reason, fresh }";
+// The engine is its author's (Swarnabha Nandi). A run from a fork is a run of
+// the same code only at the same commit, which the report's revision names.
+export const NOTES =
+  "Run by the vrp-spec maintainers, not by the engine's author. The engine was read from a checkout at the stated revision; any clone or fork that holds that commit holds the same code.";
 
 export function describe(engineDir, { git, sha256 }) {
   const pkg = JSON.parse(readFileSync(join(engineDir, "package.json"), "utf8"));

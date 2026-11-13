@@ -1,0 +1,284 @@
+{
+  "kind": "vrp_conformance_report",
+  "report_version": "0.1",
+  "engine": {
+    "name": "vrp-independent-verifier (src/verifier.mjs verifyOffer)",
+    "version": "1.0.0",
+    "source": {
+      "repository": "https://github.com/Swarnabha753/vrp-independent-verifier",
+      "revision": "bc959baa3012f19ed777ce0092c19f62bf25cbde",
+      "path": "src/verifier.mjs"
+    },
+    "digest": {
+      "alg": "sha256",
+      "value": "9833ea612e214a39243d0b5e4b05a8dd396a66e9f2d2f4714be9ddb1b3452940",
+      "method": "sha256 of the file src/verifier.mjs at the stated revision"
+    }
+  },
+  "corpus": {
+    "repository": "https://github.com/vacationrentalprotocol/vrp-spec",
+    "revision": "5436a3d3449c2e9700dafc01266f738560b81b45",
+    "path": "examples/conformance/offer",
+    "version": "1.0-candidate",
+    "digest": {
+      "alg": "sha256",
+      "value": "33670cda9043f9b05e4177668fe714ff7683817d590f4d6aec771e6a84b37e13",
+      "method": "cd examples/conformance/offer && ls *.json | LC_ALL=C sort | xargs sha256sum | sha256sum"
+    }
+  },
+  "config": {
+    "clock": "injected per vector (`clock` field); no wall-clock dependency",
+    "key_resolution": "JWKS embedded in each vector; resolved by header kid",
+    "mapping": "none: verifyOffer(vector) returns { verified, reason, fresh }",
+    "exclusions": []
+  },
+  "environment": {
+    "runtime": "node v22.23.4",
+    "platform": "linux x64",
+    "notes": "Run by the vrp-spec maintainers, not by the engine's author. The engine was read from a checkout at the stated revision; any clone or fork that holds that commit holds the same code."
+  },
+  "run_at": "2026-11-13T10:39:13Z",
+  "results": [
+    {
+      "vector": "examples/conformance/offer/01-valid-fresh.json",
+      "outcome": "pass",
+      "expected": {
+        "verified": true,
+        "reason": null,
+        "fresh": true
+      },
+      "observed": {
+        "verified": true,
+        "reason": null,
+        "fresh": true
+      }
+    },
+    {
+      "vector": "examples/conformance/offer/02-valid-expired.json",
+      "outcome": "pass",
+      "expected": {
+        "verified": true,
+        "reason": null,
+        "fresh": false
+      },
+      "observed": {
+        "verified": true,
+        "reason": null,
+        "fresh": false
+      }
+    },
+    {
+      "vector": "examples/conformance/offer/03-tampered-signature.json",
+      "outcome": "reject-as-required",
+      "expected": {
+        "verified": false,
+        "reason": "signature_mismatch",
+        "fresh": null
+      },
+      "observed": {
+        "verified": false,
+        "reason": "signature_mismatch",
+        "fresh": null
+      }
+    },
+    {
+      "vector": "examples/conformance/offer/04-unknown-kid.json",
+      "outcome": "reject-as-required",
+      "expected": {
+        "verified": false,
+        "reason": "kid_not_in_jwks",
+        "fresh": null
+      },
+      "observed": {
+        "verified": false,
+        "reason": "kid_not_in_jwks",
+        "fresh": null
+      }
+    },
+    {
+      "vector": "examples/conformance/offer/05-wrong-key.json",
+      "outcome": "reject-as-required",
+      "expected": {
+        "verified": false,
+        "reason": "signature_mismatch",
+        "fresh": null
+      },
+      "observed": {
+        "verified": false,
+        "reason": "signature_mismatch",
+        "fresh": null
+      }
+    },
+    {
+      "vector": "examples/conformance/offer/06-alg-ed25519-valid-fresh.json",
+      "outcome": "inconclusive",
+      "expected": {
+        "verified": true,
+        "reason": null,
+        "fresh": true
+      },
+      "observed": {
+        "verified": false,
+        "reason": "wrong_key",
+        "fresh": false
+      },
+      "note": "The engine refused an offer the vector expects it to accept."
+    },
+    {
+      "vector": "examples/conformance/offer/07-alg-unexpected.json",
+      "outcome": "inconclusive",
+      "expected": {
+        "verified": false,
+        "reason": "unexpected_alg",
+        "fresh": null
+      },
+      "observed": {
+        "verified": false,
+        "reason": "wrong_key",
+        "fresh": false
+      },
+      "note": "The engine reached the expected accept/reject decision but reports a different reason or freshness."
+    },
+    {
+      "vector": "examples/conformance/offer/08-protocol-version-1-0-valid-fresh.json",
+      "outcome": "pass",
+      "expected": {
+        "verified": true,
+        "reason": null,
+        "fresh": true
+      },
+      "observed": {
+        "verified": true,
+        "reason": null,
+        "fresh": true
+      }
+    },
+    {
+      "vector": "examples/conformance/offer/09-protocol-version-unknown.json",
+      "outcome": "inconclusive",
+      "expected": {
+        "verified": false,
+        "reason": "unsupported_version",
+        "fresh": null
+      },
+      "observed": {
+        "verified": true,
+        "reason": null,
+        "fresh": true
+      },
+      "note": "The engine accepted an offer the vector expects it to refuse."
+    },
+    {
+      "vector": "examples/conformance/offer/10-alg-ed25519-protocol-version-0-1-valid-fresh.json",
+      "outcome": "inconclusive",
+      "expected": {
+        "verified": true,
+        "reason": null,
+        "fresh": true
+      },
+      "observed": {
+        "verified": false,
+        "reason": "wrong_key",
+        "fresh": false
+      },
+      "note": "The engine refused an offer the vector expects it to accept."
+    },
+    {
+      "vector": "examples/conformance/offer/11-alg-ed25519-jwk-alg-ed25519-valid-fresh.json",
+      "outcome": "inconclusive",
+      "expected": {
+        "verified": true,
+        "reason": null,
+        "fresh": true
+      },
+      "observed": {
+        "verified": false,
+        "reason": "wrong_key",
+        "fresh": false
+      },
+      "note": "The engine refused an offer the vector expects it to accept."
+    },
+    {
+      "vector": "examples/conformance/offer/12-alg-eddsa-jwk-alg-ed25519-valid-fresh.json",
+      "outcome": "inconclusive",
+      "expected": {
+        "verified": true,
+        "reason": null,
+        "fresh": true
+      },
+      "observed": {
+        "verified": false,
+        "reason": "wrong_key",
+        "fresh": false
+      },
+      "note": "The engine refused an offer the vector expects it to accept."
+    },
+    {
+      "vector": "examples/conformance/offer/13-alg-none.json",
+      "outcome": "inconclusive",
+      "expected": {
+        "verified": false,
+        "reason": "unexpected_alg",
+        "fresh": null
+      },
+      "observed": {
+        "verified": false,
+        "reason": "wrong_key",
+        "fresh": false
+      },
+      "note": "The engine reached the expected accept/reject decision but reports a different reason or freshness."
+    },
+    {
+      "vector": "examples/conformance/offer/14-alg-wrong-case.json",
+      "outcome": "inconclusive",
+      "expected": {
+        "verified": false,
+        "reason": "unexpected_alg",
+        "fresh": null
+      },
+      "observed": {
+        "verified": false,
+        "reason": "wrong_key",
+        "fresh": false
+      },
+      "note": "The engine reached the expected accept/reject decision but reports a different reason or freshness."
+    },
+    {
+      "vector": "examples/conformance/offer/15-protocol-version-missing.json",
+      "outcome": "inconclusive",
+      "expected": {
+        "verified": false,
+        "reason": "missing_protocol_version",
+        "fresh": null
+      },
+      "observed": {
+        "verified": true,
+        "reason": null,
+        "fresh": true
+      },
+      "note": "The engine accepted an offer the vector expects it to refuse."
+    }
+  ],
+  "must_fail_controls": [
+    {
+      "vector": "examples/conformance/offer/03-tampered-signature.json",
+      "expected": "reject-as-required",
+      "observed": "reject-as-required",
+      "note": "Declared must-fail control: signature altered; the engine MUST reject with signature_mismatch."
+    },
+    {
+      "vector": "examples/conformance/offer/09-protocol-version-unknown.json",
+      "expected": "reject-as-required",
+      "observed": "inconclusive",
+      "note": "Declared must-fail control: genuine signature over an offer declaring protocol_version \"0.2\"; the engine MUST refuse it as unsupported_version (1.0 §5, §9)."
+    },
+    {
+      "vector": "examples/conformance/offer/13-alg-none.json",
+      "expected": "reject-as-required",
+      "observed": "inconclusive",
+      "note": "Declared must-fail control: header alg \"none\" with an empty signature; the engine MUST reject with unexpected_alg (1.0 §3, §5)."
+    }
+  ],
+  "discriminates": false,
+  "reporter": "vrp-spec maintainers, run for the 1.0 candidate (ADR 0013 D6)"
+}

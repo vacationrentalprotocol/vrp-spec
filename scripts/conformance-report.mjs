@@ -70,6 +70,7 @@ const corpusDigest = sha256(manifest);
 let engine;
 let verify;
 let mapping;
+let notes;
 if (args.engine === "reference") {
   const { verifyOfferVector } = await import("./conformance.mjs");
   if (git(repoRoot, "diff", "--name-only", revision, "--", "scripts/conformance.mjs") !== "") {
@@ -111,6 +112,7 @@ if (args.engine === "reference") {
   };
   verify = await adapter.load(engineDir);
   mapping = adapter.MAPPING;
+  notes = adapter.NOTES;
 }
 
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
@@ -170,7 +172,7 @@ const report = {
     mapping,
     exclusions: [],
   },
-  environment: { runtime: `node ${process.version}`, platform: `${process.platform} ${process.arch}` },
+  environment: { runtime: `node ${process.version}`, platform: `${process.platform} ${process.arch}`, ...(notes ? { notes } : {}) },
   run_at: args["run-at"],
   results,
   must_fail_controls,

@@ -176,6 +176,11 @@
         background: var(--fail-bg);
         color: var(--fail);
       }
+      #coding-agents li,
+      #coding-agents code,
+      #coding-agents a {
+        overflow-wrap: anywhere;
+      }
       .stay-error {
         margin: 12px 0 0;
         color: var(--fail);
@@ -341,7 +346,7 @@
             plus a live signature check so you can see it verify.
           </p>
 
-          <div class="vform">
+          <form id="formSign" class="vform" novalidate>
             <div class="row">
               <div class="field" style="flex: 1 1 260px">
                 <label for="host"
@@ -359,15 +364,15 @@
             <div class="row">
               <div class="field">
                 <label for="checkIn">Check-in</label>
-                <input id="checkIn" type="date" />
+                <input id="checkIn" type="date" aria-describedby="stayError" />
               </div>
               <div class="field">
                 <label for="checkOut">Check-out</label>
-                <input id="checkOut" type="date" />
+                <input id="checkOut" type="date" aria-describedby="stayError" />
               </div>
               <div class="field" style="flex: 0 1 110px">
                 <label for="guests">Guests</label>
-                <input id="guests" type="number" min="1" step="1" value="2" />
+                <input id="guests" type="number" min="1" step="1" value="2" aria-describedby="stayError" />
               </div>
             </div>
             <p id="stayError" class="stay-error" role="alert" hidden></p>
@@ -387,7 +392,7 @@
               </div>
             </div>
             <div>
-              <button id="btnSign">Generate key &amp; sign offer</button>
+              <button id="btnSign" type="submit">Generate key &amp; sign offer</button>
               <button id="btnReuse" class="secondary" type="button" title="Re-sign with the same key you already generated" disabled>
                 Re-sign with same key
               </button>
@@ -398,11 +403,11 @@
               private key into your server (see below), keep the public key in
               your JWKS.
             </p>
-          </div>
+          </form>
 
           <div id="out" class="out" style="display: none">
             <div id="verdictBlock" class="outblock">
-              <div id="verdict" class="verdict"></div>
+              <div id="verdict" class="verdict" role="status" aria-live="polite" aria-atomic="true"></div>
             </div>
 
             <div class="outblock">
@@ -825,14 +830,22 @@ export function signOffer(offer) {
         for (const id of ["jwks", "discovery", "offer", "privkey"]) $(id).textContent = "";
       }
 
+      // A field the form cannot use: said where the result goes, the field
+      // marked and given the focus.
+      function failField(id, msg) {
+        showFail(msg);
+        $(id).setAttribute("aria-invalid", "true");
+        $(id).focus();
+      }
       async function run(reuse) {
+        for (const id of ["host", "currency", "total"]) $(id).removeAttribute("aria-invalid");
         const host = normHost($("host").value);
-        if (!host || !host.includes(".")) return showFail("Enter a valid host domain, e.g. my-stay.example.");
+        if (!host || !host.includes(".")) return failField("host", "Enter a valid host domain, e.g. my-stay.example.");
         const currency = String($("currency").value || "").toUpperCase().trim();
-        if (!/^[A-Z]{3}$/.test(currency)) return showFail("Currency must be a 3-letter ISO 4217 code, e.g. EUR.");
+        if (!/^[A-Z]{3}$/.test(currency)) return failField("currency", "Currency must be a 3-letter ISO 4217 code, e.g. EUR.");
         const totalText = String($("total").value).trim();
         if (!/^(0|[1-9][0-9]*)$/.test(totalText) || !Number.isSafeInteger(Number(totalText))) {
-          return showFail("Total price is a whole number of minor units, 0 or more, e.g. 120000 for 1200.00.");
+          return failField("total", "Total price is a whole number of minor units, 0 or more, e.g. 120000 for 1200.00.");
         }
         // Nothing is signed for fields that do not say a stay (§5: a node MUST
         // NOT sign an offer for such dates). No earlier output stays on the
@@ -891,8 +904,13 @@ export function signOffer(offer) {
         }
       }
 
-      $("btnSign").addEventListener("click", () => run(false));
+      // A real form: the button and the Enter key both send it.
+      $("formSign").addEventListener("submit", (ev) => {
+        ev.preventDefault();
+        return run(false);
+      });
       $("btnReuse").addEventListener("click", () => run(true));
+      for (const id of ["host", "currency", "total"]) $(id).addEventListener("input", () => $(id).removeAttribute("aria-invalid"));
 
       document.addEventListener("click", (ev) => {
         const b = ev.target.closest("button.copy");

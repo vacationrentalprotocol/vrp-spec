@@ -25,6 +25,12 @@
 //              proof held to the signed tree head's size (transparency-log §8),
 //              and a result that follows the clock and the pasted text.
 //
+//   requests — every request has an end: a host, a log or a list that does not
+//              answer is said as that, and nothing is shown as verified.
+//   forms    — the tabs by keyboard, real forms, a message beside the form
+//              with the focus in the field, an announced result.
+//   words    — the pages say what they fetch and what a check shows, and no more.
+//
 // Run directly or via `npm test`:  node scripts/verify-web-pages.mjs
 
 import { readFileSync } from "node:fs";
@@ -140,10 +146,15 @@ function load(page, { search = "", hash = "", respond = () => undefined } = {}) 
     if (!elements.has(id)) elements.set(id, element(id));
     return elements.get(id);
   };
-  const fetch = async (url) => {
+  const fetch = async (url, options) => {
     url = String(url);
     state.fetched.push(url);
-    const answer = await respond(url);
+    // A request the page gives up on ends here, as it does in a browser.
+    const signal = options && options.signal;
+    const givenUp = new Promise((_resolve, reject) => {
+      if (signal) signal.addEventListener("abort", () => reject(new DOMException("The request was given up.", "AbortError")));
+    });
+    const answer = await Promise.race([respond(url), givenUp]);
     if (!answer) throw new TypeError("Failed to fetch");
     const body = answer.body;
     return {
@@ -166,7 +177,7 @@ function load(page, { search = "", hash = "", respond = () => undefined } = {}) 
     t.timers = t.timers.filter((x) => x.id !== id);
   };
   const context = vm.createContext({
-    crypto: webcrypto, atob, btoa, TextEncoder, TextDecoder, URL, URLSearchParams, console,
+    crypto: webcrypto, atob, btoa, TextEncoder, TextDecoder, URL, URLSearchParams, console, AbortController,
     Date: Clock, setTimeout, clearTimeout, fetch,
     navigator: { clipboard: { writeText: async () => {} } },
     location: { search, hash },
@@ -176,8 +187,10 @@ function load(page, { search = "", hash = "", respond = () => undefined } = {}) 
   const scripts = inlineScripts(html(page));
   if (scripts.length !== 1) throw new Error(`${page}: expected one inline script, found ${scripts.length}`);
   vm.runInContext(scripts[0], context, { filename: page });
-  const fire = async (id, type) => {
-    for (const fn of el(id).listeners[type] ?? []) await fn({ target: el(id) });
+  const fire = async (id, type, more = {}) => {
+    const event = { target: el(id), prevented: false, preventDefault() { this.prevented = true; }, ...more };
+    for (const fn of el(id).listeners[type] ?? []) await fn(event);
+    return event;
   };
   const advance = (ms) => {
     t.now += ms;
@@ -196,12 +209,12 @@ function fnText(page, name) {
   const end = lines.findIndex((l, i) => i >= start && l === "      }");
   return lines.slice(start, end + 1).join("\n");
 }
-for (const name of ["verifyJws", "isNodeUrl", "sameJson", "parseDateTime", "parseDate", "loadOfferSchema", "schemaFaults", "offerShapeFaults", "formatMoney"]) {
+for (const name of ["fetchWithin", "verifyJws", "isNodeUrl", "sameJson", "parseDateTime", "parseDate", "loadOfferSchema", "schemaFaults", "offerShapeFaults", "formatMoney"]) {
   const a = fnText("verify.html", name);
   check(`shared: verify.html defines ${name}`, a !== null);
   check(`shared: demo.html carries verify.html's ${name}, the same text`, a !== null && a === fnText("demo.html", name));
 }
-for (const prefix of ["      const LANGUAGE_TAG = ", "      const MAX_LIFETIME_MS = ", "      const CLOCK_SKEW_MS = ", "      const OFFER_SCHEMA_URL = "]) {
+for (const prefix of ["      const LANGUAGE_TAG = ", "      const MAX_LIFETIME_MS = ", "      const CLOCK_SKEW_MS = ", "      const OFFER_SCHEMA_URL = ", "      const NET_TIMEOUT_MS = ", "      class NetTimeout extends Error {}"]) {
   const pick = (page) => html(page).split("\n").filter((l) => l.startsWith(prefix));
   check(`shared: ${prefix.trim()} … is the same line in both pages`, pick("verify.html").length === 1 && pick("verify.html")[0] === pick("demo.html")[0]);
 }
@@ -585,7 +598,7 @@ const LOG_ID = "did:web:log.example";
 const INNER = await node.sign(offerFor("2027-01-27", "2027-01-29", 2));
 const INNER_BROKEN = INNER.slice(0, -8) + (INNER.endsWith("AAAAAAAA") ? "BBBBBBBB" : "AAAAAAAA");
 const attestation = (layer, signature, from = NOW - 60000, until = NOW + 540000) => ({ layer, ...(signature === undefined ? {} : { signature }), valid_from: iso(from), valid_until: iso(until) });
-async function receiptPage({ change, nodeKey = node.pub, logKey = log.pub, leaves = 1, proofTreeSize, headTreeSize, withProof = true, holdKeys } = {}) {
+async function receiptPage({ change, nodeKey = node.pub, logKey = log.pub, leaves = 1, proofTreeSize, headTreeSize, withProof = true, holdKeys, silentLog = false } = {}) {
   const receipt = {
     vrp_receipt_version: "1.0",
     subject: { node: HOST, property_name: "Test stay", check_in: "2027-01-27", check_out: "2027-01-29", guests_count: 2, total_price: 1200, currency: "EUR" },
@@ -613,6 +626,7 @@ async function receiptPage({ change, nodeKey = node.pub, logKey = log.pub, leave
         if (holdKeys) await holdKeys;
         return { status: 200, body: { keys: [nodeKey] } };
       }
+      if (silentLog && (url.includes("/.well-known/vrp/log/v0.1/proof?hash=") || url.includes("/api/vrp-tlog?hash="))) return new Promise(() => {});
       if (url.startsWith("https://" + HOST + "/.well-known/vrp/log/v0.1/proof?hash=")) return withProof ? { status: 200, body: proof } : { status: 404, body: "{}" };
       if (url === "https://log.example/.well-known/did.json") return { status: 200, body: { id: LOG_ID, verificationMethod: [{ id: LOG_ID + "#" + log.kid, publicKeyJwk: logJwk }] } };
       return { status: 404, body: "{}" };
@@ -631,7 +645,7 @@ async function receiptPage({ change, nodeKey = node.pub, logKey = log.pub, leave
 async function receiptRun(options) {
   const r = await receiptPage(options);
   r.p.el("paste").value = r.jws;
-  await r.p.fire("btnVerify", "click");
+  await r.p.fire("formVerify", "submit");
   return { ...r.view(), reference: r.reference(), page: r };
 }
 const isGreen = (r) => /\bpass\b/.test(r.cls) && r.verdict.startsWith("VERIFIED");
@@ -761,7 +775,7 @@ const isGreen = (r) => /\bpass\b/.test(r.cls) && r.verdict.startsWith("VERIFIED"
     const holdKeys = new Promise((res) => (release = res));
     const slow = await receiptPage({ holdKeys });
     slow.p.el("paste").value = slow.jws;
-    const running = slow.p.fire("btnVerify", "click");
+    const running = slow.p.fire("formVerify", "submit");
     await new Promise((res) => setImmediate(res));
     same("receipts, a check in progress: the page says so", slow.view().verdict, "Verifying…");
     slow.p.el("paste").value = "something else";
@@ -776,16 +790,284 @@ const isGreen = (r) => /\bpass\b/.test(r.cls) && r.verdict.startsWith("VERIFIED"
     let hold = new Promise((res) => (release = res));
     const two = await receiptPage({ holdKeys: { then: (f) => hold.then(f) } });
     two.p.el("paste").value = two.jws;
-    const first = two.p.fire("btnVerify", "click");
+    const first = two.p.fire("formVerify", "submit");
     await new Promise((res) => setImmediate(res));
     two.p.el("paste").value = "x.y.z";
-    const second = two.p.fire("btnVerify", "click");
+    const second = two.p.fire("formVerify", "submit");
     await second;
     const afterSecond = two.view().verdict;
     release();
     await first;
     check("receipts, two checks: the second one's answer stands", afterSecond.startsWith("NOT VERIFIED") && two.view().verdict === afterSecond, afterSecond + " / " + two.view().verdict);
   }
+}
+
+
+// ── requests: every request has an end ──────────────────────────────────────
+const never = () => new Promise(() => {});
+// Real time for the page to reach the request that will not be answered: it is
+// there when a timer is waiting. Answered requests clear theirs at once.
+const settle = async (page) => {
+  for (let i = 0; i < 400 && page.timers() === 0; i++) await new Promise((r) => setTimeout(r, 5));
+  await new Promise((r) => setTimeout(r, 5));
+};
+// Let a run end, moving the clock past each request that stays silent. A run
+// that never ends (a request without a time limit) is a failed check here, not
+// a test that hangs.
+const finish = async (page, running) => {
+  let done = false;
+  running.then(() => (done = true), () => (done = true));
+  for (let i = 0; i < 400 && !done; i++) {
+    await new Promise((r) => setTimeout(r, 5));
+    if (!done && page.timers() > 0) page.advance(15000);
+  }
+  check("requests: the run ended", done, "a request was still waiting with no time limit");
+  return done;
+};
+{
+  const silent = (match, options = {}) => (url) => (match(url) ? never() : nodeAnswers(options)(url));
+  const liveWith = async (respond) => {
+    const p = load("verify.html", { respond });
+    for (const [id, value] of Object.entries({ host: HOST, checkIn: "2027-01-27", checkOut: "2027-01-29", guests: "6" })) p.el(id).value = value;
+    const running = p.context.runLive();
+    await settle(p);
+    return { p, running };
+  };
+  {
+    const { p, running } = await liveWith(silent((u) => u.includes("/api/verified-stay-offer")));
+    same("requests verify.html, the offer endpoint is silent: the page is still waiting before the limit", p.el("btnLive").textContent, "Verifying…");
+    p.advance(14999);
+    await new Promise((r) => setTimeout(r, 20));
+    same("requests verify.html, the offer endpoint is silent: still waiting one millisecond before the limit", p.el("btnLive").textContent, "Verifying…");
+    p.advance(1);
+    await finish(p, running);
+    const said = p.el("checks").innerHTML;
+    check("requests verify.html, the offer endpoint is silent: after 15 seconds the page says no answer came", /No answer in time, so nothing was verified/.test(said) && /did not answer within 15 seconds/.test(said), said);
+    check("requests verify.html, the offer endpoint is silent: not put down to the domain or cross-origin access", !/cross-origin|domain is wrong/.test(said), said);
+    check("requests verify.html, the offer endpoint is silent: nothing green, the button is free, no timer left", !verifySaysGreenAnywhere(p) && p.el("btnLive").textContent === "Fetch & verify" && p.timers() === 0);
+  }
+  for (const [name, match, why] of [
+    ["the Public Suffix List is silent", (u) => u.includes("public_suffix_list"), /host-owned domain could not be checked/],
+    ["the offer schema is silent", (u) => u === OFFER_SCHEMA_PATH, /does not have the VRP §5 shape/],
+  ]) {
+    const { p, running } = await liveWith(silent(match));
+    await finish(p, running);
+    check(`requests verify.html, ${name}: not green, and the reason is the one thing that is unknown`, !verifySaysGreenAnywhere(p) && why.test(p.el("verdict").textContent), p.el("verdict").textContent);
+  }
+  {
+    const p = load("demo.html", { respond: silent((u) => u.endsWith("/.well-known/jwks.json")) });
+    const running = p.fire("run", "click");
+    await finish(p, running);
+    check("requests demo.html, the JWKS is silent: stopped after 15 seconds, nothing verified", !demoSaysGreenAnywhere(p) && /did not answer within 15 seconds/.test(demoLog(p)) && p.el("run").disabled === false, demoLog(p));
+  }
+  {
+    const p = load("demo.html", { respond: silent((u) => u.includes("/api/verified-stay-offer")) });
+    const running = p.fire("run", "click");
+    await finish(p, running);
+    check("requests demo.html, the offer endpoint is silent: stopped, nothing verified, no window called available", !demoSaysGreenAnywhere(p) && /did not answer within 15 seconds/.test(demoLog(p)) && !/found an available window/.test(demoLog(p)), demoLog(p));
+  }
+}
+
+// ── forms: keyboard, real forms, messages beside the form ───────────────────
+{
+  const V = html("verify.html");
+  check("forms verify.html: the tabs are a named tab list, each tab controls its panel", /role="tablist" aria-label="[^"]+"/.test(V) && /id="tab-live"[^>]*aria-controls="pane-live"/.test(V) && /id="tab-paste"[^>]*aria-controls="pane-paste"/.test(V));
+  check("forms verify.html: each panel is named by its tab", /id="pane-live" role="tabpanel" aria-labelledby="tab-live"/.test(V) && /id="pane-paste"[^>]*role="tabpanel" aria-labelledby="tab-paste"/.test(V));
+  check("forms verify.html: two real forms with submit buttons", /<form id="formLive"[^>]*novalidate>/.test(V) && /<form id="formPaste"[^>]*novalidate>/.test(V) && /id="btnLive" type="submit"/.test(V) && /id="btnPaste" type="submit"/.test(V));
+  for (const [page, text] of [["verify.html", V], ["implement.html", html("implement.html")], ["verify-receipt.html", html("verify-receipt.html")]]) {
+    check(`forms ${page}: the result is announced (role="status")`, /id="verdict" class="verdict" role="status" aria-live="polite"/.test(text));
+  }
+  check("forms demo.html: the agent's log is a log", /id="log" role="log" aria-label="[^"]+"/.test(html("demo.html")));
+  check("forms implement.html and verify-receipt.html: real forms", /<form id="formSign"[^>]*novalidate>/.test(html("implement.html")) && /<form id="formVerify"[^>]*novalidate>/.test(html("verify-receipt.html")));
+
+  // The tabs by keyboard.
+  const p = load("verify.html", { respond: nodeAnswers({}) });
+  const tab = (id) => ({ selected: p.el(id).getAttribute("aria-selected"), tabindex: p.el(id).getAttribute("tabindex") });
+  let ev = await p.fire("tab-live", "keydown", { key: "ArrowRight" });
+  check("forms verify.html: ArrowRight on the first tab selects the second and moves the focus to it", ev.prevented && tab("tab-paste").selected === "true" && tab("tab-paste").tabindex === "0" && tab("tab-live").selected === "false" && tab("tab-live").tabindex === "-1" && p.state.focused === "tab-paste" && p.el("pane-live").classList.contains("hidden") && !p.el("pane-paste").classList.contains("hidden"), JSON.stringify([tab("tab-live"), tab("tab-paste"), p.state.focused]));
+  ev = await p.fire("tab-paste", "keydown", { key: "ArrowLeft" });
+  check("forms verify.html: ArrowLeft goes back", tab("tab-live").selected === "true" && p.state.focused === "tab-live" && !p.el("pane-live").classList.contains("hidden"));
+  await p.fire("tab-live", "keydown", { key: "End" });
+  check("forms verify.html: End selects the last tab", tab("tab-paste").selected === "true" && p.state.focused === "tab-paste");
+  await p.fire("tab-paste", "keydown", { key: "Home" });
+  check("forms verify.html: Home selects the first tab", tab("tab-live").selected === "true" && p.state.focused === "tab-live");
+  ev = await p.fire("tab-live", "keydown", { key: "a" });
+  check("forms verify.html: another key is left alone", !ev.prevented && tab("tab-live").selected === "true");
+
+  // Messages beside the form, with the focus in the field; nothing is fetched.
+  p.el("host").value = "   ";
+  ev = await p.fire("formLive", "submit");
+  check("forms verify.html, no host: the form is not sent by the browser, the message is beside the form, the focus is in the field", ev.prevented && p.el("stayError").hidden === false && /Enter a host domain/.test(p.el("stayError").textContent) && p.el("host").getAttribute("aria-invalid") === "true" && p.state.focused === "host" && p.state.fetched.length === 0, p.el("stayError").textContent);
+  p.el("host").value = HOST;
+  await p.fire("host", "input");
+  check("forms verify.html, no host: the message goes when the field is edited", p.el("stayError").hidden === true && p.el("host").getAttribute("aria-invalid") === null);
+  ev = await p.fire("formPaste", "submit");
+  check("forms verify.html, nothing pasted: the message is beside the box, the focus is in it", ev.prevented && p.el("pasteError").hidden === false && /Paste an offer/.test(p.el("pasteError").textContent) && p.state.focused === "paste" && p.state.fetched.length === 0);
+  for (const [id, value] of Object.entries({ checkIn: "2027-01-27", checkOut: "2027-01-29", guests: "6" })) p.el(id).value = value;
+  ev = await p.fire("formLive", "submit");
+  await new Promise((r) => setTimeout(r, 50));
+  check("forms verify.html: sending the form runs the check", ev.prevented && p.state.fetched.some((u) => u.includes("/api/verified-stay-offer")) && verifyGreen(p), p.el("verdict").textContent);
+
+  const r = await receiptPage();
+  ev = await r.p.fire("formVerify", "submit");
+  check("forms verify-receipt.html, nothing pasted: said beside the box, focus in it, nothing fetched, no result", ev.prevented && r.p.el("pasteError").hidden === false && r.p.el("pasteError").textContent === "Paste the receipt first." && r.p.state.focused === "paste" && r.p.state.fetched.length === 0 && r.view().verdict === "" && r.view().shown === "none", r.view().verdict);
+  r.p.el("paste").value = r.jws;
+  await r.p.fire("paste", "input");
+  check("forms verify-receipt.html: the message goes when text is pasted", r.p.el("pasteError").hidden === true && r.p.el("paste").getAttribute("aria-invalid") === null);
+
+  for (const [field, value, message] of [["host", "nodots", /valid host domain/], ["currency", "EURO", /3-letter/], ["total", "12.5", /whole number of minor units/]]) {
+    const i = load("implement.html");
+    for (const [id, v] of Object.entries({ host: "my-stay.example", propName: "My Stay", checkIn: "2027-01-27", checkOut: "2027-01-30", guests: "2", currency: "EUR", total: "120000", [field]: value })) i.el(id).value = v;
+    ev = await i.fire("formSign", "submit");
+    check(`forms implement.html, ${field} ${JSON.stringify(value)}: said, the field marked, the focus in it, nothing signed`, ev.prevented && message.test(i.el("verdict").textContent) && i.el(field).getAttribute("aria-invalid") === "true" && i.state.focused === field && i.el("offer").textContent === "", i.el("verdict").textContent);
+  }
+}
+
+// ── forms and results together: the other form by keyboard ──────────────────
+{
+  const gone = (p) => !verifySaysGreenAnywhere(p) && p.el("verdict").textContent === "" && p.el("resultSection").style.display === "none" && p.timers() === 0;
+  const fill = (p) => { for (const [id, value] of Object.entries({ host: HOST, checkIn: "2027-01-27", checkOut: "2027-01-29", guests: "6" })) p.el(id).value = value; };
+  // The reviewed case: an invalid paste, a valid live offer, then the arrow key.
+  const p = load("verify.html", { respond: nodeAnswers({}) });
+  await p.fire("tab-live", "keydown", { key: "ArrowRight" });
+  p.el("paste").value = "not an offer";
+  await p.fire("formPaste", "submit");
+  check("forms and results: a pasted text that is not an offer is not green", !verifySaysGreenAnywhere(p));
+  await p.fire("tab-paste", "keydown", { key: "ArrowLeft" });
+  check("forms and results: ArrowLeft to the live form takes the paste form's result down", gone(p), p.el("verdict").textContent);
+  fill(p);
+  await p.fire("formLive", "submit");
+  check("forms and results: the live form's own valid offer is green", verifyGreen(p), p.el("verdict").textContent);
+  await p.fire("tab-live", "keydown", { key: "Home" });
+  check("forms and results: Home on the first tab, already chosen, changes nothing", verifyGreen(p) && p.state.focused === "tab-live");
+  await p.fire("tab-live", "keydown", { key: "ArrowRight" });
+  check("forms and results: ArrowRight to the paste form takes the green result and its link down", gone(p) && p.state.focused === "tab-paste" && p.el("tab-paste").getAttribute("aria-selected") === "true", p.el("verdict").textContent);
+  same("forms and results: the paste box still holds its text", p.el("paste").value, "not an offer");
+  await p.fire("tab-paste", "keydown", { key: "End" });
+  check("forms and results: End on the last tab, already chosen, changes nothing", gone(p) && p.state.focused === "tab-paste");
+  await p.fire("tab-paste", "keydown", { key: "Home" });
+  await p.fire("formLive", "submit");
+  check("forms and results: back on the live form, a new check is green again", verifyGreen(p), p.el("verdict").textContent);
+  // A live check is out when the arrow key chooses the paste form.
+  let release;
+  const hold = new Promise((r) => (release = r));
+  const q = load("verify.html", { respond: nodeAnswers({ hold }) });
+  fill(q);
+  const running = q.fire("formLive", "submit");
+  await new Promise((r) => setTimeout(r, 20));
+  await q.fire("tab-live", "keydown", { key: "ArrowRight" });
+  release();
+  await running;
+  check("forms and results: a live check that ends after the arrow key chose the paste form writes nothing", gone(q), q.el("verdict").textContent);
+}
+
+// ── film: one chain of frames, whatever is pressed ──────────────────────────
+{
+  const source = inlineScripts(html("film.html"));
+  check("film.html: one inline script", source.length === 1);
+  const film = (reduced) => {
+    const elements = new Map();
+    let queued = [];
+    const make = () => {
+      const classes = new Set();
+      return {
+        dataset: {}, children: [], listeners: {}, textContent: "",
+        classList: { add: (c) => classes.add(c), remove: (c) => classes.delete(c), toggle: (c, on) => (on ? classes.add(c) : classes.delete(c)), contains: (c) => classes.has(c) },
+        appendChild(child) { this.children.push(child); },
+        addEventListener(type, fn) { this.listeners[type] = fn; },
+      };
+    };
+    const el = (id) => { if (!elements.has(id)) elements.set(id, make()); return elements.get(id); };
+    const scenes = Array.from({ length: 5 }, (_x, i) => { const s = make(); s.dataset.s = String(i); return s; });
+    const context = vm.createContext({
+      document: { getElementById: el, querySelectorAll: () => scenes, createElement: make },
+      window: { matchMedia: () => ({ matches: reduced }) },
+      location: { hash: "", pathname: "/film" },
+      history: { replaceState() {} },
+      requestAnimationFrame(fn) { queued.push(fn); return queued.length; },
+    });
+    vm.runInContext(source[0] ?? "", context, { filename: "film.html" });
+    return {
+      press: (id) => el(id).listeners.click(),
+      // One display frame at time `ts`: every callback asked for runs once.
+      frame(ts) { const now = queued; queued = []; for (const fn of now) fn(ts); return now.length; },
+      waiting: () => queued.length,
+      scene: () => scenes.findIndex((s) => s.classList.contains("show")),
+      button: () => el("pause").textContent,
+    };
+  };
+  const f = film(false);
+  same("film.html: it starts, with one frame asked for", f.waiting(), 1);
+  f.frame(1000);
+  same("film.html: playing — one frame asked for", f.waiting(), 1);
+  for (let i = 1; i <= 4; i++) {
+    f.press("replay");
+    f.frame(1000 + 16 * i);
+    same(`film.html: Replay pressed ${i} time${i === 1 ? "" : "s"} while playing — still one chain of frames`, f.waiting(), 1);
+  }
+  f.frame(2000);
+  f.frame(2000 + 3500);
+  same("film.html: the film moves on to the second scene", f.scene(), 1);
+  f.press("pause");
+  f.frame(6000);
+  check("film.html: Pause — no frame is asked for, the scene stays, the button offers Play", f.waiting() === 0 && f.scene() === 1 && f.button() === "▶ Play");
+  f.press("pause");
+  same("film.html: Play again — one chain of frames", f.waiting(), 1);
+  f.frame(10000);
+  f.frame(10000 + 3400);
+  same("film.html: it goes on from where it was paused, to the third scene", f.scene(), 2);
+  f.press("pause");
+  f.press("replay");
+  f.press("pause");
+  f.press("pause");
+  f.frame(20000);
+  same("film.html: Pause, Replay, Pause, Play in a row — one chain of frames", f.waiting(), 1);
+  const r = film(true);
+  check("film.html, reduced motion: nothing moves and no frame is asked for until Play", r.waiting() === 0 && r.scene() === 0 && r.button() === "▶ Play");
+  r.press("pause");
+  r.frame(1000);
+  r.frame(1000 + 3500);
+  check("film.html, reduced motion: Play starts it, with one chain of frames", r.waiting() === 1 && r.scene() === 1);
+}
+
+// ── requests, receipts: a silent property or log is unknown, not a failure ──
+{
+  {
+    const r = await receiptPage({ holdKeys: never() });
+    r.p.el("paste").value = r.jws;
+    const running = r.p.fire("formVerify", "submit");
+    await finish(r.p, running);
+    check("requests verify-receipt.html, the property's keys are silent: UNKNOWN after 15 seconds, not “NOT VERIFIED”", r.view().verdict.startsWith("UNKNOWN — ") && /did not answer within 15 seconds/.test(r.view().verdict) && /\bwarn\b/.test(r.view().cls), r.view().verdict);
+  }
+  {
+    const r = await receiptPage({ silentLog: true });
+    r.p.el("paste").value = r.jws;
+    const running = r.p.fire("formVerify", "submit");
+    await finish(r.p, running);
+    check("requests verify-receipt.html, the logs are silent: signature verified, and whether it is recorded is said to be unknown", r.view().verdict.startsWith("SIGNATURE VERIFIED") && /a log did not answer in time, so this is unknown/.test(r.view().verdict) && !isGreen(r.view()), r.view().verdict);
+  }
+}
+
+// ── words: what the pages say they fetch and what a check shows ─────────────
+{
+  const D = html("demo.html");
+  const R = html("verify-receipt.html");
+  const V = html("verify.html");
+  const F = html("film.html");
+  const flat = (t) => t.replace(/\s+/g, " ");
+  check("words demo.html: no statement about the mode of the host's checkout", !/test mode/i.test(D));
+  check("words demo.html: says the host, the party and the dates are written into the page", /the host, the party of six and the trial dates are written into the page/.test(flat(D)));
+  check("words demo.html: tells the host's answers from the checks made in the browser, and says no more", /The host's answers come live from the real node, and the checks on those answers run in your browser;/.test(flat(D)) && !/Every request and every check runs live/.test(flat(D)) && !/every step runs live against the real node/.test(flat(D)));
+  check("words verify-receipt.html: does not say a receipt proves a booking exists", !/cannot produce a receipt|nobody can fabricate|fabricated booking/i.test(flat(R)));
+  check("words verify-receipt.html: says what the checks do not show", /They do not show that a payment was made or that a stay took place/.test(flat(R)) && /proves neither a payment nor a stay/.test(flat(R)));
+  check("words verify-receipt.html: says what is sent, and where", !/Nothing you paste is sent anywhere/.test(flat(R)) && /the receipt's SHA-256 fingerprint, in a lookup at that domain's log endpoint/.test(flat(R)) && /www\.hemmabo\.com/.test(R) && /Public Suffix List/.test(R));
+  check("words verify.html: says what else is read, and from whom", /reads the Public Suffix List from publicsuffix\.org, ICANN's gTLD list from icann\.org, and this site's offer schema\./.test(flat(V)));
+  check("words verify.html: says the pasted offer itself is not uploaded, and where the rest is read from", /The pasted offer itself is not uploaded\./.test(flat(V)) && /The Public Suffix List, ICANN's gTLD list and this site's offer schema are read from their publishers\./.test(flat(V)));
+  // A request to this site carries the page's own address, and a prefilled
+  // address names the host and the stay: the page makes no promise about that.
+  check("words verify.html: no promise that a request carries nothing", !/Nothing is sent anywhere/.test(flat(V)) && !/carr(y|ies) nothing/.test(flat(V)) && !/nothing about the (offer|host|stay)/.test(flat(V)));
+  check("words film.html: the film is labelled an illustration, with the way to the real check", /An illustration with example values, not a live verification\. <a href="\/demo">Run the real check<\/a>\./.test(F));
+  check("words film.html: a pause control, and nothing moves under reduced motion until asked", /id="pause"/.test(F) && /prefers-reduced-motion: reduce\)"\)\.matches/.test(F));
 }
 
 if (failures.length > 0) {

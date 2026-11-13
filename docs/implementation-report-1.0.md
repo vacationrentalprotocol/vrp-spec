@@ -209,19 +209,27 @@ Organizations with a shipped implementation: none. **Evidence outstanding.**
 
 **§3, §5: a verifier accepts `Ed25519` and `EdDSA` in the JWS header and on
 the key, and refuses any other `alg`.** Vectors 06, 10, 11, 12 (accept) and 07,
-13, 14 (refuse).
+13, 14 (refuse). What these seven vectors show is limited, and the rows below
+claim no more than that: in 07, 13 and 14 the name in the JWS header and the
+unsigned `signature.alg` beside it change together, and no vector carries a
+name other than the two on the key. A refusal of those three therefore shows
+that the engine refused the offer; it does not show which of the two values
+the engine read, and the vectors say nothing about a key labelled with another
+name.
 
 | Implementation | Result | Evidence |
 | --- | --- | --- |
-| V1 | not implemented: `Ed25519` in the header is refused; other names are refused as required | `lib/vrp.ts:17` (`VRP_JWS_ALG = "EdDSA"`) and `:333` at `7199356`; run above |
-| V2 | not implemented: `Ed25519` in the header is refused; other names are refused as required | `src/jws.js:50` at `db7b905`; run above |
-| V3 | implemented | `SIGNATURE_ALGS` and `verifyCompactJws` in `scripts/conformance.mjs`; all seven vectors as expected |
-| V4 | implemented, read only | `verify.html`: `header.alg !== "Ed25519" && header.alg !== "EdDSA"` |
-| V5 | not implemented: `Ed25519` is refused in the header and on the key; other names are refused, with the reason `wrong_key` | `src/verifier.mjs:23–24` at `bc959ba`; run above |
+| V1 | the new name is not implemented: vectors 06, 10 and 11 are refused; 07, 13 and 14 are refused | `lib/vrp.ts:17` (`VRP_JWS_ALG = "EdDSA"`) and `:333` at `7199356`, which compares the JWS header; run above |
+| V2 | the new name is not implemented: vectors 06, 10 and 11 are refused; 07, 13 and 14 are refused | `src/jws.js:50` at `db7b905`, which compares the JWS header; run above |
+| V3 | the seven vectors come out as expected | `SIGNATURE_ALGS` and `verifyCompactJws` in `scripts/conformance.mjs`, which compares the JWS header; run above |
+| V4 | read only | `verify.html`: `header.alg !== "Ed25519" && header.alg !== "EdDSA"` |
+| V5 | the new name is not implemented: vectors 06, 10, 11 and 12 are refused; 07, 13 and 14 are refused, with the reason `wrong_key` | run above |
 
 Organizations with a shipped implementation of the new name: none. **Evidence
-outstanding.** The refusal of other names is a v0.1 behaviour and has two
-organizations (V1/V2 and V5), V5 with a different reason code.
+outstanding.** No count of organizations is given for the refusal of other
+names: the seven vectors do not separate the header from the unsigned field
+beside it, and none tests the key's label, so they cannot carry that
+conclusion. Vectors that do are outstanding as well.
 
 **§5, §9: a verifier refuses an offer whose signed payload declares an unknown
 version, or none.** Vectors 08 (accept), 09 and 15 (refuse).
@@ -279,10 +287,14 @@ is kept unchanged: it binds to the five-vector corpus at its own commit.
      unknown or absent version in the signed offer. Today it refuses `"1.0"`
      and `Ed25519` and does not read the offer's version.
   3. V1 and V2 are one organization. A second organization for these three
-     requirements would be V5, or another verifier, passing the same vectors.
-     Today V5 fails 06, 09, 10, 11, 12 and 15 and reports `wrong_key` where
-     the vectors say `unexpected_alg` (07, 13, 14). Whether acceptance waits
-     for it is the review's decision (ADR 0013 D6).
+     requirements would be V5, or another verifier, passing the same vectors
+     and the discovery-document vectors. Today V5 fails 06, 09, 10, 11, 12 and
+     15 and reports `wrong_key` where the vectors say `unexpected_alg` (07,
+     13, 14). ADR 0013 D6 proposes that acceptance waits for it; that is a
+     proposal for the review, not a decision taken.
+  4. Vectors that test the name in the JWS header apart from the unsigned
+     field beside it, and the key's label apart from both. The fifteen offer
+     vectors do neither.
 - **Rules the shipped verifiers apply since 2026-11-08:** §6:502 and the §5/§7
   lifetime, date, language and request-match rules are enforced by V1 (7.0.13)
   and V2 (0.3.0) as well as by V3 and V4; until that date neither shipped

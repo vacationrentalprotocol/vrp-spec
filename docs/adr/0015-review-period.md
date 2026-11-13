@@ -8,9 +8,9 @@
 
 This record is itself a substantive change (GOVERNANCE.md §12). It is in force
 only after at least seven days of review with no maintainer objecting and
-approval from two maintainers on its current head, and after it is merged. The
-28-day period below is a proposal until then; the period in force today is
-seven days (§4).
+approval from two maintainers that counts on its current head (ADR 0014 D3),
+and after it is merged. The 28-day period below is a proposal until then; the
+period in force today is seven days (§4).
 
 ## Context
 
@@ -53,6 +53,10 @@ and back, or when its head changes other than by merging `main` into it.
 **D3. At risk.** A substantive change to the specification MAY mark a part of
 the text "at risk". A part marked at risk MAY be removed before merge without
 restarting the period; any other change restarts it (D2).
+
+D2 and D3 are rules about the review period only. Whether an approval given on
+an earlier head still counts is decided by ADR 0014 D3; neither a merge of
+`main` nor the removal of a part at risk makes it count by itself.
 
 **D4. Security corrections.** A correction that closes a security gap under
 §5 "Before 1.0" keeps the 7-day period and, where the gap is being exploited,

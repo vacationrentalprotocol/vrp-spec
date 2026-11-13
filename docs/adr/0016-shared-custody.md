@@ -10,8 +10,9 @@
 
 This record is itself a substantive change (GOVERNANCE.md §12). It is in force
 only after at least seven days of review with no maintainer objecting and
-approval from two maintainers on its current head, and after it is merged. The
-hand steps in D1–D4 are taken after that, and each is measured.
+approval from two maintainers that counts on its current head (ADR 0014 D3),
+and after it is merged. The hand steps in D1–D4 are taken after that, and each
+is measured.
 
 ## Context
 
@@ -57,18 +58,21 @@ where npm offers it. No single organization keeps sole rights to the package.
 least two owners who are independent of each other under ADR 0014 D2. Viljem
 Dvojmoč (`@viljemd-hub`) is added as an owner. In the repositories
 `vrp-spec` and `vrp-verify`, a substantive change merges only with approval
-from two maintainers on its current head, at least one of them independent of
-the change's author (ADR 0014 D1), and after its review period (ADR 0015). An
-editorial or non-breaking change (GOVERNANCE.md §4) needs one maintainer, who
-may be its author. Every change needs passing checks before merge, and an
-approval given on an earlier head does not count. A technical control in the
-two repositories is to enforce this, so that ADR 0014 D3 and ADR 0015 D2 hold
+from two maintainers that counts on its current head (ADR 0014 D3), at least
+one of them independent of the change's author (ADR 0014 D1), and after its
+review period (ADR 0015). An editorial or non-breaking change (GOVERNANCE.md
+§4) needs one maintainer, who may be its author. Every change needs passing
+checks before merge. Whether an approval given on an earlier head counts is
+decided by ADR 0014 D3 and by nothing else. A technical control in the two
+repositories is to enforce this, so that ADR 0014 D3 and ADR 0015 D2–D3 hold
 in the repository itself.
 
 Until that control is in place, the maintainer who merges checks the
 approvals, the approvers' independence and the review period by hand before
-every merge. MAINTAINERS.md "Custody" (D5) records what the two repositories
-enforce by themselves, as measured, and when it was last measured.
+every merge, and records the comparison ADR 0014 D3 requires whenever an
+approval given on an earlier head is counted. MAINTAINERS.md "Custody" (D5)
+records what the two repositories enforce by themselves, as measured, and
+when it was last measured.
 
 **D3. Domain.** `vacationrentalprotocol.com` carries a registrar transfer lock
 and auto-renewal, and a second named contact who is independent of the
@@ -87,7 +91,8 @@ gains the sentence: "The verifier the organization publishes,
 sets out; other implementations are not."
 
 **D5. Record.** MAINTAINERS.md gains a section "Custody" that lists, for each
-handle in D1–D3, who holds it and when it was last measured, and, for D2,
+handle in D1–D3, who holds it, with which permission, and when it was last
+measured, and, for D2,
 whether the approvals, independence and review period are enforced by a
 technical control or checked by hand. A change to the
 custody of a handle is recorded there in the same pull request that makes it,
@@ -95,9 +100,20 @@ or, for a hand step outside the repository, in the next pull request.
 
 ## Consequences
 
-- No single account, person or organization can change the verifier agents
-  install, the organization that holds the text, or the domain that serves it.
-  That is what GOVERNANCE.md §2 promises, made measurable.
+- The handles depend less on one person. The npm package and the GitHub
+  organization each have at least two owners who are independent of each
+  other (D1, D2), the domain has a second named contact at the registrar
+  (D3), and MAINTAINERS.md "Custody" records who holds which permission and
+  when it was last measured (D5). That is what this record adds to
+  GOVERNANCE.md §2: less dependence on one person, and permissions that are
+  written down and measured.
+- Shared custody is not a technical two-person control. An owner can still act
+  alone within the permissions the service gives an owner; GitHub's
+  documentation says organization owners "have complete administrative access
+  to your organization" (read 2026-11-13). This record does not claim that a
+  change to the verifier, the organization or the domain needs two people, and
+  it does not promise that a handle is recovered after an owner acts alone or
+  an account is lost.
 - The reference implementer keeps every role it has: lead maintainer,
   specification editor, security contact, the reference implementation and
   nodes. It gives up sole custody, not a role. HemmaBo retains no sole right

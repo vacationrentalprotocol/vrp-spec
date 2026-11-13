@@ -10,8 +10,8 @@
 
 This record is itself a substantive change (GOVERNANCE.md §12). It is in force
 only after at least seven days of review with no maintainer objecting and
-approval from two maintainers on its current head, and after it is merged
-(§4). Until then GOVERNANCE.md as it reads on `main` governs, and nothing in
+approval from two maintainers that counts on its current head (D3), and after
+it is merged (§4). Until then GOVERNANCE.md as it reads on `main` governs, and nothing in
 this record applies.
 
 ## Context
@@ -60,9 +60,28 @@ the relationship; a declared relationship counts as non-independence.
 
 **D3. Merge.** The maintainer who merges a substantive change MUST be one of
 its approvers or the lead maintainer, and MUST NOT merge before the review
-period of §4 has run from the last "ready for review" and both approvals are
-on the current head. A change that is converted to draft, or whose head
-changes, starts its review period again.
+period has run and both approvals count on the current head. When the review
+period starts, and when it starts again, is set by ADR 0015 D2–D3; this record
+sets no rule of its own for that.
+
+An approval counts on the head it was given on. It counts on a later head only
+when all of the following hold:
+
+1. every commit added after the approved head is a merge of `main` into the
+   change, made without resolving a conflict and without any other addition;
+2. the content and meaning of the change under review are unchanged: what the
+   change adds, alters or removes compared with `main` is the same at the new
+   head as at the approved head;
+3. the checks pass on the new head;
+4. the approval has not been withdrawn or dismissed.
+
+The maintainer who merges records the comparison in the pull request: the
+approved commit, the new head, and that conditions 1–4 hold. Changed content,
+a resolved conflict, or doubt about any condition means the change needs new
+approvals on the current head. An approval that has been withdrawn or
+dismissed never counts. The removal of a part marked at risk does not restart
+the review period (ADR 0015 D3); that is a rule about the period, and it does
+not by itself make an earlier approval count.
 
 **D4. When no independent maintainer is available.** If no maintainer
 independent of the author is active (GOVERNANCE.md §8), a substantive change

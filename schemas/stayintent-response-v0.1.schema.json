@@ -4,32 +4,80 @@
   "title": "VRP StayIntent Response v0.1",
   "description": "Non-authoritative pointers to host nodes that matched a StayIntent query. Carries NO price and NO ranking. Authority is established only by verifying each node's signed offer (Ed25519) at its canonical_domain. See spec/stayintent-discovery-v0.1.md.",
   "type": "object",
-  "required": ["protocol", "protocol_version", "match", "nodes"],
+  "required": [
+    "protocol",
+    "protocol_version",
+    "match",
+    "nodes"
+  ],
   "additionalProperties": false,
   "properties": {
-    "protocol": { "const": "vrp-stayintent" },
-    "protocol_version": { "const": "0.1" },
-    "match": { "enum": ["yes", "no"] },
-    "note": { "type": "string" },
+    "protocol": {
+      "const": "vrp-stayintent"
+    },
+    "protocol_version": {
+      "const": "0.1"
+    },
+    "match": {
+      "enum": [
+        "yes",
+        "no"
+      ]
+    },
+    "note": {
+      "type": "string"
+    },
     "nodes": {
       "type": "array",
       "description": "Order is non-normative — MUST NOT be read as ranking.",
       "items": {
         "type": "object",
-        "required": ["canonical_domain", "jwks_url", "verified_stay_offer_endpoint"],
+        "required": [
+          "canonical_domain",
+          "jwks_url",
+          "verified_stay_offer_endpoint"
+        ],
         "additionalProperties": false,
         "properties": {
-          "canonical_domain": { "type": "string", "pattern": "^[a-z0-9][a-z0-9.-]*[a-z0-9]$" },
-          "discovery": { "type": "string", "pattern": "^https://\\S+$" },
-          "jwks_url": { "type": "string", "pattern": "^https://\\S+/.well-known/jwks\\.json$" },
-          "verified_stay_offer_endpoint": { "type": "string", "pattern": "^https://\\S+$" },
+          "canonical_domain": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9.-]*[a-z0-9]$"
+          },
+          "discovery": {
+            "type": "string",
+            "pattern": "^https://\\S+$"
+          },
+          "jwks_url": {
+            "type": "string",
+            "pattern": "^https://\\S+/.well-known/jwks\\.json$"
+          },
+          "verified_stay_offer_endpoint": {
+            "type": "string",
+            "pattern": "^https://\\S+$"
+          },
           "trust_summary": {
             "type": "object",
             "description": "Verifiable facts only — every value MUST be a boolean or an array of references. No scores, ratings, or confidence values (these would be a ranking backdoor).",
-            "additionalProperties": { "type": ["boolean", "array"] }
+            "additionalProperties": {
+              "type": [
+                "boolean",
+                "array"
+              ]
+            }
           }
         }
       }
+    },
+    "next_cursor": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "description": "Optional. Opaque; present when more matches follow (spec §4.4). Across a chain of pages the nodes are in ascending order of canonical_domain, each at most once."
+    },
+    "match_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Optional. The number of nodes in the whole chain when its first page was made (spec §4.4). Counts matches; says nothing about any node."
     }
   }
 }

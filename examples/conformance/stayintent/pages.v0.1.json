@@ -1,0 +1,1112 @@
+{
+  "name": "vrp-stayintent-pages-v0.1",
+  "protocol_version": "0.1",
+  "description": "Pages (spec/stayintent-discovery-v0.1.md §4.4) and the endpoint a node names in its discovery document (§10). chains[].pages are the pages of one chain in reading order; expected.reason is null for a chain a client accepts, else the name of the first rule it breaks (§4.4; not_response, ranking_signal, monetary_value, trust_summary_not_fact, cursor_invalid, match_count_invalid, cursor_missing, empty_page_with_cursor, chain_open, duplicate_node, not_ascending, match_flag_wrong, match_count_mismatch). endpoints[].value are values of endpoints.stayintent (an array of one to ten https URLs, a set); reasons not_array, empty, too_many_entries, not_string, url_invalid, url_not_https, url_userinfo, duplicate_entry. Whether an address is globally reachable (§10) is a runtime check, not a vector. Example domains only; no implementation or real node is named.",
+  "query": {
+    "protocol": "vrp-stayintent",
+    "protocol_version": "0.1",
+    "geo": {
+      "near_wikidata": "Q2167",
+      "radius_km": 15
+    },
+    "capabilities": [
+      "pets_allowed"
+    ],
+    "dates": {
+      "check_in": "2027-02-12",
+      "check_out": "2027-02-14"
+    },
+    "guests": 4
+  },
+  "chains": [
+    {
+      "name": "control",
+      "pages": [
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.co.uk",
+              "discovery": "https://example.co.uk/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.co.uk/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.co.uk/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.com",
+              "discovery": "https://example.com/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.com/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ],
+          "next_cursor": "c1",
+          "match_count": 5
+        },
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.net",
+              "discovery": "https://example.net/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.net/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.net/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.org",
+              "discovery": "https://example.org/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.org/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.org/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ],
+          "next_cursor": "c2",
+          "match_count": 5
+        },
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "xn--exmple-cua.net",
+              "discovery": "https://xn--exmple-cua.net/.well-known/vacation-rental.json",
+              "jwks_url": "https://xn--exmple-cua.net/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://xn--exmple-cua.net/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ],
+          "match_count": 5
+        }
+      ],
+      "expected": {
+        "reason": null
+      },
+      "note": "Three pages over five nodes in ascending code-point order of canonical_domain; match_count on every page; the last page carries no cursor."
+    },
+    {
+      "name": "control_single_page",
+      "pages": [
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.com",
+              "discovery": "https://example.com/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.com/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.net",
+              "discovery": "https://example.net/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.net/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.net/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "reason": null
+      },
+      "note": "A response without next_cursor is a chain of one page; nothing changes for an index that does not page."
+    },
+    {
+      "name": "control_no_match",
+      "pages": [
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "no",
+          "nodes": []
+        }
+      ],
+      "expected": {
+        "reason": null
+      },
+      "note": "No match: one page, match \"no\", empty nodes, no cursor."
+    },
+    {
+      "name": "control_last_page_empty",
+      "pages": [
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.co.uk",
+              "discovery": "https://example.co.uk/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.co.uk/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.co.uk/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.com",
+              "discovery": "https://example.com/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.com/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ],
+          "next_cursor": "c1",
+          "match_count": 2
+        },
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [],
+          "match_count": 2
+        }
+      ],
+      "expected": {
+        "reason": null
+      },
+      "note": "The last page MAY be empty (availability changed between pages); match still describes the chain, so it stays \"yes\"."
+    },
+    {
+      "name": "duplicate_node",
+      "pages": [
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.co.uk",
+              "discovery": "https://example.co.uk/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.co.uk/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.co.uk/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.com",
+              "discovery": "https://example.com/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.com/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ],
+          "next_cursor": "c1"
+        },
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.com",
+              "discovery": "https://example.com/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.com/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.net",
+              "discovery": "https://example.net/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.net/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.net/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "reason": "duplicate_node"
+      },
+      "note": "example.com appears on both pages."
+    },
+    {
+      "name": "not_ascending",
+      "pages": [
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.com",
+              "discovery": "https://example.com/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.com/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.co.uk",
+              "discovery": "https://example.co.uk/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.co.uk/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.co.uk/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ],
+          "next_cursor": "c1"
+        },
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.net",
+              "discovery": "https://example.net/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.net/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.net/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "reason": "not_ascending"
+      },
+      "note": "example.com before example.co.uk: '.' (0x2E) sorts before 'm' (0x6D)."
+    },
+    {
+      "name": "not_ascending_across_pages",
+      "pages": [
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.net",
+              "discovery": "https://example.net/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.net/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.net/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.org",
+              "discovery": "https://example.org/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.org/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.org/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ],
+          "next_cursor": "c1"
+        },
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.co.uk",
+              "discovery": "https://example.co.uk/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.co.uk/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.co.uk/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.com",
+              "discovery": "https://example.com/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.com/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "reason": "not_ascending"
+      },
+      "note": "Each page is sorted; the chain is not."
+    },
+    {
+      "name": "empty_page_with_cursor",
+      "pages": [
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.co.uk",
+              "discovery": "https://example.co.uk/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.co.uk/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.co.uk/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.com",
+              "discovery": "https://example.com/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.com/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ],
+          "next_cursor": "c1"
+        },
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "no",
+          "nodes": [],
+          "next_cursor": "c2"
+        },
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.net",
+              "discovery": "https://example.net/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.net/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.net/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "reason": "empty_page_with_cursor"
+      }
+    },
+    {
+      "name": "cursor_missing",
+      "pages": [
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.co.uk",
+              "discovery": "https://example.co.uk/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.co.uk/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.co.uk/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.com",
+              "discovery": "https://example.com/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.com/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ]
+        },
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.net",
+              "discovery": "https://example.net/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.net/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.net/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.org",
+              "discovery": "https://example.org/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.org/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.org/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "reason": "cursor_missing"
+      },
+      "note": "A second page can only be reached by a cursor; a page without one is the last."
+    },
+    {
+      "name": "chain_open",
+      "pages": [
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.co.uk",
+              "discovery": "https://example.co.uk/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.co.uk/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.co.uk/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.com",
+              "discovery": "https://example.com/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.com/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ],
+          "next_cursor": "c1"
+        },
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.net",
+              "discovery": "https://example.net/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.net/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.net/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.org",
+              "discovery": "https://example.org/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.org/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.org/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ],
+          "next_cursor": "c2"
+        }
+      ],
+      "expected": {
+        "reason": "chain_open"
+      },
+      "note": "The last page still carries next_cursor: the client has not read the chain."
+    },
+    {
+      "name": "match_count_mismatch",
+      "pages": [
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.co.uk",
+              "discovery": "https://example.co.uk/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.co.uk/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.co.uk/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.com",
+              "discovery": "https://example.com/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.com/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ],
+          "next_cursor": "c1",
+          "match_count": 4
+        },
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.net",
+              "discovery": "https://example.net/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.net/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.net/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.org",
+              "discovery": "https://example.org/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.org/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.org/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "xn--exmple-cua.net",
+              "discovery": "https://xn--exmple-cua.net/.well-known/vacation-rental.json",
+              "jwks_url": "https://xn--exmple-cua.net/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://xn--exmple-cua.net/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ],
+          "match_count": 4
+        }
+      ],
+      "expected": {
+        "reason": "match_count_mismatch"
+      },
+      "note": "Five nodes, a count of four."
+    },
+    {
+      "name": "match_count_differs_between_pages",
+      "pages": [
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.co.uk",
+              "discovery": "https://example.co.uk/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.co.uk/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.co.uk/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.com",
+              "discovery": "https://example.com/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.com/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ],
+          "next_cursor": "c1",
+          "match_count": 5
+        },
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.net",
+              "discovery": "https://example.net/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.net/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.net/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.org",
+              "discovery": "https://example.org/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.org/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.org/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "xn--exmple-cua.net",
+              "discovery": "https://xn--exmple-cua.net/.well-known/vacation-rental.json",
+              "jwks_url": "https://xn--exmple-cua.net/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://xn--exmple-cua.net/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ],
+          "match_count": 3
+        }
+      ],
+      "expected": {
+        "reason": "match_count_mismatch"
+      }
+    },
+    {
+      "name": "match_flag_wrong",
+      "pages": [
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.co.uk",
+              "discovery": "https://example.co.uk/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.co.uk/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.co.uk/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.com",
+              "discovery": "https://example.com/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.com/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ],
+          "next_cursor": "c1"
+        },
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "no",
+          "nodes": [
+            {
+              "canonical_domain": "example.net",
+              "discovery": "https://example.net/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.net/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.net/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "reason": "match_flag_wrong"
+      },
+      "note": "match describes the chain, not the page."
+    },
+    {
+      "name": "ranking_signal",
+      "pages": [
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.co.uk",
+              "discovery": "https://example.co.uk/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.co.uk/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.co.uk/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "score": 0.9
+              }
+            },
+            {
+              "canonical_domain": "example.com",
+              "discovery": "https://example.com/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.com/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "reason": "ranking_signal"
+      },
+      "note": "A number an agent could read as a ranking (§4.3)."
+    },
+    {
+      "name": "monetary_value",
+      "pages": [
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.co.uk",
+              "discovery": "https://example.co.uk/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.co.uk/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.co.uk/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.com",
+              "discovery": "https://example.com/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.com/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              },
+              "total_price": 5000
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "reason": "monetary_value"
+      },
+      "note": "Price exists only inside the node's signed offer (§4.1)."
+    },
+    {
+      "name": "cursor_invalid_empty",
+      "pages": [
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.co.uk",
+              "discovery": "https://example.co.uk/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.co.uk/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.co.uk/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.com",
+              "discovery": "https://example.com/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.com/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ],
+          "next_cursor": ""
+        },
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.net",
+              "discovery": "https://example.net/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.net/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.net/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "reason": "cursor_invalid"
+      }
+    },
+    {
+      "name": "cursor_invalid_long",
+      "pages": [
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.co.uk",
+              "discovery": "https://example.co.uk/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.co.uk/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.co.uk/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            },
+            {
+              "canonical_domain": "example.com",
+              "discovery": "https://example.com/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.com/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ],
+          "next_cursor": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        },
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.net",
+              "discovery": "https://example.net/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.net/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.net/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "reason": "cursor_invalid"
+      },
+      "note": "1025 characters; the limit is 1024."
+    },
+    {
+      "name": "trust_summary_not_fact",
+      "pages": [
+        {
+          "protocol": "vrp-stayintent",
+          "protocol_version": "0.1",
+          "match": "yes",
+          "nodes": [
+            {
+              "canonical_domain": "example.co.uk",
+              "discovery": "https://example.co.uk/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.co.uk/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.co.uk/api/verified-stay-offer",
+              "trust_summary": {
+                "reviews": "4.8 of 5"
+              }
+            },
+            {
+              "canonical_domain": "example.com",
+              "discovery": "https://example.com/.well-known/vacation-rental.json",
+              "jwks_url": "https://example.com/.well-known/jwks.json",
+              "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+              "trust_summary": {
+                "jwks_ed25519": true,
+                "signed_offer_capable": true
+              }
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "reason": "trust_summary_not_fact"
+      },
+      "note": "trust_summary holds booleans and arrays of references only (§4.3)."
+    }
+  ],
+  "endpoints": [
+    {
+      "name": "control",
+      "value": [
+        "https://index.example.net/stayintent"
+      ],
+      "note": "A list of one is allowed.",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "name": "control_two",
+      "value": [
+        "https://example.com/.well-known/vrp/stayintent",
+        "https://index.example.net/stayintent"
+      ],
+      "note": "The node's own domain and another; order carries no meaning.",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "name": "control_off_node",
+      "value": [
+        "https://index.example.org/v1/stayintent"
+      ],
+      "note": "Another domain than the node's is allowed: an index covers many nodes (§10).",
+      "expected": {
+        "reason": null
+      }
+    },
+    {
+      "name": "not_array_string",
+      "value": "https://index.example.net/stayintent",
+      "note": "A single URL is not the member's shape.",
+      "expected": {
+        "reason": "not_array"
+      }
+    },
+    {
+      "name": "empty",
+      "value": [],
+      "expected": {
+        "reason": "empty"
+      }
+    },
+    {
+      "name": "too_many_entries",
+      "value": [
+        "https://index-01.example.net/stayintent",
+        "https://index-02.example.net/stayintent",
+        "https://index-03.example.net/stayintent",
+        "https://index-04.example.net/stayintent",
+        "https://index-05.example.net/stayintent",
+        "https://index-06.example.net/stayintent",
+        "https://index-07.example.net/stayintent",
+        "https://index-08.example.net/stayintent",
+        "https://index-09.example.net/stayintent",
+        "https://index-10.example.net/stayintent",
+        "https://index-11.example.net/stayintent"
+      ],
+      "note": "Eleven entries; the cap is ten.",
+      "expected": {
+        "reason": "too_many_entries"
+      }
+    },
+    {
+      "name": "entry_not_string",
+      "value": [
+        "https://index.example.net/stayintent",
+        {
+          "url": "https://example.com/.well-known/vrp/stayintent"
+        }
+      ],
+      "expected": {
+        "reason": "not_string"
+      }
+    },
+    {
+      "name": "entry_http",
+      "value": [
+        "https://index.example.net/stayintent",
+        "http://index.example.net/stayintent"
+      ],
+      "expected": {
+        "reason": "url_not_https"
+      }
+    },
+    {
+      "name": "entry_userinfo",
+      "value": [
+        "https://user:secret@index.example.net/stayintent"
+      ],
+      "expected": {
+        "reason": "url_userinfo"
+      }
+    },
+    {
+      "name": "entry_not_a_url",
+      "value": [
+        "index.example.net/stayintent"
+      ],
+      "expected": {
+        "reason": "url_invalid"
+      }
+    },
+    {
+      "name": "duplicate_entry",
+      "value": [
+        "https://index.example.net/stayintent",
+        "https://index.example.net/stayintent"
+      ],
+      "expected": {
+        "reason": "duplicate_entry"
+      }
+    }
+  ]
+}

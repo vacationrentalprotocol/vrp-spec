@@ -211,6 +211,14 @@
         overflow: auto;
         font-size: 0.8rem;
       }
+      .stay-error {
+        margin: 12px 0 0;
+        color: var(--fail);
+        font-weight: 700;
+      }
+      input[aria-invalid="true"] {
+        border-color: var(--fail);
+      }
       .note {
         color: var(--muted);
         font-size: 0.92rem;
@@ -281,9 +289,10 @@
               </div>
               <div class="field" style="flex: 0 1 110px">
                 <label for="guests">Guests</label>
-                <input id="guests" type="number" min="1" value="2" />
+                <input id="guests" type="number" min="1" step="1" value="2" />
               </div>
             </div>
+            <p id="stayError" class="stay-error" role="alert" hidden></p>
             <div>
               <button id="btnLive">Fetch &amp; verify</button>
             </div>
@@ -515,10 +524,23 @@
       // A browser cannot see where a redirect points, so this page follows no
       // redirect from a node: a redirect makes the result unknown (§2, §9).
       class NodeRedirect extends Error {}
+      // The node answered and refused: an HTTP status that is not a success.
+      // Its own error code is kept when the body is JSON with a short code in
+      // "error"; any other words of the node's are not shown.
+      class NodeRefusal extends Error {}
       async function nodeFetch(url) {
         const res = await fetch(url, { redirect: "manual", cache: "no-store" });
         if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400)) throw new NodeRedirect(url);
-        if (!res.ok) throw new Error(url + " answered HTTP " + res.status + ".");
+        if (!res.ok) {
+          let code = "";
+          try {
+            const body = await res.json();
+            if (body && typeof body.error === "string" && /^[A-Za-z0-9_.-]{1,64}$/.test(body.error)) code = body.error;
+          } catch (e) {
+            // No JSON body: the status alone is reported.
+          }
+          throw new NodeRefusal(url + " answered HTTP " + res.status + (code ? " (" + code + ")" : "") + ".");
+        }
         return res.json();
       }
       // The domain a user typed, as a lowercase A-label host. A leading "www."
@@ -889,6 +911,111 @@
         $("resultSection").scrollIntoView({ behavior: "smooth", block: "start" });
       }
 
+      // ── the stay form: dates and guests (VRP §5, §7) ──────────────────────
+      // The same text in verify.html and implement.html.
+      // scripts/verify-stay-form.mjs holds the two copies to each other and
+      // runs both.
+      const STAY_DAY_MS = 86400000;
+      const STAY_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      // §5: a YYYY-MM-DD date that exists, as ms at UTC midnight; NaN otherwise.
+      function stayDay(v) {
+        const m = typeof v === "string" && /^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
+        if (!m) return NaN;
+        // setUTCFullYear, not Date.UTC: Date.UTC reads the years 0–99 as 1900–1999.
+        const d = new Date(0);
+        d.setUTCFullYear(+m[1], +m[2] - 1, +m[3]);
+        const t = d.getTime();
+        return d.getUTCFullYear() === +m[1] && d.getUTCMonth() === +m[2] - 1 && d.getUTCDate() === +m[3] ? t : NaN;
+      }
+      // A day as YYYY-MM-DD; "" outside the years 0001–9999.
+      function stayIso(ms) {
+        const d = new Date(ms);
+        const y = d.getUTCFullYear();
+        if (isNaN(y) || y < 1 || y > 9999) return "";
+        return String(y).padStart(4, "0") + "-" + String(d.getUTCMonth() + 1).padStart(2, "0") + "-" + String(d.getUTCDate()).padStart(2, "0");
+      }
+      // A day as a person reads it: "20 January 2027".
+      function stayLabel(ms) {
+        const d = new Date(ms);
+        return d.getUTCDate() + " " + STAY_MONTHS[d.getUTCMonth()] + " " + d.getUTCFullYear();
+      }
+      // §7: a check_in earlier than the day before the current UTC date has
+      // passed everywhere. That day is the first one the form takes.
+      function stayFirstDay() {
+        return Math.floor(Date.now() / STAY_DAY_MS) * STAY_DAY_MS - STAY_DAY_MS;
+      }
+      // What the three fields say, before anything is fetched or signed. A stay
+      // (§5) is two dates that exist, check_out later than check_in, a check_in
+      // that has not passed, and a whole number of guests, at least 1. Nothing
+      // is rounded, defaulted or swapped: fields that do not say a stay name
+      // the field and what to do.
+      function readStay(checkIn, checkOut, guests) {
+        const ci = stayDay(checkIn);
+        const co = stayDay(checkOut);
+        const g = String(guests == null ? "" : guests).trim();
+        if (isNaN(ci)) return { ok: false, field: "checkIn", message: "Choose a check-in date." };
+        if (ci < stayFirstDay()) {
+          return { ok: false, field: "checkIn", message: "Check-in " + stayLabel(ci) + " has passed. Choose a later check-in." };
+        }
+        if (isNaN(co) || co <= ci) {
+          return { ok: false, field: "checkOut", message: "Choose a check-out after " + stayLabel(ci) + "." };
+        }
+        if (!/^[1-9][0-9]*$/.test(g) || !Number.isSafeInteger(Number(g))) {
+          return { ok: false, field: "guests", message: "Guests is a whole number, 1 or more." };
+        }
+        return { ok: true, check_in: checkIn, check_out: checkOut, guests: Number(g), nights: (co - ci) / STAY_DAY_MS };
+      }
+      // The two date fields as one stay. When check-in moves to or past
+      // check-out, check-out moves to the same number of nights as before, so
+      // its calendar opens on a date that can be chosen. A check-out that is
+      // still later than check-in stays where the person put it. The check-out
+      // calendar offers no day before the day after check-in.
+      function stayForm(inEl, outEl, guestsEl, errorEl) {
+        const fields = { checkIn: inEl, checkOut: outEl, guests: guestsEl };
+        let nights = 1;
+        function clear() {
+          errorEl.hidden = true;
+          errorEl.textContent = "";
+          for (const name of Object.keys(fields)) fields[name].removeAttribute("aria-invalid");
+        }
+        function sync() {
+          const first = stayFirstDay();
+          const ci = stayDay(inEl.value);
+          const co = stayDay(outEl.value);
+          inEl.min = stayIso(first);
+          outEl.min = stayIso((isNaN(ci) ? first : ci) + STAY_DAY_MS);
+          if (isNaN(ci)) return;
+          if (co > ci) nights = (co - ci) / STAY_DAY_MS;
+          else outEl.value = stayIso(ci + nights * STAY_DAY_MS);
+        }
+        function read() {
+          clear();
+          const stay = readStay(inEl.value, outEl.value, guestsEl.value);
+          if (!stay.ok) {
+            errorEl.textContent = stay.message;
+            errorEl.hidden = false;
+            fields[stay.field].setAttribute("aria-invalid", "true");
+            fields[stay.field].focus();
+          }
+          return stay;
+        }
+        for (const type of ["input", "change"]) {
+          inEl.addEventListener(type, () => {
+            clear();
+            sync();
+          });
+          outEl.addEventListener(type, () => {
+            clear();
+            const ci = stayDay(inEl.value);
+            const co = stayDay(outEl.value);
+            if (co > ci) nights = (co - ci) / STAY_DAY_MS;
+          });
+          guestsEl.addEventListener(type, clear);
+        }
+        return { sync, read };
+      }
+      // ── end of the stay form ──────────────────────────────────────────────
+
       // ── actions ───────────────────────────────────────────────────────────
       function redirectStop(e, rows) {
         showStop(
@@ -907,6 +1034,9 @@
         const btn = $("btnLive");
         const host = toHost($("host").value);
         if (!host) return showError("Enter a host domain.");
+        // Nothing is fetched for fields that do not say a stay (§5).
+        const stay = stayFields.read();
+        if (!stay.ok) return;
         btn.disabled = true;
         btn.textContent = "Verifying…";
         const rows = [];
@@ -918,9 +1048,9 @@
           rows.push(...d.rows);
           if (!d.urlsOk) return showStop("fail", "✕ Not a VRP node — " + d.problems.join("; "), rows);
           const offerUrl = new URL(disc.verified_stay_offer_endpoint);
-          offerUrl.searchParams.set("check_in", $("checkIn").value);
-          offerUrl.searchParams.set("check_out", $("checkOut").value);
-          offerUrl.searchParams.set("guests", $("guests").value || "2");
+          offerUrl.searchParams.set("check_in", stay.check_in);
+          offerUrl.searchParams.set("check_out", stay.check_out);
+          offerUrl.searchParams.set("guests", String(stay.guests));
           const [offer, jwks] = await Promise.all([nodeFetch(offerUrl.href), nodeFetch(disc.jwks_url)]);
           const jws = offer && offer.signature && offer.signature.jws;
           if (typeof jws !== "string" || !jws) throw new Error("The host response did not contain signature.jws.");
@@ -941,6 +1071,8 @@
           });
         } catch (e) {
           if (e instanceof NodeRedirect) return redirectStop(e, rows);
+          // The host was reached and said no: neither the domain nor cross-origin access is the fault.
+          if (e instanceof NodeRefusal) return showError("The host was reached and refused the request: " + e.message);
           showError(e && e.message === "NO_NATIVE_ED25519" ? "NO_NATIVE_ED25519" : "Fetch or verify failed: " + (e && e.message ? e.message : e) + "  (the host may block cross-origin requests, or the domain is wrong).");
         } finally {
           btn.disabled = false;
@@ -1011,6 +1143,8 @@
         $("checkIn").value = iso(inDays(30));
         $("checkOut").value = iso(inDays(32));
       })();
+      const stayFields = stayForm($("checkIn"), $("checkOut"), $("guests"), $("stayError"));
+      stayFields.sync();
 
       // Deep-link prefill: node pages link the verifier with their own
       // domain so a guest lands with the host field ready —
@@ -1032,6 +1166,8 @@
         const guests = params.get("guests");
         if (guests && /^[1-9]\d?$/.test(guests)) $("guests").value = guests;
       })();
+      // A link may carry one date only: the other follows it to a real stay.
+      stayFields.sync();
     </script>
   </body>
 </html>

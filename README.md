@@ -32,6 +32,8 @@ Node Seal v0.1: [spec/node-seal-v0.1.md](./spec/node-seal-v0.1.md)
 
 Node Tool Binding v0.1 (proposal for discussion): [spec/node-tool-binding-v0.1.md](./spec/node-tool-binding-v0.1.md)
 
+Peers v0.1 (experimental, proposed in ADR 0018): [spec/peers-v0.1.md](./spec/peers-v0.1.md)
+
 VRP JSON-LD context draft: [contexts/v1.jsonld](./contexts/v1.jsonld)
 
 Architecture decision: [ADR 0001 - Portable Attestations v0.1](./docs/adr/0001-portable-attestations-v0.1.md)

@@ -48,6 +48,7 @@ Definition: https://vacationrentalprotocol.com/vrp-vacation-rental
 - Node Seal v0.1 (two-way binding between a node's domain identity and its payment-receiving key — the payment recipient signs the promise; never an agent gate): https://vacationrentalprotocol.com/spec/node-seal-v0.1
 - Addon Attestation Layer v0.1 (host-signed upsells — late checkout, early check-in, extensions — as their own receipt-v1 attestation layer; proposal for discussion): https://vacationrentalprotocol.com/spec/addon-attestation-layer-v0.1
 - Domain Continuity v0.1 (did:web identity across registrant change / expiry — registration-epoch signal, fail-closed verifier guidance; proposal for discussion): https://vacationrentalprotocol.com/spec/domain-continuity-v0.1
+- Peers v0.1 (experimental, optional: a node names other VRP nodes it knows, domains only, unordered, no trust; each listed domain proves itself on its own domain; no seed list, no registry; proposal under ADR 0018): https://vacationrentalprotocol.com/spec/peers-v0.1
 - Node Tool Binding v0.1 (one capability name, get_verified_stay_offer, and one argument shape across a node's MCP, A2A and WebMCP tool surfaces; node tools only, operators carry their own namespace; proposal for discussion): https://vacationrentalprotocol.com/spec/node-tool-binding-v0.1
 - Interop and trust positioning: https://vacationrentalprotocol.com/docs/interop-and-trust-positioning
 - CM AI Docking Port and VRP, a field-by-field mapping (informative interop note; an independent CM Free node's question and answer mapped onto StayIntent, Core v0.1 and the Node Tool Binding): https://vacationrentalprotocol.com/docs/interop/cm-ai-docking-port
@@ -66,6 +67,7 @@ Definition: https://vacationrentalprotocol.com/vrp-vacation-rental
 - Receipt Envelope JSON Schema: https://vacationrentalprotocol.com/schemas/vrp-receipt.v1.schema.json
 - StayIntent query JSON Schema: https://vacationrentalprotocol.com/schemas/stayintent-query-v0.1.schema.json
 - StayIntent response JSON Schema: https://vacationrentalprotocol.com/schemas/stayintent-response-v0.1.schema.json
+- Peers JSON Schema (experimental): https://vacationrentalprotocol.com/schemas/peers-v0.1.schema.json
 - Example discovery document: https://vacationrentalprotocol.com/examples/discovery.v0.1.json
 - Example JWKS: https://vacationrentalprotocol.com/examples/jwks.v0.1.json
 - Example verified stay offer verification result (safe to quote): https://vacationrentalprotocol.com/examples/verified-stay-offer-verification-result.safe-to-quote.v0.1.json
@@ -76,6 +78,8 @@ Definition: https://vacationrentalprotocol.com/vrp-vacation-rental
 - Offer-rules conformance vectors (the stay asked for, real and future dates, the language tag, a lifetime of at most 900 seconds): https://vacationrentalprotocol.com/examples/conformance/offer-rules/vectors.v0.1.json
 - StayIntent conformance fixtures (positive + no-match): https://vacationrentalprotocol.com/examples/conformance/stayintent/positive.v0.1.json
 - StayIntent conformance fixture (no-match): https://vacationrentalprotocol.com/examples/conformance/stayintent/no-match.v0.1.json
+- Peers conformance vectors (experimental; members a client ignores, entries it skips): https://vacationrentalprotocol.com/examples/conformance/peers/negative.v0.1.json
+- Peers conformance vectors (experimental; walks over a small network): https://vacationrentalprotocol.com/examples/conformance/peers/positive.v0.1.json
 - Conformance report v0.1 (score-free record of one verifier run against one corpus): https://vacationrentalprotocol.com/docs/conformance-report
 - Conformance report JSON Schema: https://vacationrentalprotocol.com/schemas/conformance-report-v0.1.schema.json
 - Example conformance report (reference verifier, signed-offer corpus): https://vacationrentalprotocol.com/examples/conformance/reports/offer.reference-verifier.v0.1.json

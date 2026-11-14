@@ -296,7 +296,17 @@
           return out;
         }
 
-        async function verifyJws(jws, jwks) {
+        // role "node": a host node's VRP signing key. Core §3 and the JWKS schema:
+        // it names its own alg, EdDSA, compared as written; a key labelled with
+        // another algorithm, or with none, is never tried.
+        // role "log": the log operator's key from its DID document.
+        // transparency-log §5.1 asks for an Ed25519 key and names no label, so a
+        // key without alg is used; a key that names another algorithm is not.
+        function keyLabelOk(k, role) {
+          return role === "log" ? (k.alg === undefined || k.alg === "EdDSA") : k.alg === "EdDSA";
+        }
+        async function verifyJws(jws, jwks, role) {
+          if (role !== "node" && role !== "log") throw new Error("verifyJws: no key role given.");
           var parts = String(jws).split(".");
           if (parts.length !== 3) throw new Error("Not a compact JWS (expected three dot-separated parts).");
           var header = decodePart(parts[0]);
@@ -309,10 +319,12 @@
           if (typeof header.kid !== "string" || !header.kid) throw new Error("The JWS header carries no kid, so no published key can be selected (VRP §3.1).");
           var keys = (jwks && Array.isArray(jwks.keys)) ? jwks.keys : [];
           var tried = 0;
+          var mislabelled = null;
           for (var i = 0; i < keys.length; i++) {
             var k = keys[i];
             if (!k || k.kty !== "OKP" || k.crv !== "Ed25519") continue;
             if (k.kid !== header.kid) continue;
+            if (!keyLabelOk(k, role)) { mislabelled = k; continue; }
             tried++;
             var cryptoKey = await crypto.subtle.importKey(
               "jwk",
@@ -324,6 +336,12 @@
             if (await crypto.subtle.verify({ name: "Ed25519" }, cryptoKey, sig, data)) {
               return { payload: payload, kid: k.kid };
             }
+          }
+          if (!tried && mislabelled) {
+            throw new Error("The key with kid '" + header.kid + "' is labelled alg " + JSON.stringify(mislabelled.alg) +
+              (role === "log"
+                ? ". A log key is an Ed25519 key (transparency-log §5.1); one that names another algorithm is not used."
+                : ". A VRP signing key names its alg EdDSA (VRP §3), so the signature is unverifiable."));
           }
           if (!tried) throw new Error("No Ed25519 key with kid '" + header.kid + "' in the JWKS (VRP §3.1).");
           throw new Error("Signature did not verify against the published keys.");
@@ -418,6 +436,10 @@
         // leaf hash = SHA-256(0x00 || utf8(artifact_hash string));
         // inner     = SHA-256(0x01 || left || right).
         async function verifyInclusion(artifactHash, leafIndex, treeSize, auditPathB64, rootB64) {
+          // Whole numbers that the 32-bit steps below hold, and text where text is read.
+          if (!Number.isInteger(leafIndex) || !Number.isInteger(treeSize) || treeSize < 1 || treeSize > 0x7fffffff) return false;
+          if (!Array.isArray(auditPathB64) || typeof rootB64 !== "string") return false;
+          for (var j = 0; j < auditPathB64.length; j++) if (typeof auditPathB64[j] !== "string") return false;
           if (leafIndex < 0 || leafIndex >= treeSize) return false;
           var LEAF = new Uint8Array([0x00]);
           var NODE = new Uint8Array([0x01]);
@@ -465,7 +487,8 @@
             if (!jwk || jwk.kty !== "OKP" || jwk.crv !== "Ed25519" || !jwk.x) continue;
             var id = typeof vm.id === "string" ? vm.id : "";
             var kid = jwk.kid || (id.indexOf("#") >= 0 ? id.slice(id.indexOf("#") + 1) : undefined);
-            keys.push({ kty: "OKP", crv: "Ed25519", x: jwk.x, kid: kid });
+            // The key's own alg label is kept: verifyJws reads it (role "log").
+            keys.push({ kty: "OKP", crv: "Ed25519", x: jwk.x, kid: kid, alg: jwk.alg });
           }
           return { keys: keys };
         }
@@ -479,8 +502,24 @@
         }
 
         var checks = [];
-        function addCheck(ok, label, detail) {
-          checks.push({ state: ok, label: label, detail: detail || "" });
+        // One result, for one pasted text. A result is taken down when the text
+        // changes or a new check starts; a slower, earlier check never writes
+        // over a later one; and the rows and the verdict are drawn again when an
+        // attestation crosses its valid_from or valid_until (receipt-v1 §4).
+        var currentRun = 0;
+        var statusTimer = null;
+        function clearResult() {
+          currentRun += 1;
+          if (statusTimer !== null) { clearTimeout(statusTimer); statusTimer = null; }
+          checks = [];
+          document.getElementById("resultSection").style.display = "none";
+          document.getElementById("verdict").className = "verdict";
+          document.getElementById("verdict").textContent = "";
+          document.getElementById("facts").innerHTML = "";
+          document.getElementById("refbox").textContent = "";
+          document.getElementById("raw").textContent = "";
+          renderChecks();
+          return currentRun;
         }
         function renderChecks() {
           var el = document.getElementById("checks");
@@ -507,16 +546,23 @@
         }
 
         async function run() {
-          checks = [];
+          var mine = clearResult();
+          var stale = function () { return mine !== currentRun; };
+          // This run's own rows: those before the attestations, what was found
+          // out about each attestation, and those after.
+          var before = [];
+          var attFacts = [];
+          var after = [];
+          var target = before;
+          var addCheck = function (ok, label, detail) {
+            target.push({ state: ok, label: label, detail: detail || "" });
+          };
+          var artifactHash = "";
           var section = document.getElementById("resultSection");
           var verdictEl = document.getElementById("verdict");
           section.style.display = "block";
           verdictEl.className = "verdict warn";
           verdictEl.textContent = "Verifying…";
-          document.getElementById("facts").innerHTML = "";
-          document.getElementById("refbox").textContent = "";
-          document.getElementById("raw").textContent = "";
-          renderChecks();
 
           try {
             if (!("crypto" in window) || !crypto.subtle) throw new Error("Web Crypto unavailable in this browser.");
@@ -556,7 +602,7 @@
               throw new Error("Could not fetch the property's published keys.");
             }
             addCheck(true, "Fetched the property's published keys", esc("https://" + domain + "/.well-known/jwks.json"));
-            await verifyJws(jws, jwks);
+            await verifyJws(jws, jwks, "node");
             addCheck(true, "Receipt signature verifies against the property domain's Ed25519 key");
             // The receipt's own words about where it was booked count only when
             // they name the domain that signed it.
@@ -575,22 +621,51 @@
               }
             }
 
-            // Step 2: inner attestation signatures.
+            // Step 2: the receipt itself (receipt-v1 §3, §4, §6). Version and shape
+            // first; then every attestation gets its own status, never one answer
+            // for the whole receipt: "verified" is a valid signature inside the
+            // attestation's validity period, "expired" a valid signature outside it.
+            var isObject = function (v) { return !!v && typeof v === "object" && !Array.isArray(v); };
+            var versionOk = envelope.vrp_receipt_version === "1.0";
+            addCheck(versionOk, "Receipt version is 1.0 (receipt-v1 §3)",
+              versionOk ? "" : "vrp_receipt_version is " + esc(JSON.stringify(envelope.vrp_receipt_version)) + " — unsupported_version (§6.1)");
             var atts = Array.isArray(envelope.attestations) ? envelope.attestations : [];
-            var attOk = 0;
-            for (var i = 0; i < atts.length; i++) {
-              if (atts[i] && typeof atts[i].signature === "string") {
-                await verifyJws(atts[i].signature, jwks);
-                attOk++;
-              }
+            var shapeOk = isObject(envelope.subject) && isObject(envelope.issuer) && atts.length > 0 &&
+              atts.every(function (a) {
+                return isObject(a) && typeof a.layer === "string" && a.layer.length > 0 && "valid_from" in a && "valid_until" in a;
+              });
+            if (versionOk) {
+              addCheck(shapeOk, "Receipt has the shape receipt-v1 §3 requires",
+                shapeOk ? "subject, issuer, and at least one attestation with layer, valid_from and valid_until"
+                        : "malformed_receipt (§6.1): subject, issuer, or an attestation's layer, valid_from or valid_until is missing");
             }
-            addCheck(atts.length > 0 && attOk === atts.length,
-              "Inner attestation signature" + (atts.length === 1 ? "" : "s") + " verify (" + attOk + "/" + atts.length + ")");
+            // receipt-v1 §6: partial verification. One attestation that cannot be
+            // verified is reported as that, and the others are still read.
+            for (var i = 0; i < atts.length; i++) {
+              var att = isObject(atts[i]) ? atts[i] : {};
+              var attName = "Attestation " + (i + 1) + (typeof att.layer === "string" && att.layer ? " (" + esc(att.layer) + ")" : "");
+              if (typeof att.signature !== "string" || !att.signature) {
+                attFacts.push({ name: attName, state: "unverifiable", label: "unverifiable", detail: "it carries no signature — layer_unverifiable (§6)" });
+                continue;
+              }
+              try {
+                await verifyJws(att.signature, jwks, "node");
+              } catch (attErr) {
+                attFacts.push({ name: attName, state: "invalid", label: "signature does not verify",
+                  detail: esc(attErr && attErr.message ? attErr.message : String(attErr)) + " — sig_invalid (§6.1)" });
+                continue;
+              }
+              attFacts.push({
+                name: attName, state: "signed", rawFrom: att.valid_from, rawUntil: att.valid_until,
+                from: typeof att.valid_from === "string" && att.valid_from.trim() ? Date.parse(att.valid_from) : NaN,
+                until: typeof att.valid_until === "string" && att.valid_until.trim() ? Date.parse(att.valid_until) : NaN,
+              });
+            }
+            target = after;
 
             // Step 3: recompute the confirmation reference (Booking Proof Chain link 3).
             var digest = await sha256(new TextEncoder().encode(jws));
-            var artifactHash = "sha256:" + toHex(digest);
-            document.getElementById("refbox").textContent = artifactHash;
+            artifactHash = "sha256:" + toHex(digest);
             addCheck(true, "Confirmation reference recomputed from the exact receipt bytes");
 
             // Step 4: transparency-log inclusion proof (property's read-through proxy
@@ -621,17 +696,25 @@
             if (proof && proof.inclusion && proof.signed_tree_head) {
               var sth = proof.signed_tree_head;
               logId = String(sth.log_id || "");
-              var inclusionOk = await verifyInclusion(
+              // transparency-log §8: the proof is verified against the tree head's
+              // root_hash and tree_size. A proof for a tree of another size is a
+              // proof about another tree, whatever root it recomputes to; the size
+              // used is the tree head's, which step 5 holds to the operator's signature.
+              var sameTree = Number.isInteger(sth.tree_size) && proof.inclusion.tree_size === sth.tree_size;
+              var inclusionOk = sameTree && await verifyInclusion(
                 artifactHash,
                 proof.inclusion.leaf_index,
-                proof.inclusion.tree_size,
-                proof.inclusion.audit_path || [],
+                sth.tree_size,
+                proof.inclusion.audit_path === undefined ? [] : proof.inclusion.audit_path,
                 sth.root_hash
               );
+              var inclusionWhy = sameTree
+                ? "the inclusion proof did not recompute"
+                : "the inclusion proof is for a tree of " + JSON.stringify(proof.inclusion.tree_size) + " leaves, the tree head for " + JSON.stringify(sth.tree_size);
               addCheck(inclusionOk ? true : null,
                 "Inclusion proof recomputes to the tree head",
                 "leaf " + esc(proof.inclusion.leaf_index) + " of " + esc(proof.inclusion.tree_size) + " (" + proofSource + ")" +
-                  (inclusionOk ? "" : " — did not recompute"));
+                  (inclusionOk ? "" : " — " + esc(inclusionWhy)));
 
               // Step 5: the log operator's signature over the tree head.
               var sthVerified = false;
@@ -646,7 +729,7 @@
               } else {
                 try {
                   var didDoc = await (await fetch(didUrl)).json();
-                  var sthPayload = (await verifyJws(proof.signature.jws, jwksFromDidDocument(didDoc))).payload;
+                  var sthPayload = (await verifyJws(proof.signature.jws, jwksFromDidDocument(didDoc), "log")).payload;
                   sthVerified =
                     sthPayload.root_hash === sth.root_hash &&
                     sthPayload.tree_size === sth.tree_size &&
@@ -661,7 +744,7 @@
               addCheck(sthVerified ? true : null, "Tree head is signed by the log operator", esc(sthDetail));
 
               anchored = inclusionOk && sthVerified;
-              if (!anchored) notAnchoredWhy = inclusionOk ? sthDetail : "the inclusion proof did not recompute";
+              if (!anchored) notAnchoredWhy = inclusionOk ? sthDetail : inclusionWhy;
             } else {
               addCheck(null, "Transparency-log inclusion",
                 "no inclusion proof found for this receipt's reference — signature-only verification");
@@ -681,40 +764,109 @@
               (envelope.supersedes
                 ? fact("Supersedes earlier receipt", esc(envelope.supersedes))
                 : "");
-            document.getElementById("facts").innerHTML = factsHtml;
-            document.getElementById("raw").textContent = JSON.stringify(envelope, null, 2);
 
-            var allHard = checks.every(function (c) { return c.state !== false; });
-            if (allHard && own.state !== "pass") {
-              verdictEl.className = "verdict warn";
-              verdictEl.textContent =
-                "UNKNOWN — the signature verifies against " + domain +
-                ", but whether " + domain + " is a host-owned domain could not be checked (VRP §2, §9).";
-            } else if (allHard && anchored) {
-              verdictEl.className = "verdict pass";
-              verdictEl.textContent =
-                "VERIFIED — this receipt was signed by " + domain +
-                " and its fingerprint is anchored in the public log " + logId +
-                ". The promise shown below is mathematically bound to that domain.";
-            } else if (allHard) {
-              verdictEl.className = "verdict warn";
-              verdictEl.textContent =
-                "SIGNATURE VERIFIED — signed by " + domain +
-                ", but not anchored in an independent public log (" + notAnchoredWhy +
-                "). The signature alone still binds the promise to the domain.";
-            } else {
-              verdictEl.className = "verdict fail";
-              verdictEl.textContent = "NOT VERIFIED — one or more checks failed. Do not rely on this receipt.";
-            }
+            // The rows and the verdict as they stand at this moment. Drawn again
+            // when an attestation crosses valid_from or valid_until, so the page
+            // never keeps an answer the clock has overtaken (receipt-v1 §4).
+            var draw = function () {
+              if (stale()) return;
+              if (statusTimer !== null) { clearTimeout(statusTimer); statusTimer = null; }
+              var nowMs = Date.now();
+              var rows = before.slice();
+              var signed = 0;
+              var inside = 0;
+              var outside = 0;
+              var next = Infinity;
+              attFacts.forEach(function (a) {
+                if (a.state !== "signed") {
+                  rows.push({ state: false, label: a.name + ": " + a.label, detail: a.detail });
+                  return;
+                }
+                signed++;
+                if (isNaN(a.from) || isNaN(a.until)) {
+                  rows.push({ state: false, label: a.name + ": signature valid, no validity period",
+                    detail: "valid_from " + esc(JSON.stringify(a.rawFrom)) + ", valid_until " + esc(JSON.stringify(a.rawUntil)) + " — missing_validity_window (§4, §6.1)" });
+                } else if (nowMs < a.from) {
+                  outside++;
+                  next = Math.min(next, a.from);
+                  rows.push({ state: null, label: a.name + ": signature valid, not valid yet", detail: "valid from " + esc(a.rawFrom) + " — not_yet_valid (§4)" });
+                } else if (nowMs > a.until) {
+                  outside++;
+                  rows.push({ state: null, label: a.name + ": signature valid, validity period over", detail: "valid until " + esc(a.rawUntil) + " — sig_expired (§4)" });
+                } else {
+                  inside++;
+                  next = Math.min(next, a.until + 1);
+                  rows.push({ state: true, label: a.name + ": signature valid, inside its validity period", detail: esc(a.rawFrom) + " to " + esc(a.rawUntil) });
+                }
+              });
+              rows.push({ state: atts.length > 0 && signed === atts.length,
+                label: "Inner attestation signature" + (atts.length === 1 ? "" : "s") + " verify (" + signed + "/" + atts.length + ")", detail: "" });
+              rows = rows.concat(after);
+              // receipt-v1 §6: fully verified only when every attestation is "verified".
+              var fullyVerified = versionOk && shapeOk && atts.length > 0 && inside === atts.length;
+              var outsideNote = outside + " of " + atts.length + " attestation" + (atts.length === 1 ? " is" : "s are") +
+                " outside " + (atts.length === 1 ? "its" : "their") + " validity period now (receipt-v1 §4, §6)";
+              // What the period is, and no more: the attestation's own window for
+              // verification. It says nothing about the booking.
+              var periodNote = "The signature" + (anchored ? " and the log record hold" : " holds") + "; what does not hold now is the validity period the attestation" +
+                (outside === 1 ? " itself carries." : "s themselves carry.");
+              var allHard = rows.every(function (c) { return c.state !== false; });
+              if (allHard && own.state !== "pass") {
+                verdictEl.className = "verdict warn";
+                verdictEl.textContent =
+                  "UNKNOWN — the signature verifies against " + domain +
+                  ", but whether " + domain + " is a host-owned domain could not be checked (VRP §2, §9).";
+              } else if (allHard && anchored && fullyVerified) {
+                verdictEl.className = "verdict pass";
+                verdictEl.textContent =
+                  "VERIFIED — this receipt was signed by " + domain +
+                  " and its fingerprint is anchored in the public log " + logId +
+                  ". The promise shown below is mathematically bound to that domain.";
+              } else if (allHard && anchored) {
+                // Signed and recorded, and not fully verified (§6): two answers, kept apart.
+                verdictEl.className = "verdict warn";
+                verdictEl.textContent =
+                  "SIGNED AND ANCHORED, NOT FULLY VERIFIED — this receipt was signed by " + domain +
+                  " and its fingerprint is anchored in the public log " + logId +
+                  ", but " + outsideNote + ". " + periodNote;
+              } else if (allHard) {
+                verdictEl.className = "verdict warn";
+                verdictEl.textContent =
+                  "SIGNATURE VERIFIED — signed by " + domain +
+                  ", but not anchored in an independent public log (" + notAnchoredWhy +
+                  "). The signature alone still binds the promise to the domain." +
+                  (fullyVerified ? "" : " Also: " + outsideNote + ". " + periodNote);
+              } else {
+                verdictEl.className = "verdict fail";
+                verdictEl.textContent = "NOT VERIFIED — one or more checks failed. Do not rely on this receipt.";
+              }
+              checks = rows;
+              document.getElementById("facts").innerHTML = factsHtml;
+              document.getElementById("refbox").textContent = artifactHash;
+              document.getElementById("raw").textContent = JSON.stringify(envelope, null, 2);
+              renderChecks();
+              // setTimeout holds at most 2^31 − 1 ms; a timer that comes early draws
+              // the same answer and waits again.
+              if (next !== Infinity) {
+                statusTimer = setTimeout(function () { statusTimer = null; draw(); }, Math.min(Math.max(0, next - nowMs), 0x7fffffff));
+              }
+            };
+            draw();
           } catch (err) {
+            if (stale()) return;
             addCheck(err && err.unknown ? null : false, "Verification stopped", esc(err && err.message ? err.message : String(err)));
             verdictEl.className = "verdict " + (err && err.unknown ? "warn" : "fail");
             verdictEl.textContent = (err && err.unknown ? "UNKNOWN — " : "NOT VERIFIED — ") + (err && err.message ? err.message : "verification failed.");
+            checks = before.concat(after);
+            document.getElementById("refbox").textContent = artifactHash;
+            renderChecks();
           }
-          renderChecks();
         }
 
         document.getElementById("btnVerify").addEventListener("click", run);
+        // A result is for the text as it was when it was checked.
+        document.getElementById("paste").addEventListener("input", clearResult);
+        document.getElementById("paste").addEventListener("change", clearResult);
 
         // Privacy-safe prefill: a receipt after '#' never reaches any server.
         if (location.hash && location.hash.length > 1) {

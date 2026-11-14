@@ -302,7 +302,7 @@
         if (state === "done") el.querySelector(".ic").textContent = "✓";
       }
 
-      // base64url + Ed25519 (same logic as /verify, zero dependencies)
+      // base64url
       function b64urlToBytes(s) {
         s = String(s).replace(/-/g, "+").replace(/_/g, "/");
         const pad = s.length % 4; if (pad) s += "=".repeat(4 - pad);
@@ -311,22 +311,282 @@
         return out;
       }
       const jsonFromB64url = (p) => JSON.parse(new TextDecoder().decode(b64urlToBytes(p)));
+
+      // ── the rules /verify carries ─────────────────────────────────────────
+      // From here to the end mark, every function and constant is the same text
+      // as in verify.html. scripts/verify-web-pages.mjs holds the copies to each
+      // other, and runs the same offers through both pages.
       async function verifyJws(jws, jwks) {
-        const [h, p, s] = String(jws).trim().split(".");
+        const parts = String(jws).trim().split(".");
+        if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2]) {
+          throw new Error(
+            "That is not a compact JWS. Expected three dot-separated parts: header.payload.signature."
+          );
+        }
+        const [h, p, s] = parts;
         const header = jsonFromB64url(h);
-        // VRP §3.1: the key is the one whose kid the JWS header names, and no other.
-        if (typeof header.kid !== "string" || !header.kid) throw new Error("The JWS header carries no kid");
+        if (header.alg !== "EdDSA") {
+          throw new Error("Unexpected alg '" + header.alg + "'. VRP signs with EdDSA (Ed25519).");
+        }
+        // §3.1: the key is the one whose kid the JWS header names, and no other.
+        // A header without a kid, or a kid the JWKS does not hold, is unverifiable.
+        if (typeof header.kid !== "string" || !header.kid) {
+          throw new Error("The JWS header carries no kid, so no key of the host can be selected (VRP §3.1).");
+        }
         const keys = (jwks && Array.isArray(jwks.keys) && jwks.keys) || [];
         const key = keys.find((k) => k && k.kid === header.kid);
-        if (!key) throw new Error("No key with that kid in the host JWKS");
-        const cryptoKey = await crypto.subtle.importKey("jwk", { kty: "OKP", crv: "Ed25519", x: key.x }, { name: "Ed25519" }, false, ["verify"]);
+        if (!key) {
+          throw new Error("The host JWKS holds no key with kid '" + header.kid + "', so the offer is unverifiable (VRP §3.1).");
+        }
+        if (key.kty !== "OKP" || key.crv !== "Ed25519") {
+          throw new Error("The host's key is not Ed25519/OKP.");
+        }
+        // §3 and the JWKS schema: a VRP signing key names its own alg, EdDSA,
+        // compared as written. A key labelled with another algorithm, or with
+        // none, is not a VRP signing key and is never tried, even when its kid
+        // matches.
+        if (key.alg !== "EdDSA") {
+          throw new Error("The host's key with kid '" + header.kid + "' is labelled alg " + JSON.stringify(key.alg) + ". A VRP signing key names its alg EdDSA (VRP §3), so the offer is unverifiable.");
+        }
+        let cryptoKey;
+        try {
+          cryptoKey = await crypto.subtle.importKey(
+            "jwk",
+            { kty: "OKP", crv: "Ed25519", x: key.x },
+            { name: "Ed25519" },
+            false,
+            ["verify"]
+          );
+        } catch (e) {
+          throw new Error("NO_NATIVE_ED25519");
+        }
         const data = new TextEncoder().encode(h + "." + p);
         const ok = await crypto.subtle.verify({ name: "Ed25519" }, cryptoKey, b64urlToBytes(s), data);
-        return { ok, header, payload: jsonFromB64url(p) };
+        return { ok, header, key, payload: jsonFromB64url(p) };
+      }
+      function isNodeUrl(url, cd) {
+        try {
+          const u = new URL(url);
+          return u.protocol === "https:" && !u.username && !u.password && !u.port && (u.hostname === cd || u.hostname === "www." + cd);
+        } catch (e) {
+          return false;
+        }
+      }
+      function sameJson(a, b) {
+        if (a === b) return true;
+        if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+        if (Array.isArray(a) !== Array.isArray(b)) return false;
+        const ka = Object.keys(a);
+        if (ka.length !== Object.keys(b).length) return false;
+        return ka.every((k) => Object.prototype.hasOwnProperty.call(b, k) && sameJson(a[k], b[k]));
+      }
+      function parseDateTime(v) {
+        const m = typeof v === "string" && /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(\.\d+)?Z$/.exec(v);
+        if (!m) return NaN;
+        const t = Date.parse(v);
+        const d = new Date(t);
+        return d.getUTCFullYear() === +m[1] && d.getUTCMonth() + 1 === +m[2] && d.getUTCDate() === +m[3] &&
+          d.getUTCHours() === +m[4] && d.getUTCMinutes() === +m[5] && d.getUTCSeconds() === +m[6]
+          ? t
+          : NaN;
+      }
+      function parseDate(v) {
+        const m = typeof v === "string" && /^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
+        if (!m) return NaN;
+        // setUTCFullYear, not Date.UTC: Date.UTC reads the years 0–99 as 1900–1999.
+        const d = new Date(0);
+        d.setUTCFullYear(+m[1], +m[2] - 1, +m[3]);
+        const t = d.getTime();
+        return d.getUTCFullYear() === +m[1] && d.getUTCMonth() === +m[2] - 1 && d.getUTCDate() === +m[3] ? t : NaN;
+      }
+      const LANGUAGE_TAG = /^[A-Za-z]{2,3}(-[A-Za-z]{4})?(-([A-Za-z]{2}|[0-9]{3}))?$(?!\n)/;
+      const MAX_LIFETIME_MS = 900 * 1000; // §5
+      const CLOCK_SKEW_MS = 60 * 1000; // §6
+      const OFFER_SCHEMA_URL = "/schemas/verified-stay-offer-v0.1.schema.json";
+      let offerSchemaPromise = null;
+      function loadOfferSchema() {
+        if (!offerSchemaPromise) {
+          offerSchemaPromise = fetch(OFFER_SCHEMA_URL)
+            .then((r) => (r.ok ? r.json() : null))
+            .then((s) => (s !== null && typeof s === "object" && !Array.isArray(s) ? s : null))
+            .catch(() => null);
+          offerSchemaPromise.then((s) => {
+            if (s === null) offerSchemaPromise = null;
+          });
+        }
+        return offerSchemaPromise;
+      }
+      function schemaFaults(root, pointer, value) {
+        const faults = [];
+        const APPLIED = ["$ref", "type", "const", "enum", "required", "properties", "additionalProperties", "items", "minimum", "maximum", "minLength", "pattern"];
+        const NOTES = ["$schema", "$id", "$defs", "title", "description", "$comment", "examples", "default"];
+        const isObject = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+        const typeOf = (v) =>
+          v === null ? "null" : Array.isArray(v) ? "array" : typeof v === "number" ? (Number.isInteger(v) ? "integer" : "number") : typeof v;
+        const resolve = (ref) => {
+          if (typeof ref !== "string" || !ref.startsWith("#/")) return undefined;
+          let at = root;
+          for (const part of ref.slice(2).split("/")) {
+            const key = part.replace(/~1/g, "/").replace(/~0/g, "~");
+            at = isObject(at) && Object.prototype.hasOwnProperty.call(at, key) ? at[key] : undefined;
+          }
+          return at;
+        };
+        const walk = (schema, v, path, depth) => {
+          if (faults.length >= 25) return;
+          if (!isObject(schema) || depth > 40) {
+            faults.push(path + ": the schema cannot be read here");
+            return;
+          }
+          for (const key of Object.keys(schema)) {
+            if (!APPLIED.includes(key) && !NOTES.includes(key)) {
+              faults.push(path + ": the schema uses \"" + key + "\", which this page does not apply");
+              return;
+            }
+          }
+          if ("$ref" in schema) walk(resolve(schema.$ref), v, path, depth + 1);
+          const t = typeOf(v);
+          if ("type" in schema) {
+            const allowed = Array.isArray(schema.type) ? schema.type : [schema.type];
+            if (!allowed.some((a) => a === t || (a === "number" && t === "integer"))) faults.push(path + " is " + t + ", not " + allowed.join(" or "));
+          }
+          if ("const" in schema && !sameJson(v, schema.const)) faults.push(path + " is not " + JSON.stringify(schema.const));
+          if ("enum" in schema && !(Array.isArray(schema.enum) && schema.enum.some((e) => sameJson(e, v)))) faults.push(path + " is not one of the values the schema allows");
+          if (t === "integer" || t === "number") {
+            if ("minimum" in schema && !(v >= schema.minimum)) faults.push(path + " is less than " + schema.minimum);
+            if ("maximum" in schema && !(v <= schema.maximum)) faults.push(path + " is more than " + schema.maximum);
+          }
+          if (t === "string") {
+            if ("minLength" in schema && !(Array.from(v).length >= schema.minLength)) faults.push(path + " is shorter than " + schema.minLength + " character" + (schema.minLength === 1 ? "" : "s"));
+            if ("pattern" in schema) {
+              let fits = false;
+              try {
+                fits = new RegExp(schema.pattern, "u").test(v);
+              } catch (e) {
+                fits = false;
+              }
+              if (!fits) faults.push(path + " does not have the form the schema gives");
+            }
+          }
+          if (t === "object") {
+            const props = isObject(schema.properties) ? schema.properties : {};
+            const own = (k) => Object.prototype.hasOwnProperty.call(props, k);
+            for (const k of Array.isArray(schema.required) ? schema.required : []) {
+              if (!Object.prototype.hasOwnProperty.call(v, k)) faults.push(path + "." + k + " is missing");
+            }
+            for (const k of Object.keys(v)) {
+              if (own(k)) walk(props[k], v[k], path + "." + k, depth + 1);
+              else if (schema.additionalProperties === false) faults.push(path + "." + k + " is not a member the schema knows");
+              else if (isObject(schema.additionalProperties)) walk(schema.additionalProperties, v[k], path + "." + k, depth + 1);
+              else if (schema.additionalProperties !== undefined && schema.additionalProperties !== true) faults.push(path + ": the schema cannot be read here");
+            }
+          }
+          if (t === "array" && "items" in schema) v.forEach((item, i) => walk(schema.items, item, path + "[" + i + "]", depth + 1));
+        };
+        walk(resolve(pointer), value, "offer", 0);
+        return faults;
+      }
+      function offerShapeFaults(schema, payload) {
+        if (schema === null || schema === undefined) return ["the offer schema could not be fetched from this site, so the offer's shape is unknown"];
+        return schemaFaults(schema, "#/$defs/offerPayload", payload);
+      }
+      function formatMoney(amount, currency, minorUnit) {
+        if (!Number.isSafeInteger(amount) || amount < 0 || typeof currency !== "string" || !/^[A-Z]{3}$/.test(currency)) return "—";
+        if (minorUnit === false) return amount + " " + currency;
+        if (minorUnit !== true) return amount + " " + currency + " (unit not stated)";
+        let digits = NaN;
+        try {
+          // Intl answers "2" for a code it has never heard of, so the code is looked up first.
+          if (Intl.supportedValuesOf("currency").includes(currency)) {
+            digits = new Intl.NumberFormat("en", { style: "currency", currency }).resolvedOptions().maximumFractionDigits;
+          }
+        } catch (e) {
+          digits = NaN;
+        }
+        if (!Number.isInteger(digits) || digits < 0 || digits > 4) return amount + " minor units of " + currency;
+        if (digits === 0) return amount + " " + currency;
+        const text = String(amount).padStart(digits + 1, "0");
+        return text.slice(0, -digits) + "." + text.slice(-digits) + " " + currency;
+      }
+      // ── end of the rules /verify carries ──────────────────────────────────
+
+      // A stop the demo explains in its own words: the node answered, and the
+      // answer may not be shown as verified or bookable. Anything else that goes
+      // wrong is a fetch that failed.
+      class DemoStop extends Error {}
+      // GET from the node (§2): no redirect is followed, and a status that is not
+      // a success stops the run. The status the log shows is the one received.
+      async function nodeGet(url) {
+        const res = await fetch(url, { redirect: "manual", cache: "no-store" });
+        if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400)) {
+          throw new DemoStop(url + " answered with a redirect, which is not followed (VRP §2).");
+        }
+        if (!res.ok) throw new DemoStop(url + " answered HTTP " + res.status + ".");
+        return { status: res.status, body: await res.json() };
+      }
+      // §2, §7: the discovery document of HOST.
+      function discoveryProblems(doc) {
+        const d = doc && typeof doc === "object" ? doc : {};
+        const out = [];
+        if (d.protocol !== "vacation-rental-protocol" || d.protocol_version !== "0.1") out.push("the discovery document does not declare vacation-rental-protocol 0.1");
+        if (d.canonical_domain !== HOST) out.push("the discovery document names another domain");
+        if (!isNodeUrl(d.jwks_url, HOST)) out.push("jwks_url is not a node URL");
+        if (!isNodeUrl(d.verified_stay_offer_endpoint, HOST)) out.push("the offer endpoint is not a node URL");
+        return out;
+      }
+      // §6 and §7, as /verify applies them: everything that must hold before the
+      // offer is shown as verified and the guest is sent to book. A valid
+      // signature is one of the conditions, not the answer. The host is fixed in
+      // this page (HOST), neither typed nor read from the offer, so the
+      // host-owned-domain lookup /verify makes for a typed domain is not repeated.
+      const REQUIRED_FIELDS = ["kind", "protocol_version", "canonical_domain", "node_id", "generated_at", "valid_until",
+        "request", "property", "availability", "price", "booking", "agent_permission"];
+      function offerProblems(payload, asked, returned, schema) {
+        const out = [];
+        const p = payload !== null && typeof payload === "object" && !Array.isArray(payload) ? payload : {};
+        const now = Date.now();
+        const missing = REQUIRED_FIELDS.filter((k) => !(k in p));
+        const faults = offerShapeFaults(schema, p);
+        if (p.kind !== "verified_stay_offer" || p.protocol_version !== "0.1" || missing.length || faults.length) {
+          out.push("the offer does not have the VRP §5 shape" + (faults.length ? " (" + faults.slice(0, 5).join("; ") + (faults.length > 5 ? "; and " + (faults.length - 5) + " more" : "") + ")" : ""));
+        }
+        if (returned === undefined) out.push("the response carries no returned offer");
+        else if (!sameJson(returned, p)) out.push("the returned offer differs from the signed payload");
+        if (p.canonical_domain !== HOST) out.push("the offer names another domain");
+        const url = p.booking && p.booking.direct_booking_url;
+        if (url === undefined || url === null || url === "") out.push("no direct booking URL");
+        else if (!isNodeUrl(url, HOST)) out.push("the booking URL is not a node URL");
+        const vu = parseDateTime(p.valid_until);
+        const ga = parseDateTime(p.generated_at);
+        if (isNaN(vu)) out.push("valid_until is missing or malformed");
+        else if (!(vu > now)) out.push("the offer has expired");
+        if (isNaN(ga)) out.push("generated_at is missing or malformed");
+        else {
+          if (ga > now + CLOCK_SKEW_MS) out.push("generated_at is more than 60 seconds ahead");
+          if (!isNaN(vu) && !(vu > ga && vu - ga <= MAX_LIFETIME_MS)) out.push("the lifetime is not between 0 and 900 seconds");
+        }
+        const req = p.request !== null && typeof p.request === "object" ? p.request : null;
+        if (!req) out.push("the offer carries no request");
+        else {
+          const ci = parseDate(req.check_in);
+          const co = parseDate(req.check_out);
+          const dayBefore = Math.floor(now / 86400000) * 86400000 - 86400000;
+          if (isNaN(ci) || isNaN(co) || !(co > ci)) out.push("the dates do not form a stay");
+          if (!isNaN(ci) && ci < dayBefore) out.push("check_in has passed");
+          if ("language" in req && !(typeof req.language === "string" && LANGUAGE_TAG.test(req.language))) out.push("request.language is not a language tag");
+          if (req.check_in !== asked.check_in || req.check_out !== asked.check_out || req.guests !== asked.guests) out.push("the offer is not for the stay asked for");
+        }
+        if (!(p.availability && p.availability.available === true)) out.push("availability.available is not true");
+        if (!(p.price && p.price.exact === true)) out.push("price.exact is not true");
+        if (!(p.agent_permission && p.agent_permission.may_quote_as_official_direct_offer === true)) out.push("agent_permission.may_quote_as_official_direct_offer is not true");
+        if (!p.price || p.price.agent_total === null || p.price.agent_total === undefined) out.push("price.agent_total carries no amount");
+        return out;
       }
 
+      let expiryTimer = null;
       async function run() {
         const btn = $("run");
+        if (expiryTimer !== null) { clearTimeout(expiryTimer); expiryTimer = null; }
         btn.disabled = true; btn.textContent = "Agent running…";
         $("log").innerHTML = ""; $("agentDot").classList.add("live");
         $("env").className = "envelope"; $("envBody").innerHTML = ""; $("envEmpty").style.display = "";
@@ -340,9 +600,14 @@
           setStep("discover", "active");
           logLine('<b>agent ›</b> A guest asked me to book a stay. Looking for the property on the open web…');
           await sleep(700);
-          const trav = await (await fetch(origin + "/.well-known/agent-traversal.json")).json();
-          logLine('GET /.well-known/agent-traversal.json → <span class="ok">200</span>  ·  no connector, no API key');
-          logLine('   node: <b>' + esc(trav.node || HOST) + '</b>  ·  issuer: <span class="key">' + esc(trav.issuer || "did:web:" + HOST) + '</span>');
+          const trav = await nodeGet(origin + "/.well-known/agent-traversal.json");
+          const travBody = trav.body !== null && typeof trav.body === "object" ? trav.body : {};
+          logLine('GET /.well-known/agent-traversal.json → <span class="ok">' + esc(trav.status) + '</span>  ·  no connector, no API key');
+          logLine('   node: <b>' + esc(travBody.node || HOST) + '</b>  ·  issuer: <span class="key">' + esc(travBody.issuer || "did:web:" + HOST) + '</span>');
+          const disc = await nodeGet(origin + "/.well-known/vacation-rental.json");
+          const discFaults = discoveryProblems(disc.body);
+          if (discFaults.length) throw new DemoStop("Not a VRP node: " + discFaults.join("; ") + " (VRP §2, §7).");
+          logLine('GET /.well-known/vacation-rental.json → <span class="ok">' + esc(disc.status) + '</span>  ·  VRP 0.1, its own domain, its own key and offer URLs');
           setStep("discover", "done");
           await sleep(550);
 
@@ -350,29 +615,44 @@
           setStep("keys", "active");
           logLine('<b>agent ›</b> Fetching the host\u2019s own public keys so I can verify anything it signs…');
           await sleep(650);
-          const jwks = await (await fetch(origin + "/.well-known/jwks.json")).json();
-          const kid = (jwks.keys && jwks.keys[0] && jwks.keys[0].kid) || "host-key";
-          logLine('GET /.well-known/jwks.json → <span class="ok">200</span>  ·  Ed25519 key <span class="key">' + esc(kid) + '</span>');
+          const jwksGet = await nodeGet(disc.body.jwks_url);
+          const jwks = jwksGet.body;
+          const kid = (jwks && jwks.keys && jwks.keys[0] && jwks.keys[0].kid) || "host-key";
+          logLine('GET ' + esc(new URL(disc.body.jwks_url).pathname) + ' → <span class="ok">' + esc(jwksGet.status) + '</span>  ·  Ed25519 key <span class="key">' + esc(kid) + '</span>');
           setStep("keys", "done");
           await sleep(550);
 
-          // 3. offer — probe live availability so the demo always lands on a real, priced window
+          // 3. offer — probe live availability so the demo lands on a real, priced window
           setStep("offer", "active");
           logLine('<b>agent ›</b> Requesting a signed stay offer and checking real availability for ' + guests + ' guests…');
           await sleep(550);
           let offer = null;
+          let offerStatus = 0;
+          let found = false;
           for (const n of [75, 110, 145, 180, 215]) {
             ci = isoIn(n); co = isoIn(n + 2);
-            offer = await (await fetch(origin + "/api/verified-stay-offer?check_in=" + ci + "&check_out=" + co + "&guests=" + guests)).json();
-            const pp = (offer && offer.offer && offer.offer.price) || {};
-            if (pp.total != null || pp.agent_total != null) break;
+            const offerUrl = new URL(disc.body.verified_stay_offer_endpoint);
+            offerUrl.searchParams.set("check_in", ci);
+            offerUrl.searchParams.set("check_out", co);
+            offerUrl.searchParams.set("guests", String(guests));
+            const res = await fetch(offerUrl.href, { redirect: "manual", cache: "no-store" });
+            if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400)) {
+              throw new DemoStop("The offer endpoint answered with a redirect, which is not followed (VRP §2).");
+            }
+            if (!res.ok) continue; // no offer for this window; the next one is tried
+            offer = await res.json();
+            offerStatus = res.status;
+            const o = offer && offer.offer;
+            if (o && o.availability && o.availability.available === true && o.price && o.price.agent_total != null) { found = true; break; }
           }
+          // Nothing is called available that did not come back available.
+          if (!found) throw new DemoStop("None of the five windows the demo tries came back available with a total, so nothing is shown as bookable.");
           const jws = offer && offer.signature && offer.signature.jws;
-          if (!jws) throw new Error("No signature.jws in offer");
+          if (typeof jws !== "string" || !jws) throw new DemoStop("The host response did not contain signature.jws.");
           logLine('   found an available window: <b>' + ci + ' → ' + co + '</b>');
           $("envEmpty").style.display = "none";
           $("env").classList.add("sealed");
-          logLine('GET /api/verified-stay-offer → <span class="ok">200</span>  ·  sealed envelope (compact JWS, ' + esc(jws.length) + ' bytes)');
+          logLine('GET ' + esc(new URL(disc.body.verified_stay_offer_endpoint).pathname) + ' → <span class="ok">' + esc(offerStatus) + '</span>  ·  sealed envelope (compact JWS, ' + esc(jws.length) + ' bytes)');
           setStep("offer", "done");
           await sleep(700);
 
@@ -380,31 +660,58 @@
           setStep("verify", "active");
           logLine('<b>agent ›</b> Verifying the signature myself, in this browser. Trust nobody — verify…');
           await sleep(800);
-          const { ok, header, payload } = await verifyJws(jws, jwks);
-          if (!ok) throw new Error("Signature did NOT verify");
-          const cd = payload.canonical_domain || HOST;
+          let verified;
+          try {
+            verified = await verifyJws(jws, jwks);
+          } catch (e) {
+            throw new DemoStop(e && e.message === "NO_NATIVE_ED25519"
+              ? "This browser does not expose native Ed25519 in Web Crypto, and the demo loads no crypto library."
+              : (e && e.message ? e.message : String(e)));
+          }
+          const payload = verified.payload;
+          if (!verified.ok) throw new DemoStop("The signature did NOT verify. The offer is not shown.");
           logLine('crypto.subtle.verify(Ed25519) → <span class="ok">VALID ✓</span>');
-          logLine('   <span class="ok">✓ The price came from <b>' + esc(cd) + '</b>\u2019s own key.</span> Nothing was altered. No middleman.');
+          // A valid signature says who signed. Whether the offer may be quoted
+          // and booked from is the rest of §7.
+          const schema = await loadOfferSchema();
+          const problems = offerProblems(payload, { check_in: ci, check_out: co, guests }, offer !== null && typeof offer === "object" && "offer" in offer ? offer.offer : undefined, schema);
+          if (problems.length) {
+            throw new DemoStop("The signature is valid, but the offer may not be quoted or booked from: " + problems.join("; ") + " (VRP §7).");
+          }
+          const cd = payload.canonical_domain;
+          // Said under "verified" only when the signed payload itself says it.
+          const sa = payload.source_authority !== null && typeof payload.source_authority === "object" ? payload.source_authority : {};
+          logLine('   <span class="ok">✓ The price came from <b>' + esc(cd) + '</b>\u2019s own key.</span> Nothing was altered.' + (sa.intermediary === "none" ? ' No middleman.' : ''));
           $("env").classList.remove("sealed"); $("env").classList.add("verified");
           setStep("verify", "done");
 
-          // fill envelope
-          const price = payload.price || {}; const req = payload.request || {}; const prop = payload.property || {};
-          const cur = price.currency || "SEK";
-          const total = price.agent_total != null ? price.agent_total : price.total;
-          const url = (payload.booking && payload.booking.direct_booking_url) || (origin + "/book");
+          // fill envelope — from the signed payload only
+          const price = payload.price; const req = payload.request; const prop = payload.property;
+          const cur = price.currency;
+          const money = formatMoney(price.agent_total, cur, price.minor_unit);
+          const amount = money.endsWith(" " + cur) ? money.slice(0, -(cur.length + 1)) : money;
+          const url = payload.booking.direct_booking_url;
+          // Under "Verified", only what the signed payload itself says.
+          const signedFacts = [];
+          if (sa.booking_commission_pct === 0) signedFacts.push("0% commission");
+          if (sa.payment_recipient === "host") signedFacts.push("paid direct to the host");
+          if (price.no_add_on_fees === true) signedFacts.push("no add-on fees");
           $("envBody").innerHTML =
             '<div class="env-verified-tag">● Verified by your browser — signed by ' + esc(cd) + '</div>' +
-            '<div class="env-price">' + esc(total != null ? total : "—") + ' <span class="cur">' + esc(cur) + '</span></div>' +
+            '<div class="env-price">' + esc(amount) + ' <span class="cur">' + esc(cur) + '</span></div>' +
             '<div class="env-meta">' +
             '<div><b>' + esc(prop.name || "Villa Åkerlyckan") + '</b>' + (prop.city ? ", " + esc(prop.city) : "") + '</div>' +
-            '<div>' + esc(req.check_in || ci) + " → " + esc(req.check_out || co) + " · " + esc(req.guests || guests) + ' guests</div>' +
-            '<div>0% commission · paid direct to the host · no add-on fees</div>' +
+            '<div>' + esc(req.check_in) + " → " + esc(req.check_out) + " · " + esc(req.guests) + ' guests</div>' +
+            (signedFacts.length ? '<div>' + esc(signedFacts.join(" · ")) + '</div>' : '') +
             '</div>' +
-            (/^https:\/\//i.test(String(url))
-              ? '<a class="env-cta" href="' + esc(url) + '" target="_blank" rel="noopener">Book direct on ' + esc(cd) + ' →</a>'
-              : '<div class="env-cta">' + esc(url) + ' (not an https URL, so no link)</div>') +
+            '<a class="env-cta" href="' + esc(url) + '" target="_blank" rel="noopener">Book direct on ' + esc(cd) + ' →</a>' +
             '<div class="env-frontier">Checkout runs in Stripe test mode today; autonomous agent payment is the open frontier.</div>';
+          // §6: at valid_until the offer may no longer be quoted or booked from.
+          expiryTimer = setTimeout(() => {
+            expiryTimer = null;
+            $("env").classList.remove("verified");
+            $("envBody").innerHTML = '<div class="env-meta"><div>This offer expired at ' + esc(payload.valid_until) + '. Run the demo again for a fresh one.</div></div>';
+          }, Math.max(0, parseDateTime(payload.valid_until) - Date.now()));
           await sleep(650);
 
           // 5. book
@@ -412,10 +719,12 @@
           logLine('<b>agent ›</b> Routing the guest to the host\u2019s <b>own</b> signed booking URL — not a marketplace.');
           await sleep(600);
           logLine('   → <span class="key">' + esc(url) + '</span>');
-          logLine('<span class="ok">✓ Done.</span> Verified offer, direct booking, 0% commission. The host owns the guest, the domain and the data.');
+          logLine('<span class="ok">✓ Done.</span> Verified offer, direct booking' + (sa.booking_commission_pct === 0 ? ", 0% commission" : "") + '. The host owns the guest, the domain and the data.');
           setStep("book", "done");
         } catch (e) {
-          logLine('<span style="color:#fca5a5">✕ ' + esc(e && e.message ? e.message : e) + '</span>  (the host may be momentarily unreachable — try again).');
+          // Only a fetch that failed is put down to the host being unreachable.
+          logLine('<span style="color:#fca5a5">✕ ' + esc(e && e.message ? e.message : e) + '</span>' +
+            (e instanceof DemoStop ? '' : '  (the host may be momentarily unreachable — try again).'));
         } finally {
           $("agentDot").classList.remove("live");
           btn.disabled = false; btn.textContent = "▶  Run it again";

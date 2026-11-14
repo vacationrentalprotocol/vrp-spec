@@ -541,11 +541,10 @@ https://{host-domain}/.well-known/jwks.json
           other host: another name under the node's domain, another
           node's domain, a name under a platform, catalog, marketplace or
           operator domain, an OTA, a link shortener or a redirector.  A
-          verifier that cannot confirm that the URL host is the offer's
-          <tt>canonical_domain</tt> or <tt>www.</tt> followed by it
-          <bcp14>MUST</bcp14> treat the direct booking URL as unknown
-          (<xref target="three-state"/>) and <bcp14>MUST NOT</bcp14>
-          route booking to it.</li>
+          verifier that cannot confirm that it is a node URL
+          (<xref target="node-url"/>) <bcp14>MUST</bcp14> treat the direct
+          booking URL as unknown (<xref target="three-state"/>) and
+          <bcp14>MUST NOT</bcp14> route booking to it.</li>
           <li>The URL <bcp14>SHOULD</bcp14> encode the quoted stay so the
           booking page opens pre-filled for the same stay.  The
           <bcp14>RECOMMENDED</bcp14> query parameters are
@@ -733,8 +732,8 @@ https://{host-domain}/.well-known/jwks.json
         </ul>
         <t>Verifiers <bcp14>MUST NOT</bcp14>:</t>
         <ul spacing="compact">
-          <li>Invent discounts, savings, promo codes, cross-channel
-          comparisons, or price reductions.</li>
+          <li>Invent discounts, savings, promo codes, OTA comparisons, or
+          price reductions.</li>
           <li>Say the stay is bookable unless
           <tt>availability.available</tt> is true and agent permission
           allows quoting.</li>
@@ -799,11 +798,14 @@ https://{host-domain}/.well-known/jwks.json
           <tt>rules.refund_schedule</tt>.  Tampering with any of them
           invalidates the same signature.</dd>
           <dt>Attested:</dt>
-          <dd>Host-declared claims (amenities, policies) published in the
-          node's discovery document or companion attestation documents.
-          Actionable as the host's explicit statement - including
-          negations - but not cryptographically bound to a specific quote
-          moment.  Absence is unknown, never a yes or a no.</dd>
+          <dd>Host-declared tri-state claims (amenities, policies)
+          published in the node's discovery document and optionally as a
+          <tt>VRPPropertyAttestedClaimsCredential</tt> (defined in the
+          portable attestations specification in the protocol repository
+          <xref target="VRP-SPEC"/>).  Actionable as the host's explicit
+          statement - including negations ("cats are not allowed") - but
+          not cryptographically bound to a specific purchase moment.
+          Absence is unknown, never a yes or a no.</dd>
           <dt>Reputational:</dt>
           <dd>Review aggregates, stay history, and similar evidence about
           past experience.  A verifier <bcp14>MAY</bcp14> cite it
@@ -815,10 +817,13 @@ https://{host-domain}/.well-known/jwks.json
         editorial: the class follows from where the value was read, not
         from how any surface phrases it.  Read from inside the offer JWS
         payload (after signature verification): verifiable.  Read from
-        the discovery document or an attestation document: attested.
-        Read from review data: reputational.  A value that appears in
-        more than one place carries the class of the surface it was
-        actually read from.  If a host asserts something outside the
+        the discovery document's claims or an attestation credential:
+        attested.  Read from review data: reputational.  A value that
+        appears in more than one place carries the class of the surface
+        it was actually read from: reading an amenity from the discovery
+        document never inherits the offer's signature, even when the same
+        value also happens to appear inside a signed offer.  If a host
+        asserts something outside the
         signed payload - in prose, marketing copy, or an unsigned field -
         a renderer <bcp14>MUST</bcp14> treat it as attested at best,
         regardless of wording: language like "verified", "guaranteed", or
@@ -856,9 +861,9 @@ https://{host-domain}/.well-known/jwks.json
       domains, shorteners, or redirectors, integrity solely from the
       enclosing JWS - exist to prevent a tampered or substituted offer
       from routing a guest's booking, and its payment, to an attacker.</t>
-      <t>Amplification.  Refresh-on-miss (<xref target="refresh"/>) is
-      rate-limited per domain by conforming verifiers so that a stream of
-      offers bearing unknown key identifiers cannot be used to drive
+      <t>Amplification.  <xref target="refresh"/> asks verifiers to
+      rate-limit or coalesce refresh-on-miss per domain, so that a stream
+      of offers bearing unknown key identifiers cannot be used to drive
       traffic against a node's JWKS endpoint.</t>
       <t>What a valid signature proves.  A signature that verifies
       against the host domain's JWKS proves that a key the domain
@@ -1224,15 +1229,11 @@ https://{host-domain}/.well-known/jwks.json
       offer signature against the published key and the offer's expiry
       time.  The repository also keeps a draft implementation report,
       prepared for the decision on a later version of the protocol and
-      measured against requirements of VRP v0.1.  The report assesses
-      mandatory requirements of the core specification and of the
-      well-known URI specification; it does not assess all of them, and
-      it assesses no recommendations.  For each requirement it assesses,
-      it records whether each listed node or verifier meets it, citing
-      live measurements with their dates or files and lines at given
-      commits, and whether it counts two independent implementations as
-      meeting it.  Machine-readable JSON Schemas for the discovery
-      document,
+      measured against requirements of VRP v0.1.  For the requirements
+      assessed, the report records implementation results with dated
+      measurements or source references, and identifies gaps in
+      independent implementation.  Machine-readable JSON Schemas for the
+      discovery document,
       JWKS, and signed offer, together with executable conformance
       vectors (including negative cases: tampered signature, expired
       window, malformed attestations), are published in the same

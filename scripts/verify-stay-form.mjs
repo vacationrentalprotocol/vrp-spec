@@ -62,6 +62,25 @@ check("verify.html carries the stay-form block", block("verify.html") !== null);
 check("implement.html carries the stay-form block", block("implement.html") !== null);
 check("the two copies of the block are the same text", block("verify.html") !== null && block("verify.html") === block("implement.html"));
 
+// The text of every inline <script> element of a page of this repository, as
+// written. The tags are found as the exact strings the pages use, so this
+// reads the repository's own files and filters nothing.
+function inlineScripts(text) {
+  const OPEN = "<script>";
+  const CLOSE = "</script>";
+  const found = [];
+  let at = 0;
+  for (;;) {
+    const a = text.indexOf(OPEN, at);
+    if (a < 0) break;
+    const b = text.indexOf(CLOSE, a + OPEN.length);
+    if (b < 0) break;
+    found.push(text.slice(a + OPEN.length, b));
+    at = b + CLOSE.length;
+  }
+  return found;
+}
+
 // A page, loaded: its one inline script evaluated as served.
 function load(page, { search = "", respond } = {}) {
   const elements = new Map();
@@ -127,7 +146,7 @@ function load(page, { search = "", respond } = {}) {
     document: { getElementById: el, addEventListener() {}, querySelector: () => element(""), createElement: () => element("") },
   });
   context.window = context;
-  const scripts = [...html[page].matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
+  const scripts = inlineScripts(html[page]);
   check(`${page}${search ? " " + search : ""}: one inline script`, scripts.length === 1, `found ${scripts.length}`);
   vm.runInContext(scripts[0] ?? "", context, { filename: page });
   const fire = (id, type = "change") => {

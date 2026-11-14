@@ -552,11 +552,7 @@ https://{host-domain}/.well-known/jwks.json
           <tt>checkIn</tt> (<tt>YYYY-MM-DD</tt>, matching
           <tt>request.check_in</tt>), <tt>checkOut</tt>
           (<tt>YYYY-MM-DD</tt>, matching <tt>request.check_out</tt>), and
-          <tt>guests</tt> (integer, matching <tt>request.guests</tt>).
-          Note that the URL query parameters use these exact names; they
-          intentionally differ in style from the offer-request parameter
-          names and implementations <bcp14>MUST NOT</bcp14> normalize one
-          convention into the other.</li>
+          <tt>guests</tt> (integer, matching <tt>request.guests</tt>).</li>
           <li>The URL <bcp14>MAY</bcp14> include an offer reference
           identifier (for example an <tt>offer</tt> query parameter) so
           the node can correlate the click with the signed offer it
@@ -938,9 +934,12 @@ https://{host-domain}/.well-known/jwks.json
 
     <section anchor="privacy">
       <name>Privacy Considerations</name>
-      <t>The discovery document and JWKS are public, machine-readable,
-      site-wide metadata.  They <bcp14>MUST NOT</bcp14> contain guest
-      personal data or secrets.</t>
+      <t>The discovery document and the JWKS describe the site and its
+      keys; they are public, machine-readable, site-wide metadata.  The
+      discovery document <bcp14>MUST NOT</bcp14> contain guest personal
+      data or secrets.  The JWKS carries public keys only
+      (<xref target="jwks"/>); this document states no separate rule for
+      it.</t>
       <t>A verified stay offer echoes the requested dates and guest
       count.  Offers are short-lived by design (<tt>valid_until</tt>),
       and verification is unauthenticated: fetching the discovery
@@ -1225,14 +1224,15 @@ https://{host-domain}/.well-known/jwks.json
       offer signature against the published key and the offer's expiry
       time.  The repository also keeps a draft implementation report,
       prepared for the decision on a later version of the protocol and
-      measured against the requirements of VRP v0.1.  It takes each
-      mandatory requirement of the core specification and of the
-      well-known URI specification in turn and records which node and
-      which verifier meets it, with the evidence: a live measurement with
-      its date, or a file and line at a given commit.  It marks the
-      requirements that fewer than two independent implementations are
-      recorded as meeting.  Machine-readable JSON Schemas for the
-      discovery document,
+      measured against requirements of VRP v0.1.  The report assesses
+      mandatory requirements of the core specification and of the
+      well-known URI specification; it does not assess all of them, and
+      it assesses no recommendations.  For each requirement it assesses,
+      it records whether each listed node or verifier meets it, citing
+      live measurements with their dates or files and lines at given
+      commits, and whether it counts two independent implementations as
+      meeting it.  Machine-readable JSON Schemas for the discovery
+      document,
       JWKS, and signed offer, together with executable conformance
       vectors (including negative cases: tampered signature, expired
       window, malformed attestations), are published in the same

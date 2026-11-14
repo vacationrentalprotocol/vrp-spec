@@ -37,37 +37,66 @@ of the `vacation-rental.json` well-known URI suffix.
   "couldn't figure out when first submitted"; the comment is the informative
   reference RFC 6962 (obsoleted by RFC 9162). None was silenced by changing
   a rule or a reference.
-- **Corrected 2026-11-14, editorial; no normative rule changed** (the
-  `<bcp14>` keywords are the same, count by count: 111 in all). Four places:
-  the Introduction says what the checks show (a key the host domain publishes
-  signed these terms, the price among them, unaltered; separate checks tie
-  the offer and the booking URL to that domain; a valid signature does not
-  guarantee that the stay is in fact available) and no longer says a client
-  checks "the exact amount the guest will pay"; the `price.minor_unit` entry
-  carries Core §5's sentence again ("The schema requires the flag");
-  Implementation Status names the kinds of implementation the repository
-  lists (a reference implementation, an independent signing node, an
-  independent verifier) and points to the implementation report, and no
-  longer says "One implementation is live ... exercising every normative
-  requirement"; the Acknowledgements no longer say "every failure mode".
-- **Validated 2026-11-14 on the corrected files:** xml2rfc 3.35.0 renders
-  with no warning; idnits 3.3.0 (on the `.xml`, submission mode) = no nit;
-  idnits 2.17.1 (on the `.txt`) = 0 errors, 0 flaws, 2 warnings, 1 comment,
-  the same three items as on 2026-11-13. idnits 3.3.0 in normal mode gives
-  three warnings, the same on the files before the correction: the two
-  domain names in running text in Sections 3.2 and 3.8, and RFC 6962.
-- **Not changed here, and under review** (found in the audit of 2026-11-14):
-  wording in the draft that differs from Core. Two add a requirement Core
-  does not state: implementations MUST NOT normalize the booking URL's
-  query-parameter names into the offer-request names (Core §5.1 only lists
-  the names), and the rule against guest personal data and secrets covers
-  the JWKS as well as the discovery document (Core §15 states no separate
-  rule for the JWKS). The sentence above, "the draft adds none", is
-  therefore not confirmed for these two. Three more differ in level or
-  reach: "A node SHOULD also publish" where Core §2 says "Recommended
-  fields"; "any specific vendor" where Core §1 names one; and a MAY for
-  recording hashes of signed artifacts where Core §3.1 states a MAY for
-  key-rotation events only.
+- **Corrected 2026-11-14, first round, editorial** (the `<bcp14>` keywords
+  were the same after it, count by count: 111 in all, before the second round
+  below). Four places: the Introduction says what the checks show (a key the
+  host domain publishes signed these terms, the price among them, unaltered;
+  separate checks tie the offer and the booking URL to that domain; a valid
+  signature does not guarantee that the stay is in fact available) and no
+  longer says a client checks "the exact amount the guest will pay"; the
+  `price.minor_unit` entry carries Core §5's sentence again ("The schema
+  requires the flag"); Implementation Status names the kinds of
+  implementation the repository lists (a reference implementation, an
+  independent signing node, an independent verifier) and points to the
+  implementation report, and no longer says "One implementation is live ...
+  exercising every normative requirement"; the Acknowledgements no longer
+  say "every failure mode".
+- **Corrected 2026-11-14, second round; two rules brought back to Core.**
+  Direct Booking URL no longer says that the query-parameter names are exact
+  names that implementations are forbidden to normalize: Core §5.1 only
+  recommends the names. The SHOULD, the RECOMMENDED names and the integrity
+  rule (a verifier does not accept a `direct_booking_url` delivered outside,
+  or modified after, the signed payload) are unchanged. Privacy
+  Considerations applies the rule against guest personal data and secrets to
+  the discovery document only, as Well-Known §5 does, and says, as Core §15
+  does, that the JWKS carries public keys only and has no separate rule.
+  Implementation Status no longer says that the implementation report takes
+  each mandatory requirement in turn: the report assesses mandatory
+  requirements, not all of them (it has no row for the rule in Core §2 that
+  a verifier does not assume self-custody when `key_custody` is absent), and
+  no recommendations. The `<bcp14>` keywords: MUST NOT 31 to 30, the rest
+  unchanged; 110 in all. Core, the schemas and the implementation report are
+  not changed.
+- **Validated 2026-11-14 on the files of the second round:** xml2rfc 3.35.0
+  renders with no warning; idnits 3.3.0 (on the `.xml`, submission mode) = no
+  nit; idnits 2.17.1 (on the `.txt`) = 0 errors, 0 flaws, 2 warnings,
+  1 comment, the same three items as on 2026-11-13. idnits 3.3.0 in normal
+  mode gives three warnings, the same on the files before the corrections:
+  the two domain names in running text in Sections 3.2 and 3.8, and RFC 6962.
+- **Compared with Core 2026-11-14, keyword by keyword** (all 111 `<bcp14>`
+  elements of the first-round file against `spec/v0.1.md` and
+  `spec/well-known-uri-v0.1.md` on `main`). The two requirements the draft
+  had added are removed in the second round; the comparison found no other
+  MUST or MUST NOT that Core does not state, so "the draft adds none" above
+  now holds for those two keywords as far as this comparison goes. Not
+  changed here, and under review, are these differences in level, reach or
+  wording:
+  - "A node SHOULD also publish" where Core §2 says "Recommended fields".
+  - "any specific vendor" where Core §1 names one vendor, and "cross-channel
+    comparisons" where Core §7 says "OTA comparisons": both wider.
+  - A MAY for recording hashes of signed artifacts in a public log, where
+    Core §3.1 states a MAY for key-rotation events only.
+  - A verifier that "cannot confirm that the URL host is" the node's, where
+    Core §5.1 says "cannot confirm that it is a node URL" (which also covers
+    userinfo and port): narrower.
+  - "A node SHOULD omit it" without Core §5.2's "and rely on
+    `direct_booking_url`"; the example list in Section 6.5 without
+    "frontmatter"; the description of the attested class in other words
+    than Core §5.4.
+  - "the document is advisory metadata only" without the keyword that
+    Well-Known §3 gives it ("MUST treat the document as advisory metadata
+    only"); "rate-limited per domain" where Core §14 says "rate-limit or
+    coalesce".
 - **The `<date>` is 2026-11-15, the planned submission day.** Check it on the
   day of submission: if that day is another one, set the `<date>` to it,
   re-render the `.txt` and run the three tools again (xml2rfc warns when the

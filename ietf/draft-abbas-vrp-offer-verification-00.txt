@@ -126,10 +126,17 @@ Internet-Draft           VRP Offer Verification            November 2026
 
    When an AI agent or other client presents a vacation-rental stay
    offer to a guest, the guest relies on three things: that the offer
-   comes from the host, that the price is the exact amount the guest
-   will pay, and that the booking URL belongs to the host.  This
-   document specifies how a client checks each of the three against the
-   host's own domain.
+   comes from the host's own domain, that the price shown is the price
+   that domain stated, and that the booking URL is on that domain.  This
+   document specifies how a client checks each of the three.  A
+   signature that verifies against the key set the host domain publishes
+   shows that a key published by that domain signed exactly these terms,
+   the price among them, and that they have not been altered.  Separate
+   checks confirm that the offer names the domain whose discovery
+   document the client fetched (Section 6.2) and that the booking URL is
+   on that domain (Section 5.3).  A valid signature proves the
+   provenance and integrity of those statements; it does not guarantee
+   that the stay is in fact available.
 
    VRP does this for one concrete vertical, vacation rentals, with
    deliberately boring machinery: a well-known discovery document
@@ -155,13 +162,6 @@ Internet-Draft           VRP Offer Verification            November 2026
    VRP may compose with adjacent agent-commerce standards for checkout,
    payment mandates, tool bindings, or inter-agent negotiation; those
    runtime flows are out of scope for this document.
-
-
-
-
-
-
-
 
 
 
@@ -603,10 +603,10 @@ Internet-Draft           VRP Offer Verification            November 2026
       agent_total, total, each breakdown[].nightly_rate, each
       adjustments[].amount, the reconciliation sums).  true: integers in
       the currency's minor unit (cents): 29100 is 291.00 EUR.  false:
-      whole currency units: 8930 is 8 930 SEK.  The flag applies to the
-      whole price object; a consumer reads it before it quotes, converts
-      or displays an amount.
-
+      whole currency units: 8930 is 8 930 SEK.  The offer schema of this
+      protocol version [VRP-SPEC] requires the flag, and it applies to
+      the whole price object; a consumer reads it before it quotes,
+      converts or displays an amount.
 
 
 
@@ -1290,23 +1290,34 @@ Abbas                      Expires 19 May 2027                 [Page 23]
 Internet-Draft           VRP Offer Verification            November 2026
 
 
-   One implementation is live at the time of writing: a reference
-   implementation operating a production node that serves the discovery
-   document at the well-known URI, the Ed25519 JWKS, and signed verified
-   stay offers with direct booking URLs, exercising every normative
-   requirement of this document.  Machine-readable JSON Schemas for the
-   discovery document, JWKS, and signed offer, together with executable
+   At the time of writing (November 2026), the protocol repository
+   [VRP-SPEC] lists a reference implementation (a verifier, and a
+   production node that serves the discovery document at the well-known
+   URI, the Ed25519 JWKS, and signed verified stay offers with direct
+   booking URLs); a signing node developed and operated by a party with
+   no affiliation to the reference implementer, whose operator has been
+   one of the maintainers of the protocol repository since October 2026;
+   and a verifier developed by a party unrelated to the reference
+   implementer, which checks the offer signature against the published
+   key and the offer's expiry time.  The repository also keeps a draft
+   implementation report, prepared for the decision on a later version
+   of the protocol and measured against the requirements of VRP v0.1.
+   It takes each mandatory requirement of the core specification and of
+   the well-known URI specification in turn and records which node and
+   which verifier meets it, with the evidence: a live measurement with
+   its date, or a file and line at a given commit.  It marks the
+   requirements that fewer than two independent implementations are
+   recorded as meeting.  Machine-readable JSON Schemas for the discovery
+   document, JWKS, and signed offer, together with executable
    conformance vectors (including negative cases: tampered signature,
-   expired window, malformed attestations), are published in the
-   protocol repository [VRP-SPEC].  Specification text is dedicated to
-   the public domain (CC0 1.0); reference code and conformance vectors
-   are Apache-2.0.
+   expired window, malformed attestations), are published in the same
+   repository.  Specification text is dedicated to the public domain
+   (CC0 1.0); reference code and conformance vectors are Apache-2.0.
 
 Acknowledgements
 
-   Thanks to the operators of the first live node for exercising every
-   failure mode of this protocol against a real property before this
-   document was written down.
+   Thanks to the developers of the independent signing node and of the
+   independent verifier listed in the protocol repository.
 
 Author's Address
 
@@ -1314,17 +1325,6 @@ Author's Address
    Vacation Rental Protocol
    Email: hello@vacationrentalprotocol.com
    URI:   https://vacationrentalprotocol.com
-
-
-
-
-
-
-
-
-
-
-
 
 
 

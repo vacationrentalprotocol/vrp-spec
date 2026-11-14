@@ -37,6 +37,37 @@ of the `vacation-rental.json` well-known URI suffix.
   "couldn't figure out when first submitted"; the comment is the informative
   reference RFC 6962 (obsoleted by RFC 9162). None was silenced by changing
   a rule or a reference.
+- **Corrected 2026-11-14, editorial; no normative rule changed** (the
+  `<bcp14>` keywords are the same, count by count: 111 in all). Four places:
+  the Introduction says what the checks show (a key the host domain publishes
+  signed these terms, the price among them, unaltered; separate checks tie
+  the offer and the booking URL to that domain; a valid signature does not
+  guarantee that the stay is in fact available) and no longer says a client
+  checks "the exact amount the guest will pay"; the `price.minor_unit` entry
+  carries Core §5's sentence again ("The schema requires the flag");
+  Implementation Status names the kinds of implementation the repository
+  lists (a reference implementation, an independent signing node, an
+  independent verifier) and points to the implementation report, and no
+  longer says "One implementation is live ... exercising every normative
+  requirement"; the Acknowledgements no longer say "every failure mode".
+- **Validated 2026-11-14 on the corrected files:** xml2rfc 3.35.0 renders
+  with no warning; idnits 3.3.0 (on the `.xml`, submission mode) = no nit;
+  idnits 2.17.1 (on the `.txt`) = 0 errors, 0 flaws, 2 warnings, 1 comment,
+  the same three items as on 2026-11-13. idnits 3.3.0 in normal mode gives
+  three warnings, the same on the files before the correction: the two
+  domain names in running text in Sections 3.2 and 3.8, and RFC 6962.
+- **Not changed here, and under review** (found in the audit of 2026-11-14):
+  wording in the draft that differs from Core. Two add a requirement Core
+  does not state: implementations MUST NOT normalize the booking URL's
+  query-parameter names into the offer-request names (Core §5.1 only lists
+  the names), and the rule against guest personal data and secrets covers
+  the JWKS as well as the discovery document (Core §15 states no separate
+  rule for the JWKS). The sentence above, "the draft adds none", is
+  therefore not confirmed for these two. Three more differ in level or
+  reach: "A node SHOULD also publish" where Core §2 says "Recommended
+  fields"; "any specific vendor" where Core §1 names one; and a MAY for
+  recording hashes of signed artifacts where Core §3.1 states a MAY for
+  key-rotation events only.
 - **The `<date>` is 2026-11-15, the planned submission day.** Check it on the
   day of submission: if that day is another one, set the `<date>` to it,
   re-render the `.txt` and run the three tools again (xml2rfc warns when the

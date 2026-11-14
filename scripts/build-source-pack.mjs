@@ -28,6 +28,7 @@ const OUT = "docs/source-pack.md";
 const MANIFEST = [
   { file: "docs/what-is-vrp.md", title: "What is VRP?" },
   { file: "spec/v0.1.md", title: "Core specification v0.1" },
+  { file: "spec/v1.0.md", title: "Core specification 1.0 (candidate)" },
   { file: "spec/well-known-uri-v0.1.md", title: "Well-Known URI v0.1" },
   { file: "spec/stayintent-discovery-v0.1.md", title: "StayIntent open discovery v0.1" },
   { file: "spec/structure-declarations-v0.1.md", title: "Node structure declarations v0.1" },

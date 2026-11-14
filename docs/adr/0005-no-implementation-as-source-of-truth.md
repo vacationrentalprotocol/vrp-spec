@@ -1,6 +1,6 @@
 # ADR 0005: The Standard Is the Source of Truth; No Implementation Is
 
-**Status:** Proposed
+**Status:** Proposed · becomes Accepted with [ADR 0013](0013-vrp-1-0.md) when that record is accepted
 **Date:** 2026-10-16
 
 **Related:** ADR 0002 (no-gatekeeper trust and interop), ADR 0003 (GitHub org

@@ -389,8 +389,8 @@
         }
         const [h, p, s] = parts;
         const header = jsonFromB64url(h);
-        if (header.alg !== "EdDSA") {
-          throw new Error("Unexpected alg '" + header.alg + "'. VRP signs with EdDSA (Ed25519).");
+        if (header.alg !== "Ed25519" && header.alg !== "EdDSA") {
+          throw new Error("Unexpected alg '" + header.alg + "'. VRP signs over Ed25519; the header names it Ed25519 (RFC 9864) or EdDSA (RFC 8037), VRP §3.");
         }
         // §3.1: the key is the one whose kid the JWS header names, and no other.
         // A header without a kid, or a kid the JWKS does not hold, is unverifiable.
@@ -405,12 +405,11 @@
         if (key.kty !== "OKP" || key.crv !== "Ed25519") {
           throw new Error("The host's key is not Ed25519/OKP.");
         }
-        // §3 and the JWKS schema: a VRP signing key names its own alg, EdDSA,
-        // compared as written. A key labelled with another algorithm, or with
-        // none, is not a VRP signing key and is never tried, even when its kid
-        // matches.
-        if (key.alg !== "EdDSA") {
-          throw new Error("The host's key with kid '" + header.kid + "' is labelled alg " + JSON.stringify(key.alg) + ". A VRP signing key names its alg EdDSA (VRP §3), so the offer is unverifiable.");
+        // §3: a VRP signing key names its own alg, Ed25519 or EdDSA, compared
+        // as written. A key labelled with another algorithm, or with none, is
+        // not a VRP signing key and is never tried, even when its kid matches.
+        if (key.alg !== "Ed25519" && key.alg !== "EdDSA") {
+          throw new Error("The host's key with kid '" + header.kid + "' is labelled alg " + JSON.stringify(key.alg) + ". A VRP signing key names its alg Ed25519 (RFC 9864) or EdDSA (RFC 8037), VRP §3, so the offer is unverifiable.");
         }
         let cryptoKey;
         try {
@@ -572,10 +571,10 @@
         const d = doc && typeof doc === "object" ? doc : {};
         const rows = [];
         const problems = [];
-        const proto = d.protocol === "vacation-rental-protocol" && d.protocol_version === "0.1";
-        rows.push(checkRow(proto ? "pass" : "fail", proto ? "Declares VRP 0.1" : "Does NOT declare VRP 0.1",
+        const proto = d.protocol === "vacation-rental-protocol" && (d.protocol_version === "1.0" || d.protocol_version === "0.1");
+        rows.push(checkRow(proto ? "pass" : "fail", proto ? "Declares VRP " + d.protocol_version : "Does NOT declare VRP 1.0 or 0.1",
           "protocol " + JSON.stringify(d.protocol) + ", protocol_version " + JSON.stringify(d.protocol_version) + " (VRP §2, §7)."));
-        if (!proto) problems.push("the discovery document does not declare vacation-rental-protocol 0.1");
+        if (!proto) problems.push("the discovery document does not declare vacation-rental-protocol 1.0 or 0.1");
         const cdOk = d.canonical_domain === domain;
         rows.push(checkRow(cdOk ? "pass" : "fail", cdOk ? "Discovery canonical_domain is " + domain : "Discovery names another domain",
           "canonical_domain " + JSON.stringify(d.canonical_domain) + ", fetched from " + domain + " (VRP §2, §7)."));
@@ -676,13 +675,13 @@
           if (own.state === "unknown") unknown.push("the host-owned domain could not be checked");
 
           const missing = REQUIRED_FIELDS.filter((k) => !(k in payload));
-          const shape = payload.kind === "verified_stay_offer" && payload.protocol_version === "0.1" && !missing.length;
+          const shape = payload.kind === "verified_stay_offer" && (payload.protocol_version === "1.0" || payload.protocol_version === "0.1") && !missing.length;
           rows.push(
             checkRow(
               shape ? "pass" : "warn",
               shape ? "Offer has the fields VRP §5 requires" : "Offer does NOT have the shape VRP §5 requires",
               shape
-                ? "kind, protocol_version 0.1 and the twelve required fields. This page does not run the full JSON Schema."
+                ? "kind, protocol_version 1.0 or 0.1 and the twelve required fields. This page does not run the full JSON Schema."
                 : (missing.length ? "Missing: " + missing.join(", ") + ". " : "") +
                     "kind " + JSON.stringify(payload.kind) + ", protocol_version " + JSON.stringify(payload.protocol_version) + " — unknown (VRP §9)."
             )

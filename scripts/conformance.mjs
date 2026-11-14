@@ -1,4 +1,5 @@
-// Shared helpers and constants for VRP v0.1 JWS conformance vectors.
+// Shared helpers and constants for the VRP JWS conformance vectors (Core v0.1
+// and the 1.0 candidate, spec/v1.0.md).
 //
 // SECURITY: The key material here is a throwaway test vector derived from a
 // public, documented label. It is NOT a real host key, MUST NOT be used by any
@@ -47,11 +48,48 @@ function b64url(buf) {
 }
 
 // Sign an offer payload object into a compact JWS (header.payload.signature).
-export function signOffer(offer, { kid = KID } = {}) {
-  const header = { alg: "EdDSA", typ: "JWT", kid };
+// `alg` is the name written in the protected header; the operation is always
+// Ed25519. `unsigned` leaves the signature part empty (the `alg: none` vector).
+export function signOffer(offer, { kid = KID, alg = "EdDSA", unsigned = false } = {}) {
+  const header = { alg, typ: "JWT", kid };
   const signingInput = `${b64url(JSON.stringify(header))}.${b64url(JSON.stringify(offer))}`;
+  if (unsigned) return `${signingInput}.`;
   const signature = sign(null, Buffer.from(signingInput), privateKey);
   return `${signingInput}.${b64url(signature)}`;
+}
+
+// spec/v1.0.md §3, §5 (ADR 0017): the two names of the one signing operation.
+// The names are case-sensitive (RFC 7515 §4.1.1); anything else is unverifiable.
+export const SIGNATURE_ALGS = ["Ed25519", "EdDSA"];
+
+// spec/v1.0.md §2, §5, §7 (ADR 0013): the two names of the one wire format.
+export const VRP_PROTOCOL = "vacation-rental-protocol";
+export const KNOWN_PROTOCOL_VERSIONS = ["1.0", "0.1"];
+
+// A declared `protocol_version` is compared as written: a string equal to one
+// of the known values. Absent is `missing_protocol_version`; any other value,
+// of any type, is `unsupported_version`. Nothing is filled in for the node
+// (§8, fail closed).
+export function checkDeclaredVersion(value) {
+  if (value === undefined) return "missing_protocol_version";
+  if (typeof value !== "string" || !KNOWN_PROTOCOL_VERSIONS.includes(value)) return "unsupported_version";
+  return null;
+}
+
+// §2 and §7: the discovery document declares the protocol and a known version.
+// This is a rule about the discovery document only; the signed offer declares
+// its own version (checkOfferVersion), and the two are checked separately.
+export function checkDiscoveryVersion(discovery) {
+  if (!discovery || typeof discovery !== "object" || Array.isArray(discovery)) return { reason: "malformed_discovery" };
+  if (discovery.protocol !== VRP_PROTOCOL) return { reason: "unexpected_protocol" };
+  return { reason: checkDeclaredVersion(discovery.protocol_version) };
+}
+
+// §5 and §9: the signed payload declares a known version. Read from the signed
+// payload only, never from the unsigned envelope beside it.
+export function checkOfferVersion(payload) {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) return { reason: "malformed_payload" };
+  return { reason: checkDeclaredVersion(payload.protocol_version) };
 }
 
 // Verify a compact JWS against a JWKS, resolving the key by the header `kid`.
@@ -67,7 +105,9 @@ export function verifyCompactJws(compactJws, jwksDoc) {
   } catch {
     return { valid: false, reason: "malformed_header" };
   }
-  if (header.alg !== "EdDSA") return { valid: false, reason: "unexpected_alg" };
+  // §3, §5 (ADR 0017, 1.0): `Ed25519` (RFC 9864) and `EdDSA` (RFC 8037) name the
+  // same operation; either is accepted, anything else is unverifiable.
+  if (!SIGNATURE_ALGS.includes(header.alg)) return { valid: false, reason: "unexpected_alg" };
 
   const jwk = (jwksDoc.keys || []).find((k) => k.kid === header.kid);
   if (!jwk) return { valid: false, reason: "kid_not_in_jwks" };
@@ -91,6 +131,20 @@ export function verifyCompactJws(compactJws, jwksDoc) {
     return { valid: false, reason: "malformed_payload", header };
   }
   return { valid: true, reason: null, header, payload };
+}
+
+// One self-describing offer vector (examples/conformance/offer/): the JWS
+// verifies against the vector's own JWKS, the signed payload declares a known
+// version, and freshness is read against the vector's injected clock.
+// Returns { verified, reason, fresh, header, payload }.
+export function verifyOfferVector(vector) {
+  const result = verifyCompactJws(vector?.input?.signature?.jws, vector?.jwks || {});
+  if (!result.valid) return { verified: false, reason: result.reason, fresh: null, header: result.header ?? null, payload: null };
+  const version = checkOfferVersion(result.payload);
+  if (version.reason) return { verified: false, reason: version.reason, fresh: null, header: result.header, payload: result.payload };
+  const validUntil = Date.parse(result.payload?.valid_until ?? "");
+  const fresh = Number.isFinite(validUntil) && validUntil > Date.parse(vector.clock);
+  return { verified: true, reason: null, fresh, header: result.header, payload: result.payload };
 }
 
 // The canonical offer payload used by the committed positive vector.

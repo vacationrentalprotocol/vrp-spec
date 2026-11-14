@@ -13,6 +13,15 @@
       ]
     },
     {
+      "source": "/spec/v1.0.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/v1.0>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
       "source": "/spec/attestations-v0.1.md",
       "headers": [
         {

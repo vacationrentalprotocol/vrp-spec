@@ -20,13 +20,28 @@ result.
 
 ## Self-describing offer vectors
 
-The five base signed-offer cases also exist as **self-describing vector files**
-in [`offer/`](./offer/), format `{ name, description, clock, jwks, input, expected }`:
+The signed-offer cases exist as **self-describing vector files** in
+[`offer/`](./offer/), format `{ name, description, clock, jwks, input, expected }`:
 each file embeds its own key set, evaluation clock, and expected outcome, so an
 independent implementation can consume them as pure data without reading any
-JavaScript in this repository. Cases: valid+fresh, valid+expired, tampered
-signature, unknown `kid`, wrong key. CI checks that the reference verifier
-agrees with every committed file (`npm test`, `verify-offer-vectors`). See
+JavaScript in this repository. `01`–`05` are the v0.1 corpus (valid+fresh,
+valid+expired, tampered signature, unknown `kid`, wrong key) and are never
+changed. `06`–`15` belong to the 1.0 candidate ([ADR 0013](../../docs/adr/0013-vrp-1-0.md),
+[ADR 0017](../../docs/adr/0017-signature-algorithm-names.md)): the algorithm
+name (`Ed25519` or `EdDSA` in the header and on the key; `ES256`, `none` and a
+wrong-case name refused) and the offer's `protocol_version` (`"1.0"` accepted,
+`"0.2"` and an absent version refused). `expected.verified` is true when the JWS
+verifies against the embedded key set and the signed payload declares a known
+version. CI checks that the reference verifier agrees with every committed
+file (`npm test`, `verify-offer-vectors`), and that an accepting vector exists
+for each of the four combinations of version string and algorithm name. The
+site's verify page carries its own copy of the rules and is run against the
+same files (`verify-web-verifier`).
+
+The discovery document's `protocol_version` is a separate declaration and has
+its own vectors in [`discovery-version/`](./discovery-version/): fifteen
+discovery documents and eight pairs of a discovery document and a signed
+offer (`npm test`, `verify-version-vectors`). See
 [`IMPLEMENTATIONS.md`](../../IMPLEMENTATIONS.md) for how to test your own
 verifier against them.
 

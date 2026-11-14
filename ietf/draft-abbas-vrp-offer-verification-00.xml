@@ -19,7 +19,10 @@
         <uri>https://vacationrentalprotocol.com</uri>
       </address>
     </author>
-    <date year="2026" month="November" day="4"/>
+    <!-- Planned submission date. Check it on the day of submission and set
+         it to that day; xml2rfc warns when it is more than 3 days from the
+         day it runs. -->
+    <date year="2026" month="November" day="15"/>
     <keyword>vacation rental</keyword>
     <keyword>signed offers</keyword>
     <keyword>well-known URI</keyword>
@@ -30,17 +33,23 @@
     <abstract>
       <t>The Vacation Rental Protocol (VRP) lets an AI agent or other
       client verify, directly from a vacation-rental host's own domain and
-      with no intermediary, that a stay offer is authentic, currently
-      available, and exactly priced.  A host domain publishes a discovery
-      document at a well-known URI, an Ed25519 key set, and signed stay
-      offers (compact JSON Web Signatures).  Verification requires no
-      central registry, issuer, accreditation program, or gatekeeper:
-      control of the host domain is the root of trust.</t>
+      with no intermediary, that a stay offer was signed by a key that
+      domain publishes, has not been altered, and is within its stated
+      lifetime.  The signed offer carries the host domain's own statements
+      of availability and exact price for the stay asked for.  A valid
+      signature proves the provenance and integrity of those statements;
+      it does not guarantee that the stay is in fact available.  A host
+      domain publishes a discovery document at a well-known URI, an
+      Ed25519 key set, and signed stay offers (compact JSON Web
+      Signatures).  Verification requires no central registry, issuer,
+      accreditation program, or gatekeeper: control of the host domain is
+      the root of trust.</t>
       <t>This document specifies the discovery document, key publication
       and rotation, the signed verified stay offer, and the verification
       procedure, including fail-closed behavior and a three-state
-      verification model.  It also registers the "vacation-rental.json"
-      well-known URI suffix.</t>
+      verification model.  It also describes the existing provisional
+      registration of the "vacation-rental.json" well-known URI
+      suffix.</t>
     </abstract>
   </front>
 
@@ -48,15 +57,13 @@
 
     <section anchor="intro">
       <name>Introduction</name>
-      <t>Buyer-side building blocks for agent-mediated commerce - agent
-      identity, payment authorization, and checkout - are being addressed
-      in multiple venues.  The seller side of the transaction has no
-      equivalent: when an AI agent finds a vacation-rental offer, nothing
-      lets it verify from the seller's own domain that the offer is
-      genuine, that the price is the exact amount the guest will pay, and
-      that the booking URL actually belongs to the seller.  Agents today
-      either trust an aggregator's word or forward unverified prose.</t>
-      <t>VRP closes that gap for one concrete vertical, vacation rentals,
+      <t>When an AI agent or other client presents a vacation-rental stay
+      offer to a guest, the guest relies on three things: that the offer
+      comes from the host, that the price is the exact amount the guest
+      will pay, and that the booking URL belongs to the host.  This
+      document specifies how a client checks each of the three against
+      the host's own domain.</t>
+      <t>VRP does this for one concrete vertical, vacation rentals,
       with deliberately boring machinery: a well-known discovery document
       (<xref target="discovery"/>), a published Ed25519 key set
       (<xref target="jwks"/>), and stay offers signed as compact JSON Web
@@ -945,27 +952,32 @@ https://{host-domain}/.well-known/jwks.json
 
     <section anchor="iana">
       <name>IANA Considerations</name>
-      <t>IANA is requested to register the following entry in the
-      "Well-Known URIs" registry <xref target="RFC8615"/>:</t>
+      <t>This document requests no action from IANA.  The
+      <tt>vacation-rental.json</tt> well-known URI suffix is already
+      registered in the "Well-Known URIs" registry
+      <xref target="RFC8615"/>.  The entry, as the registry read on
+      2026-11-13:</t>
       <dl newline="false" spacing="normal">
         <dt>URI suffix:</dt>
         <dd>vacation-rental.json</dd>
-        <dt>Change controller:</dt>
-        <dd>Vacation Rental Protocol (VRP) - Rouiada Abbas;
-        hello@vacationrentalprotocol.com</dd>
-        <dt>Specification document(s):</dt>
-        <dd>This document, <xref target="discovery"/>.</dd>
+        <dt>Reference:</dt>
+        <dd>https://vacationrentalprotocol.com/spec/well-known-uri-v0.1</dd>
         <dt>Status:</dt>
         <dd>provisional</dd>
-        <dt>Related information:</dt>
-        <dd>Existing deployments additionally serve the same resource at
-        the transition alias suffix
-        <tt>vacation-rental-protocol.json</tt>; clients
-        <bcp14>SHOULD</bcp14> use <tt>vacation-rental.json</tt>
-        (<xref target="discovery-alias"/>).  An open registration request
-        for this suffix predates this document; see
-        <eref target="https://github.com/protocol-registries/well-known-uris/issues/93"/>.</dd>
+        <dt>Change controller:</dt>
+        <dd>Rouiada Abbas</dd>
+        <dt>Date registered:</dt>
+        <dd>2026-08-19</dd>
       </dl>
+      <t><xref target="discovery"/> of this document describes the same
+      resource as the registered reference.  The registration request is
+      recorded at
+      <eref target="https://github.com/protocol-registries/well-known-uris/issues/93"/>.</t>
+      <t>Existing deployments additionally serve the same resource at
+      the transition alias suffix
+      <tt>vacation-rental-protocol.json</tt>, which is not registered;
+      clients <bcp14>SHOULD</bcp14> use <tt>vacation-rental.json</tt>
+      (<xref target="discovery-alias"/>).</t>
       <t>The suffix names a descriptive discovery resource for one
       vertical (a vacation-rental node's site-wide configuration), in the
       naming style of other descriptive well-known resources; it is

@@ -11,6 +11,9 @@
     "verify-three-state": "node scripts/verify-three-state-fixtures.mjs",
     "verify-receipt-vectors": "node scripts/verify-receipt-vectors.mjs",
     "verify-offer-vectors": "node scripts/verify-offer-vectors.mjs",
+    "verify-web-verifier": "node scripts/verify-web-verifier.mjs",
+    "verify-stay-form": "node scripts/verify-stay-form.mjs",
+    "verify-web-pages": "node scripts/verify-web-pages.mjs",
     "verify-tlog-vectors": "node scripts/verify-tlog-vectors.mjs",
     "verify-host-domain": "node scripts/verify-host-domain.mjs",
     "verify-peers": "node scripts/verify-peers.mjs",
@@ -25,7 +28,7 @@
     "build-sitemap": "node scripts/build-sitemap.mjs",
     "check-sitemap": "node scripts/build-sitemap.mjs --check",
     "generate-vectors": "node scripts/generate-conformance-vectors.mjs",
-    "test": "npm run validate && npm run verify-vectors && npm run verify-offer-schema && npm run verify-attestations && npm run verify-three-state && npm run verify-receipt-vectors && npm run verify-offer-vectors && npm run verify-tlog-vectors && npm run verify-host-domain && npm run verify-peers && npm run verify-offer-rules && npm run verify-node-page && npm run check-public-routes && npm run check-license && npm run check-source-pack && npm run check-pages",
+    "test": "npm run validate && npm run verify-vectors && npm run verify-offer-schema && npm run verify-attestations && npm run verify-three-state && npm run verify-receipt-vectors && npm run verify-offer-vectors && npm run verify-web-verifier && npm run verify-stay-form && npm run verify-web-pages && npm run verify-tlog-vectors && npm run verify-host-domain && npm run verify-peers && npm run verify-offer-rules && npm run verify-node-page && npm run check-public-routes && npm run check-license && npm run check-source-pack && npm run check-pages",
     "build-pages": "node scripts/build-pages.mjs",
     "check-pages": "node scripts/build-pages.mjs --check"
   }

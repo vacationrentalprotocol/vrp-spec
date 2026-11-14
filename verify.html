@@ -211,6 +211,14 @@
         overflow: auto;
         font-size: 0.8rem;
       }
+      .stay-error {
+        margin: 12px 0 0;
+        color: var(--fail);
+        font-weight: 700;
+      }
+      input[aria-invalid="true"] {
+        border-color: var(--fail);
+      }
       .note {
         color: var(--muted);
         font-size: 0.92rem;
@@ -281,9 +289,10 @@
               </div>
               <div class="field" style="flex: 0 1 110px">
                 <label for="guests">Guests</label>
-                <input id="guests" type="number" min="1" value="2" />
+                <input id="guests" type="number" min="1" step="1" value="2" />
               </div>
             </div>
+            <p id="stayError" class="stay-error" role="alert" hidden></p>
             <div>
               <button id="btnLive">Fetch &amp; verify</button>
             </div>
@@ -405,6 +414,13 @@
         if (key.kty !== "OKP" || key.crv !== "Ed25519") {
           throw new Error("The host's key is not Ed25519/OKP.");
         }
+        // §3 and the JWKS schema: a VRP signing key names its own alg, EdDSA,
+        // compared as written. A key labelled with another algorithm, or with
+        // none, is not a VRP signing key and is never tried, even when its kid
+        // matches.
+        if (key.alg !== "EdDSA") {
+          throw new Error("The host's key with kid '" + header.kid + "' is labelled alg " + JSON.stringify(key.alg) + ". A VRP signing key names its alg EdDSA (VRP §3), so the offer is unverifiable.");
+        }
         let cryptoKey;
         try {
           cryptoKey = await crypto.subtle.importKey(
@@ -508,10 +524,23 @@
       // A browser cannot see where a redirect points, so this page follows no
       // redirect from a node: a redirect makes the result unknown (§2, §9).
       class NodeRedirect extends Error {}
+      // The node answered and refused: an HTTP status that is not a success.
+      // Its own error code is kept when the body is JSON with a short code in
+      // "error"; any other words of the node's are not shown.
+      class NodeRefusal extends Error {}
       async function nodeFetch(url) {
         const res = await fetch(url, { redirect: "manual", cache: "no-store" });
         if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400)) throw new NodeRedirect(url);
-        if (!res.ok) throw new Error(url + " answered HTTP " + res.status + ".");
+        if (!res.ok) {
+          let code = "";
+          try {
+            const body = await res.json();
+            if (body && typeof body.error === "string" && /^[A-Za-z0-9_.-]{1,64}$/.test(body.error)) code = body.error;
+          } catch (e) {
+            // No JSON body: the status alone is reported.
+          }
+          throw new NodeRefusal(url + " answered HTTP " + res.status + (code ? " (" + code + ")" : "") + ".");
+        }
         return res.json();
       }
       // The domain a user typed, as a lowercase A-label host. A leading "www."
@@ -560,6 +589,131 @@
       const LANGUAGE_TAG = /^[A-Za-z]{2,3}(-[A-Za-z]{4})?(-([A-Za-z]{2}|[0-9]{3}))?$(?!\n)/;
       const MAX_LIFETIME_MS = 900 * 1000; // §5
       const CLOCK_SKEW_MS = 60 * 1000; // §6
+      // The offer schema this site publishes (Core §10): what a VRP 0.1 offer
+      // is. It is fetched from the site the page came from, and is the only
+      // statement of the offer's shape the page uses. Resolves to the schema, or
+      // to null when it could not be fetched or read; then the shape is unknown
+      // (§9), and the page says so.
+      const OFFER_SCHEMA_URL = "/schemas/verified-stay-offer-v0.1.schema.json";
+      let offerSchemaPromise = null;
+      function loadOfferSchema() {
+        if (!offerSchemaPromise) {
+          offerSchemaPromise = fetch(OFFER_SCHEMA_URL)
+            .then((r) => (r.ok ? r.json() : null))
+            .then((s) => (s !== null && typeof s === "object" && !Array.isArray(s) ? s : null))
+            .catch(() => null);
+          offerSchemaPromise.then((s) => {
+            if (s === null) offerSchemaPromise = null;
+          });
+        }
+        return offerSchemaPromise;
+      }
+      // JSON Schema, with the keywords the VRP 0.1 schemas use: $ref inside the
+      // document, type, const, enum, required, properties, additionalProperties,
+      // items, minimum, maximum, minLength and pattern. A keyword this function
+      // does not apply is itself a fault, so a schema it cannot follow all the
+      // way never lets anything through (§9). Returns what is wrong with `value`
+      // under the schema at `pointer` ("#/$defs/…"), named by path; [] when valid.
+      function schemaFaults(root, pointer, value) {
+        const faults = [];
+        const APPLIED = ["$ref", "type", "const", "enum", "required", "properties", "additionalProperties", "items", "minimum", "maximum", "minLength", "pattern"];
+        const NOTES = ["$schema", "$id", "$defs", "title", "description", "$comment", "examples", "default"];
+        const isObject = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+        const typeOf = (v) =>
+          v === null ? "null" : Array.isArray(v) ? "array" : typeof v === "number" ? (Number.isInteger(v) ? "integer" : "number") : typeof v;
+        const resolve = (ref) => {
+          if (typeof ref !== "string" || !ref.startsWith("#/")) return undefined;
+          let at = root;
+          for (const part of ref.slice(2).split("/")) {
+            const key = part.replace(/~1/g, "/").replace(/~0/g, "~");
+            at = isObject(at) && Object.prototype.hasOwnProperty.call(at, key) ? at[key] : undefined;
+          }
+          return at;
+        };
+        const walk = (schema, v, path, depth) => {
+          if (faults.length >= 25) return;
+          if (!isObject(schema) || depth > 40) {
+            faults.push(path + ": the schema cannot be read here");
+            return;
+          }
+          for (const key of Object.keys(schema)) {
+            if (!APPLIED.includes(key) && !NOTES.includes(key)) {
+              faults.push(path + ": the schema uses \"" + key + "\", which this page does not apply");
+              return;
+            }
+          }
+          if ("$ref" in schema) walk(resolve(schema.$ref), v, path, depth + 1);
+          const t = typeOf(v);
+          if ("type" in schema) {
+            const allowed = Array.isArray(schema.type) ? schema.type : [schema.type];
+            if (!allowed.some((a) => a === t || (a === "number" && t === "integer"))) faults.push(path + " is " + t + ", not " + allowed.join(" or "));
+          }
+          if ("const" in schema && !sameJson(v, schema.const)) faults.push(path + " is not " + JSON.stringify(schema.const));
+          if ("enum" in schema && !(Array.isArray(schema.enum) && schema.enum.some((e) => sameJson(e, v)))) faults.push(path + " is not one of the values the schema allows");
+          if (t === "integer" || t === "number") {
+            if ("minimum" in schema && !(v >= schema.minimum)) faults.push(path + " is less than " + schema.minimum);
+            if ("maximum" in schema && !(v <= schema.maximum)) faults.push(path + " is more than " + schema.maximum);
+          }
+          if (t === "string") {
+            if ("minLength" in schema && !(Array.from(v).length >= schema.minLength)) faults.push(path + " is shorter than " + schema.minLength + " character" + (schema.minLength === 1 ? "" : "s"));
+            if ("pattern" in schema) {
+              let fits = false;
+              try {
+                fits = new RegExp(schema.pattern, "u").test(v);
+              } catch (e) {
+                fits = false;
+              }
+              if (!fits) faults.push(path + " does not have the form the schema gives");
+            }
+          }
+          if (t === "object") {
+            const props = isObject(schema.properties) ? schema.properties : {};
+            const own = (k) => Object.prototype.hasOwnProperty.call(props, k);
+            for (const k of Array.isArray(schema.required) ? schema.required : []) {
+              if (!Object.prototype.hasOwnProperty.call(v, k)) faults.push(path + "." + k + " is missing");
+            }
+            for (const k of Object.keys(v)) {
+              if (own(k)) walk(props[k], v[k], path + "." + k, depth + 1);
+              else if (schema.additionalProperties === false) faults.push(path + "." + k + " is not a member the schema knows");
+              else if (isObject(schema.additionalProperties)) walk(schema.additionalProperties, v[k], path + "." + k, depth + 1);
+              else if (schema.additionalProperties !== undefined && schema.additionalProperties !== true) faults.push(path + ": the schema cannot be read here");
+            }
+          }
+          if (t === "array" && "items" in schema) v.forEach((item, i) => walk(schema.items, item, path + "[" + i + "]", depth + 1));
+        };
+        walk(resolve(pointer), value, "offer", 0);
+        return faults;
+      }
+      // What is wrong with the shape of a signed payload, as one list: unknown
+      // when the schema could not be fetched, otherwise the schema's own answer.
+      function offerShapeFaults(schema, payload) {
+        if (schema === null || schema === undefined) return ["the offer schema could not be fetched from this site, so the offer's shape is unknown"];
+        return schemaFaults(schema, "#/$defs/offerPayload", payload);
+      }
+      // A signed amount as a person reads it. With minor_unit true the amount
+      // counts the currency's minor unit (ISO 4217: two digits for EUR and SEK,
+      // none for JPY, three for KWD), which the browser's own currency data
+      // gives; with minor_unit false it is the amount as signed. The digits are
+      // used only for a currency code the browser itself lists: for any other
+      // code the amount is shown as signed, in minor units, saying so.
+      function formatMoney(amount, currency, minorUnit) {
+        if (!Number.isSafeInteger(amount) || amount < 0 || typeof currency !== "string" || !/^[A-Z]{3}$/.test(currency)) return "—";
+        if (minorUnit === false) return amount + " " + currency;
+        if (minorUnit !== true) return amount + " " + currency + " (unit not stated)";
+        let digits = NaN;
+        try {
+          // Intl answers "2" for a code it has never heard of, so the code is looked up first.
+          if (Intl.supportedValuesOf("currency").includes(currency)) {
+            digits = new Intl.NumberFormat("en", { style: "currency", currency }).resolvedOptions().maximumFractionDigits;
+          }
+        } catch (e) {
+          digits = NaN;
+        }
+        if (!Number.isInteger(digits) || digits < 0 || digits > 4) return amount + " minor units of " + currency;
+        if (digits === 0) return amount + " " + currency;
+        const text = String(amount).padStart(digits + 1, "0");
+        return text.slice(0, -digits) + "." + text.slice(-digits) + " " + currency;
+      }
       // §2 and §7: the discovery document of `domain`.
       function checkDiscovery(doc, domain) {
         const d = doc && typeof doc === "object" ? doc : {};
@@ -588,6 +742,28 @@
       const $ = (id) => document.getElementById(id);
       function esc(v) {
         return String(v).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+      }
+      // ── one result, for one request ───────────────────────────────────────
+      // A result stands for the request it was made for, and for as long as the
+      // offer may be quoted (§6). It is taken down when a field changes or a new
+      // check starts; a slower, earlier check never writes over a later one; and
+      // at valid_until the page shows the offer as expired, without a link.
+      let currentRun = 0;
+      let expiryTimer = null;
+      function clearResult() {
+        currentRun += 1;
+        if (expiryTimer !== null) {
+          clearTimeout(expiryTimer);
+          expiryTimer = null;
+        }
+        $("resultSection").style.display = "none";
+        $("verdict").className = "verdict";
+        $("verdict").textContent = "";
+        $("checks").innerHTML = "";
+        $("facts").innerHTML = "";
+        $("facts").style.display = "none";
+        $("raw").textContent = "";
+        return currentRun;
       }
       function showError(msg) {
         $("resultSection").style.display = "";
@@ -627,10 +803,15 @@
       const REQUIRED_FIELDS = ["kind", "protocol_version", "canonical_domain", "node_id", "generated_at", "valid_until",
         "request", "property", "availability", "price", "booking", "agent_permission"];
       // ctx: result (verifyJws), host (the domain the offer was fetched from,
-      // null when pasted), own (hostOwned), rows and problems so far, jwksUrl,
+      // null when pasted), own (hostOwned), schema (loadOfferSchema; null when it
+      // could not be fetched), rows and problems so far, jwksUrl,
       // envelopeOffer (the unsigned copy; null for a bare JWS, undefined when
       // the envelope has none), asked (the stay asked for; null when pasted).
       function render(ctx) {
+        if (expiryTimer !== null) {
+          clearTimeout(expiryTimer);
+          expiryTimer = null;
+        }
         const { ok, header, payload } = ctx.result;
         const own = ctx.own;
         const rows = ctx.rows.slice();
@@ -669,14 +850,16 @@
           if (own.state === "unknown") unknown.push("the host-owned domain could not be checked");
 
           const missing = REQUIRED_FIELDS.filter((k) => !(k in payload));
-          const shape = payload.kind === "verified_stay_offer" && payload.protocol_version === "0.1" && !missing.length;
+          const faults = offerShapeFaults(ctx.schema, payload);
+          const shape = payload.kind === "verified_stay_offer" && payload.protocol_version === "0.1" && !missing.length && !faults.length;
           rows.push(
             checkRow(
               shape ? "pass" : "warn",
               shape ? "Offer has the fields VRP §5 requires" : "Offer does NOT have the shape VRP §5 requires",
               shape
-                ? "kind, protocol_version 0.1 and the twelve required fields. This page does not run the full JSON Schema."
+                ? "kind, protocol_version 0.1, the twelve required fields, and valid under this site's JSON Schema for a VRP 0.1 offer (" + OFFER_SCHEMA_URL + ")."
                 : (missing.length ? "Missing: " + missing.join(", ") + ". " : "") +
+                    (faults.length ? "Not valid under the offer schema: " + faults.slice(0, 5).join("; ") + (faults.length > 5 ? "; and " + (faults.length - 5) + " more" : "") + ". " : "") +
                     "kind " + JSON.stringify(payload.kind) + ", protocol_version " + JSON.stringify(payload.protocol_version) + " — unknown (VRP §9)."
             )
           );
@@ -739,7 +922,7 @@
             rows.push(checkRow("warn", "valid_until is missing or malformed", JSON.stringify(payload.valid_until) + " — VRP §6: the offer must not be quoted."));
             notQuotable.push("valid_until is missing or malformed");
           } else {
-            const fresh = vu > Date.now();
+            const fresh = vu > Date.now() && !ctx.expired;
             rows.push(
               checkRow(
                 fresh ? "pass" : "warn",
@@ -829,6 +1012,10 @@
           }
 
           const price = payload.price || {};
+          if (price.agent_total === null || price.agent_total === undefined) {
+            rows.push(checkRow("warn", "No total to quote", "price.agent_total is " + JSON.stringify(price.agent_total) + ": an offer without a total must not be quoted (VRP §7)."));
+            notQuotable.push("price.agent_total carries no amount");
+          }
           if (price.no_add_on_fees === true) {
             rows.push(checkRow("pass", "No add-on fees", "The signed total is the total — no booking, service, or cleaning fees."));
           }
@@ -837,7 +1024,12 @@
             rows.push(
               checkRow(
                 "pass",
-                "No intermediary, 0% commission",
+                // Each half is said only when the signed payload says it.
+                sa.intermediary === "none" && sa.booking_commission_pct === 0
+                  ? "No intermediary, 0% commission"
+                  : sa.intermediary === "none"
+                    ? "No intermediary"
+                    : "0% commission",
                 "intermediary: " + (sa.intermediary || "n/a") + ", commission: " + (sa.booking_commission_pct ?? "n/a") + "%, recipient: " + (sa.payment_recipient || "n/a") + "."
               )
             );
@@ -863,7 +1055,16 @@
         const facts = [
           ["Property", prop.name ? esc(prop.name + (prop.city ? ", " + prop.city : "") + (prop.country ? ", " + prop.country : "")) : "—"],
           ["Stay", req.check_in ? esc(req.check_in + " → " + req.check_out + " (" + (req.nights || "?") + " nights, " + (req.guests || "?") + " guests)") : "—"],
-          ["Total price", price.total != null ? esc(price.total + " " + (price.currency || "") + (price.agent_total != null && price.agent_total !== price.total ? "  (agent: " + price.agent_total + " " + (price.currency || "") + ")" : "")) : "—"],
+          // The schema: agents quote agent_total; public_total is the website's total.
+          [
+            "Total price",
+            esc(
+              formatMoney(price.agent_total, price.currency, price.minor_unit) +
+                (price.public_total != null && price.public_total !== price.agent_total
+                  ? "  (website total: " + formatMoney(price.public_total, price.currency, price.minor_unit) + ")"
+                  : "")
+            ),
+          ],
           [
             "Book direct",
             !bookUrl
@@ -879,8 +1080,122 @@
         $("facts").innerHTML = "<dl>" + facts.map(([k, v]) => "<dt>" + esc(k) + "</dt><dd>" + v + "</dd>").join("") + "</dl>";
         $("raw").textContent = JSON.stringify(payload, null, 2);
         $("resultSection").style.display = "";
-        $("resultSection").scrollIntoView({ behavior: "smooth", block: "start" });
+        if (!ctx.expired) $("resultSection").scrollIntoView({ behavior: "smooth", block: "start" });
+        // §6: at valid_until the offer may no longer be quoted. The same result is
+        // drawn again as expired: no "safe to quote", no link.
+        const until = parseDateTime(payload.valid_until);
+        if (verdict === "pass" && !isNaN(until)) {
+          expiryTimer = setTimeout(() => {
+            expiryTimer = null;
+            render({ ...ctx, expired: true });
+          }, Math.max(0, until - Date.now()));
+        }
       }
+
+      // ── the stay form: dates and guests (VRP §5, §7) ──────────────────────
+      // The same text in verify.html and implement.html.
+      // scripts/verify-stay-form.mjs holds the two copies to each other and
+      // runs both.
+      const STAY_DAY_MS = 86400000;
+      const STAY_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      // §5: a YYYY-MM-DD date that exists, as ms at UTC midnight; NaN otherwise.
+      function stayDay(v) {
+        const m = typeof v === "string" && /^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
+        if (!m) return NaN;
+        // setUTCFullYear, not Date.UTC: Date.UTC reads the years 0–99 as 1900–1999.
+        const d = new Date(0);
+        d.setUTCFullYear(+m[1], +m[2] - 1, +m[3]);
+        const t = d.getTime();
+        return d.getUTCFullYear() === +m[1] && d.getUTCMonth() === +m[2] - 1 && d.getUTCDate() === +m[3] ? t : NaN;
+      }
+      // A day as YYYY-MM-DD; "" outside the years 0001–9999.
+      function stayIso(ms) {
+        const d = new Date(ms);
+        const y = d.getUTCFullYear();
+        if (isNaN(y) || y < 1 || y > 9999) return "";
+        return String(y).padStart(4, "0") + "-" + String(d.getUTCMonth() + 1).padStart(2, "0") + "-" + String(d.getUTCDate()).padStart(2, "0");
+      }
+      // A day as a person reads it: "20 January 2027".
+      function stayLabel(ms) {
+        const d = new Date(ms);
+        return d.getUTCDate() + " " + STAY_MONTHS[d.getUTCMonth()] + " " + d.getUTCFullYear();
+      }
+      // §7: a check_in earlier than the day before the current UTC date has
+      // passed everywhere. That day is the first one the form takes.
+      function stayFirstDay() {
+        return Math.floor(Date.now() / STAY_DAY_MS) * STAY_DAY_MS - STAY_DAY_MS;
+      }
+      // What the three fields say, before anything is fetched or signed. A stay
+      // (§5) is two dates that exist, check_out later than check_in, a check_in
+      // that has not passed, and a whole number of guests, at least 1. Nothing
+      // is rounded, defaulted or swapped: fields that do not say a stay name
+      // the field and what to do.
+      function readStay(checkIn, checkOut, guests) {
+        const ci = stayDay(checkIn);
+        const co = stayDay(checkOut);
+        const g = String(guests == null ? "" : guests).trim();
+        if (isNaN(ci)) return { ok: false, field: "checkIn", message: "Choose a check-in date." };
+        if (ci < stayFirstDay()) {
+          return { ok: false, field: "checkIn", message: "Check-in " + stayLabel(ci) + " has passed. Choose a later check-in." };
+        }
+        if (isNaN(co) || co <= ci) {
+          return { ok: false, field: "checkOut", message: "Choose a check-out after " + stayLabel(ci) + "." };
+        }
+        if (!/^[1-9][0-9]*$/.test(g) || !Number.isSafeInteger(Number(g))) {
+          return { ok: false, field: "guests", message: "Guests is a whole number, 1 or more." };
+        }
+        return { ok: true, check_in: checkIn, check_out: checkOut, guests: Number(g), nights: (co - ci) / STAY_DAY_MS };
+      }
+      // The two date fields as one stay. When check-in moves to or past
+      // check-out, check-out moves to the same number of nights as before, so
+      // its calendar opens on a date that can be chosen. A check-out that is
+      // still later than check-in stays where the person put it. The check-out
+      // calendar offers no day before the day after check-in.
+      function stayForm(inEl, outEl, guestsEl, errorEl) {
+        const fields = { checkIn: inEl, checkOut: outEl, guests: guestsEl };
+        let nights = 1;
+        function clear() {
+          errorEl.hidden = true;
+          errorEl.textContent = "";
+          for (const name of Object.keys(fields)) fields[name].removeAttribute("aria-invalid");
+        }
+        function sync() {
+          const first = stayFirstDay();
+          const ci = stayDay(inEl.value);
+          const co = stayDay(outEl.value);
+          inEl.min = stayIso(first);
+          outEl.min = stayIso((isNaN(ci) ? first : ci) + STAY_DAY_MS);
+          if (isNaN(ci)) return;
+          if (co > ci) nights = (co - ci) / STAY_DAY_MS;
+          else outEl.value = stayIso(ci + nights * STAY_DAY_MS);
+        }
+        function read() {
+          clear();
+          const stay = readStay(inEl.value, outEl.value, guestsEl.value);
+          if (!stay.ok) {
+            errorEl.textContent = stay.message;
+            errorEl.hidden = false;
+            fields[stay.field].setAttribute("aria-invalid", "true");
+            fields[stay.field].focus();
+          }
+          return stay;
+        }
+        for (const type of ["input", "change"]) {
+          inEl.addEventListener(type, () => {
+            clear();
+            sync();
+          });
+          outEl.addEventListener(type, () => {
+            clear();
+            const ci = stayDay(inEl.value);
+            const co = stayDay(outEl.value);
+            if (co > ci) nights = (co - ci) / STAY_DAY_MS;
+          });
+          guestsEl.addEventListener(type, clear);
+        }
+        return { sync, read };
+      }
+      // ── end of the stay form ──────────────────────────────────────────────
 
       // ── actions ───────────────────────────────────────────────────────────
       function redirectStop(e, rows) {
@@ -898,30 +1213,39 @@
       }
       async function runLive() {
         const btn = $("btnLive");
+        const run = clearResult();
         const host = toHost($("host").value);
         if (!host) return showError("Enter a host domain.");
+        // Nothing is fetched for fields that do not say a stay (§5).
+        const stay = stayFields.read();
+        if (!stay.ok) return;
         btn.disabled = true;
         btn.textContent = "Verifying…";
         const rows = [];
         try {
           const discUrl = "https://" + host + "/.well-known/vacation-rental.json";
           const disc = await nodeFetch(discUrl);
+          if (run !== currentRun) return;
           rows.push(checkRow("pass", "Discovery document fetched from the domain itself", discUrl));
           const d = checkDiscovery(disc, host);
           rows.push(...d.rows);
           if (!d.urlsOk) return showStop("fail", "✕ Not a VRP node — " + d.problems.join("; "), rows);
           const offerUrl = new URL(disc.verified_stay_offer_endpoint);
-          offerUrl.searchParams.set("check_in", $("checkIn").value);
-          offerUrl.searchParams.set("check_out", $("checkOut").value);
-          offerUrl.searchParams.set("guests", $("guests").value || "2");
+          offerUrl.searchParams.set("check_in", stay.check_in);
+          offerUrl.searchParams.set("check_out", stay.check_out);
+          offerUrl.searchParams.set("guests", String(stay.guests));
           const [offer, jwks] = await Promise.all([nodeFetch(offerUrl.href), nodeFetch(disc.jwks_url)]);
           const jws = offer && offer.signature && offer.signature.jws;
           if (typeof jws !== "string" || !jws) throw new Error("The host response did not contain signature.jws.");
           const result = await verifyJws(jws, jwks);
+          const own = await hostOwned(host);
+          const schema = await loadOfferSchema();
+          if (run !== currentRun) return;
           render({
             result,
             host,
-            own: await hostOwned(host),
+            own,
+            schema,
             rows,
             problems: d.problems,
             jwksUrl: disc.jwks_url,
@@ -933,7 +1257,10 @@
             envelopeOffer: offer && typeof offer === "object" && "offer" in offer ? offer.offer : undefined,
           });
         } catch (e) {
+          if (run !== currentRun) return;
           if (e instanceof NodeRedirect) return redirectStop(e, rows);
+          // The host was reached and said no: neither the domain nor cross-origin access is the fault.
+          if (e instanceof NodeRefusal) return showError("The host was reached and refused the request: " + e.message);
           showError(e && e.message === "NO_NATIVE_ED25519" ? "NO_NATIVE_ED25519" : "Fetch or verify failed: " + (e && e.message ? e.message : e) + "  (the host may block cross-origin requests, or the domain is wrong).");
         } finally {
           btn.disabled = false;
@@ -942,6 +1269,7 @@
       }
       async function runPaste() {
         const btn = $("btnPaste");
+        const run = clearResult();
         const raw = $("paste").value.trim();
         if (!raw) return showError("Paste an offer JSON or a compact JWS.");
         btn.disabled = true;
@@ -962,18 +1290,23 @@
           // The domain law first: nothing is fetched from a name that is not a
           // host-owned domain in A-label form.
           const own = await hostOwned(cd);
+          if (run !== currentRun) return;
           if (own.state === "fail") {
             return showStop("fail", "✕ Not a VRP offer — not a host-owned domain", [checkRow("fail", "NOT a host-owned domain (VRP §2)", own.detail)]);
           }
           const discUrl = "https://" + cd + "/.well-known/vacation-rental.json";
           const disc = await nodeFetch(discUrl);
+          if (run !== currentRun) return;
           rows.push(checkRow("pass", "Discovery document fetched from the domain the offer names", discUrl));
           const d = checkDiscovery(disc, cd);
           rows.push(...d.rows);
           if (!d.urlsOk) return showStop("fail", "✕ Not a VRP node — " + d.problems.join("; "), rows);
           const result = await verifyJws(jws, await nodeFetch(disc.jwks_url));
-          render({ result, host: null, own, rows, problems: d.problems, jwksUrl: disc.jwks_url, envelopeOffer, asked: null });
+          const schema = await loadOfferSchema();
+          if (run !== currentRun) return;
+          render({ result, host: null, own, schema, rows, problems: d.problems, jwksUrl: disc.jwks_url, envelopeOffer, asked: null });
         } catch (e) {
+          if (run !== currentRun) return;
           if (e instanceof NodeRedirect) return redirectStop(e, rows);
           showError(e && e.message === "NO_NATIVE_ED25519" ? "NO_NATIVE_ED25519" : (e && e.message ? e.message : String(e)));
         } finally {
@@ -983,16 +1316,30 @@
       }
 
       // ── tab switching + defaults ──────────────────────────────────────────
+      // Which of the two forms is the one on the page. A result is for the form
+      // that asked for it: when the other form is chosen, the result is taken
+      // down and a check that is still out is overtaken, so nothing an earlier
+      // form asked for is ever shown under the form now in view. Choosing the
+      // form that is already chosen changes nothing. The fields keep what was
+      // typed in them.
+      let liveSelected = true;
       function selectTab(live) {
+        if (live === liveSelected) return;
+        liveSelected = live;
         $("tab-live").setAttribute("aria-selected", String(live));
         $("tab-paste").setAttribute("aria-selected", String(!live));
         $("pane-live").classList.toggle("hidden", !live);
         $("pane-paste").classList.toggle("hidden", live);
+        clearResult();
       }
       $("tab-live").addEventListener("click", () => selectTab(true));
       $("tab-paste").addEventListener("click", () => selectTab(false));
       $("btnLive").addEventListener("click", runLive);
       $("btnPaste").addEventListener("click", runPaste);
+      // A result is for the fields as they were when it was made.
+      for (const id of ["host", "checkIn", "checkOut", "guests", "paste"]) {
+        for (const type of ["input", "change"]) $(id).addEventListener(type, clearResult);
+      }
 
       (function setDefaultDates() {
         const iso = (d) => d.toISOString().slice(0, 10);
@@ -1004,6 +1351,8 @@
         $("checkIn").value = iso(inDays(30));
         $("checkOut").value = iso(inDays(32));
       })();
+      const stayFields = stayForm($("checkIn"), $("checkOut"), $("guests"), $("stayError"));
+      stayFields.sync();
 
       // Deep-link prefill: node pages link the verifier with their own
       // domain so a guest lands with the host field ready —
@@ -1025,6 +1374,8 @@
         const guests = params.get("guests");
         if (guests && /^[1-9]\d?$/.test(guests)) $("guests").value = guests;
       })();
+      // A link may carry one date only: the other follows it to a real stay.
+      stayFields.sync();
     </script>
   </body>
 </html>

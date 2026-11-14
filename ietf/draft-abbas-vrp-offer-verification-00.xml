@@ -800,9 +800,10 @@ https://{host-domain}/.well-known/jwks.json
           <dt>Attested:</dt>
           <dd>Host-declared tri-state claims (amenities, policies)
           published in the node's discovery document and optionally as a
-          <tt>VRPPropertyAttestedClaimsCredential</tt> (defined in the
-          portable attestations specification in the protocol repository
-          <xref target="VRP-SPEC"/>).  Actionable as the host's explicit
+          <tt>VRPPropertyAttestedClaimsCredential</tt> (defined in
+          Section 5.5 of the portable attestations specification in the
+          protocol repository <xref target="VRP-SPEC"/>).  Actionable as
+          the host's explicit
           statement - including negations ("cats are not allowed") - but
           not cryptographically bound to a specific purchase moment.
           Absence is unknown, never a yes or a no.</dd>

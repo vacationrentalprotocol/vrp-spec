@@ -899,12 +899,12 @@ Internet-Draft           VRP Offer Verification            November 2026
 
 
       published in the node's discovery document and optionally as a
-      VRPPropertyAttestedClaimsCredential (defined in the portable
-      attestations specification in the protocol repository [VRP-SPEC]).
-      Actionable as the host's explicit statement - including negations
-      ("cats are not allowed") - but not cryptographically bound to a
-      specific purchase moment.  Absence is unknown, never a yes or a
-      no.
+      VRPPropertyAttestedClaimsCredential (defined in Section 5.5 of the
+      portable attestations specification in the protocol repository
+      [VRP-SPEC]).  Actionable as the host's explicit statement -
+      including negations ("cats are not allowed") - but not
+      cryptographically bound to a specific purchase moment.  Absence is
+      unknown, never a yes or a no.
 
    Reputational:  Review aggregates, stay history, and similar evidence
       about past experience.  A verifier MAY cite it (accurately

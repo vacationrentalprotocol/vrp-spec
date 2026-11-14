@@ -19,8 +19,10 @@ of the `vacation-rental.json` well-known URI suffix.
   identification as SHOULD; ADR 0012 the stay asked for, dates, echoed
   fields and lifetime; `price.minor_unit`; the sixteen Safe-to-Quote
   conditions; Security and Privacy Considerations). Every MUST in Core §2,
-  §5, §6 and §7 has a counterpart; the draft adds none. xml2rfc 3.35.0
-  renders clean; idnits was not run in that session.
+  §5, §6 and §7 has a counterpart; the draft adds none. (The comparison of
+  2026-11-14 below found two requirements the draft had added; the second
+  round removed them.) xml2rfc 3.35.0 renders clean; idnits was not run in
+  that session.
 - **Corrected 2026-11-13, editorial; no normative rule changed** (the
   `<bcp14>` keywords are the same, count by count): the Abstract says what
   verification proves (a key the domain publishes signed these terms, they
@@ -73,7 +75,7 @@ of the `vacation-rental.json` well-known URI suffix.
   "cross-channel comparisons"; Section 5.3 says that a verifier that cannot
   confirm that the booking URL is a node URL treats it as unknown, as Core
   §5.1 does, where the draft named the host only (a node URL also has no
-  userinfo and the default port); Section 6.5 defines the attested class as
+  userinfo and no port other than the `https` default); Section 6.5 defines the attested class as
   Core §5.4 does (tri-state claims, the discovery document and optionally a
   `VRPPropertyAttestedClaimsCredential`, "purchase moment", and reading an
   amenity from the discovery document never inherits the offer's signature);
@@ -82,9 +84,9 @@ of the `vacation-rental.json` well-known URI suffix.
   "rate-limited". Implementation Status now says only: "For the
   requirements assessed, the report records implementation results with
   dated measurements or source references, and identifies gaps in
-  independent implementation." The second round's wording said the report
-  assesses no recommendations; it does record measurements of recommended
-  items in Core §2.1. The `<bcp14>` keywords are unchanged by this round:
+  independent implementation." The second round's wording described the
+  report's coverage too narrowly: the report also records measurements of
+  recommended items in Core §2.1. The `<bcp14>` keywords are unchanged by this round:
   110 in all.
 - **Validated 2026-11-14 on the files of the third round:** xml2rfc 3.35.0
   renders with no warning; idnits 3.3.0 (on the `.xml`, submission mode) = no
@@ -106,14 +108,18 @@ of the `vacation-rental.json` well-known URI suffix.
   - Left as they are, each with support in the adopted texts:
     "A node SHOULD also publish" for Core §2's "Recommended fields" (Core
     recommends the fields); "any specific vendor" where Core §1 names one
-    (vendor-neutral, as GOVERNANCE §2 is); a MAY for recording hashes of
-    signed artifacts in a public log (Core §14 allows it, Well-Known §4
-    describes an optional public append-only log); "A node SHOULD omit it"
-    without "and rely on `direct_booking_url`" (the same paragraph already
-    makes `direct_booking_url` the only payment path); the example list in
-    Section 6.5 without "frontmatter" (the list is not exhaustive);
-    "advisory metadata only" stated without its own keyword next to "MUST
-    NOT treat the discovery document itself as proof of any claim".
+    (neutral, as the Neutrality principle in GOVERNANCE §2 is); a MAY for
+    recording hashes of signed artifacts in a public log (Core §14 says a
+    node can record signed-artifact hashes there; Well-Known §4 describes an
+    optional public append-only log); "A node SHOULD omit it" without "and
+    rely on `direct_booking_url`" (the same paragraph already makes
+    `direct_booking_url` the only payment path); the example list in
+    Section 6.5 without "frontmatter" (frontmatter is outside the signed
+    payload and an unsigned field, which the sentence already covers);
+    "advisory metadata only", which Well-Known §3 states with its own MUST,
+    stated without a keyword as the reason for the "MUST NOT treat the
+    discovery document itself as proof of any claim" that Well-Known §4
+    states.
 - **The `<date>` is 2026-11-15, the planned submission day.** Check it on the
   day of submission: if that day is another one, set the `<date>` to it,
   re-render the `.txt` and run the three tools again (xml2rfc warns when the

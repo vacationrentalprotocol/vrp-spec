@@ -122,6 +122,13 @@
         padding: 8px 14px; border-radius: 999px; cursor: pointer;
       }
       .brand { position: fixed; top: calc(7vh + 14px); left: 18px; z-index: 45; font-family: ui-sans-serif, system-ui, sans-serif; font-weight: 800; letter-spacing: 0.18em; font-size: 0.8rem; color: var(--muted); text-decoration: none; }
+      .replay.pause { right: 126px; }
+      .illustration {
+        position: fixed; top: calc(7vh + 58px); left: 50%; transform: translateX(-50%); z-index: 45; margin: 0;
+        width: max-content; max-width: calc(100vw - 36px); text-align: center;
+        font-family: ui-sans-serif, system-ui, sans-serif; font-size: 0.78rem; color: var(--muted);
+      }
+      .illustration a { color: inherit; }
       @media (prefers-reduced-motion: reduce) { .scene { transition: opacity 0.2s; } }
     </style>
   </head>
@@ -129,7 +136,9 @@
     <div class="bar top"></div>
     <div class="bar bottom"></div>
     <a class="brand" href="/">VRP</a>
-    <button class="replay" id="replay">↻ Replay</button>
+    <button class="replay" id="replay" type="button">↻ Replay</button>
+    <button class="replay pause" id="pause" type="button">❚❚ Pause</button>
+    <p class="illustration">An illustration with example values, not a live verification. <a href="/demo">Run the real check</a>.</p>
 
     <div class="cinema">
       <div class="stage" id="stage">
@@ -237,29 +246,52 @@
       let runId = 0;
       let startTs = 0;
       let lastBeat = -1;
+      // Pause and play: where the film is, in ms, and whether it is moving.
+      let position = 0;
+      let moving = false;
+      const pauseBtn = document.getElementById("pause");
+      function setMoving(on) {
+        moving = on;
+        pauseBtn.textContent = on ? "❚❚ Pause" : "▶ Play";
+      }
 
-      function frame(ts) {
-        const my = runId;
-        if (!startTs) startTs = ts;
+      // `my` is the run that asked for this frame. After a pause or a replay it
+      // is no longer the current run, and the frame does nothing: there is
+      // never more than one chain of frames.
+      function frame(my, ts) {
+        if (my !== runId) return;
+        if (!startTs) startTs = ts - position;
         const elapsed = ts - startTs;
+        position = elapsed;
         let idx = 0;
         for (let k = 0; k < beats.length; k++) if (elapsed >= beats[k].t) idx = k;
         if (idx !== lastBeat) { lastBeat = idx; beats[idx].run(); }
-        if (elapsed < END && my === runId) requestAnimationFrame(frame);
+        if (elapsed >= END) setMoving(false);
+        else requestAnimationFrame((next) => frame(my, next));
       }
 
-      function play() {
+      function play(from) {
         runId++;
+        const my = runId;
         startTs = 0;
-        lastBeat = -1;
-        setCard("sealed");
-        requestAnimationFrame(frame);
+        position = from;
+        if (from === 0) {
+          lastBeat = -1;
+          setCard("sealed");
+        }
+        setMoving(true);
+        requestAnimationFrame((ts) => frame(my, ts));
+      }
+      function pause() {
+        runId++;
+        setMoving(false);
       }
 
       // Deterministic hold for testing/embedding: /film#s=2 holds scene 2;
       // /film#s=3v holds the widget in its VERIFIED (green) state.
       function holdScene(spec) {
         runId++; // cancel any running loop
+        setMoving(false);
         const verified = spec.endsWith("v");
         const idx = parseInt(spec, 10);
         if (Number.isNaN(idx)) return false;
@@ -270,12 +302,21 @@
 
       document.getElementById("replay").addEventListener("click", () => {
         history.replaceState(null, "", location.pathname);
-        play();
+        play(0);
+      });
+      pauseBtn.addEventListener("click", () => {
+        if (moving) pause();
+        else play(position >= END ? 0 : position);
       });
 
       const m = location.hash.match(/^#s=(\d+v?)$/);
       if (m) holdScene(m[1]);
-      else play();
+      else if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        // Reduced motion: nothing moves until the person presses Play.
+        setScene(0);
+        setCard("sealed");
+        setMoving(false);
+      } else play(0);
     </script>
   </body>
 </html>

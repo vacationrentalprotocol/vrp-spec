@@ -140,6 +140,8 @@ function load(page, { search = "", respond } = {}) {
     Date: FixedDate,
     console,
     setTimeout: () => 0,
+    clearTimeout: () => {},
+    AbortController,
     fetch,
     navigator: { clipboard: { writeText: async () => {} } },
     location: { search, hash: "" },
@@ -150,7 +152,7 @@ function load(page, { search = "", respond } = {}) {
   check(`${page}${search ? " " + search : ""}: one inline script`, scripts.length === 1, `found ${scripts.length}`);
   vm.runInContext(scripts[0] ?? "", context, { filename: page });
   const fire = (id, type = "change") => {
-    for (const fn of el(id).listeners[type] ?? []) fn({ target: el(id) });
+    for (const fn of el(id).listeners[type] ?? []) fn({ target: el(id), preventDefault() {} });
   };
   const set = (id, value, type) => {
     el(id).value = value;

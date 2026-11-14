@@ -264,71 +264,81 @@
       <section class="band">
         <div class="panel">
           <h2>1. Pick what to verify</h2>
-          <div class="tabs" role="tablist">
-            <button class="tab" id="tab-live" role="tab" aria-selected="true">
+          <div class="tabs" role="tablist" aria-label="What to verify">
+            <button class="tab" id="tab-live" type="button" role="tab" aria-selected="true" aria-controls="pane-live" tabindex="0">
               Fetch a live offer
             </button>
-            <button class="tab" id="tab-paste" role="tab" aria-selected="false">
+            <button class="tab" id="tab-paste" type="button" role="tab" aria-selected="false" aria-controls="pane-paste" tabindex="-1">
               Paste an offer
             </button>
           </div>
 
-          <div id="pane-live" class="vform">
-            <div class="row">
-              <div class="field" style="flex: 1 1 260px">
-                <label for="host">Host domain</label>
-                <input id="host" type="text" value="villaakerlyckan.se" spellcheck="false" />
+          <div id="pane-live" role="tabpanel" aria-labelledby="tab-live">
+            <form id="formLive" class="vform" novalidate>
+              <div class="row">
+                <div class="field" style="flex: 1 1 260px">
+                  <label for="host">Host domain</label>
+                  <input id="host" type="text" value="villaakerlyckan.se" spellcheck="false" aria-describedby="stayError" />
+                </div>
+                <div class="field">
+                  <label for="checkIn">Check-in</label>
+                  <input id="checkIn" type="date" aria-describedby="stayError" />
+                </div>
+                <div class="field">
+                  <label for="checkOut">Check-out</label>
+                  <input id="checkOut" type="date" aria-describedby="stayError" />
+                </div>
+                <div class="field" style="flex: 0 1 110px">
+                  <label for="guests">Guests</label>
+                  <input id="guests" type="number" min="1" step="1" value="2" aria-describedby="stayError" />
+                </div>
               </div>
-              <div class="field">
-                <label for="checkIn">Check-in</label>
-                <input id="checkIn" type="date" />
+              <p id="stayError" class="stay-error" role="alert" hidden></p>
+              <div>
+                <button id="btnLive" type="submit">Fetch &amp; verify</button>
               </div>
-              <div class="field">
-                <label for="checkOut">Check-out</label>
-                <input id="checkOut" type="date" />
-              </div>
-              <div class="field" style="flex: 0 1 110px">
-                <label for="guests">Guests</label>
-                <input id="guests" type="number" min="1" step="1" value="2" />
-              </div>
-            </div>
-            <p id="stayError" class="stay-error" role="alert" hidden></p>
-            <div>
-              <button id="btnLive">Fetch &amp; verify</button>
-            </div>
-            <p class="note">
-              Fetches
-              <code>https://&lt;host&gt;/.well-known/vacation-rental.json</code>
-              directly from the host, then the JWKS and the offer endpoint that
-              document names, which must both be node URLs (VRP §2). It follows
-              no redirect, and verifies locally against VRP §7.
-            </p>
+              <p class="note">
+                Fetches
+                <code>https://&lt;host&gt;/.well-known/vacation-rental.json</code>
+                directly from the host, then the JWKS and the offer endpoint that
+                document names, which must both be node URLs (VRP §2). It follows
+                no redirect, and verifies locally against VRP §7. To check the
+                domain (VRP §2) and the offer's shape it also reads the Public
+                Suffix List from publicsuffix.org, ICANN's gTLD list from
+                icann.org, and this site's offer schema.
+              </p>
+            </form>
           </div>
 
-          <div id="pane-paste" class="vform hidden">
-            <div class="field">
-              <label for="paste"
-                >Paste a full offer JSON, or just the compact JWS string</label
-              >
-              <textarea id="paste" spellcheck="false" placeholder='{ "signature": { "jws": "eyJ..." } }  — or —  eyJhbGciOiJFZERTQSI...'></textarea>
-            </div>
-            <div>
-              <button id="btnPaste">Verify</button>
-            </div>
-            <p class="note">
-              The discovery document and the JWKS it names are fetched from the
-              <code>canonical_domain</code> inside the offer. Nothing is sent
-              anywhere — the fetch goes straight to the host. This page cannot
-              see where you got a pasted offer, so it never shows a pasted offer
-              as safe to quote (VRP §7).
-            </p>
+          <div id="pane-paste" class="hidden" role="tabpanel" aria-labelledby="tab-paste">
+            <form id="formPaste" class="vform" novalidate>
+              <div class="field">
+                <label for="paste"
+                  >Paste a full offer JSON, or just the compact JWS string</label
+                >
+                <textarea id="paste" spellcheck="false" aria-describedby="pasteError" placeholder='{ "signature": { "jws": "eyJ..." } }  — or —  eyJhbGciOiJFZERTQSI...'></textarea>
+              </div>
+              <p id="pasteError" class="stay-error" role="alert" hidden></p>
+              <div>
+                <button id="btnPaste" type="submit">Verify</button>
+              </div>
+              <p class="note">
+                The pasted offer itself is not uploaded. The discovery document
+                and the JWKS it names are fetched straight from the
+                <code>canonical_domain</code> inside the offer. The Public Suffix
+                List, ICANN's gTLD list and this site's offer schema are read
+                from their publishers. This page cannot see where you got a
+                pasted offer, so it never shows a pasted offer as safe to quote
+                (VRP §7).
+              </p>
+            </form>
           </div>
         </div>
       </section>
 
       <section class="resources" id="resultSection" style="display: none">
         <h2>2. Result</h2>
-        <div id="verdict" class="verdict"></div>
+        <div id="verdict" class="verdict" role="status" aria-live="polite" aria-atomic="true"></div>
         <div id="checks" class="checks"></div>
         <div id="facts" class="facts" style="display: none"></div>
         <details class="raw">
@@ -386,6 +396,27 @@
       }
       function jsonFromB64url(part) {
         return JSON.parse(new TextDecoder().decode(b64urlToBytes(part)));
+      }
+
+      // ── every request has an end ──────────────────────────────────────────
+      // A host, a list publisher or this site that does not answer is told from
+      // one that answers "no": after NET_TIMEOUT_MS the request is given up and
+      // the page says so. `read` takes the Response; fetching and reading the
+      // body both fall inside the one limit.
+      const NET_TIMEOUT_MS = 15000;
+      class NetTimeout extends Error {}
+      async function fetchWithin(url, options, read) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), NET_TIMEOUT_MS);
+        try {
+          const res = await fetch(url, { ...options, signal: controller.signal });
+          return await read(res);
+        } catch (e) {
+          if (controller.signal.aborted) throw new NetTimeout(url + " did not answer within " + NET_TIMEOUT_MS / 1000 + " seconds.");
+          throw e;
+        } finally {
+          clearTimeout(timer);
+        }
       }
 
       // ── core verification (native Web Crypto Ed25519, zero dependencies) ──
@@ -455,8 +486,8 @@
       function loadLists() {
         if (!listsPromise) {
           listsPromise = Promise.all([
-            fetch(PSL_URL).then((r) => (r.ok ? r.text() : Promise.reject(new Error("PSL " + r.status)))),
-            fetch(GTLDS_URL).then((r) => (r.ok ? r.json() : Promise.reject(new Error("gTLD list " + r.status)))),
+            fetchWithin(PSL_URL, {}, (r) => (r.ok ? r.text() : Promise.reject(new Error("PSL " + r.status)))),
+            fetchWithin(GTLDS_URL, {}, (r) => (r.ok ? r.json() : Promise.reject(new Error("gTLD list " + r.status)))),
           ]).then(([psl, gtlds]) => {
             const lines = psl.split("\n");
             const a = lines.findIndex((l) => l.includes("===BEGIN ICANN DOMAINS==="));
@@ -528,20 +559,21 @@
       // Its own error code is kept when the body is JSON with a short code in
       // "error"; any other words of the node's are not shown.
       class NodeRefusal extends Error {}
-      async function nodeFetch(url) {
-        const res = await fetch(url, { redirect: "manual", cache: "no-store" });
-        if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400)) throw new NodeRedirect(url);
-        if (!res.ok) {
-          let code = "";
-          try {
-            const body = await res.json();
-            if (body && typeof body.error === "string" && /^[A-Za-z0-9_.-]{1,64}$/.test(body.error)) code = body.error;
-          } catch (e) {
-            // No JSON body: the status alone is reported.
+      function nodeFetch(url) {
+        return fetchWithin(url, { redirect: "manual", cache: "no-store" }, async (res) => {
+          if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400)) throw new NodeRedirect(url);
+          if (!res.ok) {
+            let code = "";
+            try {
+              const body = await res.json();
+              if (body && typeof body.error === "string" && /^[A-Za-z0-9_.-]{1,64}$/.test(body.error)) code = body.error;
+            } catch (e) {
+              // No JSON body: the status alone is reported.
+            }
+            throw new NodeRefusal(url + " answered HTTP " + res.status + (code ? " (" + code + ")" : "") + ".");
           }
-          throw new NodeRefusal(url + " answered HTTP " + res.status + (code ? " (" + code + ")" : "") + ".");
-        }
-        return res.json();
+          return res.json();
+        });
       }
       // The domain a user typed, as a lowercase A-label host. A leading "www."
       // is dropped: the node is the domain itself (§2).
@@ -598,8 +630,7 @@
       let offerSchemaPromise = null;
       function loadOfferSchema() {
         if (!offerSchemaPromise) {
-          offerSchemaPromise = fetch(OFFER_SCHEMA_URL)
-            .then((r) => (r.ok ? r.json() : null))
+          offerSchemaPromise = fetchWithin(OFFER_SCHEMA_URL, {}, (r) => (r.ok ? r.json() : null))
             .then((s) => (s !== null && typeof s === "object" && !Array.isArray(s) ? s : null))
             .catch(() => null);
           offerSchemaPromise.then((s) => {
@@ -765,6 +796,19 @@
         $("raw").textContent = "";
         return currentRun;
       }
+      // A message beside the form, for the field it is about: shown, announced
+      // (role="alert"), the field marked and given the focus.
+      function fieldError(box, field, message) {
+        box.textContent = message;
+        box.hidden = false;
+        field.setAttribute("aria-invalid", "true");
+        field.focus();
+      }
+      function clearFieldError(box, field) {
+        box.textContent = "";
+        box.hidden = true;
+        field.removeAttribute("aria-invalid");
+      }
       function showError(msg) {
         $("resultSection").style.display = "";
         $("facts").style.display = "none";
@@ -779,6 +823,7 @@
           '<div class="check fail"><div class="mark">✕</div><div><div class="label">Error</div><div class="detail">' +
           esc(msg) +
           "</div></div></div>";
+        $("resultSection").scrollIntoView({ behavior: "smooth", block: "start" });
       }
       function checkRow(state, label, detail) {
         return (
@@ -1215,7 +1260,8 @@
         const btn = $("btnLive");
         const run = clearResult();
         const host = toHost($("host").value);
-        if (!host) return showError("Enter a host domain.");
+        if (!host) return fieldError($("stayError"), $("host"), "Enter a host domain, for example villaakerlyckan.se.");
+        $("host").removeAttribute("aria-invalid");
         // Nothing is fetched for fields that do not say a stay (§5).
         const stay = stayFields.read();
         if (!stay.ok) return;
@@ -1261,6 +1307,8 @@
           if (e instanceof NodeRedirect) return redirectStop(e, rows);
           // The host was reached and said no: neither the domain nor cross-origin access is the fault.
           if (e instanceof NodeRefusal) return showError("The host was reached and refused the request: " + e.message);
+          // No answer in time is neither a refusal nor a failed verification.
+          if (e instanceof NetTimeout) return showError("No answer in time, so nothing was verified: " + e.message + " Try again.");
           showError(e && e.message === "NO_NATIVE_ED25519" ? "NO_NATIVE_ED25519" : "Fetch or verify failed: " + (e && e.message ? e.message : e) + "  (the host may block cross-origin requests, or the domain is wrong).");
         } finally {
           btn.disabled = false;
@@ -1271,7 +1319,8 @@
         const btn = $("btnPaste");
         const run = clearResult();
         const raw = $("paste").value.trim();
-        if (!raw) return showError("Paste an offer JSON or a compact JWS.");
+        if (!raw) return fieldError($("pasteError"), $("paste"), "Paste an offer JSON or a compact JWS.");
+        clearFieldError($("pasteError"), $("paste"));
         btn.disabled = true;
         btn.textContent = "Verifying…";
         const rows = [];
@@ -1308,6 +1357,7 @@
         } catch (e) {
           if (run !== currentRun) return;
           if (e instanceof NodeRedirect) return redirectStop(e, rows);
+          if (e instanceof NetTimeout) return showError("No answer in time, so nothing was verified: " + e.message + " Try again.");
           showError(e && e.message === "NO_NATIVE_ED25519" ? "NO_NATIVE_ED25519" : (e && e.message ? e.message : String(e)));
         } finally {
           btn.disabled = false;
@@ -1322,20 +1372,48 @@
       // form asked for is ever shown under the form now in view. Choosing the
       // form that is already chosen changes nothing. The fields keep what was
       // typed in them.
+      // The two tabs are one stop for the Tab key: the selected tab is in the
+      // tab order, the other is reached with the arrow keys, Home and End, and
+      // is selected as it gets the focus.
       let liveSelected = true;
-      function selectTab(live) {
-        if (live === liveSelected) return;
-        liveSelected = live;
-        $("tab-live").setAttribute("aria-selected", String(live));
-        $("tab-paste").setAttribute("aria-selected", String(!live));
-        $("pane-live").classList.toggle("hidden", !live);
-        $("pane-paste").classList.toggle("hidden", live);
-        clearResult();
+      function selectTab(live, focus) {
+        if (live !== liveSelected) {
+          liveSelected = live;
+          $("tab-live").setAttribute("aria-selected", String(live));
+          $("tab-paste").setAttribute("aria-selected", String(!live));
+          $("tab-live").setAttribute("tabindex", live ? "0" : "-1");
+          $("tab-paste").setAttribute("tabindex", live ? "-1" : "0");
+          $("pane-live").classList.toggle("hidden", !live);
+          $("pane-paste").classList.toggle("hidden", live);
+          clearResult();
+        }
+        if (focus) $(live ? "tab-live" : "tab-paste").focus();
       }
       $("tab-live").addEventListener("click", () => selectTab(true));
       $("tab-paste").addEventListener("click", () => selectTab(false));
-      $("btnLive").addEventListener("click", runLive);
-      $("btnPaste").addEventListener("click", runPaste);
+      for (const id of ["tab-live", "tab-paste"]) {
+        $(id).addEventListener("keydown", (ev) => {
+          const live = id === "tab-live";
+          let to = null;
+          if (ev.key === "ArrowRight" || ev.key === "ArrowLeft") to = !live;
+          else if (ev.key === "Home") to = true;
+          else if (ev.key === "End") to = false;
+          if (to === null) return;
+          ev.preventDefault();
+          selectTab(to, true);
+        });
+      }
+      // Real forms: the button and the Enter key both send them.
+      $("formLive").addEventListener("submit", (ev) => {
+        ev.preventDefault();
+        return runLive();
+      });
+      $("formPaste").addEventListener("submit", (ev) => {
+        ev.preventDefault();
+        return runPaste();
+      });
+      $("host").addEventListener("input", () => clearFieldError($("stayError"), $("host")));
+      $("paste").addEventListener("input", () => clearFieldError($("pasteError"), $("paste")));
       // A result is for the fields as they were when it was made.
       for (const id of ["host", "checkIn", "checkOut", "guests", "paste"]) {
         for (const type of ["input", "change"]) $(id).addEventListener(type, clearResult);

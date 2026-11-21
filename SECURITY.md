@@ -70,6 +70,27 @@ official, or a rotation/revocation gap that lets a removed key still verify.
 VRP is a **public draft (v0.1)**. Security fixes are applied to the current draft
 on `main`. Earlier drafts are not separately maintained.
 
+## Review status and known limits
+
+As of 2026-11-21, neither the specification nor any implementation has had an
+independent security audit or an external production review. What exists today:
+
+- **Conformance vectors** ([`examples/conformance/`](./examples/conformance/)) that
+  embed their own keys, evaluation clock and expected outcome. Every
+  implementation must reproduce them, with no network access.
+- **More than one implementation**, listed in
+  [IMPLEMENTATIONS.md](./IMPLEMENTATIONS.md): the reference implementation, an
+  independent verifier, and live nodes run by different operators. Every
+  verifier listed so far is written in JavaScript or TypeScript; no verifier in
+  a second programming language is listed yet.
+- **A transparency log** ([specification](./spec/transparency-log-v0.1.md)): a
+  Merkle tree over VRP artifact hashes with Ed25519-signed tree heads, after RFC
+  6962 and RFC 9162. The public instance in use today is run by the reference
+  implementer (log id `did:web:www.hemmabo.com`).
+
+Reports of weaknesses are welcome through the process above. This section is
+updated when an independent review is completed.
+
 ## Dependency and supply-chain hygiene
 
 VRP keeps its supply-chain surface deliberately small; there is no build step and

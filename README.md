@@ -1,5 +1,17 @@
 # Vacation Rental Protocol (VRP)
 
+[![Three screenshots from the recorded Villa Åkerlyckan demo: a guest asks for a stay, the agent verifies the host’s signed offer, and the result links to the host’s booking site.](https://raw.githubusercontent.com/HemmaBo-se/hemmabo-mcp-server/7364ff2530b01778334f251c4432e0da35fee3bf/assets/readme/verified-stay-flow.jpg)](https://www.hemmabo.com/hemmabo-in-chatgpt.mp4)
+
+Independent vacation rental hosts need agents to verify the stay offers they publish on their own domains, so guests can book directly with them.
+
+- An open protocol for stay offers signed with Ed25519 on the host’s own domain.
+- Agents can verify the signature against the domain’s public keys and check offer freshness.
+- A verified offer carries dates, guest count, total price, booking terms and the host’s booking URL.
+- Guests book on the host’s own website. In the HemmaBo example, they pay the host through the host’s Stripe account.
+- See a live implementation at [villaakerlyckan.se](https://villaakerlyckan.se/).
+
+## About VRP
+
 **The Vacation Rental Protocol (VRP) is an open protocol for host-domain-signed vacation-rental offers: an AI agent discovers a property on the open web, fetches a cryptographically signed (Ed25519, did:web) stay offer from the host's own domain, verifies it against the domain's JWKS — no central marketplace, registry, or gatekeeper.**
 
 Created and maintained by Rouiada Abbas. Anyone may implement it; HemmaBo is the reference implementation. Current public draft: v0.1.

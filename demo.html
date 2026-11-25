@@ -207,13 +207,17 @@
           <p class="eyebrow">Live · reproducible · no mock</p>
           <h1>Watch an agent verify a signed stay offer.</h1>
           <p class="lead">
-            No marketplace. No API key. The agent finds the property on the open
-            web, <strong>cryptographically verifies</strong> the host-signed offer
-            in <em>your</em> browser, and reaches a direct booking on the host's
-            own domain — every step runs live against the real node.
+            No marketplace. No API key. This page plays the agent's part, one
+            step at a time: it reads one host's own domain on the open web,
+            <strong>cryptographically verifies</strong> the host-signed offer
+            in <em>your</em> browser, and reaches a direct booking link on the
+            host's own domain. The host's answers come live from the real
+            node, and the checks on those answers run in your browser; the
+            host, the party of six and the trial dates are written into the
+            page.
           </p>
           <div class="runbar">
-            <button class="run-btn" id="run">▶  Run the agent</button>
+            <button class="run-btn" id="run" type="button">▶  Run the agent</button>
             <span class="run-meta">against <code>villaakerlyckan.se</code> · ~10s</span>
           </div>
         </div>
@@ -223,9 +227,9 @@
         <div class="stage">
           <div class="agent">
             <div class="agent-head">
-              <span class="agent-dot" id="agentDot"></span> AI agent
+              <span class="agent-dot" id="agentDot"></span> Agent, played by this page
             </div>
-            <div class="log" id="log"><span class="l" style="opacity:1;transform:none">Idle. Press “Run the agent”.</span></div>
+            <div class="log" id="log" role="log" aria-label="Agent log"><span class="l" style="opacity:1;transform:none">Idle. Press “Run the agent”.</span></div>
           </div>
 
           <div class="panelr">
@@ -270,9 +274,10 @@
           <strong>Honest about the frontier:</strong> discovery, the host-domain
           signature, and verification are fully live and reproducible above — you
           can <a href="/verify">verify it yourself</a>. The booking link is the
-          host's own signed URL; the checkout runs in Stripe <strong>test mode</strong>
-          today, and a <em>fully autonomous</em> agent payment is the open step we're
-          still building. We'd rather show you exactly where the edge is.
+          host's own signed URL: it opens the host's own checkout, on the host's
+          domain, and this page does not follow it. A <em>fully autonomous</em>
+          agent payment is the open step we're still building. We'd rather show
+          you exactly where the edge is.
         </div>
       </section>
     </main>
@@ -316,6 +321,21 @@
       // From here to the end mark, every function and constant is the same text
       // as in verify.html. scripts/verify-web-pages.mjs holds the copies to each
       // other, and runs the same offers through both pages.
+      const NET_TIMEOUT_MS = 15000;
+      class NetTimeout extends Error {}
+      async function fetchWithin(url, options, read) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), NET_TIMEOUT_MS);
+        try {
+          const res = await fetch(url, { ...options, signal: controller.signal });
+          return await read(res);
+        } catch (e) {
+          if (controller.signal.aborted) throw new NetTimeout(url + " did not answer within " + NET_TIMEOUT_MS / 1000 + " seconds.");
+          throw e;
+        } finally {
+          clearTimeout(timer);
+        }
+      }
       async function verifyJws(jws, jwks) {
         const parts = String(jws).trim().split(".");
         if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2]) {
@@ -406,8 +426,7 @@
       let offerSchemaPromise = null;
       function loadOfferSchema() {
         if (!offerSchemaPromise) {
-          offerSchemaPromise = fetch(OFFER_SCHEMA_URL)
-            .then((r) => (r.ok ? r.json() : null))
+          offerSchemaPromise = fetchWithin(OFFER_SCHEMA_URL, {}, (r) => (r.ok ? r.json() : null))
             .then((s) => (s !== null && typeof s === "object" && !Array.isArray(s) ? s : null))
             .catch(() => null);
           offerSchemaPromise.then((s) => {
@@ -516,13 +535,14 @@
       class DemoStop extends Error {}
       // GET from the node (§2): no redirect is followed, and a status that is not
       // a success stops the run. The status the log shows is the one received.
-      async function nodeGet(url) {
-        const res = await fetch(url, { redirect: "manual", cache: "no-store" });
-        if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400)) {
-          throw new DemoStop(url + " answered with a redirect, which is not followed (VRP §2).");
-        }
-        if (!res.ok) throw new DemoStop(url + " answered HTTP " + res.status + ".");
-        return { status: res.status, body: await res.json() };
+      function nodeGet(url) {
+        return fetchWithin(url, { redirect: "manual", cache: "no-store" }, async (res) => {
+          if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400)) {
+            throw new DemoStop(url + " answered with a redirect, which is not followed (VRP §2).");
+          }
+          if (!res.ok) throw new DemoStop(url + " answered HTTP " + res.status + ".");
+          return { status: res.status, body: await res.json() };
+        });
       }
       // §2, §7: the discovery document of HOST.
       function discoveryProblems(doc) {
@@ -635,13 +655,15 @@
             offerUrl.searchParams.set("check_in", ci);
             offerUrl.searchParams.set("check_out", co);
             offerUrl.searchParams.set("guests", String(guests));
-            const res = await fetch(offerUrl.href, { redirect: "manual", cache: "no-store" });
-            if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400)) {
-              throw new DemoStop("The offer endpoint answered with a redirect, which is not followed (VRP §2).");
-            }
-            if (!res.ok) continue; // no offer for this window; the next one is tried
-            offer = await res.json();
-            offerStatus = res.status;
+            const answer = await fetchWithin(offerUrl.href, { redirect: "manual", cache: "no-store" }, async (res) => {
+              if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400)) {
+                throw new DemoStop("The offer endpoint answered with a redirect, which is not followed (VRP §2).");
+              }
+              return res.ok ? { status: res.status, body: await res.json() } : null;
+            });
+            if (answer === null) continue; // no offer for this window; the next one is tried
+            offer = answer.body;
+            offerStatus = answer.status;
             const o = offer && offer.offer;
             if (o && o.availability && o.availability.available === true && o.price && o.price.agent_total != null) { found = true; break; }
           }
@@ -705,7 +727,7 @@
             (signedFacts.length ? '<div>' + esc(signedFacts.join(" · ")) + '</div>' : '') +
             '</div>' +
             '<a class="env-cta" href="' + esc(url) + '" target="_blank" rel="noopener">Book direct on ' + esc(cd) + ' →</a>' +
-            '<div class="env-frontier">Checkout runs in Stripe test mode today; autonomous agent payment is the open frontier.</div>';
+            '<div class="env-frontier">The link opens the host\u2019s own checkout; autonomous agent payment is the open frontier.</div>';
           // §6: at valid_until the offer may no longer be quoted or booked from.
           expiryTimer = setTimeout(() => {
             expiryTimer = null;

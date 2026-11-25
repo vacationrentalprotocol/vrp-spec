@@ -119,6 +119,8 @@
         padding: 10px 12px;
       }
       .note { color: var(--muted); font-size: 0.92rem; }
+      .field-error { margin: 12px 0 0; color: var(--fail); font-weight: 700; }
+      textarea[aria-invalid="true"] { border-color: var(--fail); }
       @media print {
         .site-header, .no-print, .vform, .tabs, footer { display: none !important; }
         body { background: #fff; }
@@ -164,13 +166,15 @@
           <p>
             <strong>Were you handed this proof</strong> — say, as a bank,
             card-issuer, or insurance reviewer assessing a dispute? You are the
-            intended audience. A fabricated booking cannot produce a receipt
-            that passes these checks: the signature must match the key
-            published on the property's own domain, and the receipt must
-            already be anchored in the public log. If the verdict below is
-            green, the booking promise shown is what that property committed
-            to, at the time it was committed. You do not need an account, a
-            tool, or anyone's permission to re-run this check.
+            intended audience. A receipt passes these checks only when its
+            signature matches the key published on the property's own domain
+            and its fingerprint is already recorded in the public log. If the
+            verdict below is green, the terms shown are exactly what that
+            domain signed, and the log recorded them no later than its signed
+            tree head. That is what the checks show: who signed what, and that
+            it was recorded. They do not show that a payment was made or that
+            a stay took place. You do not need an account, a tool, or anyone's
+            permission to re-run this check.
           </p>
         </div>
       </section>
@@ -178,39 +182,46 @@
       <section class="band">
         <div class="panel">
           <h2>1. Paste the receipt</h2>
-          <div class="vform">
+          <form id="formVerify" class="vform" novalidate>
             <div class="field">
               <label for="paste">Receipt (the exact compact JWS string, verbatim)</label>
-              <textarea id="paste" spellcheck="false" placeholder="eyJhbGciOiJFZERTQSI..."></textarea>
+              <textarea id="paste" spellcheck="false" aria-describedby="pasteError" placeholder="eyJhbGciOiJFZERTQSI..."></textarea>
             </div>
+            <p id="pasteError" class="field-error" role="alert" hidden></p>
             <div>
-              <button id="btnVerify">Verify</button>
+              <button id="btnVerify" type="submit">Verify</button>
             </div>
             <p class="note">
               The property's public key is fetched from the issuer domain named
               <em>inside</em> the signed receipt (<code>/.well-known/jwks.json</code>),
               and the inclusion proof from that domain's log endpoint. The tree head
               is checked against the key the log operator publishes on its own
-              domain, never a key the property serves. Nothing you paste is sent
-              anywhere — all fetches go straight to the property's own domain and
-              the log, and all checks run locally.
+              domain, never a key the property serves. The receipt itself never
+              leaves your browser, and all checks run locally. What is sent: a
+              request for the keys, to the issuer domain; the receipt's SHA-256
+              fingerprint, in a lookup at that domain's log endpoint and, when
+              it has no proof there, at the public log on www.hemmabo.com; a
+              request for the log operator's key, to the operator's domain; and
+              requests for the Public Suffix List and ICANN's gTLD list, to
+              their publishers.
             </p>
-          </div>
+          </form>
         </div>
       </section>
 
       <section class="resources" id="resultSection" style="display: none">
         <div class="panel">
           <h2>2. Result</h2>
-          <div id="verdict" class="verdict"></div>
+          <div id="verdict" class="verdict" role="status" aria-live="polite" aria-atomic="true"></div>
           <div id="checks" class="checks"></div>
           <h3>The promise this receipt proves</h3>
           <div id="facts" class="facts"></div>
           <h3>Confirmation reference (recomputed)</h3>
           <p class="note">
             This is the receipt's SHA-256 fingerprint — the booking's
-            confirmation reference. Anyone holding the receipt can recompute it;
-            nobody can fabricate it for a booking that does not exist.
+            confirmation reference. Anyone holding the receipt can recompute it.
+            It identifies these exact receipt bytes; on its own it proves
+            neither a payment nor a stay.
           </p>
           <div id="refbox" class="refbox"></div>
           <p class="no-print" style="margin-top: 12px">
@@ -364,8 +375,8 @@
         function loadLists() {
           if (!listsPromise) {
             listsPromise = Promise.all([
-              fetch(PSL_URL).then(function (r) { return r.ok ? r.text() : Promise.reject(new Error("PSL " + r.status)); }),
-              fetch(GTLDS_URL).then(function (r) { return r.ok ? r.json() : Promise.reject(new Error("gTLD list " + r.status)); }),
+              fetchWithin(PSL_URL, {}, function (r) { return r.ok ? r.text() : Promise.reject(new Error("PSL " + r.status)); }),
+              fetchWithin(GTLDS_URL, {}, function (r) { return r.ok ? r.json() : Promise.reject(new Error("gTLD list " + r.status)); }),
             ]).then(function (res) {
               var lines = res[0].split("\n");
               var a = lines.findIndex(function (l) { return l.includes("===BEGIN ICANN DOMAINS==="); });
@@ -419,17 +430,43 @@
           }
           return { state: "pass", detail: cd + " is its own registrable domain under the ICANN section, not under a brand or closed top-level domain." };
         }
+        // Every request has an end. A property, a log or a list publisher that
+        // does not answer is told from one that answers "no": after
+        // NET_TIMEOUT_MS the request is given up, and the result is unknown, not
+        // a failed check. `read` takes the Response; fetching and reading the
+        // body both fall inside the one limit.
+        var NET_TIMEOUT_MS = 15000;
+        async function fetchWithin(url, options, read) {
+          var controller = new AbortController();
+          var timer = setTimeout(function () { controller.abort(); }, NET_TIMEOUT_MS);
+          try {
+            var init = { signal: controller.signal };
+            for (var key in options) init[key] = options[key];
+            return await read(await fetch(url, init));
+          } catch (err) {
+            if (controller.signal.aborted) {
+              var late = new Error(url + " did not answer within " + NET_TIMEOUT_MS / 1000 + " seconds. Nothing is known from it; try again.");
+              late.unknown = true;
+              late.timeout = true;
+              throw late;
+            }
+            throw err;
+          } finally {
+            clearTimeout(timer);
+          }
+        }
         // A browser cannot see where a redirect points, so no redirect from the
         // issuer is followed: one makes the result unknown (§2, §9).
-        async function nodeFetchJson(url) {
-          var res = await fetch(url, { redirect: "manual", cache: "no-store" });
-          if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400)) {
-            var e = new Error(url + " answered with a redirect. A browser cannot see where it points, so the result is unknown (VRP §2).");
-            e.unknown = true;
-            throw e;
-          }
-          if (!res.ok) throw new Error(url + " answered HTTP " + res.status + ".");
-          return res.json();
+        function nodeFetchJson(url) {
+          return fetchWithin(url, { redirect: "manual", cache: "no-store" }, function (res) {
+            if (res.type === "opaqueredirect" || (res.status >= 300 && res.status < 400)) {
+              var e = new Error(url + " answered with a redirect. A browser cannot see where it points, so the result is unknown (VRP §2).");
+              e.unknown = true;
+              throw e;
+            }
+            if (!res.ok) throw new Error(url + " answered HTTP " + res.status + ".");
+            return res.json();
+          });
         }
 
         // RFC 6962 §2.1.1 — exact mirror of the log's reference implementation.
@@ -545,8 +582,18 @@
           });
         }
 
+        function pasteError(message) {
+          var box = document.getElementById("pasteError");
+          var field = document.getElementById("paste");
+          box.textContent = message;
+          box.hidden = !message;
+          if (message) { field.setAttribute("aria-invalid", "true"); field.focus(); }
+          else field.removeAttribute("aria-invalid");
+        }
         async function run() {
           var mine = clearResult();
+          if (!document.getElementById("paste").value.trim()) return pasteError("Paste the receipt first.");
+          pasteError("");
           var stale = function () { return mine !== currentRun; };
           // This run's own rows: those before the attestations, what was found
           // out about each attestation, and those after.
@@ -674,16 +721,19 @@
             // for verification (receipt-v1 §5, transparency-log §3).
             var proof = null;
             var proofSource = "";
+            // A log that did not answer in time is said as that, not as "no proof".
+            var proofLate = false;
+            var readProof = function (res) { return res.ok ? res.json() : null; };
             try {
               // No redirect from the node is followed (§2): a redirect leaves no proof.
-              var r1 = await fetch("https://" + domain + "/.well-known/vrp/log/v0.1/proof?hash=" + encodeURIComponent(artifactHash), { redirect: "manual", cache: "no-store" });
-              if (r1.ok) { proof = await r1.json(); proofSource = "property domain log proxy"; }
-            } catch (_e) { /* fall through */ }
+              proof = await fetchWithin("https://" + domain + "/.well-known/vrp/log/v0.1/proof?hash=" + encodeURIComponent(artifactHash), { redirect: "manual", cache: "no-store" }, readProof);
+              if (proof) proofSource = "property domain log proxy";
+            } catch (e1) { proof = null; if (e1 && e1.timeout) proofLate = true; }
             if (!proof || !proof.inclusion) {
               try {
-                var r2 = await fetch(FALLBACK_LOG + "?hash=" + encodeURIComponent(artifactHash));
-                if (r2.ok) { proof = await r2.json(); proofSource = "public log"; }
-              } catch (_e) { /* handled below */ }
+                proof = await fetchWithin(FALLBACK_LOG + "?hash=" + encodeURIComponent(artifactHash), {}, readProof);
+                if (proof) proofSource = "public log";
+              } catch (e2) { proof = null; if (e2 && e2.timeout) proofLate = true; }
             }
 
             // "Anchored" requires all of: the inclusion proof recomputes to the tree
@@ -728,7 +778,7 @@
                 sthDetail = "the log is operated by the issuing domain itself (" + logId + ") — not an independent anchor";
               } else {
                 try {
-                  var didDoc = await (await fetch(didUrl)).json();
+                  var didDoc = await fetchWithin(didUrl, {}, function (res) { return res.json(); });
                   var sthPayload = (await verifyJws(proof.signature.jws, jwksFromDidDocument(didDoc), "log")).payload;
                   sthVerified =
                     sthPayload.root_hash === sth.root_hash &&
@@ -747,8 +797,10 @@
               if (!anchored) notAnchoredWhy = inclusionOk ? sthDetail : inclusionWhy;
             } else {
               addCheck(null, "Transparency-log inclusion",
-                "no inclusion proof found for this receipt's reference — signature-only verification");
-              notAnchoredWhy = "no inclusion proof was found";
+                proofLate
+                  ? "a log did not answer within " + NET_TIMEOUT_MS / 1000 + " seconds, so whether the receipt is recorded is unknown — signature-only verification; try again"
+                  : "no inclusion proof found for this receipt's reference — signature-only verification");
+              notAnchoredWhy = proofLate ? "a log did not answer in time, so this is unknown" : "no inclusion proof was found";
             }
 
             // Facts panel — the promise, in clear text.
@@ -863,9 +915,13 @@
           }
         }
 
-        document.getElementById("btnVerify").addEventListener("click", run);
+        // A real form: the button sends it.
+        document.getElementById("formVerify").addEventListener("submit", function (ev) {
+          ev.preventDefault();
+          return run();
+        });
         // A result is for the text as it was when it was checked.
-        document.getElementById("paste").addEventListener("input", clearResult);
+        document.getElementById("paste").addEventListener("input", function () { pasteError(""); clearResult(); });
         document.getElementById("paste").addEventListener("change", clearResult);
 
         // Privacy-safe prefill: a receipt after '#' never reaches any server.

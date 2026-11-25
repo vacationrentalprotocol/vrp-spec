@@ -68,6 +68,7 @@ const ROUTES = [
   ["/spec/addon-attestation-layer-v0.1", "spec/addon-attestation-layer-v0.1.md"],
   ["/spec/domain-continuity-v0.1", "spec/domain-continuity-v0.1.md"],
   ["/spec/node-tool-binding-v0.1", "spec/node-tool-binding-v0.1.md"],
+  ["/spec/peers-v0.1", "spec/peers-v0.1.md"],
   ["/verify-receipt", "verify-receipt.html"],
   ["/docs/conformance-report", "docs/conformance-report.md"],
 ];

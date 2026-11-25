@@ -40,6 +40,7 @@ const MANIFEST = [
   { file: "spec/addon-attestation-layer-v0.1.md", title: "Addon attestation layer v0.1" },
   { file: "spec/domain-continuity-v0.1.md", title: "Domain continuity v0.1" },
   { file: "spec/node-tool-binding-v0.1.md", title: "Node tool binding v0.1" },
+  { file: "spec/peers-v0.1.md", title: "Peers v0.1 (experimental)" },
   { file: "docs/implement-vrp.md", title: "Implement VRP signed offers" },
   { file: "docs/implement-attestations.md", title: "Implement portable attestations" },
   { file: "docs/agent-guide.md", title: "Agent integration guide" },
@@ -59,6 +60,7 @@ const MACHINE_ARTIFACTS = [
   ["Receipt envelope JSON Schema", `${ORIGIN}/schemas/vrp-receipt.v1.schema.json`],
   ["StayIntent query JSON Schema", `${ORIGIN}/schemas/stayintent-query-v0.1.schema.json`],
   ["StayIntent response JSON Schema", `${ORIGIN}/schemas/stayintent-response-v0.1.schema.json`],
+  ["Peers JSON Schema (experimental)", `${ORIGIN}/schemas/peers-v0.1.schema.json`],
   ["Live reference node discovery", "https://villaakerlyckan.se/.well-known/vacation-rental.json"],
   ["In-browser offer verifier", `${ORIGIN}/verify`],
 ];

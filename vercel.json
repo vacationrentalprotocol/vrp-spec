@@ -112,6 +112,15 @@
       ]
     },
     {
+      "source": "/spec/peers-v0.1.md",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://vacationrentalprotocol.com/spec/peers-v0.1>; rel=\"canonical\""
+        }
+      ]
+    },
+    {
       "source": "/docs/what-is-vrp.md",
       "headers": [
         {
@@ -603,6 +612,10 @@
     {
       "source": "/schemas/stayintent-response-v0.1",
       "destination": "/schemas/stayintent-response-v0.1.schema.json"
+    },
+    {
+      "source": "/schemas/peers-v0.1",
+      "destination": "/schemas/peers-v0.1.schema.json"
     },
     {
       "source": "/spec/:slug",

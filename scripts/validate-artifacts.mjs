@@ -149,6 +149,12 @@ function validate(schema, value, state, at = "$") {
   }
 
   if (Array.isArray(value)) {
+    if (schema.maxItems !== undefined && value.length > schema.maxItems) {
+      add(`expected maxItems ${schema.maxItems}, got ${value.length}`);
+    }
+    if (schema.uniqueItems && new Set(value.map((item) => JSON.stringify(item))).size !== value.length) {
+      add("expected unique items");
+    }
     if (schema.contains) {
       const containsMatch = value.some((item, index) => validate(schema.contains, item, state, `${at}[${index}]`).length === 0);
       if (!containsMatch) add("array does not contain a required matching item");
@@ -564,6 +570,24 @@ if (reportSchema && reportExample) {
   const badOutcome = structuredClone(reportExample);
   badOutcome.results[0].outcome = "ok";
   assertSchemaInvalid(reportSchema, badOutcome, "negative: conformance report must reject outcomes outside the five-value set");
+}
+
+// spec/peers-v0.1.md (experimental, ADR 0018): every peers member in the
+// vectors against its own schema, and every discovery document in the positive
+// network against the unchanged Core discovery schema.
+const peersSchema = readJson("schemas/peers-v0.1.schema.json");
+const peersPositive = readJson("examples/conformance/peers/positive.v0.1.json");
+const peersNegative = readJson("examples/conformance/peers/negative.v0.1.json");
+const coreDiscoverySchema = readJson("schemas/discovery-v0.1.schema.json");
+if (peersSchema && peersPositive && peersNegative && coreDiscoverySchema) {
+  for (const [domain, doc] of Object.entries(peersPositive.documents)) {
+    assertSchemaValid(coreDiscoverySchema, doc, `peers positive ${domain}: Core discovery schema`);
+    if ("peers" in doc) assertSchemaValid(peersSchema, doc.peers, `peers positive ${domain}: peers schema`);
+  }
+  for (const c of peersNegative.cases) {
+    if (c.schema_valid) assertSchemaValid(peersSchema, c.peers, `peers negative ${c.name}`);
+    else assertSchemaInvalid(peersSchema, c.peers, `negative: peers schema must reject ${c.name}`);
+  }
 }
 
 const discoverySchema = readJson("schemas/discovery-v0.1.schema.json");

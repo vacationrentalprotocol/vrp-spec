@@ -1,0 +1,202 @@
+{
+  "name": "vrp-peers-positive-v0.1",
+  "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+  "description": "A small network of discovery documents (Core §2) with peers members (spec/peers-v0.1.md §3), and walks over it (§5, §6). documents maps each domain to the document it serves at /.well-known/vacation-rental.json; offline.invalid serves none. A walk's reached set is sorted by domain only to make the vector comparable; it carries no meaning (§6 item 7). not_reached names are the vectors' own: fetch_failed, not_vrp_discovery, canonical_domain_mismatch, not_node_url.",
+  "psl_icann_rules": [
+    "com",
+    "net",
+    "org",
+    "uk",
+    "co.uk"
+  ],
+  "icann_specification13_tlds": [
+    "amazon"
+  ],
+  "closed_tlds": [
+    "booking",
+    "hotels"
+  ],
+  "documents": {
+    "example.com": {
+      "protocol": "vacation-rental-protocol",
+      "protocol_version": "0.1",
+      "canonical_domain": "example.com",
+      "jwks_url": "https://example.com/.well-known/jwks.json",
+      "verified_stay_offer_endpoint": "https://example.com/api/verified-stay-offer",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "example.net",
+          "example.org"
+        ],
+        "updated_at": "2026-11-07T15:00:00Z"
+      }
+    },
+    "example.net": {
+      "protocol": "vacation-rental-protocol",
+      "protocol_version": "0.1",
+      "canonical_domain": "example.net",
+      "jwks_url": "https://example.net/.well-known/jwks.json",
+      "verified_stay_offer_endpoint": "https://example.net/api/verified-stay-offer",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "example.co.uk",
+          "example.com"
+        ]
+      }
+    },
+    "example.org": {
+      "protocol": "vacation-rental-protocol",
+      "protocol_version": "0.1",
+      "canonical_domain": "example.org",
+      "jwks_url": "https://example.org/.well-known/jwks.json",
+      "verified_stay_offer_endpoint": "https://example.org/api/verified-stay-offer",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "example.com",
+          "impostor.invalid",
+          "offline.invalid"
+        ]
+      }
+    },
+    "example.co.uk": {
+      "protocol": "vacation-rental-protocol",
+      "protocol_version": "0.1",
+      "canonical_domain": "example.co.uk",
+      "jwks_url": "https://example.co.uk/.well-known/jwks.json",
+      "verified_stay_offer_endpoint": "https://example.co.uk/api/verified-stay-offer"
+    },
+    "impostor.invalid": {
+      "protocol": "vacation-rental-protocol",
+      "protocol_version": "0.1",
+      "canonical_domain": "example.com",
+      "jwks_url": "https://impostor.invalid/.well-known/jwks.json",
+      "verified_stay_offer_endpoint": "https://impostor.invalid/api/verified-stay-offer",
+      "peers": {
+        "spec": "https://vacationrentalprotocol.com/spec/peers-v0.1",
+        "nodes": [
+          "example.net"
+        ]
+      }
+    }
+  },
+  "walks": [
+    {
+      "name": "from-com-depth-1",
+      "start": "example.com",
+      "max_depth": 1,
+      "note": "example.net and example.org list domains one hop further; the depth limit stops the walk, so it is not complete (§6 item 6).",
+      "expected": {
+        "reached": [
+          "example.com",
+          "example.net",
+          "example.org"
+        ],
+        "complete": false,
+        "not_reached": []
+      }
+    },
+    {
+      "name": "from-com-depth-2",
+      "start": "example.com",
+      "max_depth": 2,
+      "note": "Every listed domain is fetched once; the cycle example.com <-> example.net ends there (§6 item 2). impostor.invalid serves a document naming another domain and offline.invalid does not answer: neither is a node, and impostor.invalid's own peers are not read (§5).",
+      "expected": {
+        "reached": [
+          "example.co.uk",
+          "example.com",
+          "example.net",
+          "example.org"
+        ],
+        "complete": true,
+        "not_reached": [
+          {
+            "domain": "impostor.invalid",
+            "reason": "canonical_domain_mismatch"
+          },
+          {
+            "domain": "offline.invalid",
+            "reason": "fetch_failed"
+          }
+        ]
+      }
+    },
+    {
+      "name": "from-net-depth-2",
+      "start": "example.net",
+      "max_depth": 2,
+      "note": "example.org is reached at depth 2; the domains it lists lie beyond the limit, so the walk is not complete.",
+      "expected": {
+        "reached": [
+          "example.co.uk",
+          "example.com",
+          "example.net",
+          "example.org"
+        ],
+        "complete": false,
+        "not_reached": []
+      }
+    },
+    {
+      "name": "from-net-depth-3",
+      "start": "example.net",
+      "max_depth": 3,
+      "expected": {
+        "reached": [
+          "example.co.uk",
+          "example.com",
+          "example.net",
+          "example.org"
+        ],
+        "complete": true,
+        "not_reached": [
+          {
+            "domain": "impostor.invalid",
+            "reason": "canonical_domain_mismatch"
+          },
+          {
+            "domain": "offline.invalid",
+            "reason": "fetch_failed"
+          }
+        ]
+      }
+    },
+    {
+      "name": "from-co-uk",
+      "start": "example.co.uk",
+      "max_depth": 3,
+      "note": "A node with no peers member is a node; a walk from it reaches only itself (§7).",
+      "expected": {
+        "reached": [
+          "example.co.uk"
+        ],
+        "complete": true,
+        "not_reached": []
+      }
+    },
+    {
+      "name": "from-impostor",
+      "start": "impostor.invalid",
+      "max_depth": 3,
+      "note": "A starting domain that is not a node counts nothing, and its peers are not followed (§5, §6 item 3).",
+      "expected": {
+        "reached": [],
+        "complete": true,
+        "not_reached": [
+          {
+            "domain": "impostor.invalid",
+            "reason": "canonical_domain_mismatch"
+          }
+        ]
+      }
+    }
+  ],
+  "same_reached_set": [
+    [
+      "from-com-depth-2",
+      "from-net-depth-3"
+    ]
+  ]
+}

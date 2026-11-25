@@ -135,7 +135,7 @@ function build() {
 reading and citation.
 
 - Standard: **Vacation Rental Protocol (VRP)**, public draft **v0.1**
-- Author & maintainer: **Rouiada Abbas** — VRP is an open standard with no central gatekeeper
+- Author and lead maintainer: **Rouiada Abbas** — VRP is an open standard with no central gatekeeper
 - Reference implementation: **HemmaBo** (not the owner of the standard)
 - Canonical site: <${ORIGIN}>
 - Repository: <${GH}>

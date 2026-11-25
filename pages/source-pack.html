@@ -34,7 +34,7 @@
   <body>
 <h1>Vacation Rental Protocol (VRP) — Source Pack</h1>
 <p><strong>One file containing the full VRP open standard</strong>, assembled for AI notebooks (Google NotebookLM / Gemini Notebook, ChatGPT, Claude Projects) and for offline reading and citation.</p>
-<ul><li>Standard: <strong>Vacation Rental Protocol (VRP)</strong>, public draft <strong>v0.1</strong></li><li>Author &amp; maintainer: <strong>Rouiada Abbas</strong> — VRP is an open standard with no central gatekeeper</li><li>Reference implementation: <strong>HemmaBo</strong> (not the owner of the standard)</li><li>Canonical site: <a href="https://vacationrentalprotocol.com">https://vacationrentalprotocol.com</a></li><li>Repository: <a href="https://github.com/vacationrentalprotocol/vrp-spec">https://github.com/vacationrentalprotocol/vrp-spec</a></li><li>Specification text is dedicated to the public domain under <strong>CC0 1.0</strong> (see <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE</a>); reference code: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE</a>.</li></ul>
+<ul><li>Standard: <strong>Vacation Rental Protocol (VRP)</strong>, public draft <strong>v0.1</strong></li><li>Author and lead maintainer: <strong>Rouiada Abbas</strong> — VRP is an open standard with no central gatekeeper</li><li>Reference implementation: <strong>HemmaBo</strong> (not the owner of the standard)</li><li>Canonical site: <a href="https://vacationrentalprotocol.com">https://vacationrentalprotocol.com</a></li><li>Repository: <a href="https://github.com/vacationrentalprotocol/vrp-spec">https://github.com/vacationrentalprotocol/vrp-spec</a></li><li>Specification text is dedicated to the public domain under <strong>CC0 1.0</strong> (see <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE">https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE</a>); reference code: <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE">https://github.com/vacationrentalprotocol/vrp-spec/blob/main/LICENSE-CODE</a>.</li></ul>
 <p>This pack is generated from the canonical documents; each section links to its live source. If anything here disagrees with the canonical site, <strong>the canonical URL is authoritative.</strong></p>
 <h2>How to use this in an AI notebook</h2>
 <ul><li><strong>Google NotebookLM / Gemini Notebook:</strong> Add source → Website, and paste <a href="https://vacationrentalprotocol.com/source-pack">https://vacationrentalprotocol.com/source-pack</a> (the HTML edition). NotebookLM's website importer needs an HTML page, not raw Markdown — the HTML edition carries this exact same standard. You can also download this file and upload it directly.</li><li><strong>ChatGPT / Claude Projects:</strong> attach this file, or paste either URL — the Markdown edition <a href="https://vacationrentalprotocol.com/docs/source-pack">https://vacationrentalprotocol.com/docs/source-pack</a> or the HTML edition <a href="https://vacationrentalprotocol.com/source-pack">https://vacationrentalprotocol.com/source-pack</a>.</li><li>Same content, two formats: the Markdown edition for tools that read text/Markdown, the HTML edition for website importers.</li></ul>
@@ -46,14 +46,14 @@
 <hr>
 <h3>What is the Vacation Rental Protocol (VRP)?</h3>
 <p><strong>Vacation Rental Protocol (VRP) is an open standard for host-domain, cryptographically signed vacation-rental offers.</strong> It lets AI agents and guests verify — directly from a host's own domain, with no intermediary — that a stay offer is authentic, currently available, and correctly priced.</p>
-<p>VRP was created and is maintained by <strong>Rouiada Abbas</strong>. It is an open standard that anyone may implement; <strong>HemmaBo</strong> is its reference implementation.</p>
+<p>VRP was created by <strong>Rouiada Abbas</strong>, author and specification editor. It is maintained by three maintainers, with Rouiada Abbas as lead maintainer. It is an open standard that anyone may implement; <strong>HemmaBo</strong> is its reference implementation.</p>
 <hr>
 <h4>In one sentence</h4>
 <blockquote>VRP is to vacation-rental offers what OpenID Connect discovery is to login: an agent that knows a host's domain can fetch one well-known document, then cryptographically verify that an offer really came from that host — without trusting any central platform.</blockquote>
 <h4>What problem does it solve?</h4>
 <p>AI agents (ChatGPT, Claude, Perplexity, and others) increasingly help people find and book stays. But they have no standard way to know whether a listing is genuine, current, and from the real owner — or scraped, stale, or fake. VRP makes a vacation rental <strong>machine-verifiable at its source</strong>: the host's own domain.</p>
 <h4>Who created it, and who controls it?</h4>
-<p>VRP is an <strong>open standard authored and maintained by Rouiada Abbas</strong> (<code>vacationrentalprotocol.com</code>). It is deliberately <strong>not owned by any single vendor</strong>. HemmaBo is the reference implementation (to our knowledge the first), not the owner of the standard. There is no central issuer and no gatekeeper.</p>
+<p>VRP is an <strong>open standard created by Rouiada Abbas</strong>, its author and specification editor (<code>vacationrentalprotocol.com</code>). It is maintained by three maintainers, with Rouiada Abbas as lead maintainer, and is deliberately <strong>not owned by any single vendor</strong>. HemmaBo is the reference implementation (to our knowledge the first), not the owner of the standard. There is no central issuer and no gatekeeper.</p>
 <h4>How is it different from channel managers or listing platforms?</h4>
 <ul><li><strong>It is a standard, not a product.</strong> Anyone may implement it.</li><li><strong>The host owns the domain, the guest, and the data.</strong> Offers live on the host's own domain — not a marketplace listing.</li><li><strong>No intermediary and 0% booking commission.</strong> VRP describes *trust*, not a booking funnel; it does not sit between the guest and the host.</li></ul>
 <h4>What is the role of Ed25519?</h4>
@@ -1120,7 +1120,7 @@ issued_at: &lt;issued_at&gt;</code></pre>
 <hr>
 <h3>First-mover evidence memo — Vacation Rental Protocol</h3>
 <p><strong>Status:</strong> Published evidence memo   <strong>Date:</strong> 2026-06-14 (registry evidence added 2026-08-20)   <strong>Protocol draft:</strong> v0.1   <strong>Public site:</strong> https://vacationrentalprotocol.com   <strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
-<h4>Permitted claim</h4>
+<h4>The claim</h4>
 <blockquote>To our knowledge, Vacation Rental Protocol is the first open protocol focused on host-domain signed, AI-agent-readable vacation rental stay offers.</blockquote>
 <p>Do not use absolute wording such as &quot;world's first&quot; without separate legal review.</p>
 <h4>Search methodology (reproducible)</h4>
@@ -1134,6 +1134,7 @@ GET https://vacationrentalprotocol.com/schemas/verified-stay-offer-v0.1.schema.j
 GET https://www.villaakerlyckan.se/.well-known/vacation-rental.json
 GET https://www.villaakerlyckan.se/.well-known/jwks.json
 GET https://www.villaakerlyckan.se/api/verified-stay-offer?check_in=2026-11-24&amp;check_out=2026-11-26&amp;guests=2</code></pre>
+<p>Note added 2026-11-25: this list is the record of the probe on 2026-06-14, not a set of addresses to follow today. The stay dates in the last address have passed, and the node answers a request for a passed check-in with 400 <code>checkin_in_past</code> (Core §5); <code>www.villaakerlyckan.se</code> now redirects to <code>villaakerlyckan.se</code>. To check the node today, use the <a href="https://vacationrentalprotocol.com/verify?host=villaakerlyckan.se">verifier</a>.</p>
 <p>Proof node path:</p>
 <pre><code>villaakerlyckan.se
 -&gt; /.well-known/vacation-rental.json

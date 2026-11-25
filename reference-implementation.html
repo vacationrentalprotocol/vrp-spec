@@ -18,14 +18,24 @@
       <nav class="top-nav" aria-label="Main navigation">
         <a class="brand" href="/">VRP</a>
         <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
           <a href="/spec/v0.1">Core spec</a>
-          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
-          <a href="/implement">Implement</a>
+          <a href="/reference-implementation">Live proof</a>
           <a href="/verify">Verify offer</a>
-          <a href="/reference-implementation">Reference impl</a>
+          <a href="/implement">Implement</a>
+          <a href="/implementations">Implementations</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
           <a href="/declarations">Declarations</a>
-          <a href="/docs/first-mover-evidence-memo">Evidence memo</a>
           <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
         </div>
       </nav>
     </header>
@@ -61,12 +71,12 @@
             <span>2. Node JWKS (Ed25519)</span>
             <code>https://villaakerlyckan.se/.well-known/jwks.json</code>
           </a>
-          <a href="https://villaakerlyckan.se/api/verified-stay-offer?check_in=2026-11-24&amp;check_out=2026-11-26&amp;guests=2">
-            <span>3. Signed verified stay offer</span>
-            <code>/api/verified-stay-offer?check_in=…&amp;check_out=…&amp;guests=…</code>
+          <a href="/verify?host=villaakerlyckan.se">
+            <span>3. Signed verified stay offer (fetch and verify it in your browser)</span>
+            <code>https://villaakerlyckan.se/api/verified-stay-offer?check_in=…&amp;check_out=…&amp;guests=…</code>
           </a>
           <a href="https://villaakerlyckan.se/.well-known/ucp">
-            <span>4. UCP checkout discovery (composes with VRP)</span>
+            <span>4. UCP profile (composes with VRP)</span>
             <code>https://villaakerlyckan.se/.well-known/ucp</code>
           </a>
         </div>
@@ -75,27 +85,27 @@
       <section class="band">
         <div class="grid two">
           <article>
-            <h2>HemmaBo (infrastructure)</h2>
+            <h2>HemmaBo (reference implementation)</h2>
             <ul>
-              <li><a href="https://www.hemmabo.com/">hemmabo.com</a> — host onboarding and federation operator</li>
-              <li><a href="https://www.hemmabo.com/.well-known/federation-members.json">federation-members.json</a></li>
-              <li><a href="https://www.hemmabo.com/.well-known/federation-attestation.json">federation-attestation.json</a></li>
+              <li><a href="https://www.hemmabo.com/">www.hemmabo.com</a> — operates the proof node</li>
+              <li><a href="https://github.com/HemmaBo-se/hemmabo-mcp-server">hemmabo-mcp-server</a> — MCP server and verifier, Apache-2.0</li>
+              <li>The proof node declares <code>operator.key_custody: platform</code>: HemmaBo holds and operates its signing key on the host's behalf.</li>
             </ul>
           </article>
           <article>
-            <h2>What this proves</h2>
+            <h2>What the proof path shows</h2>
             <ul>
-              <li>Host-domain signed offers with live availability</li>
-              <li>Exact total price and <code>valid_until</code> freshness</li>
-              <li>Direct booking URL on the host domain</li>
-              <li>VRP schema conformance against this repo</li>
+              <li>The offer was signed by a key the host domain publishes, has not been altered, and is within its stated lifetime (<code>valid_until</code>).</li>
+              <li>The signed offer carries the host domain's own statements of availability and exact price for the stay asked for.</li>
+              <li>The direct booking URL is on the host domain.</li>
+              <li>A valid signature proves the provenance and integrity of those statements; it does not guarantee that the stay is in fact available.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section class="resources">
-        <h2>Allowed public claim</h2>
+        <h2>First-mover evidence</h2>
         <p>
           To our knowledge, Vacation Rental Protocol is the first open protocol
           focused on host-domain signed, AI-agent-readable vacation rental stay
@@ -105,7 +115,7 @@
         <p>
           Repository:
           <a href="https://github.com/vacationrentalprotocol/vrp-spec">vacationrentalprotocol/vrp-spec</a>
-          · Contact: <a href="mailto:info@hemmabo.se">info@hemmabo.se</a>
+          · Contact: <a href="mailto:hello@vacationrentalprotocol.com">hello@vacationrentalprotocol.com</a>
         </p>
       </section>
     </main>

@@ -5,8 +5,10 @@ cryptographically signed vacation-rental offers.** It lets AI agents and guests
 verify — directly from a host's own domain, with no intermediary — that a stay
 offer is authentic, currently available, and correctly priced.
 
-VRP was created and is maintained by **Rouiada Abbas**. It is an open standard
-that anyone may implement; **HemmaBo** is its reference implementation.
+VRP was created by **Rouiada Abbas**, author and specification editor. It is
+maintained by three maintainers, with Rouiada Abbas as lead maintainer. It is an
+open standard that anyone may implement; **HemmaBo** is its reference
+implementation.
 
 ---
 
@@ -27,9 +29,10 @@ domain.
 
 ## Who created it, and who controls it?
 
-VRP is an **open standard authored and maintained by Rouiada Abbas**
-(`vacationrentalprotocol.com`). It is deliberately **not owned by any single
-vendor**. HemmaBo is the reference implementation (to our knowledge the first),
+VRP is an **open standard created by Rouiada Abbas**, its author and
+specification editor (`vacationrentalprotocol.com`). It is maintained by three
+maintainers, with Rouiada Abbas as lead maintainer, and is deliberately **not
+owned by any single vendor**. HemmaBo is the reference implementation (to our knowledge the first),
 not the owner of the standard. There is no central issuer and no gatekeeper.
 
 ## How is it different from channel managers or listing platforms?

@@ -96,7 +96,7 @@
       <article>
 <h1 id="first-mover-evidence-memo-vacation-rental-protocol">First-mover evidence memo — Vacation Rental Protocol</h1>
 <p><strong>Status:</strong> Published evidence memo   <strong>Date:</strong> 2026-06-14 (registry evidence added 2026-08-20)   <strong>Protocol draft:</strong> v0.1   <strong>Public site:</strong> https://vacationrentalprotocol.com   <strong>Repository:</strong> https://github.com/vacationrentalprotocol/vrp-spec</p>
-<h2 id="permitted-claim">Permitted claim</h2>
+<h2 id="the-claim">The claim</h2>
 <blockquote>To our knowledge, Vacation Rental Protocol is the first open protocol focused on host-domain signed, AI-agent-readable vacation rental stay offers.</blockquote>
 <p>Do not use absolute wording such as &quot;world's first&quot; without separate legal review.</p>
 <h2 id="search-methodology-reproducible">Search methodology (reproducible)</h2>
@@ -110,6 +110,7 @@ GET https://vacationrentalprotocol.com/schemas/verified-stay-offer-v0.1.schema.j
 GET https://www.villaakerlyckan.se/.well-known/vacation-rental.json
 GET https://www.villaakerlyckan.se/.well-known/jwks.json
 GET https://www.villaakerlyckan.se/api/verified-stay-offer?check_in=2026-11-24&amp;check_out=2026-11-26&amp;guests=2</code></pre>
+<p>Note added 2026-11-25: this list is the record of the probe on 2026-06-14, not a set of addresses to follow today. The stay dates in the last address have passed, and the node answers a request for a passed check-in with 400 <code>checkin_in_past</code> (Core §5); <code>www.villaakerlyckan.se</code> now redirects to <code>villaakerlyckan.se</code>. To check the node today, use the <a href="https://vacationrentalprotocol.com/verify?host=villaakerlyckan.se">verifier</a>.</p>
 <p>Proof node path:</p>
 <pre><code>villaakerlyckan.se
 -&gt; /.well-known/vacation-rental.json

@@ -133,7 +133,7 @@ Operational agent procedure (Agent Skills format): skills/vrp-verify-stay-offer/
 - Host discovery: https://villaakerlyckan.se/.well-known/vacation-rental.json
 - Node JWKS: https://villaakerlyckan.se/.well-known/jwks.json
 - Signed offer endpoint: https://villaakerlyckan.se/api/verified-stay-offer
-- UCP checkout discovery: https://villaakerlyckan.se/.well-known/ucp
+- UCP profile: https://villaakerlyckan.se/.well-known/ucp
 
 ## Implementations
 

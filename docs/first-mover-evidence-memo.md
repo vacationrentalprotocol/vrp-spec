@@ -6,7 +6,7 @@
 **Public site:** https://vacationrentalprotocol.com  
 **Repository:** https://github.com/vacationrentalprotocol/vrp-spec
 
-## Permitted claim
+## The claim
 
 > To our knowledge, Vacation Rental Protocol is the first open protocol focused on host-domain signed, AI-agent-readable vacation rental stay offers.
 
@@ -36,6 +36,13 @@ GET https://www.villaakerlyckan.se/.well-known/vacation-rental.json
 GET https://www.villaakerlyckan.se/.well-known/jwks.json
 GET https://www.villaakerlyckan.se/api/verified-stay-offer?check_in=2026-11-24&check_out=2026-11-26&guests=2
 ```
+
+Note added 2026-11-25: this list is the record of the probe on 2026-06-14, not
+a set of addresses to follow today. The stay dates in the last address have
+passed, and the node answers a request for a passed check-in with 400
+`checkin_in_past` (Core §5); `www.villaakerlyckan.se` now redirects to
+`villaakerlyckan.se`. To check the node today, use the
+[verifier](https://vacationrentalprotocol.com/verify?host=villaakerlyckan.se).
 
 Proof node path:
 

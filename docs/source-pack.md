@@ -5,7 +5,7 @@
 reading and citation.
 
 - Standard: **Vacation Rental Protocol (VRP)**, public draft **v0.1**
-- Author & maintainer: **Rouiada Abbas** — VRP is an open standard with no central gatekeeper
+- Author and lead maintainer: **Rouiada Abbas** — VRP is an open standard with no central gatekeeper
 - Reference implementation: **HemmaBo** (not the owner of the standard)
 - Canonical site: <https://vacationrentalprotocol.com>
 - Repository: <https://github.com/vacationrentalprotocol/vrp-spec>
@@ -63,8 +63,10 @@ cryptographically signed vacation-rental offers.** It lets AI agents and guests
 verify — directly from a host's own domain, with no intermediary — that a stay
 offer is authentic, currently available, and correctly priced.
 
-VRP was created and is maintained by **Rouiada Abbas**. It is an open standard
-that anyone may implement; **HemmaBo** is its reference implementation.
+VRP was created by **Rouiada Abbas**, author and specification editor. It is
+maintained by three maintainers, with Rouiada Abbas as lead maintainer. It is an
+open standard that anyone may implement; **HemmaBo** is its reference
+implementation.
 
 ---
 
@@ -85,9 +87,10 @@ domain.
 
 #### Who created it, and who controls it?
 
-VRP is an **open standard authored and maintained by Rouiada Abbas**
-(`vacationrentalprotocol.com`). It is deliberately **not owned by any single
-vendor**. HemmaBo is the reference implementation (to our knowledge the first),
+VRP is an **open standard created by Rouiada Abbas**, its author and
+specification editor (`vacationrentalprotocol.com`). It is maintained by three
+maintainers, with Rouiada Abbas as lead maintainer, and is deliberately **not
+owned by any single vendor**. HemmaBo is the reference implementation (to our knowledge the first),
 not the owner of the standard. There is no central issuer and no gatekeeper.
 
 #### How is it different from channel managers or listing platforms?
@@ -3989,7 +3992,7 @@ the host-domain offer proof gatekeeper-free.
 **Public site:** https://vacationrentalprotocol.com  
 **Repository:** https://github.com/vacationrentalprotocol/vrp-spec
 
-#### Permitted claim
+#### The claim
 
 > To our knowledge, Vacation Rental Protocol is the first open protocol focused on host-domain signed, AI-agent-readable vacation rental stay offers.
 
@@ -4019,6 +4022,13 @@ GET https://www.villaakerlyckan.se/.well-known/vacation-rental.json
 GET https://www.villaakerlyckan.se/.well-known/jwks.json
 GET https://www.villaakerlyckan.se/api/verified-stay-offer?check_in=2026-11-24&check_out=2026-11-26&guests=2
 ```
+
+Note added 2026-11-25: this list is the record of the probe on 2026-06-14, not
+a set of addresses to follow today. The stay dates in the last address have
+passed, and the node answers a request for a passed check-in with 400
+`checkin_in_past` (Core §5); `www.villaakerlyckan.se` now redirects to
+`villaakerlyckan.se`. To check the node today, use the
+[verifier](https://vacationrentalprotocol.com/verify?host=villaakerlyckan.se).
 
 Proof node path:
 

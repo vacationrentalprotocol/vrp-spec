@@ -6,7 +6,7 @@ Independent vacation rental hosts need agents to verify the stay offers they pub
 
 - An open protocol for stay offers signed with Ed25519 on the host’s own domain.
 - Agents can verify the signature against the domain’s public keys and check offer freshness.
-- A verified offer carries dates, guest count, total price, booking terms and the host’s booking URL.
+- A verified offer carries dates, guest count, total price and the host’s booking URL, and the booking terms the host chooses to sign.
 - Guests book on the host’s own website. In the HemmaBo example, they pay the host through the host’s Stripe account.
 - See a live implementation at [villaakerlyckan.se](https://villaakerlyckan.se/).
 
@@ -14,7 +14,7 @@ Independent vacation rental hosts need agents to verify the stay offers they pub
 
 **The Vacation Rental Protocol (VRP) is an open protocol for host-domain-signed vacation-rental offers: an AI agent discovers a property on the open web, fetches a cryptographically signed (Ed25519, did:web) stay offer from the host's own domain, verifies it against the domain's JWKS — no central marketplace, registry, or gatekeeper.**
 
-Created and maintained by Rouiada Abbas. Anyone may implement it; HemmaBo is the reference implementation. Current public draft: v0.1.
+Created by Rouiada Abbas, author and specification editor. Maintained by [three maintainers](./MAINTAINERS.md), with Rouiada Abbas as lead maintainer. Anyone may implement it; HemmaBo is the reference implementation. Current public draft: v0.1.
 
 The `vacation-rental.json` well-known URI suffix is registered in the [IANA Well-Known URIs registry](https://www.iana.org/assignments/well-known-uris/) (provisional, 2026-08-19).
 

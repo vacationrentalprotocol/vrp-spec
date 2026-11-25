@@ -120,39 +120,60 @@ of the `vacation-rental.json` well-known URI suffix.
     stated without a keyword as the reason for the "MUST NOT treat the
     discovery document itself as proof of any claim" that Well-Known §4
     states.
-- **The `<date>` is 2026-11-15, the planned submission day.** Check it on the
-  day of submission: if that day is another one, set the `<date>` to it,
-  re-render the `.txt` and run the three tools again (xml2rfc warns when the
-  date is more than 3 days from the day it runs).
+- **The `<date>` is 2026-11-15, the day the draft was submitted.**
+- **Submitted 2026-11-15 by the author, as an individual submission.** Read
+  on the datatracker on 2026-11-25
+  (<https://datatracker.ietf.org/doc/draft-abbas-vrp-offer-verification/>):
+  revision `00`, 2026-11-15T08:27:18Z, expires 2027-05-19, intended status
+  Informational on the document itself; group "Individual Submissions",
+  state "Active", IESG state "I-D Exists" ("The IESG has not started
+  processing this draft, or has stopped processing it without
+  publication."); no stream, no area director and no shepherd are
+  recorded. The copy in the IETF archive
+  (<https://www.ietf.org/archive/id/draft-abbas-vrp-offer-verification-00.xml>)
+  is byte for byte the `.xml` in this directory (SHA-256
+  `9fc037c02ce1555416790eab79e762dfd014a128a52c7cd54b5842094283c376`, read
+  2026-11-25).
 
 ## Submission (manual, by the author)
 
-The submission tool is closed around IETF meetings. Read on
-<https://datatracker.ietf.org/submit/> on 2026-11-12: "The I-D submission
-tool will be reopened after 2026-11-14 23:59 PST (IETF-meeting local time)",
-which is 2026-11-15 07:59 UTC.
+`-00` was submitted on 2026-11-15. The steps below are the ones a later
+revision follows.
+
+The submission tool is closed around IETF meetings; its page says when
+(<https://datatracker.ietf.org/submit/>).
 
 1. Before submitting, read the Note Well and BCP 78, as the tool's
    instructions ask (<https://datatracker.ietf.org/submit/tool-instructions/>),
-   and check the `<date>` (above).
+   and set the `<date>` to the day of submission (xml2rfc warns when the
+   date is more than 3 days from the day it runs); re-render the `.txt` and
+   run the tools again.
 2. Go to <https://datatracker.ietf.org/submit/> and upload the `.xml` (the
    tool's instructions: "A single v3 .xml source file is preferred").
 3. Confirm the author email when the datatracker asks
    (hello@vacationrentalprotocol.com).
-4. The draft publishes at a permanent datatracker URL within minutes.
+4. The draft is posted at a permanent datatracker URL within minutes.
 
 ## Discipline (do not relax)
 
 - An Internet-Draft is **"work in progress"** — never describe it as an
-  "IETF standard" or "IETF-approved". Press-safe phrasing: *"an IETF
-  Internet-Draft has been submitted — work in progress."* Same precision
-  rule as tamper-evident vs immutable.
-- Drafts **expire after six months** from the `<date>` in the XML. `-00`
-  has not been submitted (datatracker 404 on 2026-11-04 and again on
-  2026-11-13); it keeps the
-  `-00` name until it is. Submit `-01` before a submitted `-00` expires
-  (bump `docName` + `seriesInfo`
-  value and the `date` element, then re-render and re-validate).
+  "IETF standard" or "IETF-approved", and never as "published". Press-safe
+  phrasing: *"an IETF Internet-Draft has been submitted — work in
+  progress."* In a sentence about VRP: *"submitted to the IETF as an
+  individual Internet-Draft (work in progress)"*. Same precision rule as
+  tamper-evident vs immutable. The two texts this rule rests on:
+  - the draft's own first page, "Status of This Memo": "It is inappropriate
+    to use Internet-Drafts as reference material or to cite them other than
+    as "work in progress."";
+  - RFC 2026 (BCP 9) Section 2.2: "An Internet-Draft is NOT a means of
+    "publishing" a specification" and "Internet-Drafts have no formal
+    status, and are subject to change or removal at any time."
+    (<https://www.rfc-editor.org/rfc/rfc2026>, read 2026-11-25; whether a
+    later BCP 9 document changed that section was not checked).
+- Drafts **expire after six months** from the `<date>` in the XML: `-00`
+  expires on 2027-05-19. Submit `-01` before then (bump `docName` +
+  `seriesInfo` value and the `date` element, then re-render and
+  re-validate).
 - Empirical findings (three-state failure data, iCal taxonomy, gap
   analysis) intentionally stay **out** of the I-D — spec text only. They
   belong in a separate research paper.

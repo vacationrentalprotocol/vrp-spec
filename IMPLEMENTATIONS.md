@@ -12,6 +12,7 @@ implementations and explains how to add yours.
 | [villaakerlyckan.se](https://villaakerlyckan.se/.well-known/vacation-rental.json) | Live production node | — | Serves signed offers and a JWKS on its own domain |
 | [vrp-independent-verifier](https://github.com/Swarnabha753/vrp-independent-verifier) | Independent verifier | MIT | Standalone implementation with no dependency on the JavaScript implementation in this repository |
 | [apartmamatevz.si](https://apartmamatevz.si/.well-known/vacation-rental.json) | Independent signing node (CM PRO, migrated from CM Free 2026-10-29) | [AGPL-3.0](https://github.com/viljemd-hub/channel-manager/blob/main/public/api/vrp_offer.php) | Self-hosted. key_custody: self. Discovery, JWKS and signed offers verified 2026-10-20. |
+| [BizPlug](https://www.bizplug.ai/how-to/plug-in/direct-offers) | Operator verifier (MCP tool `check_direct_offer` in BizPlug plug-ins for vacation rentals) | Proprietary (closed source) | Fetches discovery, JWKS and offers only from the host's own domain and fails closed: `quoteable`, `unavailable` or `unknown`. Passes the offer, offer-rules and host-domain conformance vectors; offer results in the pull request that added this row. |
 
 An independent implementation — a verifier or a node not operated by the
 reference implementer — is exactly what this page exists to welcome.

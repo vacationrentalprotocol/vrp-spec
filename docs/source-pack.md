@@ -3699,6 +3699,35 @@ A host or provider can implement VRP without becoming a marketplace. The host-ow
 6. Return explicit signed false values when a request is unavailable.
 7. Fail closed when any verification requirement cannot be satisfied.
 
+#### Readable in a Browser
+
+A verifier can run in a web page, as the one at
+[vacationrentalprotocol.com/verify](https://vacationrentalprotocol.com/verify)
+does. A browser lets a page on another domain read a response only when the
+response carries the header `Access-Control-Allow-Origin`. Send it on all three
+responses:
+
+- `/.well-known/vacation-rental.json`
+- `/.well-known/jwks.json`
+- the verified stay offer endpoint
+
+```text
+Access-Control-Allow-Origin: *
+```
+
+The three responses are public and are read without credentials, so `*` fits.
+Set the header where each endpoint is served, not for one directory: a rule
+scoped to `/.well-known/` leaves an offer endpoint at another path without it.
+The verifier in the browser then reads the discovery document and the keys and
+is stopped at the offer, although the signature is valid.
+
+To check, open `https://vacationrentalprotocol.com/verify?host=<your-domain>`
+and press "Fetch & verify", or read the response headers of each of the three
+URLs.
+
+This is guidance. The Core specification does not require the header, and a
+verifier that does not run in a browser does not need it.
+
 #### Discovery Checklist
 
 Your discovery document should include:

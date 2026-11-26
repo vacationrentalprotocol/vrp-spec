@@ -478,6 +478,28 @@ for (const page of ["verify.html", "demo.html"]) {
   check("price: verify.html shows 5900 SEK in major units as 5900 SEK", /<dt>Total price<\/dt><dd>5900 SEK<\/dd>/.test(major.el("facts").innerHTML), major.el("facts").innerHTML);
 }
 
+// ── stay: the nights are counted from the two signed dates ──────────────────
+// An offer need not carry request.nights (Core §5: "when present"). The page
+// showed "? nights" for a node that left it out (measured against an
+// independent node, 2026-11-26), although the offer was valid and safe to quote.
+{
+  const stayLine = (p) => (/<dt>Stay<\/dt><dd>([^<]*)<\/dd>/.exec(p.el("facts").innerHTML) || [])[1];
+  const carried = await runVerify({});
+  same("stay: verify.html shows the nights of an offer that carries request.nights", stayLine(carried), "2027-01-27 → 2027-01-29 (2 nights, 6 guests)");
+  const absent = await runVerify({ change: (o) => delete o.request.nights });
+  check("stay: an offer without request.nights is still verified and safe to quote", verifyGreen(absent), absent.el("verdict").textContent);
+  same("stay: verify.html counts the nights of an offer without request.nights", stayLine(absent), "2027-01-27 → 2027-01-29 (2 nights, 6 guests)");
+  const other = await runVerify({ change: (o) => (o.request.nights = 5) });
+  same("stay: verify.html shows the nights between the signed dates, whatever request.nights says", stayLine(other), "2027-01-27 → 2027-01-29 (2 nights, 6 guests)");
+  const one = load("verify.html", { respond: nodeAnswers({ change: (o) => delete o.request.nights }) });
+  one.el("host").value = HOST;
+  one.el("checkIn").value = "2027-01-27";
+  one.el("checkOut").value = "2027-01-28";
+  one.el("guests").value = "6";
+  await one.context.runLive();
+  same("stay: verify.html writes one night as 1 night", stayLine(one), "2027-01-27 → 2027-01-28 (1 night, 6 guests)");
+}
+
 // ── lifetime: a result stands for its request, until valid_until ────────────
 {
   const v = await runVerify({});

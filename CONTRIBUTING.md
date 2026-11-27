@@ -9,6 +9,23 @@ VRP is intended to be implementable by independent hosts, booking providers, and
 3. For protocol changes, explain whether the change is backward-compatible with v0.1.
 4. Keep HemmaBo-specific implementation details out of the protocol unless they are needed as reference examples.
 
+## When a pull request may be merged
+
+`GOVERNANCE.md` §4 sets a review period for substantive changes. CI enforces it
+(`scripts/check-review-period.mjs`, the step "Review period" in the required
+check "JSON and schema validation"):
+
+- A pull request that changes a file under `spec/`, `schemas/`, `contexts/` or
+  `docs/adr/`, or `GOVERNANCE.md`, stays red until it is seven days old and two
+  maintainers listed in `MAINTAINERS.md` approve it. A maintainer who opened
+  the pull request counts as one of the two; the other is an approving review.
+  A maintainer's request for changes keeps it red.
+- Every other pull request has no waiting time.
+
+The step says when the period ends and whose approval is missing. A scheduled
+workflow (`review-period-recheck.yml`) runs the step again when the period has
+passed or a maintainer has reviewed.
+
 ## Design Principles
 
 - Host-owned domains are the source of truth.

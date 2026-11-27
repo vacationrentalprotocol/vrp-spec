@@ -8,6 +8,8 @@ on:
 
 permissions:
   contents: read
+  # The review-period step reads the pull request's reviews.
+  pull-requests: read
 
 jobs:
   validate:
@@ -38,6 +40,26 @@ jobs:
       - name: Sitemap lastmod matches git (every <lastmod> is the date of the last commit to the file it serves)
         if: github.event_name == 'pull_request'
         run: npm run check-sitemap
+
+      # GOVERNANCE.md §4: a substantive change (spec/, schemas/, contexts/,
+      # docs/adr/, GOVERNANCE.md) waits seven days and two maintainer
+      # approvals. This job is a required check, so the step keeps the merge
+      # button closed until then. The rule is read from the base branch when it
+      # is there, so a pull request cannot loosen the rule it is judged by.
+      # review-period-recheck.yml runs the step again when time or a review
+      # changes its answer. The step name is read there: keep the two in step.
+      - name: Review period (GOVERNANCE.md §4)
+        if: always() && github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          if git cat-file -e origin/${{ github.base_ref }}:scripts/check-review-period.mjs 2>/dev/null; then
+            git show origin/${{ github.base_ref }}:scripts/check-review-period.mjs > "$RUNNER_TEMP/check-review-period.mjs"
+            node "$RUNNER_TEMP/check-review-period.mjs" origin/${{ github.base_ref }}
+          else
+            node scripts/check-review-period.mjs origin/${{ github.base_ref }}
+          fi
 
   markdown:
     name: Markdown integrity

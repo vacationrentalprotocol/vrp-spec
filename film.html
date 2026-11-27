@@ -3,90 +3,325 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Can the agent still quote this price? · Vacation Rental Protocol</title>
-<meta name="description" content="A 40-second VRP film. Follow the same signed example offer before and after expiry.">
+<title>From host answers to a verified offer · Vacation Rental Protocol</title>
+<meta name="description" content="Watch how a host’s yes, no and unanswered question travel through a signed VRP stay offer. A 40-second offline example.">
 <link rel="canonical" href="https://vacationrentalprotocol.com/film">
 <style>
-*{box-sizing:border-box} html,body{margin:0;background:#101716;color:#f4f6f2;font:16px/1.4 Inter,Arial,sans-serif} main{max-width:1240px;margin:auto}
-.screen{aspect-ratio:16/9;position:relative;overflow:hidden;container-type:inline-size;background:#101716}
-.canvas{width:1920px;height:1080px;transform-origin:0 0;position:absolute;overflow:hidden;background:radial-gradient(ellipse at 74% 50%,#24362f 0%,#141e1b 43%,#0d1413 80%);font-family:Inter,Arial,sans-serif}
-.bar,.foot{position:absolute;left:88px;right:88px;display:flex;align-items:center;justify-content:space-between}
-.bar{top:44px;height:65px;border-bottom:1px solid #405148;padding-bottom:22px;font-size:26px}.bar strong{font-weight:650;letter-spacing:-2px;font-size:36px;margin-right:24px}.meta,.label,.mono,.foot{font-family:ui-monospace,Consolas,monospace}
-.meta,.foot{font-size:21px;color:#adc2b6}.foot{bottom:38px}.title{position:absolute;top:142px;left:88px;font-size:75px;line-height:1.08;font-weight:520;letter-spacing:-3.8px;margin:0}
-.panel{position:absolute;left:88px;top:290px;width:1744px;height:650px;border-radius:25px;background:#f1f5f0;color:#1d342a;box-shadow:0 28px 75px #070e0e77;overflow:hidden;transform-origin:50% 70%}
-.chrome{height:81px;background:#e2ebe4;border-bottom:1px solid #c7d5cc;display:flex;align-items:center;padding:0 54px;gap:26px}.label{font-size:19px;letter-spacing:2px;text-transform:uppercase;color:#476356}.chrome .mono{font-size:26px}
-.body{display:grid;grid-template-columns:1fr 1fr;height:569px}.offer,.check{padding:45px 55px}.offer{border-right:1px solid #b6cbbc}.price{font-size:88px;letter-spacing:-5px;font-weight:550;line-height:1.2;margin:9px 0 3px}.muted{color:#4c6758;font-size:28px}.line{margin:28px 0;border:0;border-top:1px solid #bfccc2}.pair{display:flex;align-items:baseline;justify-content:space-between;margin:13px 0;font-size:28px}.pair b{font-size:28px;font-weight:550;font-variant-numeric:tabular-nums}.finger{font:20px ui-monospace,monospace;color:#4f6659;margin-top:25px}.clock{font-size:68px;line-height:1.12;font-weight:540;letter-spacing:-4px;font-variant-numeric:tabular-nums;margin:8px 0 19px}.utc{font:24px ui-monospace,monospace;color:#526c5d;letter-spacing:0;margin-left:14px}.check .pair{margin:12px 0}.good{color:#106049}.late{color:#884816}.answer{margin-top:26px;border-left:5px solid #35765a;padding:8px 0 8px 22px;font-size:33px;font-weight:580;letter-spacing:-1px}.answer.expired{border-color:#b17a43}.note{position:absolute;left:90px;top:952px;color:#c0d7c8;font-size:28px;letter-spacing:-.3px}
-.progress{position:absolute;left:0;bottom:0;height:4px;background:#a7cbb5;transform-origin:left;width:100%}
-.controls{display:flex;gap:.8rem;align-items:center;flex-wrap:wrap;padding:.8rem 1rem}.controls button,.controls a{border:1px solid #546b60;border-radius:.4rem;background:#15251e;color:#e1efe5;font:inherit;padding:.4rem .8rem;cursor:pointer}input[type=range]{max-width:36vw;flex:1;accent-color:#99c8ab}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #b1d9bd}details{margin:.4rem 1rem 2rem;max-width:75ch}details a{color:#b9dcc6}details p{color:#d1ddd5}.embedded .controls{position:absolute;bottom:0;left:0;right:0;opacity:0;background:#101716ed}.embedded:hover .controls,.embedded:focus-within .controls,.embedded.paused .controls{opacity:1}.embedded details{display:none}.time{font-variant-numeric:tabular-nums}
+* { box-sizing: border-box }
+:root { color-scheme: dark; font-family: Inter, Arial, sans-serif; background: #111918; color: #f5f6f2 }
+body { margin: 0 }
+main { max-width: 1240px; margin: auto }
+.screen { container-type: inline-size; background: #14201e }
+.frame { aspect-ratio: 16/9; padding: 3.3cqw 5.3cqw; display: flex; flex-direction: column;
+  background: radial-gradient(ellipse at 94% 0%, #35443d 0, transparent 62%), #15201e }
+header,.chrome,.row,.controlbar { display: flex; align-items: center; justify-content: space-between }
+header { border-bottom: 1px solid #62736b; padding-bottom: 1.1cqw; font-size: 1.42cqw; letter-spacing: -.025em }
+header b { font-size: 1.8cqw; margin-right: .6em }
+.mono,.chrome,.section-label,.state,.controlbar output,pre { font-family: ui-monospace, Consolas, monospace }
+header .mono { font-size: 1.15cqw; color: #c1d2c7 }
+h1 { font-size: 4.15cqw; line-height: 1.1; font-weight: 520; letter-spacing: -.055em; margin: 2.45cqw 0 2.2cqw }
+.sheet { flex: 1; min-height: 0; background: #f4f5ed; color: #1c302a; border-radius: 1.05cqw; overflow: hidden; box-shadow: 0 1.2cqw 3cqw #09110d40 }
+.chrome { justify-content: start; gap: .8em; padding: 1.1cqw 2.3cqw; font-size: 1.27cqw; background: #e3e8de; border-bottom: 1px solid #c6cfc3 }
+.chrome::before { content: ''; width: .5em; height: .5em; border-radius: 50%; background: #517562 }
+.body { display: grid; grid-template-columns: 1fr 1fr }
+.first { grid-template-columns: 1fr }
+.column { padding: 1.8cqw 2.35cqw }
+.column + .column { border-left: 1px solid #c8d1c4 }
+.section-label { font-size: 1.12cqw; letter-spacing: .055em; color: #526657; margin: 0 0 1.2cqw }
+.row { gap: .5em; border-top: 1px solid #c9d1c6; min-height: 4.45cqw; font-size: 1.69cqw; letter-spacing: -.035em }
+.state { font-size: 1.25cqw; letter-spacing: 0; color: #165e48; background: #deeadf; padding: .32em .59em; border-radius: .25em }
+.state[data-tone="no"] { color: #673d2e; background: #efe0d4 }
+.state[data-tone="unknown"] { color: #495452; background: #e3e7e1 }
+pre { font-size: 1.22cqw; line-height: 1.49; margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; color: #214e40 }
+.caption { font-size: 1.36cqw; line-height: 1.36; margin: .95cqw 0 0; color: #43594d }
+.check { padding: .6cqw 0; margin: 0; font-size: 1.55cqw }
+.check::before { content: '✓'; color: #17674d; margin-right: .55em }
+.status { color: #763e26 }
+.rule { min-height: 2.2em; margin: 1.3cqw 0 0; font-size: 1.72cqw; line-height: 1.3; color: #e6eee5 }
+.controlbar { justify-content: start; gap: .8rem; padding: .55rem 1rem; background: #111918 }
+button,summary,a,input { touch-action: manipulation }
+button { color: #e8eee8; background: #203129; border: 1px solid #65796e; padding: .5rem .8rem; border-radius: .35rem; font: inherit; cursor: pointer }
+input { flex: 1; min-width: 2rem; accent-color: #a7cbb2 }
+output { font-size: .85rem; white-space: nowrap }
+:focus-visible { outline: 3px solid #decd93; outline-offset: 2px }
+details { padding: 1rem; max-width: 78ch; line-height: 1.55 }
+summary { cursor: pointer } a { color: #c7dfd0 }
+[hidden] { display: none !important }
+@container (max-width: 590px) {
+  .frame { aspect-ratio: auto; height: 545px; padding: 16px 14px 8px }
+  header { align-items: start; flex-direction: column; gap: 4px; font-size: 14px; padding-bottom: 8px }
+  header b { font-size: 15px } header .mono { font-size: 11px }
+  h1 { font-size: clamp(23px,6.4cqw,32px); margin: 12px 0 }
+  .chrome { padding: 8px 12px; font-size: 12px }
+  .body { grid-template-columns: 1fr }
+  .column { padding: 9px 12px }
+  .column + .column { border-left: 0; border-top: 1px solid #c8d1c4 }
+  .section-label { margin-bottom: 4px; font-size: 11px }
+  .row { font-size: 15px; min-height: 29px }
+  .state { font-size: 11px }
+  pre { font-size: 12px; line-height: 1.28 }
+  .caption,.check { font-size: 13px; margin-top: 5px }
+  .rule { font-size: 15px; margin: 8px 0 0 }
+}
+@media (max-width: 590px) {
+  .controlbar { gap: .4rem; padding: .4rem }
+  button { font-size: .85rem; padding: .6rem .5rem } output { font-size: .72rem }
+}
 </style>
 </head>
-<body><main>
-<div class="screen" role="img" aria-label="A signed VRP example offer checked at 12:05 and 13:00 UTC. The signature stays valid. The offer expires at 12:10 UTC.">
-<div class="canvas">
-<header class="bar"><div><strong>VRP</strong> Vacation Rental Protocol</div><span class="meta">Conformance example · 2 June 2026</span></header>
-<h1 class="title">Can the agent still quote this price?</h1>
-<div class="panel"><div class="chrome"><span class="label">Example domain</span><span class="mono">example-host.invalid</span></div>
-<div class="body"><div class="offer"><span class="label">Signed offer</span><div class="price">€1,234</div><div class="muted">12–15 September 2026 · 2 guests</div><hr class="line">
-<div class="pair"><span>Issued</span><b>12:00 UTC</b></div><div class="pair"><span>Valid until</span><b>12:10 UTC</b></div>
-<div class="finger">JWS fingerprint · SHA-256 · 1d948fcc6fdb…</div></div>
-<div class="check"><span class="label">Verification clock</span><div class="clock"><span id="clock">12:05</span><span class="utc">UTC</span></div>
-<div id="signature" class="pair"><span>Ed25519 signature</span><b class="good">Valid</b></div>
-<div id="freshness" class="pair"><span>Offer validity</span><b id="fresh">Within window</b></div>
-<div class="answer" id="result">The agent may quote €1,234.</div></div></div></div>
-<div class="note"></div><footer class="foot"><span>VRP v0.1 · Signed stay offer</span><span>Conformance vectors 01 / 02</span></footer><div class="progress"></div>
+<body>
+<main>
+<div class="screen"><div class="frame">
+<header><span><b>VRP</b>Vacation Rental Protocol</span><span class="mono">Offline example · example-host.invalid</span></header>
+<h1 id="title">The host answers.</h1>
+<div class="sheet">
+<div class="chrome">example-host.invalid</div>
+<div class="body">
+<section class="column"><h2 class="section-label">Host answers</h2><div id="answers"></div></section>
+<section class="column" id="detail" hidden>
+<div id="signed" hidden><h2 class="section-label">Signed payload excerpt</h2><pre id="excerpt"></pre><p class="caption" id="absence"></p></div>
+<div id="verification" hidden><h2 class="section-label">Example host’s public key · Ed25519</h2>
+<p id="status" class="status"></p><div id="checks" hidden>
+<p class="check">Signature verified</p><p class="check">Signed payload matches the offer</p><p class="check">Offer valid at the example time</p>
+<p class="caption" id="clock"></p></div></div>
+<div id="outcome" hidden><h2 class="section-label">Agent reads the signed offer</h2><div id="states"></div></div>
+</section></div></div>
+<p class="rule" id="rule"></p>
 </div></div>
-<div class="controls"><button id="play" type="button">Play film</button><button id="restart" type="button">Restart</button><input id="seek" type="range" min="0" max="40" step=".05" value="0" aria-label="Film position in seconds"><span class="time">0:00 / 0:40</span></div>
-<details><summary>Transcript and test cases</summary><p>Both test cases use the same compact JWS and public key. The signed offer allows the agent to quote €1,234 for two guests. At 12:05 UTC, the signature verifies and the offer is fresh. At 13:00 UTC the signature still verifies, but the 12:10 UTC deadline has passed. The agent must obtain a fresh offer before quoting a price.</p><p><a href="/examples/conformance/offer/01-valid-fresh.json">Fresh offer test</a> · <a href="/examples/conformance/offer/02-valid-expired.json">Expired offer test</a> · <a href="/verify" target="_top">Verify an offer</a></p></details>
+<div class="controlbar"><button type="button" id="play">Play film</button><button type="button" id="restart">Restart</button><input id="seek" aria-label="Film position in seconds" type="range" min="0" max="40" step=".05" value="0"><output id="time" for="seek">0:00 / 0:40</output></div>
+<details><summary>Transcript and signed example</summary>
+<p><b>The host answers.</b> Pets are allowed. Dogs are allowed. Cats are not allowed. The host leaves the indoor smoking question unanswered.</p>
+<p><b>The host domain signs the offer.</b> In this example, the offer carries <code>rules.pets</code> set to <code>"allowed"</code>. Under <code>terms.policy_claims</code>, <code>pets_dogs</code> appears in <code>affirmed</code> and <code>pets_cats</code> in <code>negated</code>. Indoor smoking is absent from both lists.</p>
+<p><b>The agent verifies the offer.</b> The example uses a saved public key, an Ed25519 signature and a fixed clock. The agent checks the signature, compares the signed payload with the offer and checks the validity window at the example time. Dogs are affirmed. Cats are negated. Indoor smoking is unknown. A missing answer must never be quoted as yes or no.</p>
+<p><button type="button" id="download">Save signed example and public key</button> · <a href="/spec/v0.1#9-three-state-verification" target="_top">Read Core §9</a></p>
+</details>
 </main>
-<script>
-const scene = document.querySelector('.canvas');
-const screen = document.querySelector('.screen');
-const at = id => document.getElementById(id);
-const title = document.querySelector('.title'), note = document.querySelector('.note');
-const panel = document.querySelector('.panel'), progress = document.querySelector('.progress');
-const timeLabel = document.querySelector('.time');
-const duration = 40;
-function fit(){scene.style.transform='scale('+screen.clientWidth/1920+')'}
-fit(); window.addEventListener('resize',fit);
-function ease(t){const n=Math.max(0,Math.min(1,t));return n*n*(3-2*n)}
-function appear(element,amount){element.style.opacity=amount;element.style.transform='translateY('+((1-amount)*18)+'px)'}
-function draw(t){
-  const expired=t>=21;
-  const last=t>=32;
-  const stage=last?32:expired?21:t>=7?7:0;
-  title.textContent=last?'A fresh offer is needed.':expired?'Check the same offer again.':stage===7?'Five minutes after signing.':'Can the agent still quote this price?';
-  appear(title,stage===0?1:ease((t-stage)/.8));
-  panel.style.transform='perspective(2300px) rotateX('+((1-ease(t/5))*4)+'deg) translateY('+((1-ease(t/5))*15)+'px)';
-  at('clock').textContent=expired?'13:00':'12:05';
-  appear(document.querySelector('.check'),ease((t-5.8)/1.4));
-  appear(at('signature'),ease((t-8)/1.1));
-  at('fresh').textContent=expired?'Expired':'Within window';
-  at('fresh').className=expired?'late':'good';
-  appear(at('freshness'),ease((t-(expired?22:10))/1.1));
-  at('result').textContent=expired?'The agent must not quote this price.':'The agent may quote €1,234.';
-  at('result').classList.toggle('expired',expired);
-  appear(at('result'),ease((t-(expired?24:12))/1.2));
-  note.textContent=last?'The signature still verifies. The permission to quote depends on freshness.':expired?'The signed bytes are identical. Only the verification clock has changed.':stage===7?'The host permits quoting, and the price is still within its validity window.':'One signed offer. Two checks against the same public key.';
-  appear(note,ease((t-stage-.15)/1));
-  progress.style.transform='scaleX('+t/duration+')';
-  at('seek').value=t;
-  timeLabel.textContent='0:'+String(Math.floor(t)).padStart(2,'0')+' / 0:40';
+<script type="application/json" id="fixture">
+{
+  "answers": {
+    "pets": true,
+    "pets_dogs": true,
+    "pets_cats": false,
+    "smoking_indoor": null
+  },
+  "clock": "2026-06-02T12:05:00Z",
+  "domain": "example-host.invalid",
+  "jwks_url": "https://example-host.invalid/.well-known/jwks.json",
+  "jwks": {
+    "keys": [
+      {
+        "kty": "OKP",
+        "crv": "Ed25519",
+        "x": "JKhWJYvJ9bOR3jBOr9YhR2okv7zF1CAqnZ6Dy4cbQhs",
+        "kid": "example-host.invalid-film-01",
+        "alg": "EdDSA",
+        "use": "sig",
+        "key_ops": [
+          "verify"
+        ]
+      }
+    ]
+  },
+  "input": {
+    "kind": "signed_verified_stay_offer",
+    "protocol_version": "0.1",
+    "offer": {
+      "kind": "verified_stay_offer",
+      "protocol_version": "0.1",
+      "canonical_domain": "example-host.invalid",
+      "node_id": "example-host.invalid",
+      "generated_at": "2026-06-02T12:00:00Z",
+      "valid_until": "2026-06-02T12:10:00Z",
+      "request": {
+        "check_in": "2026-09-12",
+        "check_out": "2026-09-15",
+        "guests": 2
+      },
+      "property": {
+        "property_id": "example-property",
+        "name": "Example Host Stay",
+        "url": "https://example-host.invalid/"
+      },
+      "availability": {
+        "available": true,
+        "source": "official_host_domain"
+      },
+      "price": {
+        "currency": "EUR",
+        "public_total": 123400,
+        "agent_total": 123400,
+        "minor_unit": true,
+        "exact": true
+      },
+      "booking": {
+        "direct_booking_url": "https://example-host.invalid/book?offer_id=test-vector"
+      },
+      "agent_permission": {
+        "may_quote_as_official_direct_offer": true,
+        "must_not_claim_ota_comparison_without_signed_ota_price": true
+      },
+      "rules": {
+        "pets": "allowed"
+      },
+      "terms": {
+        "policy_claims": {
+          "affirmed": [
+            "pets_dogs"
+          ],
+          "negated": [
+            "pets_cats"
+          ]
+        }
+      }
+    },
+    "signature": {
+      "format": "jws_compact",
+      "alg": "EdDSA",
+      "kid": "example-host.invalid-film-01",
+      "jws": "eyJhbGciOiJFZERTQSIsImtpZCI6ImV4YW1wbGUtaG9zdC5pbnZhbGlkLWZpbG0tMDEifQ.eyJraW5kIjoidmVyaWZpZWRfc3RheV9vZmZlciIsInByb3RvY29sX3ZlcnNpb24iOiIwLjEiLCJjYW5vbmljYWxfZG9tYWluIjoiZXhhbXBsZS1ob3N0LmludmFsaWQiLCJub2RlX2lkIjoiZXhhbXBsZS1ob3N0LmludmFsaWQiLCJnZW5lcmF0ZWRfYXQiOiIyMDI2LTA2LTAyVDEyOjAwOjAwWiIsInZhbGlkX3VudGlsIjoiMjAyNi0wNi0wMlQxMjoxMDowMFoiLCJyZXF1ZXN0Ijp7ImNoZWNrX2luIjoiMjAyNi0wOS0xMiIsImNoZWNrX291dCI6IjIwMjYtMDktMTUiLCJndWVzdHMiOjJ9LCJwcm9wZXJ0eSI6eyJwcm9wZXJ0eV9pZCI6ImV4YW1wbGUtcHJvcGVydHkiLCJuYW1lIjoiRXhhbXBsZSBIb3N0IFN0YXkiLCJ1cmwiOiJodHRwczovL2V4YW1wbGUtaG9zdC5pbnZhbGlkLyJ9LCJhdmFpbGFiaWxpdHkiOnsiYXZhaWxhYmxlIjp0cnVlLCJzb3VyY2UiOiJvZmZpY2lhbF9ob3N0X2RvbWFpbiJ9LCJwcmljZSI6eyJjdXJyZW5jeSI6IkVVUiIsInB1YmxpY190b3RhbCI6MTIzNDAwLCJhZ2VudF90b3RhbCI6MTIzNDAwLCJtaW5vcl91bml0Ijp0cnVlLCJleGFjdCI6dHJ1ZX0sImJvb2tpbmciOnsiZGlyZWN0X2Jvb2tpbmdfdXJsIjoiaHR0cHM6Ly9leGFtcGxlLWhvc3QuaW52YWxpZC9ib29rP29mZmVyX2lkPXRlc3QtdmVjdG9yIn0sImFnZW50X3Blcm1pc3Npb24iOnsibWF5X3F1b3RlX2FzX29mZmljaWFsX2RpcmVjdF9vZmZlciI6dHJ1ZSwibXVzdF9ub3RfY2xhaW1fb3RhX2NvbXBhcmlzb25fd2l0aG91dF9zaWduZWRfb3RhX3ByaWNlIjp0cnVlfSwicnVsZXMiOnsicGV0cyI6ImFsbG93ZWQifSwidGVybXMiOnsicG9saWN5X2NsYWltcyI6eyJhZmZpcm1lZCI6WyJwZXRzX2RvZ3MiXSwibmVnYXRlZCI6WyJwZXRzX2NhdHMiXX19fQ.yjsDZ4BJtJ_kixh5xWYwS6k3lnxvypOAYRPMbgsfyHnhVtJnGy4S-jq0weaVxf7yku5YBM2iz8aemUcYlK8kAA"
+    }
+  }
 }
-let time=0,started=0,frame=0,playing=false;
-function pause(){playing=false;cancelAnimationFrame(frame);at('play').textContent=time>=duration?'Replay':'Play film';document.body.classList.add('paused')}
-function tick(now){time=Math.min(duration,(now-started)/1000);draw(time);if(time>=duration)pause();else frame=requestAnimationFrame(tick)}
-function play(){if(playing)return;if(time>=duration)time=0;started=performance.now()-time*1000;playing=true;document.body.classList.remove('paused');at('play').textContent='Pause';frame=requestAnimationFrame(tick)}
-function seek(value){time=value;started=performance.now()-time*1000;draw(time)}
-at('play').onclick=()=>playing?pause():play();
-at('restart').onclick=()=>{seek(0);play()};
-at('seek').oninput=event=>seek(Number(event.target.value));
-const motion=matchMedia('(prefers-reduced-motion: reduce)');
-motion.addEventListener?.('change',e=>{if(e.matches)pause()});
-if(self!==top)document.body.classList.add('embedded');
-function hold(){const map={'#s=0':1,'#s=1':7,'#s=2':15,'#s=3':19,'#s=3v':27,'#s=4':37};
- if(!Object.prototype.hasOwnProperty.call(map,location.hash))return false;
- pause();seek(map[location.hash]);return true}
-window.addEventListener('hashchange',hold);
-draw(0);pause();if(!hold()&&!motion.matches)play();
 </script>
-</body></html>
+<script>
+const byId = id => document.getElementById(id);
+const fixture = JSON.parse(byId('fixture').textContent);
+const questions = [
+  ['pets', 'Are pets allowed?', 'Pets allowed'],
+  ['pets_dogs', 'Are dogs allowed?', 'Dogs allowed'],
+  ['pets_cats', 'Are cats allowed?', 'Cats allowed'],
+  ['smoking_indoor', 'Is indoor smoking allowed?', 'Indoor smoking allowed']
+];
+function row(parent, label, value, tone) {
+  const line = document.createElement('div');
+  line.className = 'row';
+  const text = document.createElement('span');
+  text.textContent = label;
+  const badge = document.createElement('span');
+  badge.className = 'state';
+  badge.textContent = value;
+  badge.dataset.tone = tone;
+  line.append(text, badge);
+  byId(parent).append(line);
+  return line;
+}
+const answerRows = questions.map(([key, label]) => {
+  const answer = fixture.answers[key];
+  const value = answer === true ? 'Yes' : answer === false ? 'No' : 'Unanswered';
+  return row('answers', label, value, answer === true ? 'yes' : answer === false ? 'no' : 'unknown');
+});
+function readClaim(lists, key) {
+  const yes = lists.affirmed?.includes(key);
+  const no = lists.negated?.includes(key);
+  if (yes && no) throw new Error('Conflicting signed answers.');
+  return yes ? 'affirmed' : no ? 'negated' : 'unknown';
+}
+const bytes = encoded => Uint8Array.from(atob(encoded.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+const parse = encoded => JSON.parse(new TextDecoder().decode(bytes(encoded)));
+let verified = false;
+async function verify() {
+  const {offer, signature} = fixture.input;
+  const parts = signature.jws.split('.');
+  const [headerPart, payloadPart, signaturePart] = parts;
+  const header = parse(headerPart);
+  const payload = parse(payloadPart);
+  const key = fixture.jwks.keys.find(k => k.kid === header.kid && k.crv === 'Ed25519' && k.kty === 'OKP');
+  if (parts.length !== 3 || header.alg !== 'EdDSA' || signature.alg !== header.alg || !key ||
+      signature.kid !== header.kid || fixture.domain !== 'example-host.invalid' ||
+      new URL(fixture.jwks_url).origin !== 'https://' + fixture.domain || payload.canonical_domain !== fixture.domain)
+    throw new Error('Example domain or signing key mismatch.');
+  const publicKey = await crypto.subtle.importKey('jwk', key, 'Ed25519', false, ['verify']);
+  const valid = await crypto.subtle.verify('Ed25519', publicKey, bytes(signaturePart), new TextEncoder().encode(headerPart + '.' + payloadPart));
+  if (!valid || JSON.stringify(payload) !== JSON.stringify(offer)) throw new Error('Signature or payload mismatch.');
+  const now = Date.parse(fixture.clock), issued = Date.parse(payload.generated_at), end = Date.parse(payload.valid_until);
+  if (!(issued <= now + 60000 && issued < end && now < end && end - issued <= 900000))
+    throw new Error('Outside the example validity window.');
+  const lists = payload.terms.policy_claims;
+  const states = questions.slice(1).map(([key,,label]) => [label, readClaim(lists, key)]);
+  byId('excerpt').textContent = [
+    'rules.pets', '  ' + JSON.stringify(payload.rules.pets),
+    '', 'terms.policy_claims',
+    '  affirmed: ' + JSON.stringify(lists.affirmed),
+    '  negated:  ' + JSON.stringify(lists.negated)
+  ].join('\n');
+  byId('absence').textContent = states[2][1] === 'unknown' ? 'Indoor smoking is absent from both lists.' : '';
+  byId('clock').textContent = fixture.clock.replace('T', ' ').replace('Z', ' UTC');
+  for (const [label, state] of states) row('states', label, state, state === 'affirmed' ? 'yes' : state === 'negated' ? 'no' : 'unknown');
+  verified = true;
+}
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+let position = 0, playing = false, start = 0, frame = 0, failure = '';
+function enter(element, t, cue) {
+  const fraction = t < cue ? 0 : motion.matches ? 1 : Math.min(1, (t - cue) / .4);
+  element.style.opacity = String(fraction);
+  element.style.transform = 'translateY(' + (motion.matches ? 0 : (1 - fraction) * 6) + 'px)';
+}
+function draw(t) {
+  const stage = t < 11 ? 0 : t < 24 ? 1 : t < 33 ? 2 : 3;
+  byId('title').textContent = ['The host answers.', 'The host domain signs the offer.', 'The agent verifies the offer.', 'What can the agent say?'][stage];
+  answerRows.forEach((line, i) => enter(line, t, i === 0 ? -1 : i * 1.45));
+  document.querySelector('.body').classList.toggle('first', stage === 0);
+  byId('detail').hidden = stage === 0;
+  byId('signed').hidden = stage !== 1 || !verified;
+  byId('verification').hidden = stage < 1 || (verified && stage !== 2);
+  byId('checks').hidden = !verified;
+  byId('status').hidden = verified;
+  byId('status').textContent = failure || 'Checking the saved example…';
+  byId('outcome').hidden = stage !== 3 || !verified;
+  byId('rule').textContent = stage === 3 && verified ? 'A missing answer must never be quoted as yes or no.' : '';
+  if (stage) enter(byId('detail'), t, [0,11,24,33][stage]);
+  byId('seek').value = t;
+  byId('time').textContent = '0:' + String(Math.floor(t)).padStart(2,'0') + ' / 0:40';
+}
+function pause() {
+  playing = false;
+  cancelAnimationFrame(frame);
+  byId('play').textContent = position >= 40 ? 'Replay' : 'Play film';
+}
+function seek(t) {
+  position = Math.max(0, Math.min(40, t));
+  start = performance.now() - position * 1000;
+  draw(position);
+}
+function tick(now) {
+  position = Math.min(40, (now - start) / 1000);
+  draw(position);
+  if (position >= 40) pause();
+  else frame = requestAnimationFrame(tick);
+}
+function play() {
+  if (playing) return;
+  seek(position >= 40 ? 0 : position);
+  playing = true;
+  byId('play').textContent = 'Pause';
+  frame = requestAnimationFrame(tick);
+}
+byId('play').onclick = () => playing ? pause() : play();
+byId('restart').onclick = () => { seek(0); play(); };
+byId('seek').oninput = event => seek(Number(event.target.value));
+byId('download').onclick = () => {
+  const url = URL.createObjectURL(new Blob([JSON.stringify(fixture, null, 2)], {type:'application/json'}));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'vrp-host-answers.json';
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
+function holdScene() {
+  const scenes = {'#s=0':0, '#s=1':8, '#s=2':16, '#s=3':26, '#s=3v':30, '#s=4':37};
+  if (!Object.hasOwn(scenes, location.hash)) return false;
+  pause();
+  seek(scenes[location.hash]);
+  return true;
+}
+motion.addEventListener('change', e => { if (e.matches) pause(); draw(position); });
+window.addEventListener('hashchange', holdScene);
+if (self !== top) document.querySelector('details').hidden = true;
+draw(0);
+verify().catch(() => { failure = 'Verification unavailable. No policy result can be quoted.'; }).finally(() => {
+  draw(position);
+  if (!holdScene() && !motion.matches) play();
+});
+</script>
+</body>
+</html>

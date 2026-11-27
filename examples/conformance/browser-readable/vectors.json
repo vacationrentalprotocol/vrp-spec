@@ -1,0 +1,91 @@
+{
+  "spec": "spec/v0.1.md §4 Readable from a browser (ADR 0020)",
+  "checker": "scripts/verify-browser-readable.mjs",
+  "license": "Apache-2.0 — see LICENSE-CODE",
+  "vectors": [
+    {
+      "name": "all four responses send the header as *",
+      "responses": {
+        "discovery": { "status": 200, "headers": { "Access-Control-Allow-Origin": "*" } },
+        "jwks": { "status": 200, "headers": { "Access-Control-Allow-Origin": "*" } },
+        "offer": { "status": 200, "headers": { "Access-Control-Allow-Origin": "*" } },
+        "offer_error": { "status": 400, "headers": { "Access-Control-Allow-Origin": "*" } }
+      },
+      "expected": { "readable": { "discovery": true, "jwks": true, "offer": true, "offer_error": true }, "pass": true }
+    },
+    {
+      "name": "the header is set for /.well-known/ only: the offer endpoint at another path lacks it",
+      "responses": {
+        "discovery": { "status": 200, "headers": { "Access-Control-Allow-Origin": "*" } },
+        "jwks": { "status": 200, "headers": { "Access-Control-Allow-Origin": "*" } },
+        "offer": { "status": 200, "headers": { "Content-Type": "application/json" } }
+      },
+      "expected": { "readable": { "discovery": true, "jwks": true, "offer": false }, "pass": false }
+    },
+    {
+      "name": "no response sends the header",
+      "responses": {
+        "discovery": { "status": 200, "headers": { "Content-Type": "application/json" } },
+        "jwks": { "status": 200, "headers": { "Content-Type": "application/json" } },
+        "offer": { "status": 200, "headers": { "Content-Type": "application/json" } }
+      },
+      "expected": { "readable": { "discovery": false, "jwks": false, "offer": false }, "pass": false }
+    },
+    {
+      "name": "the offer sends the header, its error response does not",
+      "responses": {
+        "discovery": { "status": 200, "headers": { "Access-Control-Allow-Origin": "*" } },
+        "jwks": { "status": 200, "headers": { "Access-Control-Allow-Origin": "*" } },
+        "offer": { "status": 200, "headers": { "Access-Control-Allow-Origin": "*" } },
+        "offer_error": { "status": 400, "headers": { "Content-Type": "application/json" } }
+      },
+      "expected": { "readable": { "discovery": true, "jwks": true, "offer": true, "offer_error": false }, "pass": false }
+    },
+    {
+      "name": "the header names one origin: at most that origin can read the response",
+      "responses": {
+        "discovery": { "status": 200, "headers": { "Access-Control-Allow-Origin": "*" } },
+        "jwks": { "status": 200, "headers": { "Access-Control-Allow-Origin": "*" } },
+        "offer": { "status": 200, "headers": { "Access-Control-Allow-Origin": "https://verifier.example" } }
+      },
+      "expected": { "readable": { "discovery": true, "jwks": true, "offer": false }, "pass": false }
+    },
+    {
+      "name": "the header says null",
+      "responses": {
+        "discovery": { "status": 200, "headers": { "Access-Control-Allow-Origin": "null" } }
+      },
+      "expected": { "readable": { "discovery": false }, "pass": false }
+    },
+    {
+      "name": "the header is sent twice",
+      "responses": {
+        "jwks": { "status": 200, "headers": [["Access-Control-Allow-Origin", "*"], ["Access-Control-Allow-Origin", "*"]] }
+      },
+      "expected": { "readable": { "jwks": false }, "pass": false }
+    },
+    {
+      "name": "the header lists two values",
+      "responses": {
+        "offer": { "status": 200, "headers": { "Access-Control-Allow-Origin": "*, https://verifier.example" } }
+      },
+      "expected": { "readable": { "offer": false }, "pass": false }
+    },
+    {
+      "name": "the header is empty",
+      "responses": {
+        "offer": { "status": 200, "headers": { "Access-Control-Allow-Origin": "" } }
+      },
+      "expected": { "readable": { "offer": false }, "pass": false }
+    },
+    {
+      "name": "the header name in lower case, the value with spaces around it",
+      "responses": {
+        "discovery": { "status": 200, "headers": { "access-control-allow-origin": " * " } },
+        "jwks": { "status": 200, "headers": { "ACCESS-CONTROL-ALLOW-ORIGIN": "*" } },
+        "offer": { "status": 200, "headers": { "Access-Control-Allow-Origin": "*" } }
+      },
+      "expected": { "readable": { "discovery": true, "jwks": true, "offer": true }, "pass": true }
+    }
+  ]
+}

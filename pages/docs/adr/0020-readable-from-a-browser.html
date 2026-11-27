@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ADR 0020: The Three Responses Readable from a Browser | Vacation Rental Protocol</title>
+    <meta name="description" content="VRP's claim is that anyone can verify an offer against the host's own domain." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="ADR 0020: The Three Responses Readable from a Browser" />
+    <meta property="og:description" content="VRP's claim is that anyone can verify an offer against the host's own domain." />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/adr/0020-readable-from-a-browser" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="ADR 0020: The Three Responses Readable from a Browser" />
+    <meta name="twitter:description" content="VRP's claim is that anyone can verify an offer against the host's own domain." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/adr/0020-readable-from-a-browser" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/adr/0020-readable-from-a-browser.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/adr/0020-readable-from-a-browser#techarticle",
+  "headline": "ADR 0020: The Three Responses Readable from a Browser",
+  "description": "VRP's claim is that anyone can verify an offer against the host's own domain.",
+  "url": "https://vacationrentalprotocol.com/docs/adr/0020-readable-from-a-browser",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/adr/0020-readable-from-a-browser.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0020-readable-from-a-browser.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/implementations">Implementations</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/adr/0020-readable-from-a-browser.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0020-readable-from-a-browser.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="adr-0020-the-three-responses-readable-from-a-browser">ADR 0020: The Three Responses Readable from a Browser</h1>
+<p><strong>Status:</strong> Proposed <strong>Date:</strong> 2026-11-27 (proposed)</p>
+<h2 id="context">Context</h2>
+<p>VRP's claim is that anyone can verify an offer against the host's own domain. One way to do that is a verifier that runs in a web page: this site's <a href="https://vacationrentalprotocol.com/verify">/verify</a> fetches a node's discovery document, its JWKS and an offer, and checks the signature with the browser's own Web Crypto. No server of ours sees the request.</p>
+<p>A browser lets a page read a response from another origin only under the browser's own rule. The Fetch standard (Living Standard, last updated 20 November 2026) says of the response header:</p>
+<blockquote><code>Access-Control-Allow-Origin</code> Indicates whether the response can be shared, via returning the literal value of the <code>Origin</code> request header (which can be <code>null</code>) or <code>*</code> in a response.</blockquote>
+<p>and its &quot;CORS check&quot; (§4.10) reads:</p>
+<blockquote>Let *origin* be the result of getting <code>Access-Control-Allow-Origin</code> from *response*'s header list. If *origin* is null, then return failure. […] If *request*'s credentials mode is not &quot;include&quot; and *origin* is <code>*</code>, then return success.</blockquote>
+<p><code>spec/v0.1.md</code> said nothing about this for any of the three responses. Neither did <code>/implement</code> or the implementation guide until 2026-11-26.</p>
+<p>What that led to. An independent signing node listed in <code>IMPLEMENTATIONS.md</code> sent <code>Access-Control-Allow-Origin: *</code> on its two <code>.well-known</code> files and not on its offer endpoint. The header was set at the web server for that one directory; the offer endpoint lives at another path. The verify page fetched the discovery document and the keys and was stopped at the offer. The signature was valid: the same offer verified outside a browser. The node's operator added the header to the endpoint itself within a day of the report. Measured in a browser afterwards (2026-11-26 18:03 UTC): all three responses carry the header and the page reads the offer.</p>
+<p>The implementer had followed our texts. The gap was ours.</p>
+<h2 id="decision">Decision</h2>
+<p><strong>D1. A SHOULD in §4.</strong> A node SHOULD send <code>Access-Control-Allow-Origin: *</code> on every response from the verified stay offer endpoint, error responses included, and on the discovery document and the JWKS. The paragraph says why: the three are public and are fetched without credentials. It also says what happens without the header: the node stays verifiable by a verifier that does not run in a browser, and a verifier in a browser has a blocked fetch, which §9 already names as unknown, never negated.</p>
+<p><strong>D2. §2 and §3 point to it.</strong> One sentence each: a node SHOULD serve the discovery document, and the JWKS, so that a verifier running in a browser can read it (§4).</p>
+<p><strong>D3. SHOULD, not MUST.</strong> A verifier that does not run in a browser needs no such header, and the signature, the freshness and the binding to the domain do not depend on it. A MUST would make a node non-conforming for a property that only one kind of verifier needs. Core already has one SHOULD about a response header, <code>Cache-Control</code> on the JWKS (§3.1).</p>
+<p>**D4. The value is <code>*</code>.** The three responses are public. A page fetches them without credentials, and with <code>*</code> a browser refuses a credentialed read in any case. A header that names one origin shares the response with that origin only, which makes one verifier the reader of record; that is not what a node with no gatekeeper wants (ADR 0002). A verifier that sends only CORS-safelisted request headers causes no preflight request, so this record says nothing about <code>OPTIONS</code>.</p>
+<p><strong>D5. Conformance vectors and a checker.</strong> <code>examples/conformance/browser-readable/vectors.json</code> (10 cases: the header as <code>*</code> on every response; set for <code>/.well-known/</code> only; absent; present on the offer and absent on its error response; one origin named; <code>null</code>; sent twice; two values; empty; lower-case name and padded value), checked by <code>scripts/verify-browser-readable.mjs</code> in <code>npm test</code>. The same script has a live mode, <code>--live &lt;domain&gt;</code>, that fetches a node's discovery document, JWKS, an offer and the endpoint's answer to an empty request, one request a second, and reports the header on each response, redirects included.</p>
+<p><strong>D6. The guide and <code>/implement</code> say the same.</strong> The section &quot;Readable in a Browser&quot; in <code>docs/implement-vrp.md</code> and the two lines on <code>/implement</code> called the header guidance that Core did not require. They now cite §4.</p>
+<h2 id="consequences">Consequences</h2>
+<ul><li><strong>Version class.</strong> A backward-compatible addition under GOVERNANCE.md §5. No verifier accepts or refuses anything it did not before, and no node stops conforming: a SHOULD that a node does not follow leaves it a VRP node. The text changes within the v0.1 public draft; <code>protocol_version</code> stays <code>0.1</code>.</li><li><strong>Known nodes, measured.</strong> The two signing nodes in <code>IMPLEMENTATIONS.md</code>, checked with the live mode on 2026-11-27 (01:36 and 01:37 UTC): both send <code>Access-Control-Allow-Origin: *</code> on the discovery document, the JWKS, an offer and the 400 answer to an empty request. Neither has anything to change.</li><li><strong>Substantive</strong> under GOVERNANCE.md §4: the change adds normative text, so it takes this record, a review period of at least seven days, and approval from two maintainers while two are active.</li><li><strong>Migration path.</strong> None is required. A node that wants to be verifiable from a web page sends the header where each endpoint is served, not for one directory.</li><li><strong>Verifiers.</strong> A verifier outside a browser is unaffected. <code>vacationrentalprotocol/vrp-verify</code> does not change. The site's verify page already reports a blocked fetch as a fetch that failed, and names cross-origin blocking as a possible cause; it does not call the signature invalid.</li><li>The IETF draft keeps the old wording until its next revision.</li><li>Open pull requests that prepare a later text of the specification need the same paragraph if this record is accepted before they are.</li><li>Neutrality: the rule applies to every node alike, the reference implementation included (ADR 0002).</li></ul>
+      </article>
+    </main>
+  </body>
+</html>

@@ -322,7 +322,7 @@
             verifier running in a web page can read them. Set it where each
             endpoint is served: a rule for <code>/.well-known/</code> alone
             leaves an offer endpoint at another path without it. The core spec
-            does not require the header; a verifier outside a browser does not
+            says a node should (§4); a verifier outside a browser does not
             need it.
           </p>
           <p class="note" style="margin-top: 16px">
@@ -341,7 +341,7 @@
           <ol class="steps">
             <li>Publish three documents on the host's own domain: <code>/.well-known/jwks.json</code>, <code>/.well-known/vacation-rental.json</code>, and the offer endpoint it names, e.g. <code>/api/verified-stay-offer</code>.</li>
             <li>Sign only what the host has stated: a missing answer is <code>null</code> or left out, never <code>false</code> or "not allowed", and no value is invented to make an offer validate (guidance; the reader's rule is Core §9).</li>
-            <li>Send <code>Access-Control-Allow-Origin: *</code> on all three, set where each is served, so a verifier in a browser can read them (guidance, not a Core requirement).</li>
+            <li>Send <code>Access-Control-Allow-Origin: *</code> on all three, set where each is served, so a verifier in a browser can read them (Core §4, SHOULD).</li>
             <li>Do not invent a schema — use <a href="/spec/v0.1">spec/v0.1.md</a> and <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/schemas">schemas/</a> verbatim.</li>
             <li>Do not proxy booking through a marketplace — <code>direct_booking_url</code> stays on the host's domain.</li>
             <li>Prove interop with the <a href="https://github.com/vacationrentalprotocol/vrp-spec/tree/main/examples/conformance">conformance vectors</a> (<code>npm test</code>).</li>

@@ -1,0 +1,45 @@
+name: Review period recheck
+
+# The "Review period" step in validate.yml (GOVERNANCE.md §4) judges a pull
+# request at the moment it runs. Two things change its answer without a new
+# run: time passing, and a maintainer's review. This workflow runs the step
+# again for a pull request whose recorded answer no longer matches the rule:
+# red although the seven days and the two approvals are there, or green
+# although a maintainer has asked for changes.
+
+on:
+  pull_request_review:
+    types: [submitted, dismissed]
+  schedule:
+    - cron: "23 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+  # Re-running a workflow run.
+  actions: write
+
+jobs:
+  recheck:
+    name: Run the review-period step again where its answer changed
+    runs-on: ubuntu-latest
+    steps:
+      # Always the default branch: the rule that is run is the merged one,
+      # never a pull request's copy of it.
+      - name: Check out the default branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: "22"
+
+      - name: Compare each pull request's recorded answer with the rule
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: bash scripts/recheck-review-period.sh

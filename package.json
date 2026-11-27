@@ -21,6 +21,8 @@
     "verify-node-page:live": "node scripts/verify-node-page.mjs --live",
     "verify-browser-readable": "node scripts/verify-browser-readable.mjs",
     "verify-browser-readable:live": "node scripts/verify-browser-readable.mjs --live",
+    "verify-review-period": "node scripts/verify-review-period.mjs",
+    "check-review-period": "node scripts/check-review-period.mjs",
     "check-public-routes": "node scripts/check-public-routes.mjs",
     "check-public-routes:live": "node scripts/check-public-routes.mjs --live",
     "check-license": "node scripts/check-license-boundary.mjs",
@@ -29,7 +31,7 @@
     "build-sitemap": "node scripts/build-sitemap.mjs",
     "check-sitemap": "node scripts/build-sitemap.mjs --check",
     "generate-vectors": "node scripts/generate-conformance-vectors.mjs",
-    "test": "npm run validate && npm run verify-vectors && npm run verify-offer-schema && npm run verify-attestations && npm run verify-three-state && npm run verify-receipt-vectors && npm run verify-offer-vectors && npm run verify-web-verifier && npm run verify-stay-form && npm run verify-web-pages && npm run verify-tlog-vectors && npm run verify-host-domain && npm run verify-offer-rules && npm run verify-node-page && npm run verify-browser-readable && npm run check-public-routes && npm run check-license && npm run check-source-pack && npm run check-pages",
+    "test": "npm run validate && npm run verify-vectors && npm run verify-offer-schema && npm run verify-attestations && npm run verify-three-state && npm run verify-receipt-vectors && npm run verify-offer-vectors && npm run verify-web-verifier && npm run verify-stay-form && npm run verify-web-pages && npm run verify-tlog-vectors && npm run verify-host-domain && npm run verify-offer-rules && npm run verify-node-page && npm run verify-browser-readable && npm run verify-review-period && npm run check-public-routes && npm run check-license && npm run check-source-pack && npm run check-pages",
     "build-pages": "node scripts/build-pages.mjs",
     "check-pages": "node scripts/build-pages.mjs --check"
   }

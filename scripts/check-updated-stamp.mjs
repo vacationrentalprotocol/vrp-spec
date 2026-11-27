@@ -11,6 +11,14 @@
  *   declarations/examples, or any top-level *.html other than the stamp
  *   itself), the stamp line in index.html must ALSO change in the same PR.
  *
+ *   One case where the stamp may stay: it already carries a date that is not
+ *   earlier than the newest commit that changed the content. A second content
+ *   change on the same day has no later date to move the stamp to; requiring a
+ *   change there would block an honest stamp (found 2026-11-27, when the stamp
+ *   had been moved to that day by one pull request and a second one followed).
+ *   The dates compared are committer dates as git records them (`%cs`), the
+ *   same convention as scripts/build-sitemap.mjs.
+ *
  * Usage (CI): node scripts/check-updated-stamp.mjs <base-ref>
  * The base ref defaults to origin/main. Pushes to main (base == HEAD) skip.
  */
@@ -105,11 +113,29 @@ if (!headStamp) {
   console.error("check-updated-stamp: FAIL — the stamp line is missing from index.html.");
   process.exit(1);
 }
+// The date the stamp carries, and the date of the newest commit in this change
+// that touches the changed content. Committer dates (`%cs`), never local time.
+// On a pull request's synthetic merge commit git follows the parent whose tree
+// already holds the file, so the date is the pull request's own commit date.
+const stampDate = headStamp.match(/\d{4}-\d{2}-\d{2}$/)[0];
+const newestContentDate = contentChanged
+  .map((file) => sh(`git log -1 --format=%cs ${mergeBase}..HEAD -- "${file}"`))
+  .filter((date) => /^\d{4}-\d{2}-\d{2}$/.test(date))
+  .sort()
+  .pop();
+
+if (baseStamp === headStamp && newestContentDate && stampDate >= newestContentDate) {
+  console.log(
+    `check-updated-stamp: OK — the stamp already says ${stampDate}; the newest content change is dated ${newestContentDate}.`,
+  );
+  process.exit(0);
+}
 if (baseStamp === headStamp) {
   console.error(
     "check-updated-stamp: FAIL — spec content changed but the landing-page stamp did not.\n" +
       `  Changed content: ${contentChanged.join(", ")}\n` +
       `  Stamp still says: "${headStamp}"\n` +
+      `  Newest content change is dated: ${newestContentDate || "unknown"}\n` +
       "  Bump the 'updated YYYY-MM-DD' date in index.html in this PR.",
   );
   process.exit(1);

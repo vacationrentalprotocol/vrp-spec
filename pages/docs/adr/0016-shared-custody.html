@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ADR 0016: Shared Custody of the Standard's Handles | Vacation Rental Protocol</title>
+    <meta name="description" content="This record is itself a substantive change (GOVERNANCE.md §12)." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Vacation Rental Protocol (VRP)" />
+    <meta property="og:title" content="ADR 0016: Shared Custody of the Standard's Handles" />
+    <meta property="og:description" content="This record is itself a substantive change (GOVERNANCE.md §12)." />
+    <meta property="og:url" content="https://vacationrentalprotocol.com/docs/adr/0016-shared-custody" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="ADR 0016: Shared Custody of the Standard's Handles" />
+    <meta name="twitter:description" content="This record is itself a substantive change (GOVERNANCE.md §12)." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://vacationrentalprotocol.com/docs/adr/0016-shared-custody" />
+    <link rel="alternate" type="text/markdown" href="https://vacationrentalprotocol.com/docs/adr/0016-shared-custody.md" title="Markdown source" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .doc { max-width: 80ch; margin: 0 auto; padding: 2.5rem 1.25rem 6rem; line-height: 1.7; }
+      .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.25; margin: 2.2em 0 0.6em; }
+      .doc h1 { margin-top: 0.6em; }
+      .doc pre { overflow-x: auto; padding: 1rem; border-radius: 6px; background: #f4f6f5; }
+      .doc pre code { font-size: 0.85em; }
+      .doc table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; margin: 1em 0; }
+      .doc th, .doc td { border: 1px solid #d8dfdc; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+      .doc hr { border: 0; border-top: 1px solid #d8dfdc; margin: 2.5rem 0; }
+      .doc blockquote { margin: 1em 0; padding-left: 1rem; border-left: 3px solid #d8dfdc; color: #5c6863; }
+      .doc .doc-meta { font-size: 0.85rem; color: #5c6863; margin: 0 0 1.5rem; }
+      .doc .doc-meta a { color: inherit; }
+      @media (prefers-color-scheme: dark) {
+        .doc pre { background: #171b1a; }
+        .doc th, .doc td, .doc hr, .doc blockquote { border-color: #2a302e; }
+      }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://vacationrentalprotocol.com/docs/adr/0016-shared-custody#techarticle",
+  "headline": "ADR 0016: Shared Custody of the Standard's Handles",
+  "description": "This record is itself a substantive change (GOVERNANCE.md §12).",
+  "url": "https://vacationrentalprotocol.com/docs/adr/0016-shared-custody",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@id": "https://vacationrentalprotocol.com/#website"
+  },
+  "about": {
+    "@id": "https://vacationrentalprotocol.com/#vrp"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Rouiada Abbas"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "encoding": {
+    "@type": "MediaObject",
+    "encodingFormat": "text/markdown",
+    "contentUrl": "https://vacationrentalprotocol.com/docs/adr/0016-shared-custody.md"
+  },
+  "codeRepository": "https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0016-shared-custody.md"
+}
+    </script>
+  </head>
+  <body>
+<header class="site-header">
+      <nav class="top-nav" aria-label="Main navigation">
+        <a class="brand" href="/">VRP</a>
+        <div class="nav-links">
+          <a href="/docs/what-is-vrp">What is VRP?</a>
+          <a href="/docs/source-pack">Source pack</a>
+          <a href="/film">The film</a>
+          <a href="/demo">Watch the agent</a>
+          <a href="/spec/v0.1">Core spec</a>
+          <a href="/reference-implementation">Live proof</a>
+          <a href="/verify">Verify offer</a>
+          <a href="/implement">Implement</a>
+          <a href="/implementations">Implementations</a>
+          <a href="/spec/attestations-v0.1">Attestations</a>
+          <a href="/spec/stayintent-discovery-v0.1">StayIntent</a>
+          <a href="/spec/transparency-log-v0.1">Transparency log</a>
+          <a href="/spec/receipt-v1">Receipt</a>
+          <a href="/spec/well-known-uri-v0.1">Well-Known URI</a>
+          <a href="/declarations">Declarations</a>
+          <a href="/docs/interop-and-trust-positioning">Interop</a>
+          <a href="/contexts/v1">Context</a>
+          <a href="/schemas/attestations-v0.1.schema.json">Schema</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="doc">
+      <p class="doc-meta">Documentation · <a href="https://vacationrentalprotocol.com/docs/adr/0016-shared-custody.md">Markdown source</a> · <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/docs/adr/0016-shared-custody.md">Edit on GitHub</a> · CC0 1.0</p>
+      <article>
+<h1 id="adr-0016-shared-custody-of-the-standards-handles">ADR 0016: Shared Custody of the Standard's Handles</h1>
+<p><strong>Status:</strong> Proposed <strong>Date:</strong> 2026-11-04 (proposed)</p>
+<p><strong>Related:</strong> <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/GOVERNANCE.md">GOVERNANCE.md</a> §2, §3, §7, §12, <a href="https://github.com/vacationrentalprotocol/vrp-spec/blob/main/MAINTAINERS.md">MAINTAINERS.md</a>, <a href="https://vacationrentalprotocol.com/docs/adr/0002-no-gatekeeper-trust-and-interop">ADR 0002</a>, <a href="https://vacationrentalprotocol.com/docs/adr/0003-github-org-segregation">ADR 0003</a>, <a href="https://vacationrentalprotocol.com/docs/adr/0014-independent-approval">ADR 0014</a>, <a href="https://vacationrentalprotocol.com/docs/adr/0015-review-period">ADR 0015</a>.</p>
+<p>This record is itself a substantive change (GOVERNANCE.md §12). It is in force only after at least seven days of review with no maintainer objecting and approval from two maintainers that counts on its current head (ADR 0014 D3), and after it is merged. The hand steps in D1–D4 are taken after that, and each is measured.</p>
+<h2 id="context">Context</h2>
+<p>The standard is held by a set of handles outside this repository: the npm package agents install to verify offers, the GitHub organization, the domain, and the hosting project that serves the site. Measured 2026-11-04:</p>
+<ul><li><code>@vacationrentalprotocol/vrp-verify</code> on npm has one owner, the account <code>hemmabo</code> (<code>npm owner ls</code>, 09:13:50 UTC). Versions 0.1.1 to 0.2.0 were published by the repository's workflow with OIDC trusted publishing and a provenance attestation (<code>.github/workflows/npm-publish.yml</code> in <code>vacationrentalprotocol/vrp-verify</code> at <code>e6eceaa</code>); 0.1.0 was published by hand from that account.</li><li>Pull requests in <code>vacationrentalprotocol/vrp-spec</code> and <code>vacationrentalprotocol/vrp-verify</code> are merged by the account <code>HemmaBo-se</code> (#180 and #22, read from the repositories).</li><li>The site <code>vacationrentalprotocol.com</code> is built from this repository in a hosting project that belongs to the reference implementer's team (read from the hosting provider's API, 08:51:44 UTC).</li><li>ADR 0003 says the GitHub organization &quot;begins with two owners&quot;. The owner set is not readable from where this record was written and is to be measured by an owner before D2.</li></ul>
+<p>ADR 0003 moved the source out of one implementer's namespace so the standard would not &quot;read as one implementer's product path&quot;. The handles above still do. Whoever holds the only npm owner account can publish a verifier that every agent installs; whoever holds the only hosting project can change what the site says. GOVERNANCE.md §2 commits VRP to being &quot;not owned by, branded as, or steered for any single operator&quot;. The commitment is in the text; the handles are the proof.</p>
+<h2 id="decision">Decision</h2>
+<p><strong>D1. npm.</strong> The package <code>@vacationrentalprotocol/vrp-verify</code> has at least two owners who are independent of each other under ADR 0014 D2, both with two-factor authentication. Viljem Dvojmoč (<code>@viljemd-hub</code>), the independent maintainer in MAINTAINERS.md, is added as an owner. Publishing stays as it is: only the repository's workflow publishes, through OIDC trusted publishing with provenance; no owner publishes by hand. The repository setting that disallows token publishing is turned on where npm offers it. No single organization keeps sole rights to the package.</p>
+<p><strong>D2. GitHub organization.</strong> The organization <code>vacationrentalprotocol</code> has at least two owners who are independent of each other under ADR 0014 D2. Viljem Dvojmoč (<code>@viljemd-hub</code>) is added as an owner. In the repositories <code>vrp-spec</code> and <code>vrp-verify</code>, a substantive change merges only with approval from two maintainers that counts on its current head (ADR 0014 D3), at least one of them independent of the change's author (ADR 0014 D1), and after its review period (ADR 0015). An editorial or non-breaking change (GOVERNANCE.md §4) needs one maintainer, who may be its author. Every change needs passing checks before merge. Whether an approval given on an earlier head counts is decided by ADR 0014 D3 and by nothing else. A technical control in the two repositories is to enforce this, so that ADR 0014 D3 and ADR 0015 D2–D3 hold in the repository itself.</p>
+<p>Until that control is in place, the maintainer who merges checks the approvals, the approvers' independence and the review period by hand before every merge, and records the comparison ADR 0014 D3 requires whenever an approval given on an earlier head is counted. MAINTAINERS.md &quot;Custody&quot; (D5) records what the two repositories enforce by themselves, as measured, and when it was last measured.</p>
+<p><strong>D3. Domain.</strong> <code>vacationrentalprotocol.com</code> carries a registrar transfer lock and auto-renewal, and a second named contact who is independent of the registrant under ADR 0014 D2 is on record at the registrar. The site's hosting project is either moved to a team named for the standard, with two owners as in D2, or the reason it stays where it is is recorded in MAINTAINERS.md.</p>
+<p><strong>D4. The verifier follows this governance.</strong> <code>vacationrentalprotocol/vrp-verify</code> is the verifier the organization publishes. Its maintainers are the maintainers in MAINTAINERS.md; a change to what it accepts or rejects is reviewed under GOVERNANCE.md §4 with ADR 0014 and the 7-day period of ADR 0015 D1; a release is tagged by a maintainer and published by the workflow (D1). GOVERNANCE.md §1, which says governance &quot;does not govern any implementation&quot;, gains the sentence: &quot;The verifier the organization publishes, <code>vacationrentalprotocol/vrp-verify</code>, is governed by this document as ADR 0016 sets out; other implementations are not.&quot;</p>
+<p><strong>D5. Record.</strong> MAINTAINERS.md gains a section &quot;Custody&quot; that lists, for each handle in D1–D3, who holds it, with which permission, and when it was last measured, and, for D2, whether the approvals, independence and review period are enforced by a technical control or checked by hand. A change to the custody of a handle is recorded there in the same pull request that makes it, or, for a hand step outside the repository, in the next pull request.</p>
+<h2 id="consequences">Consequences</h2>
+<ul><li>The handles depend less on one person. The npm package and the GitHub organization each have at least two owners who are independent of each other (D1, D2), the domain has a second named contact at the registrar (D3), and MAINTAINERS.md &quot;Custody&quot; records who holds which permission and when it was last measured (D5). That is what this record adds to GOVERNANCE.md §2: less dependence on one person, and permissions that are written down and measured.</li><li>Shared custody is not a technical two-person control. An owner can still act alone within the permissions the service gives an owner; GitHub's documentation says organization owners &quot;have complete administrative access to your organization&quot; (read 2026-11-13). This record does not claim that a change to the verifier, the organization or the domain needs two people, and it does not promise that a handle is recovered after an owner acts alone or an account is lost.</li><li>The reference implementer keeps every role it has: lead maintainer, specification editor, security contact, the reference implementation and nodes. It gives up sole ownership of the npm package and of the GitHub organization (D1, D2), not a role: HemmaBo retains no sole right to those two. The domain and the hosting project are not shared in that way. The domain stays with its registrant, with a transfer lock, auto-renewal and a second named contact on record (D3). The hosting project either moves to a team named for the standard with two owners, or stays where it is with the reason recorded in MAINTAINERS.md (D3).</li><li>Shared custody is shared power. It is bounded by the same rules: publishing only through the workflow, two approvals before a substantive change merges (D2), and GOVERNANCE.md §3 (the continuity role) and §8 (adding and removing maintainers).</li><li>D1–D3 are hand steps by the account holders. Each is measured after it is taken (<code>npm owner ls</code>, the organization's people page, the registrar's record) and written into MAINTAINERS.md &quot;Custody&quot; (D5). This record is not complete until every row there is measured.</li><li>Neutrality: the rule names no company; it applies to whoever holds a handle, the reference implementer included (ADR 0002).</li></ul>
+      </article>
+    </main>
+  </body>
+</html>

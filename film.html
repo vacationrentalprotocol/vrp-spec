@@ -1,281 +1,92 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>VRP — the film: how an agent verifies a signed stay offer</title>
-    <meta
-      name="description"
-      content="A 20-second film: a guest asks, an AI agent finds a vacation rental on the open web, and the host's own domain signs the offer. Then verify it yourself."
-    />
-    <meta name="robots" content="index,follow" />
-    <link rel="canonical" href="https://vacationrentalprotocol.com/film" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <style>
-      :root {
-        /* Real HemmaBo verified-stay-offer envelope palette: deep navy,
-           ivory paper card, gold. No green. */
-        --ink: #f5efe2;        /* ivory */
-        --muted: #9fb0c9;      /* cool muted on navy */
-        --gold: #c9a84c;
-        --gold-2: #e0cfa0;
-        --gold-deep: #8a6d1f;
-        --ok: #c9a84c;         /* gold — replaces the old green accent */
-        --bg: #0b1626;         /* navy */
-        --ivory: #f5efe2;
-        --paper-ink: #0b1626;
-        --paper-warm: #4a4436;
-      }
-      * { box-sizing: border-box; }
-      html, body { margin: 0; height: 100%; background: #000; }
-      body {
-        font-family: ui-serif, Georgia, "Times New Roman", serif;
-        color: var(--ink);
-        overflow: hidden;
-      }
-      .cinema {
-        position: fixed; inset: 0;
-        background: radial-gradient(130% 120% at 50% 0%, #16294a 0%, var(--bg) 55%, #060d18 100%);
-        display: grid; place-items: center;
-      }
-      /* letterbox bars */
-      .bar { position: fixed; left: 0; right: 0; height: 7vh; background: #000; z-index: 40; pointer-events: none; }
-      .bar.top { top: 0; } .bar.bottom { bottom: 0; }
-
-      .stage { position: relative; width: min(960px, 92vw); height: min(560px, 74vh); }
-      .scene {
-        position: absolute; inset: 0;
-        display: grid; place-items: center; text-align: center;
-        opacity: 0; transform: translateY(14px) scale(0.99);
-        transition: opacity 0.9s ease, transform 1.1s cubic-bezier(.2,.7,.2,1);
-        pointer-events: none;
-      }
-      .scene.show { opacity: 1; transform: none; }
-
-      .kicker { letter-spacing: 0.34em; text-transform: uppercase; font-family: ui-sans-serif, system-ui, sans-serif; font-weight: 700; font-size: 0.72rem; color: var(--gold); margin-bottom: 18px; opacity: 0.9; }
-      .line { font-size: clamp(1.7rem, 4.6vw, 3.2rem); line-height: 1.12; font-weight: 600; max-width: 18ch; margin: 0 auto; }
-      .line .hl { color: var(--gold-2); }
-      .line .ok { color: var(--ok); }
-      .sub { margin-top: 18px; font-family: ui-sans-serif, system-ui, sans-serif; color: var(--muted); font-size: clamp(0.95rem, 2vw, 1.12rem); max-width: 34ch; margin-left: auto; margin-right: auto; }
-
-      /* guest chat bubble */
-      .bubble {
-        font-family: ui-sans-serif, system-ui, sans-serif; font-size: clamp(1rem, 2.4vw, 1.35rem); font-weight: 600;
-        background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14);
-        padding: 16px 22px; border-radius: 20px 20px 20px 4px; max-width: 30ch; color: var(--ink);
-        box-shadow: 0 18px 50px rgba(0,0,0,0.4);
-      }
-
-      /* property reveal */
-      .prop { width: 100%; max-width: 720px; }
-      .prop-img {
-        width: 100%; height: clamp(220px, 40vh, 360px); object-fit: cover; border-radius: 18px;
-        box-shadow: 0 30px 80px rgba(0,0,0,0.55); filter: saturate(1.05);
-      }
-      .prop-name { margin-top: 16px; font-size: clamp(1.3rem, 3vw, 2rem); font-weight: 600; }
-      .prop-name small { display:block; font-family: ui-sans-serif, system-ui, sans-serif; color: var(--muted); font-size: 0.6em; font-weight: 500; margin-top: 4px; letter-spacing: 0.02em; }
-
-      /* the widget / envelope card */
-      .card {
-        position: relative; width: min(440px, 86vw); margin: 0 auto;
-        background: var(--ivory); border: 1px solid rgba(201,168,76,0.55); color: var(--paper-ink);
-        border-radius: 18px; padding: 26px 26px 24px; text-align: left;
-        box-shadow: 0 34px 90px rgba(0,0,0,0.55); transition: border-color 0.6s, box-shadow 0.6s;
-        font-family: ui-sans-serif, system-ui, sans-serif;
-      }
-      .card.verified { border-color: var(--gold); box-shadow: 0 34px 90px rgba(6,13,24,0.55), 0 0 0 1px rgba(201,168,76,0.4); }
-      .seal {
-        position: absolute; top: -22px; right: 22px; width: 64px; height: 64px; border-radius: 50%;
-        background: radial-gradient(circle at 34% 30%, var(--gold-2), var(--gold) 70%); color: #3a2f0c;
-        display: grid; place-items: center; font-weight: 900; font-size: 0.6rem; text-align: center; line-height: 1.05;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.45); transition: transform 0.5s cubic-bezier(.2,1.3,.3,1), background 0.5s;
-      }
-      .card.verified .seal { background: radial-gradient(circle at 34% 30%, #efe0b4, var(--gold) 70%); color: #3a2f0c; }
-      .card-tag { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.02em; color: var(--gold-deep); transition: color 0.5s; display:flex; align-items:center; gap:8px; }
-      .card.verified .card-tag { color: var(--gold-deep); }
-      .card-price { font-size: 2.5rem; font-weight: 800; color: var(--paper-ink); margin: 10px 0 2px; line-height: 1; }
-      .card-price .cur { font-size: 1rem; color: var(--paper-warm); font-weight: 700; }
-      .card-rows { color: var(--paper-warm); font-size: 0.92rem; display: grid; gap: 4px; margin-top: 8px; }
-      .card-rows b { color: var(--paper-ink); }
-      .card-book { margin-top: 16px; display: inline-block; background: var(--ok); color: #06140d; font-weight: 800; padding: 11px 18px; border-radius: 10px; font-size: 0.9rem; opacity: 0; transition: opacity 0.6s; }
-      .card.verified .card-book { opacity: 1; }
-
-      /* end CTA */
-      .cta {
-        font-family: ui-sans-serif, system-ui, sans-serif; margin-top: 26px; display: inline-flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: center;
-      }
-      .cta a {
-        text-decoration: none; font-weight: 800; font-size: 1rem; padding: 13px 26px; border-radius: 999px;
-        background: linear-gradient(135deg, var(--gold), var(--gold-2)); color: #1a1a18;
-        box-shadow: 0 10px 30px rgba(201,168,76,0.35);
-      }
-      .cta a.ghost { background: transparent; color: var(--ink); border: 1px solid rgba(255,255,255,0.25); box-shadow: none; }
-
-      /* progress + replay */
-      .hud { position: fixed; bottom: calc(7vh + 14px); left: 50%; transform: translateX(-50%); z-index: 45; display: flex; gap: 7px; }
-      .dot { width: 26px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.18); transition: background 0.3s; }
-      .dot.on { background: var(--gold); }
-      .replay {
-        position: fixed; top: calc(7vh + 14px); right: 18px; z-index: 45;
-        font-family: ui-sans-serif, system-ui, sans-serif; font-size: 0.8rem; font-weight: 700;
-        background: rgba(255,255,255,0.08); color: var(--ink); border: 1px solid rgba(255,255,255,0.18);
-        padding: 8px 14px; border-radius: 999px; cursor: pointer;
-      }
-      .brand { position: fixed; top: calc(7vh + 14px); left: 18px; z-index: 45; font-family: ui-sans-serif, system-ui, sans-serif; font-weight: 800; letter-spacing: 0.18em; font-size: 0.8rem; color: var(--muted); text-decoration: none; }
-      @media (prefers-reduced-motion: reduce) { .scene { transition: opacity 0.2s; } }
-    </style>
-  </head>
-  <body>
-    <div class="bar top"></div>
-    <div class="bar bottom"></div>
-    <a class="brand" href="/">VRP</a>
-    <button class="replay" id="replay">↻ Replay</button>
-
-    <div class="cinema">
-      <div class="stage" id="stage">
-        <!-- 1 -->
-        <div class="scene" data-s="0">
-          <div>
-            <p class="kicker">Vacation Rental Protocol</p>
-            <p class="line">When an agent verifies a stay offer,<br /><span class="hl">how do you know the price is real?</span></p>
-          </div>
-        </div>
-        <!-- 2 -->
-        <div class="scene" data-s="1">
-          <div>
-            <p class="kicker">A guest asks</p>
-            <div class="bubble">"Find a villa in Skåne for 6 — Oct 15–17."</div>
-          </div>
-        </div>
-        <!-- 3 -->
-        <div class="scene" data-s="2">
-          <div class="prop">
-            <img class="prop-img" alt="Villa Åkerlyckan" width="1280" height="720" loading="eager" src="https://vfalgymbhyfqsyxkvpqg.supabase.co/storage/v1/object/public/property-images/properties/3ef1d46d-5c23-46fe-86cb-8e714abf734f/other/1783167588683-rewm-0-desktop.jpg" />
-            <div class="prop-name">Villa Åkerlyckan<small>Kävlinge, Sweden · found on the open web — no marketplace</small></div>
-          </div>
-        </div>
-        <!-- 4 + 5 + 6 : the widget -->
-        <div class="scene" data-s="3">
-          <div>
-            <p class="kicker" id="cardKicker">The host's own domain signs the offer</p>
-            <div class="card" id="card">
-              <div class="seal">VRP<br />Ed25519</div>
-              <div class="card-tag" id="cardTag">● Signed offer — sealed</div>
-              <div class="card-price">6970 <span class="cur">SEK</span></div>
-              <div class="card-rows">
-                <div><b>Villa Åkerlyckan</b> · Oct 15–17 · 6 guests</div>
-                <div>0% commission · paid direct to the host · no add-on fees</div>
-              </div>
-              <span class="card-book">Book direct on villaakerlyckan.se →</span>
-            </div>
-            <p class="sub" id="cardSub">Anyone can verify the signature against the host's own keys.</p>
-          </div>
-        </div>
-        <!-- 7 -->
-        <div class="scene" data-s="4">
-          <div>
-            <p class="line">No marketplace.<br />No gatekeeper.<br /><span class="ok">The host owns it all.</span></p>
-            <div class="cta">
-              <a href="/demo">Verify it yourself — live →</a>
-              <a class="ghost" href="/">vacationrentalprotocol.com</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="hud" id="hud"></div>
-
-    <script>
-      "use strict";
-      const scenes = Array.from(document.querySelectorAll(".scene"));
-      const hud = document.getElementById("hud");
-      const card = document.getElementById("card");
-      const cardKicker = document.getElementById("cardKicker");
-      const cardTag = document.getElementById("cardTag");
-      const cardSub = document.getElementById("cardSub");
-      scenes.forEach((_, i) => { const d = document.createElement("div"); d.className = "dot"; d.dataset.d = i; hud.appendChild(d); });
-      const dots = Array.from(hud.children);
-
-      function setScene(i) {
-        scenes.forEach((s) => s.classList.toggle("show", Number(s.dataset.s) === i));
-        dots.forEach((d, di) => d.classList.toggle("on", di === i));
-      }
-      // Card states for the widget scene (scene 3).
-      function setCard(state) {
-        if (state === "sealed") {
-          card.classList.remove("verified");
-          cardKicker.textContent = "The host's own domain signs the offer";
-          cardTag.textContent = "● Signed offer — sealed";
-          cardSub.textContent = "Anyone can verify the signature against the host's own keys.";
-        } else if (state === "verified") {
-          card.classList.add("verified");
-          cardKicker.textContent = "Verified — in the browser";
-          cardTag.textContent = "✓ Verified — signed by villaakerlyckan.se";
-          cardSub.textContent = "The signature checks out against the host's own keys. Nothing altered.";
-        } else if (state === "priced") {
-          card.classList.add("verified");
-          cardKicker.textContent = "Exact price · 0% commission · direct to the host";
-          cardTag.textContent = "✓ Verified — signed by villaakerlyckan.se";
-          cardSub.textContent = "The price came from the host's own domain — not a middleman.";
-        }
-      }
-
-      // Cinematic timeline driven by requestAnimationFrame against the real wall
-      // clock (rAF timestamps) — immune to setTimeout throttling/virtualization.
-      const beats = [
-        { t: 0,     run: () => setScene(0) },
-        { t: 3400,  run: () => setScene(1) },
-        { t: 6800,  run: () => setScene(2) },
-        { t: 10200, run: () => { setScene(3); setCard("sealed"); } },
-        { t: 12400, run: () => setCard("verified") },
-        { t: 15000, run: () => setCard("priced") },
-        { t: 17800, run: () => setScene(4) },
-      ];
-      const END = beats[beats.length - 1].t + 300;
-
-      let runId = 0;
-      let startTs = 0;
-      let lastBeat = -1;
-
-      function frame(ts) {
-        const my = runId;
-        if (!startTs) startTs = ts;
-        const elapsed = ts - startTs;
-        let idx = 0;
-        for (let k = 0; k < beats.length; k++) if (elapsed >= beats[k].t) idx = k;
-        if (idx !== lastBeat) { lastBeat = idx; beats[idx].run(); }
-        if (elapsed < END && my === runId) requestAnimationFrame(frame);
-      }
-
-      function play() {
-        runId++;
-        startTs = 0;
-        lastBeat = -1;
-        setCard("sealed");
-        requestAnimationFrame(frame);
-      }
-
-      // Deterministic hold for testing/embedding: /film#s=2 holds scene 2;
-      // /film#s=3v holds the widget in its VERIFIED (green) state.
-      function holdScene(spec) {
-        runId++; // cancel any running loop
-        const verified = spec.endsWith("v");
-        const idx = parseInt(spec, 10);
-        if (Number.isNaN(idx)) return false;
-        if (idx === 3) setCard(verified ? "verified" : "sealed");
-        setScene(idx);
-        return true;
-      }
-
-      document.getElementById("replay").addEventListener("click", () => {
-        history.replaceState(null, "", location.pathname);
-        play();
-      });
-
-      const m = location.hash.match(/^#s=(\d+v?)$/);
-      if (m) holdScene(m[1]);
-      else play();
-    </script>
-  </body>
-</html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Can the agent still quote this price? · Vacation Rental Protocol</title>
+<meta name="description" content="A 40-second VRP film. Follow the same signed example offer before and after expiry.">
+<link rel="canonical" href="https://vacationrentalprotocol.com/film">
+<style>
+*{box-sizing:border-box} html,body{margin:0;background:#101716;color:#f4f6f2;font:16px/1.4 Inter,Arial,sans-serif} main{max-width:1240px;margin:auto}
+.screen{aspect-ratio:16/9;position:relative;overflow:hidden;container-type:inline-size;background:#101716}
+.canvas{width:1920px;height:1080px;transform-origin:0 0;position:absolute;overflow:hidden;background:radial-gradient(ellipse at 74% 50%,#24362f 0%,#141e1b 43%,#0d1413 80%);font-family:Inter,Arial,sans-serif}
+.bar,.foot{position:absolute;left:88px;right:88px;display:flex;align-items:center;justify-content:space-between}
+.bar{top:44px;height:65px;border-bottom:1px solid #405148;padding-bottom:22px;font-size:26px}.bar strong{font-weight:650;letter-spacing:-2px;font-size:36px;margin-right:24px}.meta,.label,.mono,.foot{font-family:ui-monospace,Consolas,monospace}
+.meta,.foot{font-size:21px;color:#adc2b6}.foot{bottom:38px}.title{position:absolute;top:142px;left:88px;font-size:75px;line-height:1.08;font-weight:520;letter-spacing:-3.8px;margin:0}
+.panel{position:absolute;left:88px;top:290px;width:1744px;height:650px;border-radius:25px;background:#f1f5f0;color:#1d342a;box-shadow:0 28px 75px #070e0e77;overflow:hidden;transform-origin:50% 70%}
+.chrome{height:81px;background:#e2ebe4;border-bottom:1px solid #c7d5cc;display:flex;align-items:center;padding:0 54px;gap:26px}.label{font-size:19px;letter-spacing:2px;text-transform:uppercase;color:#476356}.chrome .mono{font-size:26px}
+.body{display:grid;grid-template-columns:1fr 1fr;height:569px}.offer,.check{padding:45px 55px}.offer{border-right:1px solid #b6cbbc}.price{font-size:88px;letter-spacing:-5px;font-weight:550;line-height:1.2;margin:9px 0 3px}.muted{color:#4c6758;font-size:28px}.line{margin:28px 0;border:0;border-top:1px solid #bfccc2}.pair{display:flex;align-items:baseline;justify-content:space-between;margin:13px 0;font-size:28px}.pair b{font-size:28px;font-weight:550;font-variant-numeric:tabular-nums}.finger{font:20px ui-monospace,monospace;color:#4f6659;margin-top:25px}.clock{font-size:68px;line-height:1.12;font-weight:540;letter-spacing:-4px;font-variant-numeric:tabular-nums;margin:8px 0 19px}.utc{font:24px ui-monospace,monospace;color:#526c5d;letter-spacing:0;margin-left:14px}.check .pair{margin:12px 0}.good{color:#106049}.late{color:#884816}.answer{margin-top:26px;border-left:5px solid #35765a;padding:8px 0 8px 22px;font-size:33px;font-weight:580;letter-spacing:-1px}.answer.expired{border-color:#b17a43}.note{position:absolute;left:90px;top:952px;color:#c0d7c8;font-size:28px;letter-spacing:-.3px}
+.progress{position:absolute;left:0;bottom:0;height:4px;background:#a7cbb5;transform-origin:left;width:100%}
+.controls{display:flex;gap:.8rem;align-items:center;flex-wrap:wrap;padding:.8rem 1rem}.controls button,.controls a{border:1px solid #546b60;border-radius:.4rem;background:#15251e;color:#e1efe5;font:inherit;padding:.4rem .8rem;cursor:pointer}input[type=range]{max-width:36vw;flex:1;accent-color:#99c8ab}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #b1d9bd}details{margin:.4rem 1rem 2rem;max-width:75ch}details a{color:#b9dcc6}details p{color:#d1ddd5}.embedded .controls{position:absolute;bottom:0;left:0;right:0;opacity:0;background:#101716ed}.embedded:hover .controls,.embedded:focus-within .controls,.embedded.paused .controls{opacity:1}.embedded details{display:none}.time{font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body><main>
+<div class="screen" role="img" aria-label="A signed VRP example offer checked at 12:05 and 13:00 UTC. The signature stays valid. The offer expires at 12:10 UTC.">
+<div class="canvas">
+<header class="bar"><div><strong>VRP</strong> Vacation Rental Protocol</div><span class="meta">Conformance example · 2 June 2026</span></header>
+<h1 class="title">Can the agent still quote this price?</h1>
+<div class="panel"><div class="chrome"><span class="label">Example domain</span><span class="mono">example-host.invalid</span></div>
+<div class="body"><div class="offer"><span class="label">Signed offer</span><div class="price">€1,234</div><div class="muted">12–15 September 2026 · 2 guests</div><hr class="line">
+<div class="pair"><span>Issued</span><b>12:00 UTC</b></div><div class="pair"><span>Valid until</span><b>12:10 UTC</b></div>
+<div class="finger">JWS fingerprint · SHA-256 · 1d948fcc6fdb…</div></div>
+<div class="check"><span class="label">Verification clock</span><div class="clock"><span id="clock">12:05</span><span class="utc">UTC</span></div>
+<div id="signature" class="pair"><span>Ed25519 signature</span><b class="good">Valid</b></div>
+<div id="freshness" class="pair"><span>Offer validity</span><b id="fresh">Within window</b></div>
+<div class="answer" id="result">The agent may quote €1,234.</div></div></div></div>
+<div class="note"></div><footer class="foot"><span>VRP v0.1 · Signed stay offer</span><span>Conformance vectors 01 / 02</span></footer><div class="progress"></div>
+</div></div>
+<div class="controls"><button id="play" type="button">Play film</button><button id="restart" type="button">Restart</button><input id="seek" type="range" min="0" max="40" step=".05" value="0" aria-label="Film position in seconds"><span class="time">0:00 / 0:40</span></div>
+<details><summary>Transcript and test cases</summary><p>Both test cases use the same compact JWS and public key. The signed offer allows the agent to quote €1,234 for two guests. At 12:05 UTC, the signature verifies and the offer is fresh. At 13:00 UTC the signature still verifies, but the 12:10 UTC deadline has passed. The agent must obtain a fresh offer before quoting a price.</p><p><a href="/examples/conformance/offer/01-valid-fresh.json">Fresh offer test</a> · <a href="/examples/conformance/offer/02-valid-expired.json">Expired offer test</a> · <a href="/verify" target="_top">Verify an offer</a></p></details>
+</main>
+<script>
+const scene = document.querySelector('.canvas');
+const screen = document.querySelector('.screen');
+const at = id => document.getElementById(id);
+const title = document.querySelector('.title'), note = document.querySelector('.note');
+const panel = document.querySelector('.panel'), progress = document.querySelector('.progress');
+const timeLabel = document.querySelector('.time');
+const duration = 40;
+function fit(){scene.style.transform='scale('+screen.clientWidth/1920+')'}
+fit(); window.addEventListener('resize',fit);
+function ease(t){const n=Math.max(0,Math.min(1,t));return n*n*(3-2*n)}
+function appear(element,amount){element.style.opacity=amount;element.style.transform='translateY('+((1-amount)*18)+'px)'}
+function draw(t){
+  const expired=t>=21;
+  const last=t>=32;
+  const stage=last?32:expired?21:t>=7?7:0;
+  title.textContent=last?'A fresh offer is needed.':expired?'Check the same offer again.':stage===7?'Five minutes after signing.':'Can the agent still quote this price?';
+  appear(title,stage===0?1:ease((t-stage)/.8));
+  panel.style.transform='perspective(2300px) rotateX('+((1-ease(t/5))*4)+'deg) translateY('+((1-ease(t/5))*15)+'px)';
+  at('clock').textContent=expired?'13:00':'12:05';
+  appear(document.querySelector('.check'),ease((t-5.8)/1.4));
+  appear(at('signature'),ease((t-8)/1.1));
+  at('fresh').textContent=expired?'Expired':'Within window';
+  at('fresh').className=expired?'late':'good';
+  appear(at('freshness'),ease((t-(expired?22:10))/1.1));
+  at('result').textContent=expired?'The agent must not quote this price.':'The agent may quote €1,234.';
+  at('result').classList.toggle('expired',expired);
+  appear(at('result'),ease((t-(expired?24:12))/1.2));
+  note.textContent=last?'The signature still verifies. The permission to quote depends on freshness.':expired?'The signed bytes are identical. Only the verification clock has changed.':stage===7?'The host permits quoting, and the price is still within its validity window.':'One signed offer. Two checks against the same public key.';
+  appear(note,ease((t-stage-.15)/1));
+  progress.style.transform='scaleX('+t/duration+')';
+  at('seek').value=t;
+  timeLabel.textContent='0:'+String(Math.floor(t)).padStart(2,'0')+' / 0:40';
+}
+let time=0,started=0,frame=0,playing=false;
+function pause(){playing=false;cancelAnimationFrame(frame);at('play').textContent=time>=duration?'Replay':'Play film';document.body.classList.add('paused')}
+function tick(now){time=Math.min(duration,(now-started)/1000);draw(time);if(time>=duration)pause();else frame=requestAnimationFrame(tick)}
+function play(){if(playing)return;if(time>=duration)time=0;started=performance.now()-time*1000;playing=true;document.body.classList.remove('paused');at('play').textContent='Pause';frame=requestAnimationFrame(tick)}
+function seek(value){time=value;started=performance.now()-time*1000;draw(time)}
+at('play').onclick=()=>playing?pause():play();
+at('restart').onclick=()=>{seek(0);play()};
+at('seek').oninput=event=>seek(Number(event.target.value));
+const motion=matchMedia('(prefers-reduced-motion: reduce)');
+motion.addEventListener?.('change',e=>{if(e.matches)pause()});
+if(self!==top)document.body.classList.add('embedded');
+function hold(){const map={'#s=0':1,'#s=1':7,'#s=2':15,'#s=3':19,'#s=3v':27,'#s=4':37};
+ if(!Object.prototype.hasOwnProperty.call(map,location.hash))return false;
+ pause();seek(map[location.hash]);return true}
+window.addEventListener('hashchange',hold);
+draw(0);pause();if(!hold()&&!motion.matches)play();
+</script>
+</body></html>

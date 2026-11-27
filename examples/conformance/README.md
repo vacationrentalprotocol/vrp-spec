@@ -146,3 +146,13 @@ How a node names the protocol on the page people and models read — a
 standard's origin with `VRP` in its text — is checked against
 [`node-page/`](./node-page/) (`vectors.json` + one HTML page per case). See
 [`spec/v0.1.md`](../../spec/v0.1.md) §2.1 and `npm test` (`verify-node-page`).
+
+## Browser-readable vectors
+
+Whether a verifier running in a web page can read a node's discovery document,
+JWKS and offer — each response sent with `Access-Control-Allow-Origin: *`,
+error responses included — is checked against
+[`browser-readable/`](./browser-readable/) (`vectors.json`, 10 cases). See
+[`spec/v0.1.md`](../../spec/v0.1.md) §4 and `npm test`
+(`verify-browser-readable`). `node scripts/verify-browser-readable.mjs --live
+<domain>` runs the same check against a live node.

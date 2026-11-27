@@ -76,8 +76,9 @@ To check, open `https://vacationrentalprotocol.com/verify?host=<your-domain>`
 and press "Fetch & verify", or read the response headers of each of the three
 URLs.
 
-This is guidance. The Core specification does not require the header, and a
-verifier that does not run in a browser does not need it.
+Core §4 says a node SHOULD send the header. A verifier that does not run in a
+browser does not need it. To check your own node from a terminal:
+`node scripts/verify-browser-readable.mjs --live <your-domain>`.
 
 ## Discovery Checklist
 

@@ -109,7 +109,7 @@
 <pre><code>Access-Control-Allow-Origin: *</code></pre>
 <p>The three responses are public and are read without credentials, so <code>*</code> fits. Set the header where each endpoint is served, not for one directory: a rule scoped to <code>/.well-known/</code> leaves an offer endpoint at another path without it. The verifier in the browser then reads the discovery document and the keys and is stopped at the offer, although the signature is valid.</p>
 <p>To check, open <code>https://vacationrentalprotocol.com/verify?host=&lt;your-domain&gt;</code> and press &quot;Fetch &amp; verify&quot;, or read the response headers of each of the three URLs.</p>
-<p>This is guidance. The Core specification does not require the header, and a verifier that does not run in a browser does not need it.</p>
+<p>Core §4 says a node SHOULD send the header. A verifier that does not run in a browser does not need it. To check your own node from a terminal: <code>node scripts/verify-browser-readable.mjs --live &lt;your-domain&gt;</code>.</p>
 <h2 id="discovery-checklist">Discovery Checklist</h2>
 <p>Your discovery document should include:</p>
 <ul><li><code>protocol</code></li><li><code>protocol_version</code></li><li><code>canonical_domain</code></li><li><code>node_id</code></li><li><code>jwks_url</code></li><li><code>verified_stay_offer_endpoint</code></li><li><code>capabilities</code></li></ul>

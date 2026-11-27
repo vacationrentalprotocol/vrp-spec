@@ -67,6 +67,11 @@
         ]
       }
     </script>
+    <style>
+      .film-player { width: min(900px, 100%); margin: auto; container-type: inline-size }
+      .film-player iframe { display: block; width: 100%; height: calc(56.25cqw + 56px); border: 0; border-radius: 16px; background: #14201e }
+      @container (max-width: 590px) { .film-player iframe { height: 600px } }
+    </style>
   </head>
   <body>
     <header class="site-header">
@@ -134,17 +139,14 @@
 
       <section class="band" style="text-align: center">
         <p class="eyebrow">The 40-second film</p>
-        <h2 style="margin-top: 6px">Can the agent still quote this price?</h2>
+        <h2 style="margin-top: 6px">From host answers to a verified offer</h2>
         <p style="max-width: 62ch; margin: 10px auto 22px">
-          The same signed offer is checked twice. Its signature verifies both times.
-          Watch what changes when the offer expires.
+          Follow the host’s yes, no and unanswered question into a signed stay offer.
+          Watch an agent verify which answers it can quote.
         </p>
-        <iframe
-          src="/film"
-          title="VRP — the film: verify a signed stay offer"
-          loading="lazy"
-          style="width: min(900px, 100%); aspect-ratio: 16 / 9; border: 0; border-radius: 16px; box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35); display: block; margin: 0 auto; background: #060d18"
-        ></iframe>
+        <div class="film-player">
+          <iframe src="/film" title="VRP film — from host answers to a verified offer" loading="lazy"></iframe>
+        </div>
         <p style="margin-top: 20px">
           <a
             href="/film"
